@@ -1,13 +1,12 @@
-'use client';
-
-import {useExtracted} from 'next-intl';
-import ClientBoundary from '@/components/ClientBoundary';
+import DebugMessages from '@/components/DebugMessages';
+import {NextIntlClientProvider} from 'next-intl';
+import FeedPageContent from './FeedPageContent';
 
 export default function FeedPage() {
-  const t = useExtracted();
   return (
-    <ClientBoundary>
-      <p>{t('Feed page')}</p>
-    </ClientBoundary>
+    <NextIntlClientProvider messages="infer">
+      <DebugMessages />
+      <FeedPageContent />
+    </NextIntlClientProvider>
   );
 }

@@ -1,7 +1,6 @@
-import {NextIntlClientProvider} from 'next-intl';
 import {getLocale, getExtracted} from 'next-intl/server';
-import Navigation from './Navigation';
 import Document from '@/components/Document';
+import Navigation from './Navigation';
 
 export async function generateMetadata() {
   const t = await getExtracted();
@@ -18,14 +17,12 @@ export default async function LocaleLayout({children}: LayoutProps<'/'>) {
 
   return (
     <Document locale={locale}>
-      <NextIntlClientProvider messages="infer">
-        <div className="flex flex-col gap-2.5">
-          <Navigation />
-          <div className="p-4 flex flex-col gap-4">
-            <div>{children}</div>
-          </div>
+      <div className="flex flex-col gap-2.5">
+        <Navigation />
+        <div className="p-4 flex flex-col gap-4">
+          <div>{children}</div>
         </div>
-      </NextIntlClientProvider>
+      </div>
     </Document>
   );
 }

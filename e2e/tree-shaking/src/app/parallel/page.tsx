@@ -1,15 +1,12 @@
-'use client';
-
-import {useExtracted} from 'next-intl';
-import ClientBoundary from '@/components/ClientBoundary';
+import DebugMessages from '@/components/DebugMessages';
+import {NextIntlClientProvider} from 'next-intl';
+import ParallelPageContent from './ParallelPageContent';
 
 export default function ParallelPage() {
-  const t = useExtracted();
   return (
-    <ClientBoundary>
-      <div>
-        <p>{t('Parallel page')}</p>
-      </div>
-    </ClientBoundary>
+    <NextIntlClientProvider messages="infer">
+      <DebugMessages />
+      <ParallelPageContent />
+    </NextIntlClientProvider>
   );
 }

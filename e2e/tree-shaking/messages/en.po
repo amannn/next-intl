@@ -10,25 +10,13 @@ msgstr ""
 msgid "Cq+Nds"
 msgstr "Profile card"
 
-#: src/app/(group)/group-one/page.tsx:11
+#: src/app/(group)/group-one/GroupOneContent.tsx:11
 msgid "0A97lp"
 msgstr "Group (one) page"
 
-#: src/app/(group)/group-two/page.tsx:11
+#: src/app/(group)/group-two/GroupTwoContent.tsx:11
 msgid "ntVPJ+"
 msgstr "Group (two) page"
-
-#: src/app/(home)/Counter.tsx:17
-msgid "jm1lmy"
-msgstr "Count: {count, number}"
-
-#: src/app/(home)/Counter.tsx:22
-msgid "tQLRmz"
-msgstr "Increment"
-
-#: src/app/(home)/page.tsx:10
-msgid "vlslj0"
-msgstr "Hey {name}!"
 
 #: src/app/actions/ActionComponent.tsx:5
 msgid "sJNiQX"
@@ -38,7 +26,7 @@ msgstr "Returned from action"
 msgid "2QgyEZ"
 msgstr "Lazy server content"
 
-#: src/app/actions/page.tsx:8
+#: src/app/actions/page.tsx:9
 msgid "mz9I4r"
 msgstr "Server action page"
 
@@ -46,9 +34,17 @@ msgstr "Server action page"
 msgid "RNB4/W"
 msgstr "Load lazy content"
 
-#: src/app/catch-all/[...parts]/page.tsx:17
+#: src/app/catch-all/[...parts]/CatchAllPageContent.tsx:17
 msgid "xmCXAl"
 msgstr "Catch-all page: {segment}"
+
+#: src/app/Counter.tsx:17
+msgid "jm1lmy"
+msgstr "Count: {count, number}"
+
+#: src/app/Counter.tsx:22
+msgid "tQLRmz"
+msgstr "Increment"
 
 #: src/app/dynamic-import/DynamicImportContent.tsx:10
 msgid "TghmPk"
@@ -58,51 +54,59 @@ msgstr "Dynamic imported client"
 msgid "cOlyBM"
 msgstr "Lazy imported client"
 
-#: src/app/dynamic-segment/[slug]/page.tsx:16
+#: src/app/dynamic-segment/[slug]/DynamicSlugPageContent.tsx:12
 msgid "mrNFad"
 msgstr "Dynamic slug page: {slug}"
 
-#: src/app/explicit-id/page.tsx:12
+#: src/app/explicit-id/ExplicitIdPageContent.tsx:12
 msgctxt "carousel"
 msgid "next"
 msgstr "Right"
 
-#: src/app/feed/@modal/(..)photo/[id]/page.tsx:13
+#: src/app/feed/@modal/(..)photo/[id]/FeedPhotoModalPageContent.tsx:17
 msgid "Ax7uMP"
 msgstr "Intercepted photo modal: {id}"
 
-#: src/app/feed/@modal/default.tsx:10
+#: src/app/feed/@modal/FeedModalDefaultContent.tsx:10
 msgid "Z2Vmmr"
 msgstr "Feed modal default"
 
-#: src/app/feed/page.tsx:10
+#: src/app/feed/FeedPageContent.tsx:10
 msgid "I6Uu2z"
 msgstr "Feed page"
 
-#: src/app/layout-template/layout.tsx:13
+#: src/app/layout-template/layout.tsx:9
 msgid "mocvtj"
 msgstr "Layout template layout"
 
-#: src/app/layout-template/page.tsx:10
+#: src/app/layout-template/LayoutTemplatePageContent.tsx:10
 msgid "bowxvu"
 msgstr "Layout template page"
 
-#: src/app/layout-template/template.tsx:13
+#: src/app/layout-template/LayoutTemplateTemplateContent.tsx:14
 msgid "30s0PJ"
 msgstr "Layout template template"
 
 #. Default meta title if not overridden by pages
-#: src/app/layout.tsx:9
+#: src/app/layout.tsx:8
 msgid "lNLCAE"
 msgstr "next-intl example"
 
-#: src/app/loading/loading.tsx:10
+#: src/app/loading/LoadingContent.tsx:10
 msgid "o6jHkb"
 msgstr "Loading page …"
 
-#: src/app/loading/page.tsx:6
+#: src/app/loading/page.tsx:8
 msgid "2dpR22"
 msgstr "Static page"
+
+#: src/app/multi-provider/MultiProviderOneContent.tsx:10
+msgid "0tkhmz"
+msgstr "Multi provider one"
+
+#: src/app/multi-provider/MultiProviderTwoContent.tsx:10
+msgid "Kjbz3y"
+msgstr "Multi provider two"
 
 #: src/app/Navigation.tsx:9
 msgctxt "Navigation"
@@ -194,47 +198,57 @@ msgctxt "Navigation"
 msgid "ZME3di"
 msgstr "Linked dependency"
 
-#: src/app/optional/[[...parts]]/page.tsx:17
+#: src/app/Navigation.tsx:39
+msgctxt "Navigation"
+msgid "a5d+uJ"
+msgstr "Multi provider"
+
+#: src/app/Navigation.tsx:40
+msgctxt "Navigation"
+msgid "114fgF"
+msgstr "Server only"
+
+#: src/app/optional/[[...parts]]/OptionalCatchAllPageContent.tsx:17
 msgid "bT9Pga"
 msgstr "Optional catch-all page: {segment}"
 
-#: src/app/parallel/@activity/default.tsx:10
+#: src/app/page.tsx:13
+msgid "vlslj0"
+msgstr "Hey {name}!"
+
+#: src/app/parallel/@activity/ParallelActivityDefaultContent.tsx:10
 msgid "zZQM/j"
 msgstr "Parallel activity default (client)"
 
-#: src/app/parallel/@activity/page.tsx:10
+#: src/app/parallel/@activity/ParallelActivityPageContent.tsx:10
 msgid "eoEXj3"
 msgstr "Parallel activity page (client)"
 
-#: src/app/parallel/@team/default.tsx:5
+#: src/app/parallel/@team/default.tsx:7
 msgid "qzdMio"
 msgstr "Parallel team default (server)"
 
-#: src/app/parallel/@team/page.tsx:5
+#: src/app/parallel/@team/page.tsx:7
 msgid "siB/XG"
 msgstr "Parallel team page (server)"
 
-#: src/app/parallel/error.tsx:16
-msgid "ox304v"
-msgstr "An error occurred"
-
-#: src/app/parallel/error.tsx:19
-msgid "62nsdy"
-msgstr "Retry"
-
-#: src/app/parallel/page.tsx:11
+#: src/app/parallel/ParallelPageContent.tsx:11
 msgid "E8vtaB"
 msgstr "Parallel page"
 
-#: src/app/parallel/template.tsx:11
+#: src/app/parallel/ParallelTemplateContent.tsx:10
 msgid "fJxh6G"
 msgstr "Parallel template"
 
-#: src/app/photo/[id]/page.tsx:13
+#: src/app/photo/[id]/PhotoPageContent.tsx:15
 msgid "o25lsU"
 msgstr "Photo page: {id}"
 
-#: src/app/type-imports/page.tsx:10
+#: src/app/server-only/ServerOnlyPageContent.tsx:5
+msgid "eWHETa"
+msgstr "Server-only page"
+
+#: src/app/type-imports/page.tsx:13
 msgid "MmAwwP"
 msgstr "Type imports page"
 

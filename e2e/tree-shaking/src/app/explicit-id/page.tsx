@@ -1,19 +1,12 @@
-'use client';
-
-import {useExtracted} from 'next-intl';
-import ClientBoundary from '@/components/ClientBoundary';
+import DebugMessages from '@/components/DebugMessages';
+import {NextIntlClientProvider} from 'next-intl';
+import ExplicitIdPageContent from './ExplicitIdPageContent';
 
 export default function ExplicitIdPage() {
-  const t = useExtracted();
-
   return (
-    <ClientBoundary>
-      <p>
-        {t({
-          id: 'carousel.next',
-          message: 'Right'
-        })}
-      </p>
-    </ClientBoundary>
+    <NextIntlClientProvider messages="infer">
+      <DebugMessages />
+      <ExplicitIdPageContent />
+    </NextIntlClientProvider>
   );
 }

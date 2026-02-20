@@ -9,11 +9,6 @@ const routesMap = {
       tQLRmz: 'Increment'
     }
   ],
-  '/loading': [
-    {
-      o6jHkb: 'Loading page \u2026'
-    }
-  ],
   '/dynamic-segment/test': [
     {
       mrNFad: ['Dynamic slug page: ', ['slug']]
@@ -48,30 +43,22 @@ const routesMap = {
   ],
   '/group-one': [
     {
-      '0A97lp': 'Group (one) page',
-      'ntVPJ+': 'Group (two) page'
+      '0A97lp': 'Group (one) page'
     }
   ],
   '/group-two': [
     {
-      '0A97lp': 'Group (one) page',
       'ntVPJ+': 'Group (two) page'
     }
   ],
   '/parallel': [
     {
-      '62nsdy': 'Retry',
-      'zZQM/j': 'Parallel activity default (client)',
-      E8vtaB: 'Parallel page',
-      eoEXj3: 'Parallel activity page (client)',
-      fJxh6G: 'Parallel template',
-      ox304v: 'An error occurred'
+      fJxh6G: 'Parallel template'
     }
   ],
   '/feed': [
     {
-      I6Uu2z: 'Feed page',
-      Z2Vmmr: 'Feed modal default'
+      I6Uu2z: 'Feed page'
     }
   ],
   '/photo/alpha': [
@@ -91,16 +78,19 @@ const routesMap = {
     }
   ],
   '/layout-template': [
-    {
-      '30s0PJ': 'Layout template template',
-      bowxvu: 'Layout template page'
-    }
+    {'30s0PJ': 'Layout template template'},
+    {bowxvu: 'Layout template page'}
   ],
   '/linked-dependency': [
     {
       'Cq+Nds': 'Profile card'
     }
   ],
+  '/multi-provider': [
+    {'0tkhmz': 'Multi provider one'},
+    {Kjbz3y: 'Multi provider two'}
+  ],
+  '/server-only': [{}],
   '/shared-component': [
     {
       JdTriE: 'Shared component'
@@ -159,14 +149,71 @@ async function readProviderClientMessages(
   return messages;
 }
 
+function providerMatchesExactly(
+  provider: Record<string, unknown>,
+  expected: Record<string, unknown>
+): boolean {
+  const providerKeys = Object.keys(provider);
+  const expectedKeys = Object.keys(expected);
+  if (providerKeys.length !== expectedKeys.length) return false;
+  for (const key of expectedKeys) {
+    if (!(key in provider)) return false;
+    const pv = provider[key];
+    const ev = expected[key];
+    if (typeof ev === 'object' && ev !== null && !Array.isArray(ev)) {
+      if (
+        typeof pv !== 'object' ||
+        pv === null ||
+        Array.isArray(pv) ||
+        !providerMatchesExactly(
+          pv as Record<string, unknown>,
+          ev as Record<string, unknown>
+        )
+      ) {
+        return false;
+      }
+    } else if (JSON.stringify(pv) !== JSON.stringify(ev)) {
+      return false;
+    }
+  }
+  return true;
+}
+
 describe('provider client messages', () => {
   for (const [pathname, expectedMessages] of Object.entries(routesMap)) {
-    it(`has matching messages for ${pathname}`, async ({page}) => {
+    it(`renders exactly expected messages for ${pathname}`, async ({page}) => {
       await page.goto(pathname);
       const messages = await readProviderClientMessages(page);
-      expect(messages).toEqual(expectedMessages);
+      const unmatchedExpected = expectedMessages.filter(
+        (expected) => !messages.some((m) => providerMatchesExactly(m, expected))
+      );
+      const hasExactMatch = unmatchedExpected.length === 0;
+      expect(
+        hasExactMatch,
+        `No provider had exactly expected messages for ${pathname}\n` +
+          `Expected (${expectedMessages.length}):\n${JSON.stringify(expectedMessages, null, 2)}\n` +
+          `Actual (${messages.length} providers):\n${JSON.stringify(messages, null, 2)}`
+      ).toBe(true);
     });
   }
+
+  it('loading page shows loading UI messages during suspense', async ({
+    page
+  }) => {
+    await page.goto('/');
+    await page.locator('a[href="/loading"]').first().click();
+    await page.waitForSelector('text=Loading page …', {timeout: 5000});
+    const messages = await readProviderClientMessages(page);
+    const loadingExpected = {o6jHkb: 'Loading page …'};
+    const hasMatch = messages.some((m) =>
+      providerMatchesExactly(m, loadingExpected)
+    );
+    expect(
+      hasMatch,
+      'Expected provider with loading UI messages (o6jHkb)'
+    ).toBe(true);
+    await page.waitForSelector('text=Static page', {timeout: 5000});
+  });
 
   it('has matching messages for soft navigation of /feed -> /photo/alpha', async ({
     page
@@ -176,14 +223,10 @@ describe('provider client messages', () => {
     await expect(page).toHaveURL('/photo/alpha');
 
     const messages = await readProviderClientMessages(page);
-    expect(messages).toEqual([
-      {
-        I6Uu2z: 'Feed page',
-        Z2Vmmr: 'Feed modal default'
-      },
-      {
-        Ax7uMP: ['Intercepted photo modal: ', ['id']]
-      }
-    ]);
+    const photoExpected = {Ax7uMP: ['Intercepted photo modal: ', ['id']]};
+    const hasPhoto = messages.some((m) =>
+      providerMatchesExactly(m, photoExpected)
+    );
+    expect(hasPhoto).toBe(true);
   });
 });

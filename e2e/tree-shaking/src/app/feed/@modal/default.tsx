@@ -1,13 +1,12 @@
-'use client';
-
-import ClientBoundary from '@/components/ClientBoundary';
-import {useExtracted} from 'next-intl';
+import DebugMessages from '@/components/DebugMessages';
+import {NextIntlClientProvider} from 'next-intl';
+import FeedModalDefaultContent from './FeedModalDefaultContent';
 
 export default function FeedModalDefault() {
-  const t = useExtracted();
   return (
-    <ClientBoundary>
-      <p>{t('Feed modal default')}</p>
-    </ClientBoundary>
+    <NextIntlClientProvider messages="infer">
+      <DebugMessages />
+      <FeedModalDefaultContent />
+    </NextIntlClientProvider>
   );
 }

@@ -1,4 +1,5 @@
-import {useExtracted} from 'next-intl';
+import DebugMessages from '@/components/DebugMessages';
+import {NextIntlClientProvider, useExtracted} from 'next-intl';
 import ServerActionForm from './ServerActionForm';
 
 export default function ActionsPage() {
@@ -6,7 +7,10 @@ export default function ActionsPage() {
   return (
     <div>
       <p>{t('Server action page')}</p>
-      <ServerActionForm />
+      <NextIntlClientProvider messages="infer">
+        <DebugMessages />
+        <ServerActionForm />
+      </NextIntlClientProvider>
     </div>
   );
 }

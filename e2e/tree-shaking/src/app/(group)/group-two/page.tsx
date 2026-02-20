@@ -1,15 +1,12 @@
-'use client';
-
-import {useExtracted} from 'next-intl';
-import ClientBoundary from '@/components/ClientBoundary';
+import DebugMessages from '@/components/DebugMessages';
+import {NextIntlClientProvider} from 'next-intl';
+import GroupTwoContent from './GroupTwoContent';
 
 export default function GroupTwoPage() {
-  const t = useExtracted();
   return (
-    <ClientBoundary>
-      <div>
-        <p>{t('Group (two) page')}</p>
-      </div>
-    </ClientBoundary>
+    <NextIntlClientProvider messages="infer">
+      <DebugMessages />
+      <GroupTwoContent />
+    </NextIntlClientProvider>
   );
 }

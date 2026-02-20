@@ -1,13 +1,12 @@
 import {NextIntlClientProvider} from 'next-intl';
+import MultiProviderOneContent from './MultiProviderOneContent';
 import DebugMessages from '@/components/DebugMessages';
 
-export default function LinkedDependencyLayout({
-  children
-}: LayoutProps<'/linked-dependency'>) {
+export default function MultiProviderOne() {
   return (
     <NextIntlClientProvider messages="infer">
       <DebugMessages />
-      {children}
+      <MultiProviderOneContent />
     </NextIntlClientProvider>
   );
 }

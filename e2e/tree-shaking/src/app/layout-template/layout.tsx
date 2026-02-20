@@ -1,18 +1,13 @@
-import DebugMessages from '@/components/DebugMessages';
-import {NextIntlClientProvider} from 'next-intl';
-import {useExtracted} from 'next-intl';
+import {getExtracted} from 'next-intl/server';
 
-export default function LayoutTemplateLayout({
+export default async function LayoutTemplateLayout({
   children
 }: LayoutProps<'/layout-template'>) {
-  const t = useExtracted();
+  const t = await getExtracted();
   return (
-    <NextIntlClientProvider messages="infer">
-      <DebugMessages />
-      <section>
-        <h1>{t('Layout template layout')}</h1>
-        {children}
-      </section>
-    </NextIntlClientProvider>
+    <section>
+      <h1>{t('Layout template layout')}</h1>
+      {children}
+    </section>
   );
 }

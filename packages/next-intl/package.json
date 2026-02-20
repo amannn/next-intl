@@ -97,9 +97,9 @@
       "types": "./dist/types/plugin/catalog/catalogLoader.d.ts",
       "default": "./dist/esm/production/extractor/catalogLoader.js"
     },
-    "./treeShaking/layoutSegmentLoader": {
-      "types": "./dist/types/plugin/treeShaking/layoutSegmentLoader.d.ts",
-      "default": "./dist/esm/production/treeShaking/layoutSegmentLoader.js"
+    "./treeShaking/manifestLoader": {
+      "types": "./dist/types/plugin/treeShaking/manifestLoader.d.ts",
+      "default": "./dist/esm/production/treeShaking/manifestLoader.js"
     }
   },
   "files": [
@@ -130,9 +130,10 @@
   ],
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.5.4",
+    "magic-string": "^0.30.10",
     "@parcel/watcher": "^2.4.1",
     "@swc/core": "^1.15.2",
-    "dependency-tree": "^11.3.0",
+    "enhanced-resolve": "^5.19.0",
     "icu-minify": "workspace:^",
     "negotiator": "^1.0.0",
     "next-intl-swc-plugin-extractor": "workspace:^",

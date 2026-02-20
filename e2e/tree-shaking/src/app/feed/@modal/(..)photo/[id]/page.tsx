@@ -1,16 +1,16 @@
-'use client';
+import DebugMessages from '@/components/DebugMessages';
+import {NextIntlClientProvider} from 'next-intl';
+import FeedPhotoModalPageContent from './FeedPhotoModalPageContent';
 
-import {use} from 'react';
-import {useExtracted} from 'next-intl';
-import ClientBoundary from '@/components/ClientBoundary';
+type Props = {
+  params: Promise<{id: string}>;
+};
 
-export default function FeedPhotoModalPage({params}: PageProps<'/photo/[id]'>) {
-  const {id} = use(params);
-  const t = useExtracted();
-
+export default function FeedPhotoModalPage({params}: Props) {
   return (
-    <ClientBoundary>
-      <p>{t('Intercepted photo modal: {id}', {id})}</p>
-    </ClientBoundary>
+    <NextIntlClientProvider messages="infer">
+      <DebugMessages />
+      <FeedPhotoModalPageContent params={params} />
+    </NextIntlClientProvider>
   );
 }
