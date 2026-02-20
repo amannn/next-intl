@@ -9,9 +9,6 @@ const routesMap = {
       tQLRmz: 'Increment'
     }
   ],
-  '/loading': [
-    {}
-  ],
   '/dynamic-segment/test': [
     {
       mrNFad: ['Dynamic slug page: ', ['slug']]
@@ -177,9 +174,6 @@ describe('provider client messages', () => {
   for (const [pathname, expectedMessages] of Object.entries(routesMap)) {
     it(`has matching messages for ${pathname}`, async ({page}) => {
       await page.goto(pathname);
-      if (pathname === '/loading') {
-        await page.waitForSelector('text=Static page', {timeout: 10000});
-      }
       const messages = await readProviderClientMessages(page);
       const hasMatch = expectedMessages.every((expected) =>
         messages.some((m) => providerHasExpected(m, expected))
@@ -191,16 +185,33 @@ describe('provider client messages', () => {
     });
   }
 
-  it('loading page static content does not dump all messages', async ({
+  it('loading page shows loading UI messages during suspense', async ({
+    page
+  }) => {
+    await page.goto('/');
+    await page.locator('a[href="/loading"]').first().click();
+    await page.waitForSelector('text=Loading page …', {timeout: 5000});
+    const messages = await readProviderClientMessages(page);
+    const loadingExpected = {o6jHkb: 'Loading page …'};
+    const hasMatch = messages.some((m) =>
+      providerHasExpected(m, loadingExpected)
+    );
+    expect(
+      hasMatch,
+      'Expected provider with loading UI messages (o6jHkb)'
+    ).toBe(true);
+  });
+
+  it('loading page shows no messages after static content loads', async ({
     page
   }) => {
     await page.goto('/loading');
     await page.waitForSelector('text=Static page', {timeout: 10000});
     const messages = await readProviderClientMessages(page);
-    const loadingProvider = messages.find((m) => Object.keys(m).length === 0);
+    const emptyProvider = messages.find((m) => Object.keys(m).length === 0);
     expect(
-      loadingProvider !== undefined,
-      'Expected at least one provider with no messages (empty manifest) for /loading'
+      emptyProvider !== undefined,
+      'Expected at least one provider with no messages (empty manifest) after load'
     ).toBe(true);
   });
 
