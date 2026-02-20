@@ -94,6 +94,7 @@ const routesMap = {
     {'0tkhmz': 'Multi provider one'},
     {Kjbz3y: 'Multi provider two'}
   ],
+  '/server-only': [{}],
   '/shared-component': [
     {
       JdTriE: 'Shared component'
@@ -187,12 +188,15 @@ describe('provider client messages', () => {
     it(`renders exactly expected messages for ${pathname}`, async ({page}) => {
       await page.goto(pathname);
       const messages = await readProviderClientMessages(page);
-      const hasExactMatch = expectedMessages.every((expected) =>
-        messages.some((m) => providerMatchesExactly(m, expected))
+      const unmatchedExpected = expectedMessages.filter(
+        (expected) => !messages.some((m) => providerMatchesExactly(m, expected))
       );
+      const hasExactMatch = unmatchedExpected.length === 0;
       expect(
         hasExactMatch,
-        `No provider had exactly expected messages for ${pathname} (extra keys indicate message dump)`
+        `No provider had exactly expected messages for ${pathname}\n` +
+          `Expected (${expectedMessages.length}):\n${JSON.stringify(expectedMessages, null, 2)}\n` +
+          `Actual (${messages.length} providers):\n${JSON.stringify(messages, null, 2)}`
       ).toBe(true);
     });
   }

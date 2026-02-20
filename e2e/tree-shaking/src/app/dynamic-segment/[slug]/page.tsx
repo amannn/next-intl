@@ -1,16 +1,16 @@
 import DebugMessages from '@/components/DebugMessages';
 import {NextIntlClientProvider} from 'next-intl';
 import DynamicSlugPageContent from './DynamicSlugPageContent';
+import {use} from 'react';
 
-type Props = {
-  params: Promise<{slug: string}>;
-};
-
-export default function DynamicSlugPage({params}: Props) {
+export default function DynamicSlugPage({
+  params
+}: PageProps<'/dynamic-segment/[slug]'>) {
+  const {slug} = use(params);
   return (
     <NextIntlClientProvider messages="infer">
       <DebugMessages />
-      <DynamicSlugPageContent params={params} />
+      <DynamicSlugPageContent slug={slug} />
     </NextIntlClientProvider>
   );
 }

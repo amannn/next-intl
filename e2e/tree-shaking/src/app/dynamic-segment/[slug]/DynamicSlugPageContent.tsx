@@ -1,15 +1,13 @@
 'use client';
 
 import {useExtracted} from 'next-intl';
-import {use} from 'react';
 import ClientBoundary from '@/components/ClientBoundary';
 
 type Props = {
-  params: Promise<{slug: string}>;
+  slug: string;
 };
 
-export default function DynamicSlugPageContent({params}: Props) {
-  const {slug} = use(params);
+export default function DynamicSlugPageContent({slug}: Props) {
   const t = useExtracted();
 
   return (

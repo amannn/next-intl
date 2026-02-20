@@ -54,7 +54,7 @@ msgstr "Dynamic imported client"
 msgid "cOlyBM"
 msgstr "Lazy imported client"
 
-#: src/app/dynamic-segment/[slug]/DynamicSlugPageContent.tsx:18
+#: src/app/dynamic-segment/[slug]/DynamicSlugPageContent.tsx:12
 msgid "mrNFad"
 msgstr "Dynamic slug page: {slug}"
 
@@ -203,6 +203,11 @@ msgctxt "Navigation"
 msgid "a5d+uJ"
 msgstr "Multi provider"
 
+#: src/app/Navigation.tsx:40
+msgctxt "Navigation"
+msgid "114fgF"
+msgstr "Server only"
+
 #: src/app/optional/[[...parts]]/OptionalCatchAllPageContent.tsx:17
 msgid "bT9Pga"
 msgstr "Optional catch-all page: {segment}"
@@ -238,6 +243,10 @@ msgstr "Parallel template"
 #: src/app/photo/[id]/PhotoPageContent.tsx:15
 msgid "o25lsU"
 msgstr "Photo page: {id}"
+
+#: src/app/server-only/ServerOnlyPageContent.tsx:5
+msgid "eWHETa"
+msgstr "Server-only page"
 
 #: src/app/type-imports/page.tsx:13
 msgid "MmAwwP"

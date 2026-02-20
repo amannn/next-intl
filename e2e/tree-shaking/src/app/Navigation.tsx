@@ -37,6 +37,7 @@ export default function Navigation() {
         label={t('Linked dependency')}
       />
       <NavigationItem href="/multi-provider" label={t('Multi provider')} />
+      <NavigationItem href="/server-only" label={t('Server only')} />
     </nav>
   );
 }
