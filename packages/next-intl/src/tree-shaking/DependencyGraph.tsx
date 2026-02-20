@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
-import LRUCache from '../extractor/extractor/LRUCache.js';
+import LRUCache from '../utils/LRUCache.js';
 import SourceFileFilter from '../extractor/source/SourceFileFilter.js';
 import createModuleResolver from './createModuleResolver.js';
 import parseImports from './parseImports.js';
