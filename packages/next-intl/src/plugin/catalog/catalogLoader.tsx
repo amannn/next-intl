@@ -109,15 +109,18 @@ export default function catalogLoader(
           },
           {isDevelopment: false, projectRoot}
         );
+        let stats: {filesScanned: number; filesChanged: number} | undefined;
         try {
-          await compiler.extractAll();
+          stats = await compiler.extractAll();
         } finally {
           compiler[Symbol.dispose]();
         }
         extractorLogger.extractionEnd({
           projectRoot,
           resourcePath: this.resourcePath,
-          durationMs: Date.now() - extractionStart
+          durationMs: Date.now() - extractionStart,
+          filesScanned: stats?.filesScanned,
+          filesChanged: stats?.filesChanged
         });
         contentToDecode = await fs.readFile(this.resourcePath, 'utf8');
       }

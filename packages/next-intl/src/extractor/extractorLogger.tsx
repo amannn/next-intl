@@ -65,19 +65,23 @@ export type ExtractorLogger = {
     runExtraction: boolean;
     srcPaths: Array<string>;
   }): void;
-  addContextDependency(params: {projectRoot: string; path: string}): void;
+  addContextDependency(params: {path: string; projectRoot: string}): void;
   extractionStart(params: {projectRoot: string; resourcePath: string}): void;
   extractionEnd(params: {
     projectRoot: string;
     resourcePath: string;
     durationMs: number;
+    filesScanned?: number;
+    filesChanged?: number;
   }): void;
   catalogManagerLoadStart(params: {projectRoot: string}): void;
   catalogManagerScanComplete(params: {
     projectRoot: string;
-    fileCount: number;
-    messageCount: number;
     durationMs: number;
+    fileCount: number;
+    filesChanged: number;
+    messageCount: number;
+    totalFilesScanned: number;
   }): void;
   catalogManagerFileProcessed(params: {
     projectRoot: string;
@@ -129,11 +133,19 @@ export const extractorLogger: ExtractorLogger = {
     });
   },
 
-  extractionEnd({durationMs, projectRoot, resourcePath}) {
+  extractionEnd({
+    durationMs,
+    filesChanged,
+    filesScanned,
+    projectRoot,
+    resourcePath
+  }) {
     write(projectRoot, 'EXTRACTION', 'Extraction completed', {
       resourcePath,
       durationMs,
-      goal: 'HMR batching: one loader run = one extraction = one batched write'
+      filesScanned,
+      filesChanged,
+      note: 'filesChanged=files with message delta vs prev (prev is empty on fresh CatalogManager). When 1 file changes, we still scan all files - loader receives no trigger.'
     });
   },
 
@@ -146,13 +158,18 @@ export const extractorLogger: ExtractorLogger = {
   catalogManagerScanComplete({
     durationMs,
     fileCount,
+    filesChanged,
     messageCount,
-    projectRoot
+    projectRoot,
+    totalFilesScanned
   }) {
     write(projectRoot, 'CATALOG_MANAGER', 'Scan complete', {
+      totalFilesScanned,
       fileCount,
+      filesChanged,
       messageCount,
-      durationMs
+      durationMs,
+      goal: 'Granularity: totalFilesScanned=all read, filesChanged=only these had message delta (vs prev)'
     });
   },
 

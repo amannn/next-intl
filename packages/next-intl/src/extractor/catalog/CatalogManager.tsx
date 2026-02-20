@@ -136,7 +136,10 @@ export default class CatalogManager implements Disposable {
     ).map((srcPath) => path.join(this.projectRoot, srcPath));
   }
 
-  public async loadMessages() {
+  public async loadMessages(): Promise<{
+    filesScanned: number;
+    filesChanged: number;
+  }> {
     extractorLogger.catalogManagerLoadStart({projectRoot: this.projectRoot});
 
     const sourceDiskMessages = await this.loadSourceMessages();
@@ -145,15 +148,17 @@ export default class CatalogManager implements Disposable {
     await this.loadCatalogsPromise;
 
     const scanStart = Date.now();
+    let filesChanged = 0;
+    let totalFilesScanned = 0;
     this.scanCompletePromise = (async () => {
       const sourceFiles = await SourceFileScanner.getSourceFiles(
         this.getSrcPaths()
       );
-      await Promise.all(
-        Array.from(sourceFiles).map(async (filePath) =>
-          this.processFile(filePath)
-        )
-      );
+      totalFilesScanned = sourceFiles.size;
+      for (const filePath of sourceFiles) {
+        const changed = await this.processFile(filePath);
+        if (changed) filesChanged++;
+      }
       this.mergeSourceDiskMetadata(sourceDiskMessages);
     })();
 
@@ -161,7 +166,9 @@ export default class CatalogManager implements Disposable {
 
     extractorLogger.catalogManagerScanComplete({
       projectRoot: this.projectRoot,
+      totalFilesScanned,
       fileCount: this.messagesByFile.size,
+      filesChanged,
       messageCount: this.messagesById.size,
       durationMs: Date.now() - scanStart
     });
@@ -170,6 +177,8 @@ export default class CatalogManager implements Disposable {
       const catalogLocales = this.getCatalogLocales();
       catalogLocales.subscribeLocalesChange(this.onLocalesChange);
     }
+
+    return {filesScanned: totalFilesScanned, filesChanged};
   }
 
   private async loadSourceMessages(): Promise<Map<string, ExtractorMessage>> {
