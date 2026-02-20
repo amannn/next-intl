@@ -4,9 +4,6 @@ import type MessageExtractor from '../extractor/MessageExtractor.js';
 import type ExtractorCodec from '../format/ExtractorCodec.js';
 import {getFormatExtension, resolveCodec} from '../format/index.js';
 import SourceFileScanner from '../source/SourceFileScanner.js';
-import SourceFileWatcher, {
-  type SourceFileWatcherEvent
-} from '../source/SourceFileWatcher.js';
 import type {
   ExtractorConfig,
   ExtractorMessage,
@@ -61,7 +58,6 @@ export default class CatalogManager implements Disposable {
   private codec?: ExtractorCodec;
   private catalogLocales?: CatalogLocales;
   private extractor: MessageExtractor;
-  private sourceWatcher?: SourceFileWatcher;
 
   // Resolves when all catalogs are loaded
   private loadCatalogsPromise?: Promise<unknown>;
@@ -84,17 +80,6 @@ export default class CatalogManager implements Disposable {
     this.isDevelopment = opts.isDevelopment ?? false;
 
     this.extractor = opts.extractor;
-
-    if (
-      this.isDevelopment &&
-      process.env.NEXT_INTL_EXTRACT_LOADER_ONLY !== '1'
-    ) {
-      this.sourceWatcher = new SourceFileWatcher(
-        this.getSrcPaths(),
-        this.handleFileEvents.bind(this)
-      );
-      void this.sourceWatcher.start();
-    }
   }
 
   private async getCodec(): Promise<ExtractorCodec> {
@@ -492,41 +477,7 @@ export default class CatalogManager implements Disposable {
     }
   };
 
-  private async handleFileEvents(events: Array<SourceFileWatcherEvent>) {
-    if (this.loadCatalogsPromise) {
-      await this.loadCatalogsPromise;
-    }
-
-    // Wait for initial scan to complete to avoid race conditions
-    if (this.scanCompletePromise) {
-      await this.scanCompletePromise;
-    }
-
-    if (!this.sourceWatcher) {
-      return;
-    }
-
-    let changed = false;
-    const expandedEvents = await this.sourceWatcher.expandDirectoryDeleteEvents(
-      events,
-      Array.from(this.messagesByFile.keys())
-    );
-    for (const event of expandedEvents) {
-      const hasChanged = await this.processFile(event.path);
-      changed ||= hasChanged;
-    }
-
-    if (changed) {
-      await this.save();
-    }
-  }
-
   public [Symbol.dispose](): void {
-    if (this.sourceWatcher) {
-      void this.sourceWatcher.stop();
-    }
-    this.sourceWatcher = undefined;
-
     this.saveScheduler[Symbol.dispose]();
     if (this.catalogLocales && this.isDevelopment) {
       this.catalogLocales.unsubscribeLocalesChange(this.onLocalesChange);

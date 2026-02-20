@@ -70,10 +70,7 @@ export default function catalogLoader(
   const projectRoot = this.rootContext ?? process.cwd();
 
   const runExtraction =
-    options.sourceLocale &&
-    options.srcPath &&
-    locale === options.sourceLocale &&
-    process.env.NEXT_INTL_EXTRACT_LOADER_ONLY === '1';
+    options.sourceLocale && options.srcPath && locale === options.sourceLocale;
 
   const srcPaths = runExtraction
     ? (Array.isArray(options.srcPath) ? options.srcPath : [options.srcPath])

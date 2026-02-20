@@ -30,9 +30,9 @@ export default function initExtractionCompiler(pluginConfig: PluginConfig) {
   const shouldRun = isDevelopmentOrNextBuild;
   if (!shouldRun) return;
 
-  // Prototype: loader-based extraction. Set NEXT_INTL_EXTRACT_LOADER_ONLY=1
-  // to use catalog loader + addContextDependency instead of parcel watcher.
-  if (isDevelopment && process.env.NEXT_INTL_EXTRACT_LOADER_ONLY === '1') {
+  // Dev: catalog loader + addContextDependency handles extraction.
+  // Build: run extraction once before build.
+  if (isDevelopment) {
     return;
   }
 
