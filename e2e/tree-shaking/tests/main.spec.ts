@@ -4,18 +4,6 @@ import {join} from 'path';
 
 const {describe} = it;
 
-const COUNTER_PATH = join(process.cwd(), 'src/app/Counter.tsx');
-
-function useCounterRestore() {
-  const original = readFileSync(COUNTER_PATH, 'utf-8');
-  return {
-    original,
-    [Symbol.dispose]() {
-      writeFileSync(COUNTER_PATH, original);
-    }
-  };
-}
-
 const routesMap = {
   '/': [
     {
@@ -263,86 +251,80 @@ describe('provider client messages', () => {
 describe.serial('HMR message updates', () => {
   const HMR_POLL_TIMEOUT_MS = 15_000;
 
+  async function pollMessages(
+    page: Page,
+    predicate: (messages: Array<Record<string, unknown>>) => boolean
+  ) {
+    await expect
+      .poll(async () => predicate(await readProviderClientMessages(page)), {
+        timeout: HMR_POLL_TIMEOUT_MS
+      })
+      .toBe(true);
+  }
+
+  function useEdit(path: string, edit: (original: string) => string) {
+    const fullPath = join(process.cwd(), path);
+    const original = readFileSync(fullPath, 'utf-8');
+    writeFileSync(fullPath, edit(original));
+    return {
+      [Symbol.dispose]() {
+        writeFileSync(fullPath, original);
+      }
+    };
+  }
+
   it('updates rendered messages when modifying client message', async ({
     page
   }) => {
-    using restore = useCounterRestore();
     await page.goto('/');
     const messages = await readProviderClientMessages(page);
     expect(messagesContainValue(messages, 'Increment')).toBe(true);
 
-    writeFileSync(
-      COUNTER_PATH,
-      restore.original.replace("'Increment'", "'Increment plus'")
+    using _ = useEdit('src/app/Counter.tsx', (original) =>
+      original.replace("'Increment'", "'Increment plus'")
     );
 
-    await expect
-      .poll(
-        async () => {
-          const m = await readProviderClientMessages(page);
-          return (
-            messagesContainValue(m, 'Increment plus') &&
-            !messagesContainValue(m, 'Increment')
-          );
-        },
-        {timeout: HMR_POLL_TIMEOUT_MS}
-      )
-      .toBe(true);
+    await pollMessages(
+      page,
+      (messages) =>
+        messagesContainValue(messages, 'Increment plus') &&
+        !messagesContainValue(messages, 'Increment')
+    );
   });
 
-  it('updates rendered messages when adding client message', async ({
-    page
-  }) => {
-    using restore = useCounterRestore();
+  it('updates rendered messages when adding client message', async ({page}) => {
     await page.goto('/');
     await page.reload(); // Reset after previous test's restore (messages come from server)
     const messages = await readProviderClientMessages(page);
     expect(messagesContainValue(messages, 'Increment')).toBe(true);
 
-    writeFileSync(
-      COUNTER_PATH,
-      restore.original.replace(
+    using _ = useEdit('src/app/Counter.tsx', (original) =>
+      original.replace(
         '</button>\n    </ClientBoundary>',
-        '</button>\n      <span>{t(\'Decrement\')}</span>\n    </ClientBoundary>'
+        "</button>\n      <span>{t('Decrement')}</span>\n    </ClientBoundary>"
       )
     );
 
-    await expect
-      .poll(
-        async () => {
-          const m = await readProviderClientMessages(page);
-          return (
-            messagesContainValue(m, 'Increment') &&
-            messagesContainValue(m, 'Decrement')
-          );
-        },
-        {timeout: HMR_POLL_TIMEOUT_MS}
-      )
-      .toBe(true);
+    await pollMessages(
+      page,
+      (m) =>
+        messagesContainValue(m, 'Increment') &&
+        messagesContainValue(m, 'Decrement')
+    );
   });
 
   it('updates rendered messages when deleting client message', async ({
     page
   }) => {
-    using restore = useCounterRestore();
     await page.goto('/');
     await page.reload(); // Reset after previous test's restore (messages come from server)
     const messages = await readProviderClientMessages(page);
     expect(messagesContainValue(messages, 'Increment')).toBe(true);
 
-    writeFileSync(
-      COUNTER_PATH,
-      restore.original.replace("{t('Increment')}", "'Click'")
+    using _ = useEdit('src/app/Counter.tsx', (original) =>
+      original.replace("{t('Increment')}", "'Click'")
     );
 
-    await expect
-      .poll(
-        async () => {
-          const m = await readProviderClientMessages(page);
-          return !messagesContainValue(m, 'Increment');
-        },
-        {timeout: HMR_POLL_TIMEOUT_MS}
-      )
-      .toBe(true);
+    await pollMessages(page, (m) => !messagesContainValue(m, 'Increment'));
   });
 });
