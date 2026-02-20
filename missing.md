@@ -7,10 +7,7 @@ Tests that could not be migrated to e2e or proved unreliable.
 - creates the messages directory and source catalog when they do not exist initially
   - reason: App requires messages to exist for getRequestConfig to load; chicken-and-egg
   - verdict: ok, leave as unit test
-- restores previous translations when messages are added back
-  - reason: Predicate timing – app has Footer with Hey! so state differs from unit test
-  - verdict: this is important, add the e2e test
-- preserves manual translations in target catalogs when adding new messages
+ preserves manual translations in target catalogs when adding new messages
   - reason: Multi-step flow; de.json state across edits unreliable
   - verdict: it should be reliable. make sure we're running sequentially.
 - avoids race condition when compiling while a new locale is added
