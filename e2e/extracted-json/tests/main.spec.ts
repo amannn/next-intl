@@ -26,6 +26,18 @@ describe('extraction json format', () => {
     expect(en['NhX4DJ']).toBe('Hello');
   });
 
+  it('writes to newly added catalog file', async ({page}) => {
+    await page.goto('/');
+    await expectJson('en.json', {'+YJVTi': 'Hey!', NhX4DJ: 'Hello'});
+
+    await using _ = await withTempFileApp('messages/fr.json', '{}');
+
+    await page.goto('/');
+    const fr = await expectJson('fr.json', {'+YJVTi': '', NhX4DJ: ''});
+    expect(fr['+YJVTi']).toBe('');
+    expect(fr['NhX4DJ']).toBe('');
+  });
+
   it('resets translations when a message changes', async ({page}) => {
     await page.goto('/');
     await expectJson('en.json', {'+YJVTi': 'Hey!'});
