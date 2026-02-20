@@ -1,0 +1,29 @@
+{
+  "name": "e2e-extraction",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "next build",
+    "lint": "eslint src tests && prettier src tests --check",
+    "test": "pnpm vitest run"
+  },
+  "dependencies": {
+    "next": "^16.0.10",
+    "next-intl": "^4.0.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.1.0",
+    "@types/react": "^19.2.3",
+    "@types/react-dom": "^19.2.3",
+    "eslint": "^9.38.0",
+    "eslint-config-next": "^16.0.10",
+    "prettier": "^3.3.3",
+    "typescript": "^5.5.3",
+    "vitest": "^3.0.8"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
