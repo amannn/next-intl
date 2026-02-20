@@ -1,9 +1,9 @@
 import {createRequire} from 'module';
 import path from 'path';
 import {transform} from '@swc/core';
+import LRUCache from '../../utils/LRUCache.js';
 import type {ExtractorMessage} from '../types.js';
 import {getDefaultProjectRoot, normalizePathToPosix} from '../utils.js';
-import LRUCache from '../../utils/LRUCache.js';
 
 const require = createRequire(import.meta.url);
 
