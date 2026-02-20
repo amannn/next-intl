@@ -20,12 +20,9 @@ import {throwError} from './utils.js';
 const require = createRequire(import.meta.url);
 
 function withExtensions(localPath: string) {
-  return [
-    `${localPath}.ts`,
-    `${localPath}.tsx`,
-    `${localPath}.js`,
-    `${localPath}.jsx`
-  ];
+  return SourceFileFilter.EXTENSIONS.map(
+    (ext) => `${localPath}.${ext}`
+  );
 }
 
 function normalizeTurbopackAliasPath(pathname: string) {
@@ -51,12 +48,12 @@ function getPathCondition(paths: Array<string>): string {
 }
 
 function getAppSourcePaths(srcPaths: Array<string>): Array<string> {
-  return srcPaths.flatMap((srcPath) => [
-    `${srcPath}/**/*.ts`,
-    `${srcPath}/**/*.tsx`,
-    `${srcPath}/*.ts`,
-    `${srcPath}/*.tsx`
-  ]);
+  return srcPaths.flatMap((srcPath) =>
+    SourceFileFilter.EXTENSIONS.flatMap((ext) => [
+      `${srcPath}/**/*.${ext}`,
+      `${srcPath}/*.${ext}`
+    ])
+  );
 }
 
 function resolveI18nPath(providedPath?: string, cwd?: string) {
