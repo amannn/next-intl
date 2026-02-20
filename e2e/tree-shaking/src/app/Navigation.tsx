@@ -36,6 +36,7 @@ export default function Navigation() {
         href="/linked-dependency"
         label={t('Linked dependency')}
       />
+      <NavigationItem href="/multi-provider" label={t('Multi provider')} />
     </nav>
   );
 }

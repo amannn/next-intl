@@ -100,6 +100,14 @@ msgstr "Loading page …"
 msgid "2dpR22"
 msgstr "Static page"
 
+#: src/app/multi-provider/MultiProviderOneContent.tsx:10
+msgid "0tkhmz"
+msgstr "Multi provider one"
+
+#: src/app/multi-provider/MultiProviderTwoContent.tsx:10
+msgid "Kjbz3y"
+msgstr "Multi provider two"
+
 #: src/app/Navigation.tsx:9
 msgctxt "Navigation"
 msgid "ejEGdx"
@@ -189,6 +197,11 @@ msgstr "Use translations"
 msgctxt "Navigation"
 msgid "ZME3di"
 msgstr "Linked dependency"
+
+#: src/app/Navigation.tsx:39
+msgctxt "Navigation"
+msgid "a5d+uJ"
+msgstr "Multi provider"
 
 #: src/app/optional/[[...parts]]/OptionalCatchAllPageContent.tsx:17
 msgid "bT9Pga"

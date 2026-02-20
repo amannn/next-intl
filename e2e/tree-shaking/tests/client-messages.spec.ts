@@ -90,6 +90,10 @@ const routesMap = {
       'Cq+Nds': 'Profile card'
     }
   ],
+  '/multi-provider': [
+    {'0tkhmz': 'Multi provider one'},
+    {Kjbz3y: 'Multi provider two'}
+  ],
   '/shared-component': [
     {
       JdTriE: 'Shared component'
