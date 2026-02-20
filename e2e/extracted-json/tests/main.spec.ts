@@ -1,8 +1,11 @@
-import fs from 'fs/promises';
 import path from 'path';
 import {fileURLToPath} from 'url';
 import {expect, test as it} from '@playwright/test';
-import {createExtractionHelpers} from './helpers.js';
+import {
+  createExtractionHelpers,
+  withTempEdit,
+  withTempFile
+} from './helpers.js';
 
 const {describe} = it;
 
@@ -12,41 +15,8 @@ const MESSAGES_DIR = path.join(APP_ROOT, 'messages');
 
 const {expectJson, expectJsonPredicate} = createExtractionHelpers(MESSAGES_DIR);
 
-async function withTempEdit(
-  filePath: string,
-  newContent: string
-): Promise<{[Symbol.asyncDispose]: () => Promise<void>}> {
-  const fullPath = path.join(APP_ROOT, filePath);
-  const original = await fs.readFile(fullPath, 'utf-8');
-  await fs.writeFile(fullPath, newContent);
-  return {
-    [Symbol.asyncDispose]: async () => fs.writeFile(fullPath, original)
-  };
-}
-
-async function withTempFile(
-  filePath: string,
-  content: string
-): Promise<{[Symbol.asyncDispose]: () => Promise<void>}> {
-  const fullPath = path.join(APP_ROOT, filePath);
-  let existed = true;
-  let original = '';
-  try {
-    original = await fs.readFile(fullPath, 'utf-8');
-  } catch {
-    existed = false;
-  }
-  await fs.writeFile(fullPath, content);
-  return {
-    [Symbol.asyncDispose]: async () => {
-      if (existed) {
-        await fs.writeFile(fullPath, original);
-      } else {
-        await fs.unlink(fullPath);
-      }
-    }
-  };
-}
+const withTempEditApp = (p: string, c: string) => withTempEdit(APP_ROOT, p, c);
+const withTempFileApp = (p: string, c: string) => withTempFile(APP_ROOT, p, c);
 
 describe('extraction json format', () => {
   it('saves messages initially', async ({page}) => {
@@ -60,7 +30,7 @@ describe('extraction json format', () => {
     await page.goto('/');
     await expectJson('en.json', {'+YJVTi': 'Hey!'});
 
-    await using _ = await withTempEdit(
+    await using _ = await withTempEditApp(
       'src/components/Greeting.tsx',
       `'use client';
 
@@ -90,7 +60,7 @@ export default function Greeting() {
     await page.goto('/');
     await expectJson('en.json', {'+YJVTi': 'Hey!', NhX4DJ: 'Hello'});
 
-    await using _ = await withTempEdit(
+    await using _ = await withTempEditApp(
       'src/components/Greeting.tsx',
       `'use client';
 
@@ -99,7 +69,7 @@ export default function Greeting() {
 }
 `
     );
-    await using __ = await withTempEdit(
+    await using __ = await withTempEditApp(
       'src/components/Footer.tsx',
       `'use client';
 
@@ -126,7 +96,7 @@ export default function Footer() {
     await page.goto('/');
     await expectJson('en.json', {'+YJVTi': 'Hey!'});
 
-    await using _ = await withTempEdit(
+    await using _ = await withTempEditApp(
       'src/components/Greeting.tsx',
       `'use client';
 
@@ -153,7 +123,7 @@ export default function Greeting() {
     await page.goto('/');
     await expectJson('en.json', {'+YJVTi': 'Hey!'});
 
-    await using _ = await withTempEdit(
+    await using _ = await withTempEditApp(
       'src/components/Greeting.tsx',
       `'use client';
 
@@ -162,7 +132,7 @@ export default function Greeting() {
 }
 `
     );
-    await using __ = await withTempEdit(
+    await using __ = await withTempEditApp(
       'src/components/Footer.tsx',
       `'use client';
 
@@ -180,7 +150,7 @@ export default function Footer() {
       );
     });
 
-    await using ___ = await withTempEdit(
+    await using ___ = await withTempEditApp(
       'src/components/Greeting.tsx',
       `'use client';
 
@@ -192,7 +162,7 @@ export default function Greeting() {
 }
 `
     );
-    await using ____ = await withTempEdit(
+    await using ____ = await withTempEditApp(
       'src/components/Footer.tsx',
       `'use client';
 
@@ -214,7 +184,7 @@ export default function Footer() {
     await page.goto('/');
     await expectJson('en.json', {'+YJVTi': 'Hey!'});
 
-    await using _ = await withTempEdit(
+    await using _ = await withTempEditApp(
       'src/components/Greeting.tsx',
       `'use client';
 
@@ -235,7 +205,7 @@ export default function Greeting() {
   it('omits file with parse error during initial scan but continues processing others', async ({
     page
   }) => {
-    await using _ = await withTempFile(
+    await using _ = await withTempFileApp(
       'src/components/Valid.tsx',
       `'use client';
 
@@ -248,7 +218,7 @@ export default function Valid() {
 `
     );
 
-    await using __ = await withTempFile(
+    await using __ = await withTempFileApp(
       'src/components/Invalid.tsx',
       `'use client';
 
@@ -267,7 +237,7 @@ export default function Invalid() {
     expect(en['HovSZ7']).toBe('Valid message');
     expect(en['Initially invalid']).toBeUndefined();
 
-    await using ___ = await withTempEdit(
+    await using ___ = await withTempEditApp(
       'src/components/Invalid.tsx',
       `'use client';
 

@@ -1,8 +1,10 @@
-import fs from 'fs/promises';
 import path from 'path';
 import {fileURLToPath} from 'url';
 import {expect, test as it} from '@playwright/test';
-import {createExtractionHelpers} from '../../extracted-json/tests/helpers.js';
+import {
+  createExtractionHelpers,
+  withTempEdit
+} from '../../extracted-json/tests/helpers.js';
 
 const {describe} = it;
 
@@ -11,18 +13,7 @@ const APP_ROOT = path.join(__dirname, '..');
 const MESSAGES_DIR = path.join(APP_ROOT, 'messages');
 
 const {expectPo} = createExtractionHelpers(MESSAGES_DIR);
-
-async function withTempEdit(
-  filePath: string,
-  newContent: string
-): Promise<{[Symbol.asyncDispose]: () => Promise<void>}> {
-  const fullPath = path.join(APP_ROOT, filePath);
-  const original = await fs.readFile(fullPath, 'utf-8');
-  await fs.writeFile(fullPath, newContent);
-  return {
-    [Symbol.asyncDispose]: async () => fs.writeFile(fullPath, original)
-  };
-}
+const withTempEditApp = (p: string, c: string) => withTempEdit(APP_ROOT, p, c);
 
 describe('extraction po format', () => {
   it('saves messages initially', async ({page}) => {
@@ -37,7 +28,7 @@ describe('extraction po format', () => {
   it('tracks all line numbers when same message appears multiple times in one file', async ({
     page
   }) => {
-    await using _ = await withTempEdit(
+    await using _ = await withTempEditApp(
       'src/components/Greeting.tsx',
       `'use client';
 
@@ -74,7 +65,7 @@ export default function Greeting() {
     await page.goto('/');
     await expectPo('en.po', (c) => c.includes('msgid "+YJVTi"'));
 
-    await using _ = await withTempEdit(
+    await using _ = await withTempEditApp(
       'src/components/Greeting.tsx',
       `'use client';
 
@@ -122,7 +113,7 @@ export default function Greeting() {
     await page.goto('/');
     await expectPo('en.po', (c) => c.includes('msgid "+YJVTi"'));
 
-    await using _ = await withTempEdit(
+    await using _ = await withTempEditApp(
       'src/components/Greeting.tsx',
       `'use client';
 
@@ -147,7 +138,7 @@ export default function Greeting() {
   it('removes references when a message is dropped from a single file', async ({
     page
   }) => {
-    await using _ = await withTempEdit(
+    await using _ = await withTempEditApp(
       'src/components/Greeting.tsx',
       `'use client';
 
@@ -170,7 +161,7 @@ export default function Greeting() {
       return c.includes('msgid "+YJVTi"') && c.includes('msgid "4xqPlJ"');
     });
 
-    await using __ = await withTempEdit(
+    await using __ = await withTempEditApp(
       'src/components/Greeting.tsx',
       `'use client';
 
