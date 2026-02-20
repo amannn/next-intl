@@ -54,7 +54,7 @@ msgstr "Dynamic imported client"
 msgid "cOlyBM"
 msgstr "Lazy imported client"
 
-#: src/app/dynamic-segment/[slug]/DynamicSlugPageContent.tsx:12
+#: src/app/dynamic-segment/[slug]/DynamicSlugPageContent.tsx:16
 msgid "mrNFad"
 msgstr "Dynamic slug page: {slug}"
 
@@ -108,106 +108,6 @@ msgstr "Multi provider one"
 msgid "Kjbz3y"
 msgstr "Multi provider two"
 
-#: src/app/Navigation.tsx:9
-msgctxt "Navigation"
-msgid "ejEGdx"
-msgstr "Home"
-
-#: src/app/Navigation.tsx:10
-msgctxt "Navigation"
-msgid "iFsDVR"
-msgstr "Loading"
-
-#: src/app/Navigation.tsx:13
-msgctxt "Navigation"
-msgid "ThN10Z"
-msgstr "Dynamic segment (test)"
-
-#: src/app/Navigation.tsx:15
-msgctxt "Navigation"
-msgid "6zugfW"
-msgstr "Catch-all (a/b/c)"
-
-#: src/app/Navigation.tsx:18
-msgctxt "Navigation"
-msgid "IconuS"
-msgstr "Optional catch-all (x/y)"
-
-#: src/app/Navigation.tsx:20
-msgctxt "Navigation"
-msgid "wL7VAE"
-msgstr "Actions"
-
-#: src/app/Navigation.tsx:21
-msgctxt "Navigation"
-msgid "1Q7GRc"
-msgstr "Type imports"
-
-#: src/app/Navigation.tsx:22
-msgctxt "Navigation"
-msgid "k7Agno"
-msgstr "Group (one)"
-
-#: src/app/Navigation.tsx:23
-msgctxt "Navigation"
-msgid "ntGINj"
-msgstr "Group (two)"
-
-#: src/app/Navigation.tsx:24
-msgctxt "Navigation"
-msgid "fPQSeV"
-msgstr "Parallel"
-
-#: src/app/Navigation.tsx:25
-msgctxt "Navigation"
-msgid "eW/Bj9"
-msgstr "Feed"
-
-#: src/app/Navigation.tsx:28
-msgctxt "Navigation"
-msgid "hJlOFc"
-msgstr "Photo (intercept from feed)"
-
-#: src/app/Navigation.tsx:30
-msgctxt "Navigation"
-msgid "d/em2z"
-msgstr "Dynamic import"
-
-#: src/app/Navigation.tsx:31
-msgctxt "Navigation"
-msgid "Iv+hfk"
-msgstr "Hook translation"
-
-#: src/app/Navigation.tsx:32
-msgctxt "Navigation"
-msgid "VRx4Ab"
-msgstr "Layout template"
-
-#: src/app/Navigation.tsx:33
-msgctxt "Navigation"
-msgid "JdTriE"
-msgstr "Shared component"
-
-#: src/app/Navigation.tsx:34
-msgctxt "Navigation"
-msgid "BXSx4m"
-msgstr "Use translations"
-
-#: src/app/Navigation.tsx:37
-msgctxt "Navigation"
-msgid "ZME3di"
-msgstr "Linked dependency"
-
-#: src/app/Navigation.tsx:39
-msgctxt "Navigation"
-msgid "a5d+uJ"
-msgstr "Multi provider"
-
-#: src/app/Navigation.tsx:40
-msgctxt "Navigation"
-msgid "114fgF"
-msgstr "Server only"
-
 #: src/app/optional/[[...parts]]/OptionalCatchAllPageContent.tsx:17
 msgid "bT9Pga"
 msgstr "Optional catch-all page: {segment}"
@@ -256,8 +156,112 @@ msgstr "Type imports page"
 msgid "GO9hSh"
 msgstr "Test label: {value}"
 
+#: src/components/Navigation.tsx:9
+msgctxt "Navigation"
+msgid "ejEGdx"
+msgstr "Home"
+
+#: src/components/Navigation.tsx:10
+msgctxt "Navigation"
+msgid "iFsDVR"
+msgstr "Loading"
+
+#: src/components/Navigation.tsx:13
+msgctxt "Navigation"
+msgid "ThN10Z"
+msgstr "Dynamic segment (test)"
+
+#: src/components/Navigation.tsx:15
+msgctxt "Navigation"
+msgid "6zugfW"
+msgstr "Catch-all (a/b/c)"
+
+#: src/components/Navigation.tsx:18
+msgctxt "Navigation"
+msgid "IconuS"
+msgstr "Optional catch-all (x/y)"
+
+#: src/components/Navigation.tsx:20
+msgctxt "Navigation"
+msgid "wL7VAE"
+msgstr "Actions"
+
+#: src/components/Navigation.tsx:21
+msgctxt "Navigation"
+msgid "1Q7GRc"
+msgstr "Type imports"
+
+#: src/components/Navigation.tsx:22
+msgctxt "Navigation"
+msgid "k7Agno"
+msgstr "Group (one)"
+
+#: src/components/Navigation.tsx:23
+msgctxt "Navigation"
+msgid "ntGINj"
+msgstr "Group (two)"
+
+#: src/components/Navigation.tsx:24
+msgctxt "Navigation"
+msgid "fPQSeV"
+msgstr "Parallel"
+
+#: src/components/Navigation.tsx:25
+msgctxt "Navigation"
+msgid "eW/Bj9"
+msgstr "Feed"
+
+#: src/components/Navigation.tsx:28
+msgctxt "Navigation"
+msgid "hJlOFc"
+msgstr "Photo (intercept from feed)"
+
+#: src/components/Navigation.tsx:30
+msgctxt "Navigation"
+msgid "d/em2z"
+msgstr "Dynamic import"
+
+#: src/components/Navigation.tsx:31
+msgctxt "Navigation"
+msgid "Iv+hfk"
+msgstr "Hook translation"
+
+#: src/components/Navigation.tsx:32
+msgctxt "Navigation"
+msgid "VRx4Ab"
+msgstr "Layout template"
+
+#: src/components/Navigation.tsx:33
+msgctxt "Navigation"
+msgid "JdTriE"
+msgstr "Shared component"
+
+#: src/components/Navigation.tsx:34
+msgctxt "Navigation"
+msgid "BXSx4m"
+msgstr "Use translations"
+
+#: src/components/Navigation.tsx:37
+msgctxt "Navigation"
+msgid "ZME3di"
+msgstr "Linked dependency"
+
+#: src/components/Navigation.tsx:39
+msgctxt "Navigation"
+msgid "a5d+uJ"
+msgstr "Multi provider"
+
+#: src/components/Navigation.tsx:40
+msgctxt "Navigation"
+msgid "114fgF"
+msgstr "Server only"
+
+#: src/components/Navigation.tsx:41
+msgctxt "Navigation"
+msgid "Bi6/nw"
+msgstr "Global not found"
+
 #: src/components/NotFound.tsx:10
-msgctxt "NotFound"
 msgid "QRccCM"
 msgstr "Page not found"
 

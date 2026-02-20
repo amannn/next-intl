@@ -1,17 +1,14 @@
 import DebugMessages from '@/components/DebugMessages';
 import Document from '@/components/Document';
+import Navigation from '@/components/Navigation';
 import NotFound from '@/components/NotFound';
-import {NextIntlClientProvider, useMessages} from 'next-intl';
+import {NextIntlClientProvider} from 'next-intl';
 
 export default function GlobalNotFound() {
-  const messages = useMessages();
-
-  // Note: `global-not-found` is currently not supported with
-  // `messages="infer"`, therefore we're providing messages manually.
-
   return (
     <Document locale="en">
-      <NextIntlClientProvider messages={{NotFound: messages.NotFound}}>
+      <Navigation />
+      <NextIntlClientProvider messages="infer">
         <DebugMessages />
         <NotFound />
       </NextIntlClientProvider>

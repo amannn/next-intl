@@ -110,7 +110,7 @@ const routesMap = {
       }
     }
   ],
-  '/nonexistent': [
+  '/global-not-found': [
     {
       NotFound: {
         QRccCM: 'Page not found'

@@ -1,6 +1,6 @@
 import {getLocale, getExtracted} from 'next-intl/server';
 import Document from '@/components/Document';
-import Navigation from './Navigation';
+import Navigation from '@/components/Navigation';
 
 export async function generateMetadata() {
   const t = await getExtracted();

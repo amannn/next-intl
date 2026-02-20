@@ -38,6 +38,7 @@ export default function Navigation() {
       />
       <NavigationItem href="/multi-provider" label={t('Multi provider')} />
       <NavigationItem href="/server-only" label={t('Server only')} />
+      <NavigationItem href="/global-not-found" label={t('Global not found')} />
     </nav>
   );
 }
