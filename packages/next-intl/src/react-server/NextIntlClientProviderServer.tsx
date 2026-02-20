@@ -15,10 +15,17 @@ type ResolvedMessages = Exclude<Props['messages'], 'infer'>;
 async function resolveMessages(
   inferredManifest: ManifestNamespaces | undefined
 ): Promise<ResolvedMessages> {
-  const allMessages = await getMessages();
   if (!inferredManifest) {
-    return allMessages;
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn(
+        '[next-intl] No manifest was provided for `messages="infer"`. ' +
+          'Providing no messages to avoid leaking all translations. ' +
+          'Ensure the manifest loader processes this file and finds client components using translations.'
+      );
+    }
+    return {} as ResolvedMessages;
   }
+  const allMessages = await getMessages();
   return pruneMessagesByManifestNamespaces(
     allMessages as Record<string, unknown>,
     inferredManifest

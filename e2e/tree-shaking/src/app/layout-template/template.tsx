@@ -1,18 +1,15 @@
-'use client';
+import type {ReactNode} from 'react';
+import DebugMessages from '@/components/DebugMessages';
+import {NextIntlClientProvider} from 'next-intl';
+import LayoutTemplateTemplateContent from './LayoutTemplateTemplateContent';
 
-import {useExtracted} from 'next-intl';
-import ClientBoundary from '@/components/ClientBoundary';
+type Props = {children: ReactNode};
 
-export default function LayoutTemplateTemplate({
-  children
-}: LayoutProps<'/layout-template'>) {
-  const t = useExtracted();
+export default function LayoutTemplateTemplate({children}: Props) {
   return (
-    <ClientBoundary>
-      <div>
-        <p>{t('Layout template template')}</p>
-        {children}
-      </div>
-    </ClientBoundary>
+    <NextIntlClientProvider messages="infer">
+      <DebugMessages />
+      <LayoutTemplateTemplateContent>{children}</LayoutTemplateTemplateContent>
+    </NextIntlClientProvider>
   );
 }

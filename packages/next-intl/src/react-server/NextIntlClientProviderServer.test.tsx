@@ -120,3 +120,19 @@ it('resolves inferred messages from __inferredManifest prop', async () => {
   expect(provider.type).toBe(NextIntlClientProvider);
   expect(provider.props.messages).toEqual({Feed: 'Feed message'});
 });
+
+it('provides no messages when __inferredManifest is undefined', async () => {
+  vi.mocked(getMessages).mockResolvedValue({
+    Feed: 'Feed message',
+    Root: 'Root message'
+  });
+
+  const result = await NextIntlClientProviderServer({
+    children: null,
+    messages: 'infer'
+  });
+
+  const provider = readProviderFromResult(result);
+  expect(provider.type).toBe(NextIntlClientProvider);
+  expect(provider.props.messages).toEqual({});
+});

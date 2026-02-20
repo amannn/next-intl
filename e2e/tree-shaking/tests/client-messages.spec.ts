@@ -10,9 +10,7 @@ const routesMap = {
     }
   ],
   '/loading': [
-    {
-      '2dpR22': 'Static page'
-    }
+    {}
   ],
   '/dynamic-segment/test': [
     {
@@ -83,10 +81,8 @@ const routesMap = {
     }
   ],
   '/layout-template': [
-    {
-      '30s0PJ': 'Layout template template',
-      bowxvu: 'Layout template page'
-    }
+    {'30s0PJ': 'Layout template template'},
+    {bowxvu: 'Layout template page'}
   ],
   '/linked-dependency': [
     {
@@ -185,14 +181,48 @@ describe('provider client messages', () => {
         await page.waitForSelector('text=Static page', {timeout: 10000});
       }
       const messages = await readProviderClientMessages(page);
-      const expected = expectedMessages[0];
-      const hasMatch = messages.some((m) => providerHasExpected(m, expected));
+      const hasMatch = expectedMessages.every((expected) =>
+        messages.some((m) => providerHasExpected(m, expected))
+      );
       expect(
         hasMatch,
         `No provider had expected messages for ${pathname}`
       ).toBe(true);
     });
   }
+
+  it('loading page static content does not dump all messages', async ({
+    page
+  }) => {
+    await page.goto('/loading');
+    await page.waitForSelector('text=Static page', {timeout: 10000});
+    const messages = await readProviderClientMessages(page);
+    const loadingProvider = messages.find((m) => Object.keys(m).length === 0);
+    expect(
+      loadingProvider !== undefined,
+      'Expected at least one provider with no messages (empty manifest) for /loading'
+    ).toBe(true);
+  });
+
+  it('parallel route does not dump all messages', async ({page}) => {
+    await page.goto('/parallel');
+    const messages = await readProviderClientMessages(page);
+    const hasUnused = messages.some((m) => 'unused' in m);
+    expect(
+      !hasUnused,
+      'No provider should have "unused" key (indicates all messages dumped)'
+    ).toBe(true);
+  });
+
+  it('layout-template route does not dump all messages', async ({page}) => {
+    await page.goto('/layout-template');
+    const messages = await readProviderClientMessages(page);
+    const hasUnused = messages.some((m) => 'unused' in m);
+    expect(
+      !hasUnused,
+      'No provider should have "unused" key (indicates all messages dumped)'
+    ).toBe(true);
+  });
 
   it('has matching messages for soft navigation of /feed -> /photo/alpha', async ({
     page
