@@ -134,6 +134,7 @@
   ],
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.5.4",
+    "magic-string": "^0.30.10",
     "@parcel/watcher": "^2.4.1",
     "@swc/core": "^1.15.2",
     "enhanced-resolve": "^5.19.0",

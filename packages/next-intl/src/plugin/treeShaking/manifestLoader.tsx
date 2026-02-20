@@ -60,9 +60,9 @@ export default async function manifestLoader(
       return source;
     }
 
-    const result = injectManifestProp(source, namespaces);
-    callback?.(null, result);
-    return result;
+    const {code, map} = injectManifestProp(source, namespaces, inputFile);
+    callback?.(null, code, map ?? undefined);
+    return code;
   } catch (error) {
     callback?.(error as Error);
     throw error;
