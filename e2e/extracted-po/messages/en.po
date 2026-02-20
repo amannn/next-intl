@@ -10,7 +10,11 @@ msgstr ""
 msgid "NhX4DJ"
 msgstr "Hello"
 
+#. Shown on home screen
 #: src/components/Footer.tsx:7
-#: src/components/Greeting.tsx:7
 msgid "+YJVTi"
 msgstr "Hey!"
+
+#: src/components/Greeting.tsx:7
+msgid "4xqPlJ"
+msgstr "Howdy!"
