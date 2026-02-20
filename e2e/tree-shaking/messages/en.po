@@ -75,6 +75,10 @@ msgstr "Feed modal default"
 msgid "I6Uu2z"
 msgstr "Feed page"
 
+#: src/app/hmr-test/HmrTestContent.tsx:10
+msgid "reBjg3"
+msgstr "HMR test initial"
+
 #: src/app/layout-template/layout.tsx:9
 msgid "mocvtj"
 msgstr "Layout template layout"

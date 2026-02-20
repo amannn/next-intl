@@ -1,6 +1,13 @@
 import {expect, test as it, type Page} from '@playwright/test';
+import {writeFileSync} from 'fs';
+import {join} from 'path';
 
 const {describe} = it;
+
+const HMR_TEST_CONTENT_PATH = join(
+  process.cwd(),
+  'src/app/hmr-test/HmrTestContent.tsx'
+);
 
 const routesMap = {
   '/': [
@@ -177,6 +184,23 @@ function providerMatchesExactly(
   return true;
 }
 
+function messagesContainValue(
+  messages: Array<Record<string, unknown>>,
+  value: string
+): boolean {
+  function check(obj: Record<string, unknown>): boolean {
+    for (const v of Object.values(obj)) {
+      if (v === value) return true;
+      if (Array.isArray(v) && v[0] === value) return true;
+      if (typeof v === 'object' && v !== null && !Array.isArray(v)) {
+        if (check(v as Record<string, unknown>)) return true;
+      }
+    }
+    return false;
+  }
+  return messages.some((m) => check(m));
+}
+
 describe('provider client messages', () => {
   for (const [pathname, expectedMessages] of Object.entries(routesMap)) {
     it(`renders exactly expected messages for ${pathname}`, async ({page}) => {
@@ -226,5 +250,109 @@ describe('provider client messages', () => {
       providerMatchesExactly(m, photoExpected)
     );
     expect(hasPhoto).toBe(true);
+  });
+});
+
+const HMR_ORIGINAL_CONTENT = `'use client';
+
+import {useExtracted} from 'next-intl';
+import ClientBoundary from '@/components/ClientBoundary';
+
+export default function HmrTestContent() {
+  const t = useExtracted();
+  return (
+    <ClientBoundary>
+      <p>{t('HMR test initial')}</p>
+    </ClientBoundary>
+  );
+}
+`;
+
+describe.serial('HMR message updates', () => {
+  const HMR_RECOMPILE_WAIT_MS = 5000;
+
+  it.afterEach(() => {
+    writeFileSync(HMR_TEST_CONTENT_PATH, HMR_ORIGINAL_CONTENT);
+  });
+
+  it('updates rendered messages when modifying client message', async ({
+    page
+  }) => {
+    await page.goto('/hmr-test');
+    let messages = await readProviderClientMessages(page);
+    expect(messagesContainValue(messages, 'HMR test initial')).toBe(true);
+
+    writeFileSync(
+      HMR_TEST_CONTENT_PATH,
+      HMR_ORIGINAL_CONTENT.replace("'HMR test initial'", "'HMR test modified'")
+    );
+    await page.waitForTimeout(HMR_RECOMPILE_WAIT_MS);
+    await page.reload();
+
+    messages = await readProviderClientMessages(page);
+    expect(messagesContainValue(messages, 'HMR test modified')).toBe(true);
+    expect(messagesContainValue(messages, 'HMR test initial')).toBe(false);
+  });
+
+  it('updates rendered messages when adding client message', async ({
+    page
+  }) => {
+    await page.goto('/hmr-test');
+    let messages = await readProviderClientMessages(page);
+    expect(messagesContainValue(messages, 'HMR test initial')).toBe(true);
+
+    writeFileSync(
+      HMR_TEST_CONTENT_PATH,
+      `'use client';
+
+import {useExtracted} from 'next-intl';
+import ClientBoundary from '@/components/ClientBoundary';
+
+export default function HmrTestContent() {
+  const t = useExtracted();
+  return (
+    <ClientBoundary>
+      <p>{t('HMR test initial')}</p>
+      <p>{t('HMR test added')}</p>
+    </ClientBoundary>
+  );
+}
+`
+    );
+    await page.waitForTimeout(HMR_RECOMPILE_WAIT_MS);
+    await page.reload();
+
+    messages = await readProviderClientMessages(page);
+    expect(messagesContainValue(messages, 'HMR test initial')).toBe(true);
+    expect(messagesContainValue(messages, 'HMR test added')).toBe(true);
+  });
+
+  it('updates rendered messages when deleting client message', async ({
+    page
+  }) => {
+    await page.goto('/hmr-test');
+    let messages = await readProviderClientMessages(page);
+    expect(messagesContainValue(messages, 'HMR test initial')).toBe(true);
+
+    writeFileSync(
+      HMR_TEST_CONTENT_PATH,
+      `'use client';
+
+import ClientBoundary from '@/components/ClientBoundary';
+
+export default function HmrTestContent() {
+  return (
+    <ClientBoundary>
+      <p>Static content only</p>
+    </ClientBoundary>
+  );
+}
+`
+    );
+    await page.waitForTimeout(HMR_RECOMPILE_WAIT_MS);
+    await page.reload();
+
+    messages = await readProviderClientMessages(page);
+    expect(messagesContainValue(messages, 'HMR test initial')).toBe(false);
   });
 });
