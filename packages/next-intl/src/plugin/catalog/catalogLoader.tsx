@@ -1,5 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-condition -- Loader context varies (webpack/turbopack) */
+import fs from 'fs/promises';
 import path from 'path';
 import compile from 'icu-minify/compile';
+import ExtractionCompiler from '../../extractor/ExtractionCompiler.js';
+import {extractorLogger} from '../../extractor/extractorLogger.js';
 import type ExtractorCodec from '../../extractor/format/ExtractorCodec.js';
 import {
   getFormatExtension,
@@ -48,6 +52,10 @@ async function getCodec(
 /**
  * Parses and optimizes catalog files.
  *
+ * When extract enabled and this is the source locale catalog: adds
+ * addContextDependency for srcPaths, runs extraction, then decodes.
+ * Target locale catalogs decode only.
+ *
  * Note that if we use a dynamic import like `import(`${locale}.json`)`, then
  * the loader will optimistically run for all candidates in this folder (both
  * during dev as well as at build time).
@@ -59,19 +67,74 @@ export default function catalogLoader(
   const options = this.getOptions();
   const callback = this.async();
   const extension = getFormatExtension(options.messages.format);
+  const locale = path.basename(this.resourcePath, extension);
+  const projectRoot = this.rootContext ?? process.cwd();
 
-  getCodec(options, this.rootContext)
-    .then((codec) => {
-      const locale = path.basename(this.resourcePath, extension);
+  const runExtraction =
+    options.sourceLocale && options.srcPath && locale === options.sourceLocale;
+  const isSourceLocale = locale === (options.sourceLocale ?? '');
+  const srcPaths = runExtraction
+    ? (Array.isArray(options.srcPath) ? options.srcPath : [options.srcPath])
+        .filter((p): p is string => typeof p === 'string')
+        .map((p) => path.resolve(projectRoot, p))
+    : [];
+
+  extractorLogger.catalogLoaderRun({
+    projectRoot,
+    resourcePath: this.resourcePath,
+    locale,
+    isSourceLocale,
+    runExtraction: Boolean(runExtraction),
+    srcPaths
+  });
+
+  Promise.resolve()
+    .then(async () => {
+      let contentToDecode = source;
+      if (runExtraction && srcPaths.length > 0) {
+        for (const srcPath of srcPaths) {
+          this.addContextDependency?.(srcPath);
+          extractorLogger.addContextDependency({projectRoot, path: srcPath});
+        }
+        const extractionStart = Date.now();
+        extractorLogger.extractionStart({
+          projectRoot,
+          resourcePath: this.resourcePath
+        });
+        const compiler = new ExtractionCompiler(
+          {
+            srcPath: options.srcPath!,
+            sourceLocale: options.sourceLocale!,
+            messages: options.messages
+          },
+          {isDevelopment: false, projectRoot}
+        );
+        let stats: {filesScanned: number; filesChanged: number} | undefined;
+        try {
+          stats = await compiler.extractAll();
+        } finally {
+          compiler[Symbol.dispose]();
+        }
+        extractorLogger.extractionEnd({
+          projectRoot,
+          resourcePath: this.resourcePath,
+          durationMs: Date.now() - extractionStart,
+          filesScanned: stats?.filesScanned,
+          filesChanged: stats?.filesChanged
+        });
+        contentToDecode = await fs.readFile(this.resourcePath, 'utf8');
+      }
+
+      const codec = await getCodec(options, projectRoot);
       let outputString: string;
 
       if (options.messages.precompile) {
-        const decoded = codec.decode(source, {locale});
+        const decoded = codec.decode(contentToDecode, {locale});
         const cache = getMessageCache(this.resourcePath);
         const precompiled = precompileMessages(decoded, cache);
         outputString = JSON.stringify(precompiled);
       } else {
-        outputString = codec.toJSONString(source, {locale});
+        outputString = codec.toJSONString(contentToDecode, {locale});
       }
 
       // https://v8.dev/blog/cost-of-javascript-2019#json

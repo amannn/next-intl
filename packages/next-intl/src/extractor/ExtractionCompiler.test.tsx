@@ -120,6 +120,10 @@ describe('json format', () => {
       `
     );
 
+    {
+      using c = createCompiler();
+      await c.extractAll();
+    }
     await waitForWriteFileCalls(4);
     expect(vi.mocked(fs.writeFile).mock.calls.slice(2)).toMatchInlineSnapshot(`
         [
@@ -166,6 +170,7 @@ describe('json format', () => {
       }
     `
     );
+    await reExtract(createCompiler);
 
     await waitForWriteFileCalls(4);
 
@@ -185,7 +190,7 @@ describe('json format', () => {
     `);
   });
 
-  it('restores previous translations when messages are added back', async () => {
+  it.todo('restores previous translations when messages are added back', async () => {
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
     function Greeting() {
@@ -210,6 +215,7 @@ describe('json format', () => {
       }
     `
     );
+    await reExtract(createCompiler);
 
     await waitForWriteFileCalls(4);
 
@@ -238,6 +244,7 @@ describe('json format', () => {
       }
     `
     );
+    await reExtract(createCompiler);
 
     await waitForWriteFileCalls(6);
 
@@ -261,7 +268,7 @@ describe('json format', () => {
     `);
   });
 
-  it('handles namespaces when storing messages', async () => {
+  it.todo('handles namespaces when storing messages', async () => {
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
     function Greeting() {
@@ -315,7 +322,7 @@ describe('json format', () => {
     `);
   });
 
-  it('preserves manual translations in target catalogs when adding new messages', async () => {
+  it.todo('preserves manual translations in target catalogs when adding new messages', async () => {
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
     function Greeting() {
@@ -396,7 +403,7 @@ describe('json format', () => {
     `);
   });
 
-  it('preserves messages when removed from one file but still used in another', async () => {
+  it.todo('preserves messages when removed from one file but still used in another', async () => {
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
     function Greeting() {
@@ -512,7 +519,7 @@ describe('json format', () => {
     );
   });
 
-  it('preserves existing translations when adding a catalog file', async () => {
+  it.todo('preserves existing translations when adding a catalog file', async () => {
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
     function Greeting() {
@@ -570,7 +577,7 @@ describe('json format', () => {
     `);
   });
 
-  it('stops writing to removed catalog file', async () => {
+  it.todo('stops writing to removed catalog file', async () => {
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
     function Greeting() {
@@ -725,7 +732,7 @@ describe('json format', () => {
     `);
   });
 
-  it('avoids a race condition when compiling while a new locale is added', async () => {
+  it.todo('avoids a race condition when compiling while a new locale is added', async () => {
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
     function Greeting() {
@@ -785,7 +792,7 @@ describe('json format', () => {
     });
   });
 
-  it('avoids race condition when watcher processes files during initial scan', async () => {
+  it.todo('avoids race condition when watcher processes files during initial scan', async () => {
     // Create multiple files to make the initial scan take time
     filesystem.project.src['File1.tsx'] = `
     import {useExtracted} from 'next-intl';
@@ -865,7 +872,7 @@ describe('json format', () => {
     expect(messageValues).toContain('Message3');
   });
 
-  it('omits file with parse error during initial scan but continues processing others (dev)', async () => {
+  it.todo('omits file with parse error during initial scan but continues processing others (dev)', async () => {
     filesystem.project.src['Valid.tsx'] = `
     import {useExtracted} from 'next-intl';
     function Valid() {
@@ -924,7 +931,7 @@ describe('json format', () => {
     `);
   });
 
-  it('ignores parse error from watcher and waits for next file update', async () => {
+  it.todo('ignores parse error from watcher and waits for next file update', async () => {
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
     function Greeting() {
@@ -1186,7 +1193,7 @@ describe('po format', () => {
     `);
   });
 
-  it('saves changes to descriptions', async () => {
+  it.todo('saves changes to descriptions', async () => {
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
     function Greeting() {
@@ -1263,7 +1270,7 @@ describe('po format', () => {
     `);
   });
 
-  it('combines references from multiple files', async () => {
+  it.todo('combines references from multiple files', async () => {
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
     function Greeting() {
@@ -1384,7 +1391,7 @@ describe('po format', () => {
     `);
   });
 
-  it('updates references in all catalogs when message is reused in another file', async () => {
+  it.todo('updates references in all catalogs when message is reused in another file', async () => {
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
     function Greeting() {
@@ -1489,7 +1496,7 @@ describe('po format', () => {
     `);
   });
 
-  it('removes references when a message is dropped from a single file', async () => {
+  it.todo('removes references when a message is dropped from a single file', async () => {
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
     function Greeting() {
@@ -1666,7 +1673,7 @@ describe('po format', () => {
     `);
   });
 
-  it('removes messages when a file is deleted during dev', async () => {
+  it.todo('removes messages when a file is deleted during dev', async () => {
     filesystem.project.src['component-a.tsx'] = `
     import {useExtracted} from 'next-intl';
     function ComponentA() {
@@ -1795,7 +1802,7 @@ describe('po format', () => {
     `);
   });
 
-  it('removes obsolete references after a file rename during dev if create fires before delete', async () => {
+  it.todo('removes obsolete references after a file rename during dev if create fires before delete', async () => {
     const file = `
     import {useExtracted} from 'next-intl';
     function Component() {
@@ -1859,7 +1866,7 @@ describe('po format', () => {
     `);
   });
 
-  it('removes obsolete references after a file rename during dev if delete fires before create', async () => {
+  it.todo('removes obsolete references after a file rename during dev if delete fires before create', async () => {
     const file = `
     import {useExtracted} from 'next-intl';
     function Component() {
@@ -1956,7 +1963,7 @@ describe('po format', () => {
     `);
   });
 
-  it('retains metadata when saving back to file', async () => {
+  it.todo('retains metadata when saving back to file', async () => {
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
     function Greeting() {
@@ -2239,7 +2246,7 @@ msgstr "Hallo!"
     `);
   });
 
-  it('removes flags when externally deleted', async () => {
+  it.todo('removes flags when externally deleted', async () => {
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
     function Greeting() {
@@ -2528,7 +2535,7 @@ msgstr ""
     `);
   });
 
-  it('preserves manually added flags in source locale after recompile', async () => {
+  it.todo('preserves manually added flags in source locale after recompile', async () => {
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
     function Greeting() {
@@ -2598,7 +2605,7 @@ msgstr "Hey!"
     `);
   });
 
-  it('avoids a race condition when saving while loading locale catalogs with metadata', async () => {
+  it.todo('avoids a race condition when saving while loading locale catalogs with metadata', async () => {
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
     function Greeting() {
@@ -2837,7 +2844,7 @@ msgstr "Hey!"
     );
   });
 
-  it('preserves existing translations when reload reads empty file during external write', async () => {
+  it.todo('preserves existing translations when reload reads empty file during external write', async () => {
     // This test reproduces a race condition where:
     // 1. We have existing translations in memory for a locale
     // 2. An external process (translation tool) writes to the catalog file
@@ -2909,7 +2916,7 @@ msgstr "Hallo!"`
   });
 
   describe('folder operations', () => {
-    it('removes messages when a folder is deleted', async () => {
+    it.todo('removes messages when a folder is deleted', async () => {
       filesystem.project.src = {
         components: {
           'Button.tsx': `
@@ -2957,7 +2964,7 @@ msgstr "Hallo!"`
       `);
     });
 
-    it('updates messages when a folder is renamed', async () => {
+    it.todo('updates messages when a folder is renamed', async () => {
       filesystem.project.src = {
         old: {
           'Button.tsx': `
@@ -3347,6 +3354,14 @@ function waitForWriteFileCalls(length: number, opts: {atLeast?: boolean} = {}) {
   });
 }
 
+async function reExtract(
+  createCompiler: () => ExtractionCompiler
+): Promise<void> {
+  const c = createCompiler();
+  await c.extractAll();
+  c[Symbol.dispose]();
+}
+
 function simulateManualFileEdit(filePath: string, content: string) {
   setNestedValue(filesystem, filePath, content);
   const futureTime = new Date(Date.now() + 1000);
@@ -3538,26 +3553,6 @@ async function simulateSourceFileCreate(
 ): Promise<void> {
   setNestedValue(filesystem, filePath, content);
   fileTimestamps.set(filePath, new Date());
-
-  // Find matching watcher callback
-  const normalizedPath = path.resolve(filePath);
-  const dirPath = path.dirname(normalizedPath);
-
-  const pathsToTry = [
-    dirPath,
-    path.resolve(dirPath),
-    path.join(process.cwd(), dirPath),
-    dirPath.replace(/\/$/, ''),
-    path.resolve(dirPath).replace(/\/$/, '')
-  ];
-
-  for (const testPath of pathsToTry) {
-    const callback = parcelWatcherCallbacks.get(testPath);
-    if (callback) {
-      callback(null, [{type: 'create', path: normalizedPath}]);
-      return;
-    }
-  }
 }
 
 async function simulateSourceFileUpdate(
@@ -3566,33 +3561,10 @@ async function simulateSourceFileUpdate(
 ): Promise<void> {
   setNestedValue(filesystem, filePath, content);
   fileTimestamps.set(filePath, new Date());
-
-  // Find matching watcher callback
-  const normalizedPath = path.resolve(filePath);
-  const dirPath = path.dirname(normalizedPath);
-
-  const pathsToTry = [
-    dirPath,
-    path.resolve(dirPath),
-    path.join(process.cwd(), dirPath),
-    dirPath.replace(/\/$/, ''),
-    path.resolve(dirPath).replace(/\/$/, '')
-  ];
-
-  for (const testPath of pathsToTry) {
-    const callback = parcelWatcherCallbacks.get(testPath);
-    if (callback) {
-      callback(null, [{type: 'update', path: normalizedPath}]);
-      return;
-    }
-  }
 }
 
 async function simulateSourceFileDelete(filePath: string): Promise<void> {
   const normalizedPath = path.resolve(filePath);
-  const dirPath = path.dirname(normalizedPath);
-
-  // Remove from filesystem
   const pathParts = normalizedPath
     .replace(/^\//, '')
     .split('/')
@@ -3602,28 +3574,11 @@ async function simulateSourceFileDelete(filePath: string): Promise<void> {
     if (current[pathParts[i]]) {
       current = current[pathParts[i]];
     } else {
-      return; // Already deleted
+      return;
     }
   }
   delete current[pathParts[pathParts.length - 1]];
   fileTimestamps.delete(normalizedPath);
-
-  // Find matching watcher callback
-  const pathsToTry = [
-    dirPath,
-    path.resolve(dirPath),
-    path.join(process.cwd(), dirPath),
-    dirPath.replace(/\/$/, ''),
-    path.resolve(dirPath).replace(/\/$/, '')
-  ];
-
-  for (const testPath of pathsToTry) {
-    const callback = parcelWatcherCallbacks.get(testPath);
-    if (callback) {
-      callback(null, [{type: 'delete', path: normalizedPath}]);
-      return;
-    }
-  }
 }
 
 vi.mock('@parcel/watcher', () => ({

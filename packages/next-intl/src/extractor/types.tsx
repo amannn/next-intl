@@ -34,4 +34,8 @@ export type ExtractorConfig = {
 
 export type CatalogLoaderConfig = {
   messages: MessagesConfig;
+  /** When extract enabled: source locale triggers extraction in loader */
+  sourceLocale?: string;
+  /** When extract enabled: paths to watch via addContextDependency */
+  srcPath?: string | Array<string>;
 };
