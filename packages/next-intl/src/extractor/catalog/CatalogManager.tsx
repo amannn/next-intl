@@ -85,10 +85,10 @@ export default class CatalogManager implements Disposable {
 
     this.extractor = opts.extractor;
 
-    if (this.isDevelopment) {
-      // We kick this off as early as possible, so we get notified about changes
-      // that happen during the initial project scan (while awaiting it to
-      // complete though)
+    if (
+      this.isDevelopment &&
+      process.env.NEXT_INTL_EXTRACT_LOADER_ONLY !== '1'
+    ) {
       this.sourceWatcher = new SourceFileWatcher(
         this.getSrcPaths(),
         this.handleFileEvents.bind(this)

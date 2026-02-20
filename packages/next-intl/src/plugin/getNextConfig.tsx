@@ -132,11 +132,16 @@ export default function getNextConfig(
   }
 
   function getCatalogLoaderConfig() {
+    const options: CatalogLoaderConfig = {
+      messages: pluginConfig.experimental!.messages!
+    };
+    if (pluginConfig.experimental?.extract) {
+      options.sourceLocale = pluginConfig.experimental.extract.sourceLocale;
+      options.srcPath = pluginConfig.experimental.srcPath;
+    }
     return {
       loader: 'next-intl/extractor/catalogLoader',
-      options: {
-        messages: pluginConfig.experimental!.messages!
-      } satisfies CatalogLoaderConfig as TurbopackLoaderOptions
+      options: options satisfies CatalogLoaderConfig as TurbopackLoaderOptions
     };
   }
 
