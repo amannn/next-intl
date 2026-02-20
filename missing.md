@@ -7,7 +7,7 @@ Tests that could not be migrated to e2e or proved unreliable.
 - creates the messages directory and source catalog when they do not exist initially
   - reason: App requires messages to exist for getRequestConfig to load; chicken-and-egg
   - verdict: ok, leave as unit test
- avoids race condition when compiling while a new locale is added
+- avoids race condition when compiling while a new locale is added
   - reason: Race condition – requires readFile interceptors
   - verdict: lets leave as unit test
 - avoids race condition when watcher processes files during initial scan
@@ -19,22 +19,10 @@ Tests that could not be migrated to e2e or proved unreliable.
 
 ## PO format
 
-- tracks all line numbers when same message appears multiple times in one file
-  - reason: Needs multi-file setup; migrate when PO suite is expanded
-  - verdict: add the e2e test
-- saves changes to descriptions
-  - reason: Pending PO migration
-  - verdict: add the e2e test
-- combines references from multiple files
-  - reason: Pending PO migration
-  - verdict: add the e2e test
 - merges descriptions when message appears in multiple files
   - reason: Pending PO migration
   - verdict: add the e2e test
 - updates references in all catalogs when message is reused
-  - reason: Pending PO migration
-  - verdict: add the e2e test
-- removes references when a message is dropped from a single file
   - reason: Pending PO migration
   - verdict: add the e2e test
 - removes obsolete messages during build
@@ -43,12 +31,10 @@ Tests that could not be migrated to e2e or proved unreliable.
 - removes messages when a file is deleted during dev
   - reason: File delete watcher
   - verdict: add the e2e test
+  - note: File delete watcher may not fire reliably in e2e; parcel watcher delete events need investigation
 - removes obsolete references after file rename (3 variants)
   - reason: File rename watcher
   - verdict: keep as unit test
-- supports namespaces
-  - reason: Pending PO migration
-  - verdict: add the e2e test
 - retains metadata when saving back to file
   - reason: PO metadata handling
   - verdict: add the e2e test
