@@ -26,7 +26,7 @@ export default async function manifestLoader(
   }
 
   const options = (this.getOptions?.() ?? {}) as Partial<ManifestLoaderConfig>;
-  const srcPaths = options.srcPath;
+  const srcPaths = options.srcPaths;
   const projectRoot = options.projectRoot ?? rootContext;
   if (!srcPaths || !Array.isArray(srcPaths)) {
     callback?.(null, source);

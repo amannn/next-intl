@@ -20,9 +20,7 @@ import {throwError} from './utils.js';
 const require = createRequire(import.meta.url);
 
 function withExtensions(localPath: string) {
-  return SourceFileFilter.EXTENSIONS.map(
-    (ext) => `${localPath}.${ext}`
-  );
+  return SourceFileFilter.EXTENSIONS.map((ext) => `${localPath}.${ext}`);
 }
 
 function normalizeTurbopackAliasPath(pathname: string) {
@@ -151,7 +149,7 @@ export default function getNextConfig(
       loader: 'next-intl/treeShaking/manifestLoader',
       options: {
         projectRoot: process.cwd(),
-        srcPath: srcPaths
+        srcPaths
       } satisfies ManifestLoaderConfig as TurbopackLoaderOptions
     };
   }
