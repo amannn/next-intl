@@ -7,9 +7,6 @@ Tests that could not be migrated to e2e or proved unreliable.
 - creates the messages directory and source catalog when they do not exist initially
   - reason: App requires messages to exist for getRequestConfig to load; chicken-and-egg
   - verdict: ok, leave as unit test
- preserves existing translations when adding a catalog file
-  - reason: Same – catalog add watcher
-  - verdict: similar to above, should add fr.json but with pre-populated values (at least one message), then assert that other values are added
 - stops writing to removed catalog file
   - reason: Catalog remove + re-extraction timing unreliable
   - verdict: this should definitely work, keep working on the e2e test
