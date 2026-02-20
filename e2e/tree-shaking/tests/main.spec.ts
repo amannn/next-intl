@@ -1,4 +1,9 @@
 import {expect, test as it, type Page} from '@playwright/test';
+import {readFileSync, writeFileSync} from 'fs';
+import {dirname, join} from 'path';
+import {fileURLToPath} from 'url';
+
+const projectRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 const {describe} = it;
 
@@ -177,6 +182,23 @@ function providerMatchesExactly(
   return true;
 }
 
+function messagesContainValue(
+  messages: Array<Record<string, unknown>>,
+  value: string
+): boolean {
+  function check(obj: Record<string, unknown>): boolean {
+    for (const v of Object.values(obj)) {
+      if (v === value) return true;
+      if (Array.isArray(v) && v[0] === value) return true;
+      if (typeof v === 'object' && v !== null && !Array.isArray(v)) {
+        if (check(v as Record<string, unknown>)) return true;
+      }
+    }
+    return false;
+  }
+  return messages.some((m) => check(m));
+}
+
 describe('provider client messages', () => {
   for (const [pathname, expectedMessages] of Object.entries(routesMap)) {
     it(`renders exactly expected messages for ${pathname}`, async ({page}) => {
@@ -226,5 +248,82 @@ describe('provider client messages', () => {
       providerMatchesExactly(m, photoExpected)
     );
     expect(hasPhoto).toBe(true);
+  });
+});
+
+describe.serial('HMR message updates', () => {
+  async function pollMessages(
+    page: Page,
+    predicate: (messages: Array<Record<string, unknown>>) => boolean
+  ) {
+    await expect
+      .poll(async () => predicate(await readProviderClientMessages(page)), {
+        timeout: 10000
+      })
+      .toBe(true);
+  }
+
+  function useEdit(path: string, edit: (original: string) => string) {
+    const fullPath = join(projectRoot, path);
+    const original = readFileSync(fullPath, 'utf-8');
+    writeFileSync(fullPath, edit(original));
+    return {
+      [Symbol.dispose]() {
+        writeFileSync(fullPath, original);
+      }
+    };
+  }
+
+  it('updates rendered messages when modifying client message', async ({
+    page
+  }) => {
+    await page.goto('/');
+    const messages = await readProviderClientMessages(page);
+    expect(messagesContainValue(messages, 'Increment')).toBe(true);
+
+    using _ = useEdit('src/app/Counter.tsx', (original) =>
+      original.replace("'Increment'", "'Increment plus'")
+    );
+
+    await pollMessages(
+      page,
+      (messages) =>
+        messagesContainValue(messages, 'Increment plus') &&
+        !messagesContainValue(messages, 'Increment')
+    );
+  });
+
+  it('updates rendered messages when adding client message', async ({page}) => {
+    await page.goto('/');
+    const messages = await readProviderClientMessages(page);
+    expect(messagesContainValue(messages, 'Increment')).toBe(true);
+
+    using _ = useEdit('src/app/Counter.tsx', (original) =>
+      original.replace(
+        '</button>\n    </ClientBoundary>',
+        "</button>\n      <span>{t('Decrement')}</span>\n    </ClientBoundary>"
+      )
+    );
+
+    await pollMessages(
+      page,
+      (m) =>
+        messagesContainValue(m, 'Increment') &&
+        messagesContainValue(m, 'Decrement')
+    );
+  });
+
+  it('updates rendered messages when deleting client message', async ({
+    page
+  }) => {
+    await page.goto('/');
+    const messages = await readProviderClientMessages(page);
+    expect(messagesContainValue(messages, 'Increment')).toBe(true);
+
+    using _ = useEdit('src/app/Counter.tsx', (original) =>
+      original.replace("{t('Increment')}", "'Click'")
+    );
+
+    await pollMessages(page, (m) => !messagesContainValue(m, 'Increment'));
   });
 });

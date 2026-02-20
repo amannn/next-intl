@@ -12,8 +12,9 @@ export default defineConfig({
     baseURL: `http://localhost:${PORT}`
   },
   webServer: {
-    command: `PORT=${PORT} pnpm start`,
+    command: `PORT=${PORT} pnpm dev`,
     port: PORT,
-    reuseExistingServer: true
+    reuseExistingServer: true,
+    timeout: 180_000
   }
 });
