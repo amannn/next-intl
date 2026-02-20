@@ -279,7 +279,7 @@ export default function Counter() {
 `;
 
 describe.serial('HMR message updates', () => {
-  const HMR_RECOMPILE_WAIT_MS = 5000;
+  const HMR_POLL_TIMEOUT_MS = 15_000;
 
   it.afterEach(() => {
     writeFileSync(COUNTER_PATH, COUNTER_ORIGINAL);
@@ -296,18 +296,26 @@ describe.serial('HMR message updates', () => {
       COUNTER_PATH,
       COUNTER_ORIGINAL.replace("'Increment'", "'Increment plus'")
     );
-    await page.waitForTimeout(HMR_RECOMPILE_WAIT_MS);
-    await page.reload();
 
-    messages = await readProviderClientMessages(page);
-    expect(messagesContainValue(messages, 'Increment plus')).toBe(true);
-    expect(messagesContainValue(messages, 'Increment')).toBe(false);
+    await expect
+      .poll(
+        async () => {
+          const m = await readProviderClientMessages(page);
+          return (
+            messagesContainValue(m, 'Increment plus') &&
+            !messagesContainValue(m, 'Increment')
+          );
+        },
+        {timeout: HMR_POLL_TIMEOUT_MS}
+      )
+      .toBe(true);
   });
 
   it('updates rendered messages when adding client message', async ({
     page
   }) => {
     await page.goto('/');
+    await page.reload(); // Reset after previous test's restore (messages come from server)
     let messages = await readProviderClientMessages(page);
     expect(messagesContainValue(messages, 'Increment')).toBe(true);
 
@@ -318,32 +326,42 @@ describe.serial('HMR message updates', () => {
         '</button>\n      <span>{t(\'Decrement\')}</span>\n    </ClientBoundary>'
       )
     );
-    await page.waitForTimeout(HMR_RECOMPILE_WAIT_MS);
-    await page.reload();
 
-    messages = await readProviderClientMessages(page);
-    expect(messagesContainValue(messages, 'Increment')).toBe(true);
-    expect(messagesContainValue(messages, 'Decrement')).toBe(true);
+    await expect
+      .poll(
+        async () => {
+          const m = await readProviderClientMessages(page);
+          return (
+            messagesContainValue(m, 'Increment') &&
+            messagesContainValue(m, 'Decrement')
+          );
+        },
+        {timeout: HMR_POLL_TIMEOUT_MS}
+      )
+      .toBe(true);
   });
 
   it('updates rendered messages when deleting client message', async ({
     page
   }) => {
     await page.goto('/');
+    await page.reload(); // Reset after previous test's restore (messages come from server)
     let messages = await readProviderClientMessages(page);
     expect(messagesContainValue(messages, 'Increment')).toBe(true);
 
     writeFileSync(
       COUNTER_PATH,
-      COUNTER_ORIGINAL.replace(
-        "{t('Increment')}",
-        "'Click'"
-      )
+      COUNTER_ORIGINAL.replace("{t('Increment')}", "'Click'")
     );
-    await page.waitForTimeout(HMR_RECOMPILE_WAIT_MS);
-    await page.reload();
 
-    messages = await readProviderClientMessages(page);
-    expect(messagesContainValue(messages, 'Increment')).toBe(false);
+    await expect
+      .poll(
+        async () => {
+          const m = await readProviderClientMessages(page);
+          return !messagesContainValue(m, 'Increment');
+        },
+        {timeout: HMR_POLL_TIMEOUT_MS}
+      )
+      .toBe(true);
   });
 });
