@@ -12,7 +12,7 @@ export type InjectManifestResult = {
 export function injectManifestProp(
   source: string,
   manifest: ManifestNamespaces,
-  filename?: string
+  options?: {filename?: string; sourceMap?: boolean}
 ): InjectManifestResult {
   const manifestJson = JSON.stringify(manifest);
   const propInjection = ` ${INFERRED_MANIFEST_PROP}={${manifestJson}}`;
@@ -33,10 +33,13 @@ export function injectManifestProp(
   const end = start + match[0].length;
   s.overwrite(start, end, match[1] + propInjection + match[2]);
 
-  const map = s.generateMap({
-    source: filename,
-    includeContent: true
-  });
+  const map =
+    options?.sourceMap === true
+      ? s.generateMap({
+          includeContent: true,
+          source: options.filename
+        })
+      : undefined;
 
   return {code: s.toString(), map};
 }

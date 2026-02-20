@@ -60,7 +60,10 @@ export default async function manifestLoader(
       return source;
     }
 
-    const {code, map} = injectManifestProp(source, namespaces, inputFile);
+    const {code, map} = injectManifestProp(source, namespaces, {
+      filename: inputFile,
+      sourceMap: this.sourceMap
+    });
     callback?.(null, code, map ?? undefined);
     return code;
   } catch (error) {
