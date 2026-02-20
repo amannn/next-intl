@@ -58,6 +58,46 @@ describe('extraction json format', () => {
     expect(fr['NhX4DJ']).toBe('');
   });
 
+  it('preserves manual translations in target catalogs when adding new messages', async ({
+    page
+  }) => {
+    await page.goto('/');
+    await expectJson('en.json', {'+YJVTi': 'Hey!', NhX4DJ: 'Hello'});
+
+    await using _ = await withTempEditApp(
+      'messages/de.json',
+      '{"+YJVTi": "Hallo", "NhX4DJ": "Hallo"}'
+    );
+
+    await using __ = await withTempEditApp(
+      'src/components/Greeting.tsx',
+      `'use client';
+
+import {useExtracted} from 'next-intl';
+
+export default function Greeting() {
+  const t = useExtracted();
+  return (
+    <div>
+      {t('Hey!')}
+      {t('Hello!')}
+    </div>
+  );
+}
+`
+    );
+
+    await page.goto('/');
+    const de = await expectJson('de.json', {
+      '+YJVTi': 'Hallo',
+      NhX4DJ: 'Hallo',
+      OpKKos: ''
+    });
+    expect(de['+YJVTi']).toBe('Hallo');
+    expect(de['NhX4DJ']).toBe('Hallo');
+    expect(de['OpKKos']).toBe('');
+  });
+
   it('stops writing to removed catalog file', async ({page}) => {
     await page.goto('/');
     await expectJson('en.json', {'+YJVTi': 'Hey!', NhX4DJ: 'Hello'});
