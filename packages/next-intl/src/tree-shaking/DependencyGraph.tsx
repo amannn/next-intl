@@ -1,5 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
+import LRUCache from '../extractor/extractor/LRUCache.js';
 import SourceFileFilter from '../extractor/source/SourceFileFilter.js';
 import createModuleResolver from './createModuleResolver.js';
 import parseImports from './parseImports.js';
@@ -22,8 +23,10 @@ function isSourceFile(filePath: string): boolean {
   return SUPPORTED_EXTENSIONS.has(path.extname(filePath));
 }
 
+const CACHE_MAX_SIZE = 250;
+
 export default class DependencyGraph {
-  private cache = new Map<string, EntryGraph>();
+  private cache = new LRUCache<EntryGraph>(CACHE_MAX_SIZE);
   private projectRoot: string;
   private srcMatcher: SourcePathMatcher;
   private tsconfigPath?: string;
@@ -49,12 +52,13 @@ export default class DependencyGraph {
 
   public clearEntries(entryFiles: Array<string>) {
     for (const entryFile of entryFiles) {
-      this.cache.delete(entryFile);
+      this.cache.delete(path.normalize(entryFile));
     }
   }
 
   public async getEntryGraph(entryFile: string): Promise<EntryGraph> {
-    const cached = this.cache.get(entryFile);
+    const normalizedEntry = path.normalize(entryFile);
+    const cached = this.cache.get(normalizedEntry);
     if (cached) return cached;
 
     const adjacency = new Map<string, Set<string>>();
@@ -103,14 +107,14 @@ export default class DependencyGraph {
       await Promise.all(children.map((child) => visit(path.normalize(child))));
     };
 
-    await visit(path.normalize(entryFile));
+    await visit(normalizedEntry);
 
-    if (!adjacency.has(entryFile)) {
-      adjacency.set(entryFile, new Set());
+    if (!adjacency.has(normalizedEntry)) {
+      adjacency.set(normalizedEntry, new Set());
     }
 
     const graph = {adjacency, files};
-    this.cache.set(entryFile, graph);
+    this.cache.set(normalizedEntry, graph);
     return graph;
   }
 }
