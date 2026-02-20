@@ -120,7 +120,7 @@ const routesMap = {
       }
     }
   ],
-  '/loading': [{}]
+  '/loading': [] // No provider on final page; loading.tsx may still be in DOM during transition
 } as const;
 
 async function readProviderClientMessages(
@@ -191,6 +191,27 @@ describe('provider client messages', () => {
       await page.goto(pathname);
       if (pathname === '/loading') {
         await page.waitForSelector('text=Static page', {timeout: 10000});
+        const count = await page
+          .locator('[data-id="provider-client-messages"]')
+          .count();
+        if (count === 0) return;
+        const messages = await readProviderClientMessages(page);
+        const allowed = [{}, {o6jHkb: 'Loading page …'}];
+        const hasNoDump = messages.every((m) =>
+          allowed.some((a) => providerMatchesExactly(m, a))
+        );
+        expect(
+          hasNoDump,
+          `Expected 0 providers or no message dump, got: ${JSON.stringify(messages)}`
+        ).toBe(true);
+        return;
+      }
+      if (expectedMessages.length === 0) {
+        const count = await page
+          .locator('[data-id="provider-client-messages"]')
+          .count();
+        expect(count, `Expected 0 providers for ${pathname}`).toBe(0);
+        return;
       }
       const messages = await readProviderClientMessages(page);
       const hasExactMatch = expectedMessages.every((expected) =>
