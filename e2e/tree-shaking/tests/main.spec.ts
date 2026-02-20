@@ -112,9 +112,7 @@ const routesMap = {
   ],
   '/global-not-found': [
     {
-      NotFound: {
-        QRccCM: 'Page not found'
-      }
+      QRccCM: 'Page not found'
     }
   ]
 } as const;
