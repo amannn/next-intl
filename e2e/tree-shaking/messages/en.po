@@ -96,7 +96,7 @@ msgstr "next-intl example"
 msgid "o6jHkb"
 msgstr "Loading page …"
 
-#: src/app/loading/page.tsx:12
+#: src/app/loading/page.tsx:13
 msgid "2dpR22"
 msgstr "Static page"
 
