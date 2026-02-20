@@ -6,7 +6,8 @@ const routesMap = {
   '/': [
     {
       jm1lmy: ['Count: ', ['count', 4]],
-      tQLRmz: 'Increment'
+      tQLRmz: 'Increment',
+      vlslj0: ['Hey ', ['name'], '!']
     }
   ],
   '/dynamic-segment/test': [
@@ -33,12 +34,15 @@ const routesMap = {
   ],
   '/actions': [
     {
-      'RNB4/W': 'Load lazy content'
+      'RNB4/W': 'Load lazy content',
+      mz9I4r: 'Server action page',
+      sJNiQX: 'Returned from action'
     }
   ],
   '/type-imports': [
     {
-      GO9hSh: ['Test label: ', ['value']]
+      GO9hSh: ['Test label: ', ['value']],
+      MmAwwP: 'Type imports page'
     }
   ],
   '/group-one': [
@@ -111,7 +115,8 @@ const routesMap = {
         QRccCM: 'Page not found'
       }
     }
-  ]
+  ],
+  '/loading': [{}]
 } as const;
 
 async function readProviderClientMessages(
@@ -144,26 +149,30 @@ async function readProviderClientMessages(
   return messages;
 }
 
-function providerHasExpected(
+function providerMatchesExactly(
   provider: Record<string, unknown>,
   expected: Record<string, unknown>
 ): boolean {
-  for (const [key, value] of Object.entries(expected)) {
+  const providerKeys = Object.keys(provider);
+  const expectedKeys = Object.keys(expected);
+  if (providerKeys.length !== expectedKeys.length) return false;
+  for (const key of expectedKeys) {
     if (!(key in provider)) return false;
     const pv = provider[key];
-    if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+    const ev = expected[key];
+    if (typeof ev === 'object' && ev !== null && !Array.isArray(ev)) {
       if (
         typeof pv !== 'object' ||
         pv === null ||
         Array.isArray(pv) ||
-        !providerHasExpected(
+        !providerMatchesExactly(
           pv as Record<string, unknown>,
-          value as Record<string, unknown>
+          ev as Record<string, unknown>
         )
       ) {
         return false;
       }
-    } else if (JSON.stringify(pv) !== JSON.stringify(value)) {
+    } else if (JSON.stringify(pv) !== JSON.stringify(ev)) {
       return false;
     }
   }
@@ -172,15 +181,20 @@ function providerHasExpected(
 
 describe('provider client messages', () => {
   for (const [pathname, expectedMessages] of Object.entries(routesMap)) {
-    it(`has matching messages for ${pathname}`, async ({page}) => {
+    it(`renders exactly expected messages for ${pathname}`, async ({
+      page
+    }) => {
       await page.goto(pathname);
+      if (pathname === '/loading') {
+        await page.waitForSelector('text=Static page', {timeout: 10000});
+      }
       const messages = await readProviderClientMessages(page);
-      const hasMatch = expectedMessages.every((expected) =>
-        messages.some((m) => providerHasExpected(m, expected))
+      const hasExactMatch = expectedMessages.every((expected) =>
+        messages.some((m) => providerMatchesExactly(m, expected))
       );
       expect(
-        hasMatch,
-        `No provider had expected messages for ${pathname}`
+        hasExactMatch,
+        `No provider had exactly expected messages for ${pathname} (extra keys indicate message dump)`
       ).toBe(true);
     });
   }
@@ -194,44 +208,11 @@ describe('provider client messages', () => {
     const messages = await readProviderClientMessages(page);
     const loadingExpected = {o6jHkb: 'Loading page …'};
     const hasMatch = messages.some((m) =>
-      providerHasExpected(m, loadingExpected)
+      providerMatchesExactly(m, loadingExpected)
     );
     expect(
       hasMatch,
       'Expected provider with loading UI messages (o6jHkb)'
-    ).toBe(true);
-  });
-
-  it('loading page shows no messages after static content loads', async ({
-    page
-  }) => {
-    await page.goto('/loading');
-    await page.waitForSelector('text=Static page', {timeout: 10000});
-    const messages = await readProviderClientMessages(page);
-    const emptyProvider = messages.find((m) => Object.keys(m).length === 0);
-    expect(
-      emptyProvider !== undefined,
-      'Expected at least one provider with no messages (empty manifest) after load'
-    ).toBe(true);
-  });
-
-  it('parallel route does not dump all messages', async ({page}) => {
-    await page.goto('/parallel');
-    const messages = await readProviderClientMessages(page);
-    const hasUnused = messages.some((m) => 'unused' in m);
-    expect(
-      !hasUnused,
-      'No provider should have "unused" key (indicates all messages dumped)'
-    ).toBe(true);
-  });
-
-  it('layout-template route does not dump all messages', async ({page}) => {
-    await page.goto('/layout-template');
-    const messages = await readProviderClientMessages(page);
-    const hasUnused = messages.some((m) => 'unused' in m);
-    expect(
-      !hasUnused,
-      'No provider should have "unused" key (indicates all messages dumped)'
     ).toBe(true);
   });
 
@@ -245,7 +226,7 @@ describe('provider client messages', () => {
     const messages = await readProviderClientMessages(page);
     const photoExpected = {Ax7uMP: ['Intercepted photo modal: ', ['id']]};
     const hasPhoto = messages.some((m) =>
-      providerHasExpected(m, photoExpected)
+      providerMatchesExactly(m, photoExpected)
     );
     expect(hasPhoto).toBe(true);
   });
