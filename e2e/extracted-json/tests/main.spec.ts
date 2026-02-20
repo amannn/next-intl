@@ -1,10 +1,12 @@
+import fs from 'fs/promises';
 import path from 'path';
 import {fileURLToPath} from 'url';
 import {expect, test as it} from '@playwright/test';
 import {
   createExtractionHelpers,
   withTempEdit,
-  withTempFile
+  withTempFile,
+  withTempRemove
 } from './helpers.js';
 
 const {describe} = it;
@@ -17,6 +19,7 @@ const {expectJson, expectJsonPredicate} = createExtractionHelpers(MESSAGES_DIR);
 
 const withTempEditApp = (p: string, c: string) => withTempEdit(APP_ROOT, p, c);
 const withTempFileApp = (p: string, c: string) => withTempFile(APP_ROOT, p, c);
+const withTempRemoveApp = (p: string) => withTempRemove(APP_ROOT, p);
 
 describe('extraction json format', () => {
   it('saves messages initially', async ({page}) => {
@@ -53,6 +56,41 @@ describe('extraction json format', () => {
     const fr = await expectJson('fr.json', {'+YJVTi': 'Salut!', NhX4DJ: ''});
     expect(fr['+YJVTi']).toBe('Salut!');
     expect(fr['NhX4DJ']).toBe('');
+  });
+
+  it('stops writing to removed catalog file', async ({page}) => {
+    await page.goto('/');
+    await expectJson('en.json', {'+YJVTi': 'Hey!', NhX4DJ: 'Hello'});
+    await expectJson('de.json', {NhX4DJ: 'Hallo'});
+
+    await using _ = await withTempRemoveApp('messages/de.json');
+
+    await using __ = await withTempEditApp(
+      'src/components/Greeting.tsx',
+      `'use client';
+
+import {useExtracted} from 'next-intl';
+
+export default function Greeting() {
+  const t = useExtracted();
+  return <div>{t('Hello!')}</div>;
+}
+`
+    );
+
+    await page.goto('/');
+    await expectJson('en.json', {OpKKos: 'Hello!'});
+    const dePath = path.join(MESSAGES_DIR, 'de.json');
+    await expect
+      .poll(async () => {
+        try {
+          await fs.access(dePath);
+          return false;
+        } catch {
+          return true;
+        }
+      })
+      .toBe(true);
   });
 
   it('resets translations when a message changes', async ({page}) => {

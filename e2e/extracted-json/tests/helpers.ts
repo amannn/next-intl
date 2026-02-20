@@ -40,6 +40,18 @@ export async function withTempFile(
   };
 }
 
+export async function withTempRemove(
+  appRoot: string,
+  filePath: string
+): Promise<{[Symbol.asyncDispose]: () => Promise<void>}> {
+  const fullPath = path.join(appRoot, filePath);
+  const original = await fs.readFile(fullPath, 'utf-8');
+  await fs.unlink(fullPath);
+  return {
+    [Symbol.asyncDispose]: async () => fs.writeFile(fullPath, original)
+  };
+}
+
 export function createExtractionHelpers(messagesDir: string) {
   return {
     async expectJson(
