@@ -4,10 +4,7 @@ import {join} from 'path';
 
 const {describe} = it;
 
-const HMR_TEST_CONTENT_PATH = join(
-  process.cwd(),
-  'src/app/hmr-test/HmrTestContent.tsx'
-);
+const COUNTER_PATH = join(process.cwd(), 'src/app/Counter.tsx');
 
 const routesMap = {
   '/': [
@@ -253,16 +250,29 @@ describe('provider client messages', () => {
   });
 });
 
-const HMR_ORIGINAL_CONTENT = `'use client';
+const COUNTER_ORIGINAL = `'use client';
 
 import {useExtracted} from 'next-intl';
+import {useState} from 'react';
 import ClientBoundary from '@/components/ClientBoundary';
 
-export default function HmrTestContent() {
+export default function Counter() {
+  const [count, setCount] = useState(1000);
   const t = useExtracted();
+
+  function onIncrement() {
+    setCount(count + 1);
+  }
+
   return (
     <ClientBoundary>
-      <p>{t('HMR test initial')}</p>
+      <p>{t('Count: {count, number}', {count})}</p>
+      <button
+        className="border border-gray-300 rounded-md px-2 py-1"
+        onClick={onIncrement}
+      >
+        {t('Increment')}
+      </button>
     </ClientBoundary>
   );
 }
@@ -272,87 +282,68 @@ describe.serial('HMR message updates', () => {
   const HMR_RECOMPILE_WAIT_MS = 5000;
 
   it.afterEach(() => {
-    writeFileSync(HMR_TEST_CONTENT_PATH, HMR_ORIGINAL_CONTENT);
+    writeFileSync(COUNTER_PATH, COUNTER_ORIGINAL);
   });
 
   it('updates rendered messages when modifying client message', async ({
     page
   }) => {
-    await page.goto('/hmr-test');
+    await page.goto('/');
     let messages = await readProviderClientMessages(page);
-    expect(messagesContainValue(messages, 'HMR test initial')).toBe(true);
+    expect(messagesContainValue(messages, 'Increment')).toBe(true);
 
     writeFileSync(
-      HMR_TEST_CONTENT_PATH,
-      HMR_ORIGINAL_CONTENT.replace("'HMR test initial'", "'HMR test modified'")
+      COUNTER_PATH,
+      COUNTER_ORIGINAL.replace("'Increment'", "'Increment plus'")
     );
     await page.waitForTimeout(HMR_RECOMPILE_WAIT_MS);
     await page.reload();
 
     messages = await readProviderClientMessages(page);
-    expect(messagesContainValue(messages, 'HMR test modified')).toBe(true);
-    expect(messagesContainValue(messages, 'HMR test initial')).toBe(false);
+    expect(messagesContainValue(messages, 'Increment plus')).toBe(true);
+    expect(messagesContainValue(messages, 'Increment')).toBe(false);
   });
 
   it('updates rendered messages when adding client message', async ({
     page
   }) => {
-    await page.goto('/hmr-test');
+    await page.goto('/');
     let messages = await readProviderClientMessages(page);
-    expect(messagesContainValue(messages, 'HMR test initial')).toBe(true);
+    expect(messagesContainValue(messages, 'Increment')).toBe(true);
 
     writeFileSync(
-      HMR_TEST_CONTENT_PATH,
-      `'use client';
-
-import {useExtracted} from 'next-intl';
-import ClientBoundary from '@/components/ClientBoundary';
-
-export default function HmrTestContent() {
-  const t = useExtracted();
-  return (
-    <ClientBoundary>
-      <p>{t('HMR test initial')}</p>
-      <p>{t('HMR test added')}</p>
-    </ClientBoundary>
-  );
-}
-`
+      COUNTER_PATH,
+      COUNTER_ORIGINAL.replace(
+        '</button>\n    </ClientBoundary>',
+        '</button>\n      <span>{t(\'Decrement\')}</span>\n    </ClientBoundary>'
+      )
     );
     await page.waitForTimeout(HMR_RECOMPILE_WAIT_MS);
     await page.reload();
 
     messages = await readProviderClientMessages(page);
-    expect(messagesContainValue(messages, 'HMR test initial')).toBe(true);
-    expect(messagesContainValue(messages, 'HMR test added')).toBe(true);
+    expect(messagesContainValue(messages, 'Increment')).toBe(true);
+    expect(messagesContainValue(messages, 'Decrement')).toBe(true);
   });
 
   it('updates rendered messages when deleting client message', async ({
     page
   }) => {
-    await page.goto('/hmr-test');
+    await page.goto('/');
     let messages = await readProviderClientMessages(page);
-    expect(messagesContainValue(messages, 'HMR test initial')).toBe(true);
+    expect(messagesContainValue(messages, 'Increment')).toBe(true);
 
     writeFileSync(
-      HMR_TEST_CONTENT_PATH,
-      `'use client';
-
-import ClientBoundary from '@/components/ClientBoundary';
-
-export default function HmrTestContent() {
-  return (
-    <ClientBoundary>
-      <p>Static content only</p>
-    </ClientBoundary>
-  );
-}
-`
+      COUNTER_PATH,
+      COUNTER_ORIGINAL.replace(
+        "{t('Increment')}",
+        "'Click'"
+      )
     );
     await page.waitForTimeout(HMR_RECOMPILE_WAIT_MS);
     await page.reload();
 
     messages = await readProviderClientMessages(page);
-    expect(messagesContainValue(messages, 'HMR test initial')).toBe(false);
+    expect(messagesContainValue(messages, 'Increment')).toBe(false);
   });
 });
