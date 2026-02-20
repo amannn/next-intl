@@ -1,3 +1,4 @@
+import fs from 'fs/promises';
 import path from 'path';
 import {fileURLToPath} from 'url';
 import {expect, test as it} from '@playwright/test';
@@ -15,7 +16,6 @@ async function withTempEdit(
   filePath: string,
   newContent: string
 ): Promise<{[Symbol.asyncDispose]: () => Promise<void>}> {
-  const fs = await import('fs/promises');
   const fullPath = path.join(APP_ROOT, filePath);
   const original = await fs.readFile(fullPath, 'utf-8');
   await fs.writeFile(fullPath, newContent);
