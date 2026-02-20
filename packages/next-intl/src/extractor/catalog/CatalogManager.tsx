@@ -1,6 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import type MessageExtractor from '../extractor/MessageExtractor.js';
+import {extractorLogger} from '../extractorLogger.js';
 import type ExtractorCodec from '../format/ExtractorCodec.js';
 import {getFormatExtension, resolveCodec} from '../format/index.js';
 import SourceFileScanner from '../source/SourceFileScanner.js';
@@ -136,11 +137,14 @@ export default class CatalogManager implements Disposable {
   }
 
   public async loadMessages() {
+    extractorLogger.catalogManagerLoadStart({projectRoot: this.projectRoot});
+
     const sourceDiskMessages = await this.loadSourceMessages();
 
     this.loadCatalogsPromise = this.loadTargetMessages();
     await this.loadCatalogsPromise;
 
+    const scanStart = Date.now();
     this.scanCompletePromise = (async () => {
       const sourceFiles = await SourceFileScanner.getSourceFiles(
         this.getSrcPaths()
@@ -154,6 +158,13 @@ export default class CatalogManager implements Disposable {
     })();
 
     await this.scanCompletePromise;
+
+    extractorLogger.catalogManagerScanComplete({
+      projectRoot: this.projectRoot,
+      fileCount: this.messagesByFile.size,
+      messageCount: this.messagesById.size,
+      durationMs: Date.now() - scanStart
+    });
 
     if (this.isDevelopment) {
       const catalogLocales = this.getCatalogLocales();
@@ -350,6 +361,13 @@ export default class CatalogManager implements Disposable {
       prevFileMessages,
       fileMessages
     );
+
+    extractorLogger.catalogManagerFileProcessed({
+      projectRoot: this.projectRoot,
+      filePath: absoluteFilePath,
+      messageCount: messages.length,
+      changed
+    });
     return changed;
   }
 
@@ -410,9 +428,21 @@ export default class CatalogManager implements Disposable {
   }
 
   private async saveImpl(): Promise<void> {
+    extractorLogger.catalogManagerSaveStart({
+      projectRoot: this.projectRoot
+    });
+    const saveStart = Date.now();
+
     await this.saveLocale(this.config.sourceLocale);
     const targetLocales = await this.getTargetLocales();
+    const localesWritten = [this.config.sourceLocale, ...targetLocales];
     await Promise.all(targetLocales.map((locale) => this.saveLocale(locale)));
+
+    extractorLogger.catalogManagerSaveComplete({
+      projectRoot: this.projectRoot,
+      localesWritten,
+      durationMs: Date.now() - saveStart
+    });
   }
 
   private async saveLocale(locale: Locale): Promise<void> {

@@ -3,6 +3,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import compile from 'icu-minify/compile';
 import ExtractionCompiler from '../../extractor/ExtractionCompiler.js';
+import {extractorLogger} from '../../extractor/extractorLogger.js';
 import type ExtractorCodec from '../../extractor/format/ExtractorCodec.js';
 import {
   getFormatExtension,
@@ -71,12 +72,21 @@ export default function catalogLoader(
 
   const runExtraction =
     options.sourceLocale && options.srcPath && locale === options.sourceLocale;
-
+  const isSourceLocale = locale === (options.sourceLocale ?? '');
   const srcPaths = runExtraction
     ? (Array.isArray(options.srcPath) ? options.srcPath : [options.srcPath])
         .filter((p): p is string => typeof p === 'string')
         .map((p) => path.resolve(projectRoot, p))
     : [];
+
+  extractorLogger.catalogLoaderRun({
+    projectRoot,
+    resourcePath: this.resourcePath,
+    locale,
+    isSourceLocale,
+    runExtraction: Boolean(runExtraction),
+    srcPaths
+  });
 
   Promise.resolve()
     .then(async () => {
@@ -84,7 +94,13 @@ export default function catalogLoader(
       if (runExtraction && srcPaths.length > 0) {
         for (const srcPath of srcPaths) {
           this.addContextDependency?.(srcPath);
+          extractorLogger.addContextDependency({projectRoot, path: srcPath});
         }
+        const extractionStart = Date.now();
+        extractorLogger.extractionStart({
+          projectRoot,
+          resourcePath: this.resourcePath
+        });
         const compiler = new ExtractionCompiler(
           {
             srcPath: options.srcPath!,
@@ -98,6 +114,11 @@ export default function catalogLoader(
         } finally {
           compiler[Symbol.dispose]();
         }
+        extractorLogger.extractionEnd({
+          projectRoot,
+          resourcePath: this.resourcePath,
+          durationMs: Date.now() - extractionStart
+        });
         contentToDecode = await fs.readFile(this.resourcePath, 'utf8');
       }
 
