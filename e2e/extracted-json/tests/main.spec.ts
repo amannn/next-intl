@@ -38,6 +38,23 @@ describe('extraction json format', () => {
     expect(fr['NhX4DJ']).toBe('');
   });
 
+  it('preserves existing translations when adding a catalog file', async ({
+    page
+  }) => {
+    await page.goto('/');
+    await expectJson('en.json', {'+YJVTi': 'Hey!', NhX4DJ: 'Hello'});
+
+    await using _ = await withTempFileApp(
+      'messages/fr.json',
+      '{"+YJVTi": "Salut!", "NhX4DJ": ""}'
+    );
+
+    await page.goto('/');
+    const fr = await expectJson('fr.json', {'+YJVTi': 'Salut!', NhX4DJ: ''});
+    expect(fr['+YJVTi']).toBe('Salut!');
+    expect(fr['NhX4DJ']).toBe('');
+  });
+
   it('resets translations when a message changes', async ({page}) => {
     await page.goto('/');
     await expectJson('en.json', {'+YJVTi': 'Hey!'});
