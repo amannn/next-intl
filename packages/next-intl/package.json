@@ -1,6 +1,6 @@
 {
   "name": "next-intl",
-  "version": "4.8.2",
+  "version": "4.8.3",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.work>",
   "funding": [
@@ -129,7 +129,7 @@
     "next.js"
   ],
   "dependencies": {
-    "@formatjs/intl-localematcher": "^0.5.4",
+    "@formatjs/intl-localematcher": "^0.8.1",
     "magic-string": "^0.30.10",
     "@parcel/watcher": "^2.4.1",
     "@swc/core": "^1.15.2",

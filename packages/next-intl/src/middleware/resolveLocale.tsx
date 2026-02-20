@@ -30,6 +30,13 @@ function orderLocales<AppLocales extends Locales>(locales: AppLocales) {
   return locales.slice().sort((a, b) => b.length - a.length);
 }
 
+function mapToProvidedLocale<AppLocales extends Locales>(
+  locales: AppLocales,
+  locale: string
+) {
+  return locales.find((cur) => cur.toLowerCase() === locale.toLowerCase());
+}
+
 export function getAcceptLanguageLocale<AppLocales extends Locales>(
   requestHeaders: Headers,
   locales: AppLocales,
@@ -44,7 +51,10 @@ export function getAcceptLanguageLocale<AppLocales extends Locales>(
   }).languages();
   try {
     const orderedLocales = orderLocales(locales);
-    locale = match(languages, orderedLocales, defaultLocale);
+    locale = mapToProvidedLocale(
+      locales,
+      match(languages, orderedLocales, defaultLocale)
+    );
   } catch {
     // Invalid language
   }

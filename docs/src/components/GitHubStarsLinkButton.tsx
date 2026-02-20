@@ -69,6 +69,7 @@ export default function GitHubStarsLinkButton() {
 
   return (
     <LinkButton
+      arrow={false}
       href={config.githubUrl}
       rel="noreferrer"
       size="lg"
