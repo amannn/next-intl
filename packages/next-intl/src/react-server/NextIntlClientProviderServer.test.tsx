@@ -1,4 +1,4 @@
-import {expect, it, vi} from 'vitest';
+import {beforeEach, expect, it, vi} from 'vitest';
 import getConfigNow from '../server/react-server/getConfigNow.js';
 import getFormats from '../server/react-server/getFormats.js';
 import {getLocale, getMessages, getTimeZone} from '../server.react-server.js';
@@ -28,6 +28,26 @@ vi.mock('../../src/server/react-server/getConfigNow', () => ({
 vi.mock('../../src/shared/NextIntlClientProvider', async () => ({
   default: vi.fn(() => 'NextIntlClientProvider')
 }));
+
+beforeEach(() => {
+  vi.clearAllMocks();
+  vi.mocked(getLocale).mockResolvedValue('en-US');
+  vi.mocked(getMessages).mockResolvedValue({});
+  vi.mocked(getTimeZone).mockResolvedValue('America/New_York');
+});
+
+function readProviderFromResult(
+  result: Awaited<ReturnType<typeof NextIntlClientProviderServer>>
+) {
+  if (result.type === NextIntlClientProvider) {
+    return result;
+  }
+
+  const children = Array.isArray(result.props.children)
+    ? result.props.children
+    : [result.props.children];
+  return children[1];
+}
 
 it("doesn't read from headers if all relevant configuration is passed", async () => {
   const result = await NextIntlClientProviderServer({
@@ -82,4 +102,37 @@ it('reads missing configuration from getter functions', async () => {
   expect(getTimeZone).toHaveBeenCalled();
   expect(getFormats).toHaveBeenCalled();
   expect(getMessages).toHaveBeenCalled();
+});
+
+it('resolves inferred messages from __inferredManifest prop', async () => {
+  vi.mocked(getMessages).mockResolvedValue({
+    Feed: 'Feed message',
+    Root: 'Root message'
+  });
+
+  const result = await NextIntlClientProviderServer({
+    __inferredManifest: {Feed: true},
+    children: null,
+    messages: 'infer'
+  });
+
+  const provider = readProviderFromResult(result);
+  expect(provider.type).toBe(NextIntlClientProvider);
+  expect(provider.props.messages).toEqual({Feed: 'Feed message'});
+});
+
+it('provides no messages when __inferredManifest is undefined', async () => {
+  vi.mocked(getMessages).mockResolvedValue({
+    Feed: 'Feed message',
+    Root: 'Root message'
+  });
+
+  const result = await NextIntlClientProviderServer({
+    children: null,
+    messages: 'infer'
+  });
+
+  const provider = readProviderFromResult(result);
+  expect(provider.type).toBe(NextIntlClientProvider);
+  expect(provider.props.messages).toEqual({});
 });
