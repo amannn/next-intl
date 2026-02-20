@@ -265,7 +265,7 @@ export default function getNextConfig(
       });
     }
 
-    // Add loader for messages="infer" only (injects __inferredManifest prop)
+    // Add manifest loader
     if (pluginConfig.experimental?.treeShaking) {
       if (!isNextJs16OrHigher()) {
         throwError('Tree-shaking requires Next.js 16 or higher.');
@@ -356,7 +356,7 @@ export default function getNextConfig(
         ] = require.resolve('use-intl/format-message/format-only');
       }
 
-      // Add loader for messages="infer" (injects __inferredManifest prop)
+      // Add manifest loader
       if (pluginConfig.experimental?.treeShaking) {
         if (!config.module) config.module = {};
         if (!config.module.rules) config.module.rules = [];
