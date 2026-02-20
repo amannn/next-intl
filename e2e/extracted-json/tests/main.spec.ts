@@ -2,18 +2,15 @@ import fs from 'fs/promises';
 import path from 'path';
 import {fileURLToPath} from 'url';
 import {expect, test as it} from '@playwright/test';
+import {createExtractionHelpers} from './helpers.js';
 
 const {describe} = it;
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = path.join(__dirname, '..');
 const MESSAGES_DIR = path.join(APP_ROOT, 'messages');
-const SRC_DIR = path.join(APP_ROOT, 'src');
 
-async function readJson(filePath: string): Promise<Record<string, unknown>> {
-  const content = await fs.readFile(filePath, 'utf-8');
-  return JSON.parse(content) as Record<string, unknown>;
-}
+const {expectJson, expectJsonPredicate} = createExtractionHelpers(MESSAGES_DIR);
 
 async function withTempEdit(
   filePath: string,
@@ -51,45 +48,17 @@ async function withTempFile(
   };
 }
 
-async function waitForExtraction(
-  predicate: () => Promise<boolean>,
-  opts: {timeout?: number} = {}
-): Promise<void> {
-  const timeout = opts.timeout ?? 30_000;
-  const start = Date.now();
-  while (Date.now() - start < timeout) {
-    if (await predicate()) return;
-    await new Promise((r) => setTimeout(r, 200));
-  }
-  throw new Error('Extraction did not complete within timeout');
-}
-
 describe('extraction json format', () => {
   it('saves messages initially', async ({page}) => {
     await page.goto('/');
-    await waitForExtraction(async () => {
-      try {
-        const en = await readJson(path.join(MESSAGES_DIR, 'en.json'));
-        return en['+YJVTi'] === 'Hey!' && en['NhX4DJ'] === 'Hello';
-      } catch {
-        return false;
-      }
-    });
-    const en = await readJson(path.join(MESSAGES_DIR, 'en.json'));
+    const en = await expectJson('en.json', {'+YJVTi': 'Hey!', NhX4DJ: 'Hello'});
     expect(en['+YJVTi']).toBe('Hey!');
     expect(en['NhX4DJ']).toBe('Hello');
   });
 
   it('resets translations when a message changes', async ({page}) => {
     await page.goto('/');
-    await waitForExtraction(async () => {
-      try {
-        const en = await readJson(path.join(MESSAGES_DIR, 'en.json'));
-        return en['+YJVTi'] === 'Hey!';
-      } catch {
-        return false;
-      }
-    });
+    await expectJson('en.json', {'+YJVTi': 'Hey!'});
 
     await using _ = await withTempEdit(
       'src/components/Greeting.tsx',
@@ -105,18 +74,10 @@ export default function Greeting() {
     );
 
     await page.goto('/');
-    await waitForExtraction(async () => {
-      try {
-        const en = await readJson(path.join(MESSAGES_DIR, 'en.json'));
-        return en['OpKKos'] === 'Hello!';
-      } catch {
-        return false;
-      }
-    });
-    const en = await readJson(path.join(MESSAGES_DIR, 'en.json'));
+    const en = await expectJson('en.json', {OpKKos: 'Hello!'});
     expect(en['OpKKos']).toBe('Hello!');
     try {
-      const de = await readJson(path.join(MESSAGES_DIR, 'de.json'));
+      const de = await expectJson('de.json', {OpKKos: ''});
       expect(de['OpKKos']).toBe('');
     } catch {
       // de.json may not exist with locales: infer
@@ -127,14 +88,7 @@ export default function Greeting() {
     page
   }) => {
     await page.goto('/');
-    await waitForExtraction(async () => {
-      try {
-        const en = await readJson(path.join(MESSAGES_DIR, 'en.json'));
-        return en['+YJVTi'] === 'Hey!' && en['NhX4DJ'] === 'Hello';
-      } catch {
-        return false;
-      }
-    });
+    await expectJson('en.json', {'+YJVTi': 'Hey!', NhX4DJ: 'Hello'});
 
     await using _ = await withTempEdit(
       'src/components/Greeting.tsx',
@@ -156,18 +110,12 @@ export default function Footer() {
     );
 
     await page.goto('/');
-    await waitForExtraction(async () => {
-      try {
-        const en = await readJson(path.join(MESSAGES_DIR, 'en.json'));
-        return (
-          en['NhX4DJ'] === 'Hello' &&
-          (en['+YJVTi'] === undefined || en['+YJVTi'] === null)
-        );
-      } catch {
-        return false;
-      }
+    const en = await expectJsonPredicate('en.json', (j) => {
+      return (
+        j['NhX4DJ'] === 'Hello' &&
+        (j['+YJVTi'] === undefined || j['+YJVTi'] === null)
+      );
     });
-    const en = await readJson(path.join(MESSAGES_DIR, 'en.json'));
     expect(en['+YJVTi']).toBeUndefined();
     expect(en['NhX4DJ']).toBe('Hello');
   });
@@ -176,14 +124,7 @@ export default function Footer() {
     page
   }) => {
     await page.goto('/');
-    await waitForExtraction(async () => {
-      try {
-        const en = await readJson(path.join(MESSAGES_DIR, 'en.json'));
-        return en['+YJVTi'] === 'Hey!';
-      } catch {
-        return false;
-      }
-    });
+    await expectJson('en.json', {'+YJVTi': 'Hey!'});
 
     await using _ = await withTempEdit(
       'src/components/Greeting.tsx',
@@ -196,29 +137,13 @@ export default function Greeting() {
     );
 
     await page.goto('/');
-    await waitForExtraction(async () => {
-      try {
-        const en = await readJson(path.join(MESSAGES_DIR, 'en.json'));
-        return en['+YJVTi'] === 'Hey!';
-      } catch {
-        return false;
-      }
-    });
-    const en = await readJson(path.join(MESSAGES_DIR, 'en.json'));
+    const en = await expectJson('en.json', {'+YJVTi': 'Hey!'});
     expect(en['+YJVTi']).toBe('Hey!');
   });
 
   it('skips node_modules, .next and .git by default', async ({page}) => {
     await page.goto('/');
-    await waitForExtraction(async () => {
-      try {
-        const en = await readJson(path.join(MESSAGES_DIR, 'en.json'));
-        return en['+YJVTi'] === 'Hey!';
-      } catch {
-        return false;
-      }
-    });
-    const en = await readJson(path.join(MESSAGES_DIR, 'en.json'));
+    const en = await expectJson('en.json', {'+YJVTi': 'Hey!'});
     expect(en['JdTriE']).toBeUndefined();
   });
 
@@ -226,14 +151,7 @@ export default function Greeting() {
     page
   }) => {
     await page.goto('/');
-    await waitForExtraction(async () => {
-      try {
-        const en = await readJson(path.join(MESSAGES_DIR, 'en.json'));
-        return en['+YJVTi'] === 'Hey!';
-      } catch {
-        return false;
-      }
-    });
+    await expectJson('en.json', {'+YJVTi': 'Hey!'});
 
     await using _ = await withTempEdit(
       'src/components/Greeting.tsx',
@@ -255,16 +173,11 @@ export default function Footer() {
     );
 
     await page.goto('/');
-    await waitForExtraction(async () => {
-      try {
-        const en = await readJson(path.join(MESSAGES_DIR, 'en.json'));
-        return (
-          en['NhX4DJ'] === 'Hello' &&
-          (en['+YJVTi'] === undefined || en['+YJVTi'] === null)
-        );
-      } catch {
-        return false;
-      }
+    await expectJsonPredicate('en.json', (j) => {
+      return (
+        j['NhX4DJ'] === 'Hello' &&
+        (j['+YJVTi'] === undefined || j['+YJVTi'] === null)
+      );
     });
 
     await using ___ = await withTempEdit(
@@ -293,28 +206,13 @@ export default function Footer() {
     );
 
     await page.goto('/');
-    await waitForExtraction(async () => {
-      try {
-        const en = await readJson(path.join(MESSAGES_DIR, 'en.json'));
-        return en['+YJVTi'] === 'Hey!';
-      } catch {
-        return false;
-      }
-    });
-    const en = await readJson(path.join(MESSAGES_DIR, 'en.json'));
+    const en = await expectJson('en.json', {'+YJVTi': 'Hey!'});
     expect(en['+YJVTi']).toBe('Hey!');
   });
 
   it('handles namespaces when storing messages', async ({page}) => {
     await page.goto('/');
-    await waitForExtraction(async () => {
-      try {
-        const en = await readJson(path.join(MESSAGES_DIR, 'en.json'));
-        return en['+YJVTi'] === 'Hey!';
-      } catch {
-        return false;
-      }
-    });
+    await expectJson('en.json', {'+YJVTi': 'Hey!'});
 
     await using _ = await withTempEdit(
       'src/components/Greeting.tsx',
@@ -330,16 +228,7 @@ export default function Greeting() {
     );
 
     await page.goto('/');
-    await waitForExtraction(async () => {
-      try {
-        const en = await readJson(path.join(MESSAGES_DIR, 'en.json'));
-        const ui = en['ui'] as Record<string, unknown>;
-        return ui?.['OpKKos'] === 'Hello!';
-      } catch {
-        return false;
-      }
-    });
-    const en = await readJson(path.join(MESSAGES_DIR, 'en.json'));
+    const en = await expectJson('en.json', {ui: {OpKKos: 'Hello!'}});
     expect((en['ui'] as Record<string, unknown>)['OpKKos']).toBe('Hello!');
   });
 
@@ -374,15 +263,7 @@ export default function Invalid() {
     );
 
     await page.goto('/');
-    await waitForExtraction(async () => {
-      try {
-        const en = await readJson(path.join(MESSAGES_DIR, 'en.json'));
-        return en['HovSZ7'] === 'Valid message';
-      } catch {
-        return false;
-      }
-    });
-    const en = await readJson(path.join(MESSAGES_DIR, 'en.json'));
+    const en = await expectJson('en.json', {HovSZ7: 'Valid message'});
     expect(en['HovSZ7']).toBe('Valid message');
     expect(en['Initially invalid']).toBeUndefined();
 
@@ -400,15 +281,10 @@ export default function Invalid() {
     );
 
     await page.goto('/');
-    await waitForExtraction(async () => {
-      try {
-        const en = await readJson(path.join(MESSAGES_DIR, 'en.json'));
-        return en['KvzhZT'] === 'Now valid' && en['HovSZ7'] === 'Valid message';
-      } catch {
-        return false;
-      }
+    const en2 = await expectJson('en.json', {
+      KvzhZT: 'Now valid',
+      HovSZ7: 'Valid message'
     });
-    const en2 = await readJson(path.join(MESSAGES_DIR, 'en.json'));
     expect(en2['KvzhZT']).toBe('Now valid');
     expect(en2['HovSZ7']).toBe('Valid message');
   });
