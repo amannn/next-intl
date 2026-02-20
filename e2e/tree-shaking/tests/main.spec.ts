@@ -1,10 +1,20 @@
 import {expect, test as it, type Page} from '@playwright/test';
-import {writeFileSync} from 'fs';
+import {readFileSync, writeFileSync} from 'fs';
 import {join} from 'path';
 
 const {describe} = it;
 
 const COUNTER_PATH = join(process.cwd(), 'src/app/Counter.tsx');
+
+function useCounterRestore() {
+  const original = readFileSync(COUNTER_PATH, 'utf-8');
+  return {
+    original,
+    [Symbol.dispose]() {
+      writeFileSync(COUNTER_PATH, original);
+    }
+  };
+}
 
 const routesMap = {
   '/': [
@@ -250,51 +260,20 @@ describe('provider client messages', () => {
   });
 });
 
-const COUNTER_ORIGINAL = `'use client';
-
-import {useExtracted} from 'next-intl';
-import {useState} from 'react';
-import ClientBoundary from '@/components/ClientBoundary';
-
-export default function Counter() {
-  const [count, setCount] = useState(1000);
-  const t = useExtracted();
-
-  function onIncrement() {
-    setCount(count + 1);
-  }
-
-  return (
-    <ClientBoundary>
-      <p>{t('Count: {count, number}', {count})}</p>
-      <button
-        className="border border-gray-300 rounded-md px-2 py-1"
-        onClick={onIncrement}
-      >
-        {t('Increment')}
-      </button>
-    </ClientBoundary>
-  );
-}
-`;
-
 describe.serial('HMR message updates', () => {
   const HMR_POLL_TIMEOUT_MS = 15_000;
-
-  it.afterEach(() => {
-    writeFileSync(COUNTER_PATH, COUNTER_ORIGINAL);
-  });
 
   it('updates rendered messages when modifying client message', async ({
     page
   }) => {
+    using restore = useCounterRestore();
     await page.goto('/');
-    let messages = await readProviderClientMessages(page);
+    const messages = await readProviderClientMessages(page);
     expect(messagesContainValue(messages, 'Increment')).toBe(true);
 
     writeFileSync(
       COUNTER_PATH,
-      COUNTER_ORIGINAL.replace("'Increment'", "'Increment plus'")
+      restore.original.replace("'Increment'", "'Increment plus'")
     );
 
     await expect
@@ -314,14 +293,15 @@ describe.serial('HMR message updates', () => {
   it('updates rendered messages when adding client message', async ({
     page
   }) => {
+    using restore = useCounterRestore();
     await page.goto('/');
     await page.reload(); // Reset after previous test's restore (messages come from server)
-    let messages = await readProviderClientMessages(page);
+    const messages = await readProviderClientMessages(page);
     expect(messagesContainValue(messages, 'Increment')).toBe(true);
 
     writeFileSync(
       COUNTER_PATH,
-      COUNTER_ORIGINAL.replace(
+      restore.original.replace(
         '</button>\n    </ClientBoundary>',
         '</button>\n      <span>{t(\'Decrement\')}</span>\n    </ClientBoundary>'
       )
@@ -344,14 +324,15 @@ describe.serial('HMR message updates', () => {
   it('updates rendered messages when deleting client message', async ({
     page
   }) => {
+    using restore = useCounterRestore();
     await page.goto('/');
     await page.reload(); // Reset after previous test's restore (messages come from server)
-    let messages = await readProviderClientMessages(page);
+    const messages = await readProviderClientMessages(page);
     expect(messagesContainValue(messages, 'Increment')).toBe(true);
 
     writeFileSync(
       COUNTER_PATH,
-      COUNTER_ORIGINAL.replace("{t('Increment')}", "'Click'")
+      restore.original.replace("{t('Increment')}", "'Click'")
     );
 
     await expect
