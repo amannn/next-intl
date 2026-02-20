@@ -110,7 +110,7 @@ async function collectNamespacesFromGraph(
     const hasTranslations = analysis.translations.length > 0;
     if (effectiveClient || hasTranslations) {
       if (effectiveClient && analysis.requiresAllMessages) namespaces = true;
-      if (namespaces !== true && hasTranslations) {
+      if (namespaces !== true && hasTranslations && effectiveClient) {
         for (const translation of analysis.translations) {
           addToManifest(namespaces as Record<string, unknown>, translation);
         }

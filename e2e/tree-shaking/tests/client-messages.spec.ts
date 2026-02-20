@@ -6,8 +6,7 @@ const routesMap = {
   '/': [
     {
       jm1lmy: ['Count: ', ['count', 4]],
-      tQLRmz: 'Increment',
-      vlslj0: ['Hey ', ['name'], '!']
+      tQLRmz: 'Increment'
     }
   ],
   '/dynamic-segment/test': [
@@ -34,15 +33,12 @@ const routesMap = {
   ],
   '/actions': [
     {
-      'RNB4/W': 'Load lazy content',
-      mz9I4r: 'Server action page',
-      sJNiQX: 'Returned from action'
+      'RNB4/W': 'Load lazy content'
     }
   ],
   '/type-imports': [
     {
-      GO9hSh: ['Test label: ', ['value']],
-      MmAwwP: 'Type imports page'
+      GO9hSh: ['Test label: ', ['value']]
     }
   ],
   '/group-one': [
