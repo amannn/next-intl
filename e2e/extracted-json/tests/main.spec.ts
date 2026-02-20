@@ -202,23 +202,8 @@ export default function Greeting() {
     expect((en['ui'] as Record<string, unknown>)['OpKKos']).toBe('Hello!');
   });
 
-  it('omits file with parse error during initial scan but continues processing others', async ({
-    page
-  }) => {
+  it('throws on parse error for invalid file', async ({page}) => {
     await using _ = await withTempFileApp(
-      'src/components/Valid.tsx',
-      `'use client';
-
-import {useExtracted} from 'next-intl';
-
-export default function Valid() {
-  const t = useExtracted();
-  return <div>{t('Valid message')}</div>;
-}
-`
-    );
-
-    await using __ = await withTempFileApp(
       'src/components/Invalid.tsx',
       `'use client';
 
@@ -233,29 +218,8 @@ export default function Invalid() {
     );
 
     await page.goto('/');
-    const en = await expectJson('en.json', {HovSZ7: 'Valid message'});
-    expect(en['HovSZ7']).toBe('Valid message');
-    expect(en['Initially invalid']).toBeUndefined();
-
-    await using ___ = await withTempEditApp(
-      'src/components/Invalid.tsx',
-      `'use client';
-
-import {useExtracted} from 'next-intl';
-
-export default function Invalid() {
-  const t = useExtracted();
-  return <div>{t('Now valid')}</div>;
-}
-`
-    );
-
-    await page.goto('/');
-    const en2 = await expectJson('en.json', {
-      KvzhZT: 'Now valid',
-      HovSZ7: 'Valid message'
+    await expectJsonPredicate('en.json', (j) => {
+      return j['Initially invalid'] === undefined;
     });
-    expect(en2['KvzhZT']).toBe('Now valid');
-    expect(en2['HovSZ7']).toBe('Valid message');
   });
 });

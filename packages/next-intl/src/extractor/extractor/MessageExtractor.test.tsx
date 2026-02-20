@@ -107,6 +107,20 @@ it('does not add a fallback message in production', async () => {
 });
 
 describe('error handling', () => {
+  it('throws when source has parse error', async () => {
+    await expect(
+      process(
+        `'use client';
+import {useExtracted} from 'next-intl';
+export default function Invalid() {
+  const t = useExtracted();
+  return <div>{t('Initially invalid')}</div>;
+// Missing closing brace
+`
+      )
+    ).rejects.toThrow();
+  });
+
   it('throws when using a template literal with interpolation', async () => {
     await expect(async () => {
       await process(
