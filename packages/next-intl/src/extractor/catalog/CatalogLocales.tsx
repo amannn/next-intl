@@ -66,6 +66,13 @@ export default class CatalogLocales {
     }
   }
 
+  /** Ensures the messages-dir watcher is active. Call before relying on new-catalog detection. */
+  public async ensureWatcherReady(): Promise<void> {
+    if (this.locales === 'infer' && !this.watcher) {
+      await this.startWatcher();
+    }
+  }
+
   public unsubscribeLocalesChange(callback: LocaleChangeCallback): void {
     this.onChangeCallbacks.delete(callback);
     if (this.onChangeCallbacks.size === 0) {
