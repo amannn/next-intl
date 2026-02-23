@@ -27,7 +27,7 @@ it('writes to newly added catalog file', async ({page}) => {
   await page.goto('/');
   await expectCatalog('en.json', {'+YJVTi': 'Hey!', NhX4DJ: 'Hello'});
 
-  await using _ = await withTempFileApp('messages/fr.json', '{}');
+  await using _ = await withTempFileApp('messages/fr.json', '');
 
   await page.goto('/');
   const fr = await expectCatalog('fr.json', {'+YJVTi': '', NhX4DJ: ''}, {
