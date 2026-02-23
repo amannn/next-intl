@@ -173,6 +173,7 @@ export default class CatalogManager implements Disposable {
     if (this.isDevelopment) {
       const catalogLocales = this.getCatalogLocales();
       catalogLocales.subscribeLocalesChange(this.onLocalesChange);
+      await catalogLocales.ensureWatcherReady();
     }
   }
 

@@ -45,6 +45,9 @@ export default class CatalogPersister {
         {cause: error}
       );
     }
+    if (content.trim() === '') {
+      return [];
+    }
     try {
       return this.codec.decode(content, {locale});
     } catch (error) {
