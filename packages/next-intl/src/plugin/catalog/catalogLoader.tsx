@@ -96,6 +96,9 @@ export default function catalogLoader(
           this.addContextDependency?.(srcPath);
           extractorLogger.addContextDependency({projectRoot, path: srcPath});
         }
+        const messagesDir = path.resolve(projectRoot, options.messages.path);
+        this.addContextDependency?.(messagesDir);
+        extractorLogger.addContextDependency({projectRoot, path: messagesDir});
         const extractionStart = Date.now();
         extractorLogger.extractionStart({
           projectRoot,

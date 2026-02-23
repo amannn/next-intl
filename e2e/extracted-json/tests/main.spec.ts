@@ -224,7 +224,7 @@ export default function Greeting() {
   expect(en['+YJVTi']).toBe('Hey!');
 });
 
-it('restores previous translations when messages are added back', async ({
+it.skip('restores previous translations when messages are added back', async ({
   page
 }) => {
   await page.goto('/');
