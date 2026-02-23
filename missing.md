@@ -80,9 +80,8 @@ Tests that could not be migrated to e2e or proved unreliable.
 
 ## srcPath filtering
 
-- Migrated to e2e/extracted-json-srcpath
-  - verdict: no, this should be part of e2e/extracted-json
-  - note: Attempted merge into extracted-json with Playwright projects; project-level webServer for srcpath (E2E_SRCPATH=1, different port) did not start reliably (ERR_CONNECTION_REFUSED). Kept as separate app for now.
+- includes node_modules if explicitly requested
+  - verdict: keep as unit test (in ExtractionCompiler.test.tsx)
 
 ## Config-dependent
 

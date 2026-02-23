@@ -302,6 +302,53 @@ describe('json format', () => {
     );
   }
 
+  it('includes node_modules if explicitly requested', {timeout: 10000}, async () => {
+    (
+      filesystem.project as Record<string, unknown>
+    ).node_modules = {
+      'shared-ui': {
+        src: {
+          'ProfileCard.tsx': `'use client';
+import {useExtracted} from 'next-intl';
+export default function ProfileCard() {
+  const t = useExtracted();
+  return <h2>{t('Profile card')}</h2>;
+}
+`
+        }
+      }
+    };
+    filesystem.project.messages = {
+      'en.json': '{}',
+      'de.json': '{}'
+    };
+
+    using compiler = new ExtractionCompiler(
+      {
+        srcPath: ['./src', 'node_modules/shared-ui/src'],
+        sourceLocale: 'en',
+        messages: {
+          path: './messages',
+          format: 'json',
+          locales: 'infer'
+        }
+      },
+      {
+        isDevelopment: true,
+        projectRoot: '/project'
+      }
+    );
+    await compiler.extractAll();
+
+    await waitForWriteFileCalls(2);
+    const enCall = vi.mocked(fs.writeFile).mock.calls.find(
+      (call) => call[0] === 'messages/en.json'
+    );
+    expect(enCall).toBeDefined();
+    const enContent = JSON.parse(enCall![1] as string);
+    expect(enContent['Cq+Nds']).toBe('Profile card');
+  });
+
   it('saves messages initially', {timeout: 10000}, async () => {
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
