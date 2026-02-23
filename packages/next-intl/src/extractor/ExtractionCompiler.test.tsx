@@ -19,18 +19,6 @@ const filesystem: {
 };
 
 const fileTimestamps = new Map<string, Date>();
-const watchCallbacks: Map<string, (event: string, filename: string) => void> =
-  new Map();
-const mockWatchers: Map<string, {close(): void}> = new Map();
-const readFileInterceptors = new Map<string, () => Promise<void>>();
-const parcelWatcherCallbacks = new Map<
-  string,
-  (err: Error | null, events: Array<{type: string; path: string}>) => void
->();
-const parcelWatcherSubscriptions = new Map<
-  string,
-  {unsubscribe(): Promise<void>}
->();
 
 beforeEach(() => {
   filesystem.project = {
@@ -39,11 +27,6 @@ beforeEach(() => {
   };
   delete (filesystem as Record<string, unknown>).ui;
   fileTimestamps.clear();
-  watchCallbacks.clear();
-  mockWatchers.clear();
-  readFileInterceptors.clear();
-  parcelWatcherCallbacks.clear();
-  parcelWatcherSubscriptions.clear();
   vi.clearAllMocks();
 });
 
@@ -145,83 +128,20 @@ function createENOENTError(filePath: string): NodeJS.ErrnoException {
 }
 
 vi.mock('@parcel/watcher', () => ({
-  subscribe: vi.fn(
-    async (
-      rootPath: string,
-      callback: (
-        err: Error | null,
-        events: Array<{type: string; path: string}>
-      ) => void
-    ) => {
-      parcelWatcherCallbacks.set(rootPath, callback);
-      const normalizedPath = path.resolve(rootPath);
-      if (normalizedPath !== rootPath) {
-        parcelWatcherCallbacks.set(normalizedPath, callback);
-      }
-      if (!rootPath.startsWith('/')) {
-        parcelWatcherCallbacks.set(
-          path.join(process.cwd(), rootPath),
-          callback
-        );
-      }
-      const subscription = {
-        unsubscribe: vi.fn(async () => {
-          parcelWatcherCallbacks.delete(rootPath);
-          if (normalizedPath !== rootPath) {
-            parcelWatcherCallbacks.delete(normalizedPath);
-          }
-          if (!rootPath.startsWith('/')) {
-            parcelWatcherCallbacks.delete(path.join(process.cwd(), rootPath));
-          }
-          parcelWatcherSubscriptions.delete(rootPath);
-        })
-      };
-      parcelWatcherSubscriptions.set(rootPath, subscription);
-      return subscription;
-    }
-  )
+  subscribe: vi.fn(async () => ({
+    unsubscribe: vi.fn(async () => {})
+  }))
 }));
 
 vi.mock('fs', () => ({
   default: {
-    watch: vi.fn(
-      (
-        dirPath: string,
-        _options: {persistent: boolean; recursive: boolean},
-        callback: (event: string, filename: string) => void
-      ) => {
-        watchCallbacks.set(dirPath, callback);
-        if (dirPath.startsWith('/')) {
-          watchCallbacks.set(path.resolve(dirPath), callback);
-        } else {
-          watchCallbacks.set(path.join(process.cwd(), dirPath), callback);
-        }
-        const watcher = {
-          close: vi.fn(() => {
-            watchCallbacks.delete(dirPath);
-            if (dirPath.startsWith('/')) {
-              watchCallbacks.delete(path.resolve(dirPath));
-            } else {
-              watchCallbacks.delete(path.join(process.cwd(), dirPath));
-            }
-            mockWatchers.delete(dirPath);
-          })
-        };
-        mockWatchers.set(dirPath, watcher);
-        return watcher;
-      }
-    )
+    watch: vi.fn(() => ({close: vi.fn()}))
   }
 }));
 
 vi.mock('fs/promises', () => ({
   default: {
     readFile: vi.fn(async (filePath: string) => {
-      for (const [key, interceptor] of readFileInterceptors) {
-        if (filePath.endsWith(key)) {
-          await interceptor();
-        }
-      }
       const content = getNestedValue(filesystem, filePath);
       if (typeof content === 'string') {
         return content;
@@ -302,52 +222,54 @@ describe('json format', () => {
     );
   }
 
-  it('includes node_modules if explicitly requested', {timeout: 10000}, async () => {
-    (
-      filesystem.project as Record<string, unknown>
-    ).node_modules = {
-      'shared-ui': {
-        src: {
-          'ProfileCard.tsx': `'use client';
+  it(
+    'includes node_modules if explicitly requested',
+    {timeout: 10000},
+    async () => {
+      (filesystem.project as Record<string, unknown>).node_modules = {
+        'shared-ui': {
+          src: {
+            'ProfileCard.tsx': `'use client';
 import {useExtracted} from 'next-intl';
 export default function ProfileCard() {
   const t = useExtracted();
   return <h2>{t('Profile card')}</h2>;
 }
 `
+          }
         }
-      }
-    };
-    filesystem.project.messages = {
-      'en.json': '{}',
-      'de.json': '{}'
-    };
+      };
+      filesystem.project.messages = {
+        'en.json': '{}',
+        'de.json': '{}'
+      };
 
-    using compiler = new ExtractionCompiler(
-      {
-        srcPath: ['./src', 'node_modules/shared-ui/src'],
-        sourceLocale: 'en',
-        messages: {
-          path: './messages',
-          format: 'json',
-          locales: 'infer'
+      using compiler = new ExtractionCompiler(
+        {
+          srcPath: ['./src', 'node_modules/shared-ui/src'],
+          sourceLocale: 'en',
+          messages: {
+            path: './messages',
+            format: 'json',
+            locales: 'infer'
+          }
+        },
+        {
+          isDevelopment: true,
+          projectRoot: '/project'
         }
-      },
-      {
-        isDevelopment: true,
-        projectRoot: '/project'
-      }
-    );
-    await compiler.extractAll();
+      );
+      await compiler.extractAll();
 
-    await waitForWriteFileCalls(2);
-    const enCall = vi.mocked(fs.writeFile).mock.calls.find(
-      (call) => call[0] === 'messages/en.json'
-    );
-    expect(enCall).toBeDefined();
-    const enContent = JSON.parse(enCall![1] as string);
-    expect(enContent['Cq+Nds']).toBe('Profile card');
-  });
+      await waitForWriteFileCalls(2);
+      const enCall = vi
+        .mocked(fs.writeFile)
+        .mock.calls.find((call) => call[0] === 'messages/en.json');
+      expect(enCall).toBeDefined();
+      const enContent = JSON.parse(enCall![1] as string);
+      expect(enContent['Cq+Nds']).toBe('Profile card');
+    }
+  );
 
   it('saves messages initially', {timeout: 10000}, async () => {
     filesystem.project.src['Greeting.tsx'] = `
