@@ -51,15 +51,6 @@ export default class CatalogPersister {
     try {
       return this.codec.decode(content, {locale});
     } catch (error) {
-      const isParseError =
-        error instanceof SyntaxError ||
-        (error &&
-          typeof error === 'object' &&
-          'cause' in error &&
-          (error as {cause?: unknown}).cause instanceof SyntaxError);
-      if (isParseError) {
-        return [];
-      }
       throw new Error(
         `Error while decoding ${this.getFileName(locale)}:\n> ${error}`,
         {cause: error}
