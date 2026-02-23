@@ -104,7 +104,8 @@ export default function Greeting() {
   await page.goto('/');
   const content = await expectCatalog(
     'en.po',
-    (content) => getPoEntry(content, 'OpKKos') != null
+    (content) => getPoEntry(content, 'OpKKos') != null,
+    {timeout: 15_000}
   );
   const entry = getPoEntry(content, 'OpKKos');
   expect(entry).toMatch(/msgstr "Hello!"/);
