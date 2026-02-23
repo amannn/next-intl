@@ -10,13 +10,10 @@ export {
 
 /** Extract full PO entry block for msgid (refs + comment + msgctxt + msgid + msgstr) */
 export function getPoEntry(poContent: string, msgid: string): string | null {
+  const blocks = poContent.split(/\n\n+/);
   const escaped = msgid.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const re = new RegExp(
-    `(?:^|\\n\\n)(((?:#:[^\\n]*\\n|#\\.[^\\n]*\\n)*(?:msgctxt "[^"]*"\\n)?msgid "${escaped}"\\nmsgstr "[^"]*"))`,
-    'm'
-  );
-  const match = poContent.match(re);
-  return match ? match[1].trim() : null;
+  const block = blocks.find((b) => new RegExp(`msgid "${escaped}"`).test(b));
+  return block ? block.trim() : null;
 }
 
 export function createExtractionHelpers(messagesDir: string) {
