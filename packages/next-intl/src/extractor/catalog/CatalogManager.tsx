@@ -18,6 +18,7 @@ import {
 } from '../utils.js';
 import CatalogLocales from './CatalogLocales.js';
 import CatalogPersister from './CatalogPersister.js';
+import OrphanedTranslationsCache from './OrphanedTranslationsCache.js';
 import SaveScheduler from './SaveScheduler.js';
 
 export default class CatalogManager implements Disposable {
@@ -55,6 +56,7 @@ export default class CatalogManager implements Disposable {
   private isDevelopment: boolean;
 
   // Cached instances
+  private orphanedCache: OrphanedTranslationsCache;
   private persister?: CatalogPersister;
   private codec?: ExtractorCodec;
   private catalogLocales?: CatalogLocales;
@@ -79,7 +81,7 @@ export default class CatalogManager implements Disposable {
     this.saveScheduler = new SaveScheduler<void>(50);
     this.projectRoot = opts.projectRoot ?? getDefaultProjectRoot();
     this.isDevelopment = opts.isDevelopment ?? false;
-
+    this.orphanedCache = new OrphanedTranslationsCache(this.projectRoot);
     this.extractor = opts.extractor;
   }
 
@@ -260,6 +262,29 @@ export default class CatalogManager implements Disposable {
     }
   }
 
+  private async restoreOrphanedTranslations(
+    messageId: string,
+    targetLocales: Array<Locale>
+  ): Promise<boolean> {
+    let restored = false;
+    for (const locale of targetLocales) {
+      const entry = await this.orphanedCache.get(locale, messageId);
+      if (entry) {
+        let translations = this.translationsByTargetLocale.get(locale);
+        if (!translations) {
+          translations = new Map();
+          this.translationsByTargetLocale.set(locale, translations);
+        }
+        translations.set(messageId, {
+          id: messageId,
+          message: entry.message
+        });
+        restored = true;
+      }
+    }
+    return restored;
+  }
+
   private mergeSourceDiskMetadata(
     diskMessages: Map<string, ExtractorMessage>
   ): void {
@@ -307,8 +332,13 @@ export default class CatalogManager implements Disposable {
     // Replace existing messages with new ones
     const fileMessages = new Map<string, ExtractorMessage>();
 
+    const targetLocales = await this.getTargetLocales();
     for (let message of messages) {
       const prevMessage = this.messagesById.get(message.id);
+
+      if (!prevMessage) {
+        await this.restoreOrphanedTranslations(message.id, targetLocales);
+      }
 
       // Merge with previous message if it exists
       if (prevMessage) {
@@ -340,25 +370,32 @@ export default class CatalogManager implements Disposable {
     }
 
     // Clean up removed messages from `messagesById`
-    idsToRemove.forEach((id) => {
+    for (const id of idsToRemove) {
       const message = this.messagesById.get(id);
-      if (!message) return;
+      if (!message) continue;
 
       const hasOtherReferences = message.references?.some(
         (ref) => ref.path !== relativeFilePath
       );
 
       if (!hasOtherReferences) {
-        // No other references, delete the message entirely
+        for (const locale of targetLocales) {
+          const translation = this.translationsByTargetLocale
+            .get(locale)
+            ?.get(id);
+          if (translation?.message) {
+            await this.orphanedCache.add(locale, id, {
+              message: translation.message
+            });
+          }
+        }
         this.messagesById.delete(id);
       } else {
-        // Message is used elsewhere, remove this file from references
-        // Mutate the existing object to keep `messagesById` and `messagesByFile` in sync
         message.references = message.references?.filter(
           (ref) => ref.path !== relativeFilePath
         );
       }
-    });
+    }
 
     // Update the stored messages
     if (messages.length > 0) {
@@ -473,6 +510,16 @@ export default class CatalogManager implements Disposable {
     const localeMessages = isSourceLocale
       ? this.messagesById
       : this.translationsByTargetLocale.get(locale);
+
+    if (!isSourceLocale && localeMessages) {
+      for (const [id, translation] of localeMessages) {
+        if (!this.messagesById.has(id) && translation.message) {
+          await this.orphanedCache.add(locale, id, {
+            message: translation.message
+          });
+        }
+      }
+    }
 
     const messagesToPersist = messages.map((message) => {
       const localeMessage = localeMessages?.get(message.id);
