@@ -13,23 +13,45 @@ import SourceFileFilter from '../extractor/source/SourceFileFilter.js';
 import type {CatalogLoaderConfig, ExtractorConfig} from '../extractor/types.js';
 import {isDevelopmentOrNextBuild} from './config.js';
 import {hasStableTurboConfig, isNextJs16OrHigher} from './nextFlags.js';
+import type {ManifestLoaderConfig} from './treeShaking/manifestLoaderConfig.js';
 import type {PluginConfig} from './types.js';
 import {throwError} from './utils.js';
 
 const require = createRequire(import.meta.url);
+
 function withExtensions(localPath: string) {
-  return [
-    `${localPath}.ts`,
-    `${localPath}.tsx`,
-    `${localPath}.js`,
-    `${localPath}.jsx`
-  ];
+  return SourceFileFilter.EXTENSIONS.map((ext) => `${localPath}.${ext}`);
 }
 
 function normalizeTurbopackAliasPath(pathname: string) {
   // Turbopack alias targets should use forward slashes; Windows backslashes can
   // break resolution in dev (see `next-intl/config` alias path style).
   return pathname.replace(/\\/g, '/');
+}
+
+function normalizeSrcPath(srcPath: string) {
+  const normalized = srcPath.replace(/[/\\]+$/, '');
+  return normalized || srcPath;
+}
+
+function getConfiguredSrcPaths(srcPath: string | Array<string>): Array<string> {
+  const srcPaths = Array.isArray(srcPath) ? srcPath : [srcPath];
+  return srcPaths.map((currentPath) =>
+    normalizeTurbopackAliasPath(normalizeSrcPath(currentPath))
+  );
+}
+
+function getPathCondition(paths: Array<string>): string {
+  return paths.length === 1 ? paths[0] : `{${paths.join(',')}}`;
+}
+
+function getAppSourcePaths(srcPaths: Array<string>): Array<string> {
+  return srcPaths.flatMap((srcPath) =>
+    SourceFileFilter.EXTENSIONS.flatMap((ext) => [
+      `${srcPath}/**/*.${ext}`,
+      `${srcPath}/*.${ext}`
+    ])
+  );
 }
 
 function resolveI18nPath(providedPath?: string, cwd?: string) {
@@ -118,6 +140,20 @@ export default function getNextConfig(
     };
   }
 
+  function getManifestLoaderConfig(): {
+    loader: string;
+    options: TurbopackLoaderOptions;
+  } {
+    const srcPaths = getConfiguredSrcPaths(pluginConfig.experimental!.srcPath!);
+    return {
+      loader: 'next-intl/treeShaking/manifestLoader',
+      options: {
+        projectRoot: process.cwd(),
+        srcPaths
+      } satisfies ManifestLoaderConfig as TurbopackLoaderOptions
+    };
+  }
+
   function getTurboRules() {
     return (
       nextConfig?.turbopack?.rules ||
@@ -154,6 +190,13 @@ export default function getNextConfig(
     if (!messages.path) {
       throwError('`path` is required when using `messages`.');
     }
+  }
+
+  if (
+    pluginConfig.experimental?.treeShaking &&
+    !pluginConfig.experimental.srcPath
+  ) {
+    throwError('`experimental.srcPath` is required when using `treeShaking`.');
   }
 
   if (shouldConfigureTurbo) {
@@ -203,20 +246,36 @@ export default function getNextConfig(
         throwError('Message extraction requires Next.js 16 or higher.');
       }
       rules ??= getTurboRules();
-      const srcPaths = (
-        Array.isArray(pluginConfig.experimental.srcPath!)
-          ? pluginConfig.experimental.srcPath!
-          : [pluginConfig.experimental.srcPath!]
-      ).map((srcPath) =>
-        srcPath.endsWith('/') ? srcPath.slice(0, -1) : srcPath
+      const srcPaths = getConfiguredSrcPaths(
+        pluginConfig.experimental.srcPath!
       );
       addTurboRule(rules!, `*.{${SourceFileFilter.EXTENSIONS.join(',')}}`, {
         loaders: [getExtractMessagesLoaderConfig()],
         condition: {
           // Note: We don't need `not: 'foreign'`, because this is
           // implied by the filter based on `srcPath`.
-          path: `{${srcPaths.join(',')}}` + '/**/*',
+          path: getPathCondition(srcPaths.map((srcPath) => `${srcPath}/**/*`)),
           content: /(useExtracted|getExtracted)/
+        }
+      });
+    }
+
+    // Add manifest loader
+    if (pluginConfig.experimental?.treeShaking) {
+      if (!isNextJs16OrHigher()) {
+        throwError('Tree-shaking requires Next.js 16 or higher.');
+      }
+      rules ??= getTurboRules();
+      const manifestLoaderConfig = getManifestLoaderConfig();
+      const srcPaths = getConfiguredSrcPaths(
+        pluginConfig.experimental.srcPath!
+      );
+      addTurboRule(rules!, '*.{ts,tsx}', {
+        loaders: [manifestLoaderConfig],
+        condition: {
+          path: getPathCondition(getAppSourcePaths(srcPaths)),
+          content:
+            /messages\s*=\s*["']infer["']|messages\s*=\s*\{\s*["']infer["']\s*\}/
         }
       });
     }
@@ -282,7 +341,6 @@ export default function getNextConfig(
           config.context!,
           resolveI18nPath(pluginConfig.requestConfig, config.context)
         );
-
       // Add alias for precompiled message formatting
       if (pluginConfig.experimental?.messages?.precompile) {
         // Use require.resolve to get the actual file path, since
@@ -291,6 +349,21 @@ export default function getNextConfig(
         (config.resolve.alias as Record<string, string>)[
           'use-intl/format-message'
         ] = require.resolve('use-intl/format-message/format-only');
+      }
+
+      // Add manifest loader
+      if (pluginConfig.experimental?.treeShaking) {
+        if (!config.module) config.module = {};
+        if (!config.module.rules) config.module.rules = [];
+        const srcPath = pluginConfig.experimental.srcPath;
+        const include = Array.isArray(srcPath)
+          ? srcPath.map((cur) => path.resolve(config.context!, cur))
+          : path.resolve(config.context!, srcPath || '');
+        config.module.rules.push({
+          test: new RegExp(`\\.(${SourceFileFilter.EXTENSIONS.join('|')})$`),
+          include,
+          use: [getManifestLoaderConfig()]
+        });
       }
 
       // Add loader for extractor

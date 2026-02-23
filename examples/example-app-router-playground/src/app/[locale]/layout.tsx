@@ -6,7 +6,8 @@ import {
   getFormatter,
   getNow,
   getTimeZone,
-  getTranslations
+  getTranslations,
+  getMessages
 } from 'next-intl/server';
 import {routing} from '@/i18n/routing';
 import Navigation from '../../components/Navigation';
@@ -51,6 +52,8 @@ export default async function LocaleLayout({
     notFound();
   }
 
+  const messages = await getMessages({locale});
+
   return (
     <html className={inter.className} lang={locale}>
       <body>
@@ -61,7 +64,7 @@ export default async function LocaleLayout({
             lineHeight: 1.5
           }}
         >
-          <NextIntlClientProvider>
+          <NextIntlClientProvider messages={messages}>
             <Navigation />
             {children}
           </NextIntlClientProvider>

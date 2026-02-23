@@ -32,4 +32,8 @@ export default class LRUCache<Value> {
     }
     return undefined;
   }
+
+  public delete(key: string): boolean {
+    return this.cache.delete(key);
+  }
 }
