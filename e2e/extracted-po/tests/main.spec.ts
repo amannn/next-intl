@@ -3,7 +3,8 @@ import {fileURLToPath} from 'url';
 import {expect, test as it} from '@playwright/test';
 import {
   createExtractionHelpers,
-  withTempEdit
+  withTempEdit,
+  withTempRemove
 } from '../../extracted-json/tests/helpers.js';
 
 const {describe} = it;
@@ -14,15 +15,51 @@ const MESSAGES_DIR = path.join(APP_ROOT, 'messages');
 
 const {expectPo} = createExtractionHelpers(MESSAGES_DIR);
 const withTempEditApp = (p: string, c: string) => withTempEdit(APP_ROOT, p, c);
+const withTempRemoveApp = (p: string) => withTempRemove(APP_ROOT, p);
 
 describe('extraction po format', () => {
   it('saves messages initially', async ({page}) => {
     await page.goto('/');
-    const content = await expectPo('en.po', (c) => {
-      return c.includes('msgid "+YJVTi"') && c.includes('msgstr "Hey!"');
+    const content = await expectPo('en.po', (poContent) => {
+      return (
+        poContent.includes('msgid "+YJVTi"') && poContent.includes('msgstr "Hey!"')
+      );
     });
     expect(content).toContain('msgid "+YJVTi"');
     expect(content).toContain('msgstr "Hey!"');
+  });
+
+  it('saves catalog when it\'s missing', async ({page}) => {
+    await page.goto('/');
+    await expectPo('en.po', (poContent) => poContent.includes('msgid "+YJVTi"'));
+
+    await using _ = await withTempRemoveApp('messages/en.po');
+
+    await using __ = await withTempEditApp(
+      'src/components/Greeting.tsx',
+      `'use client';
+
+import {useExtracted} from 'next-intl';
+
+export default function Greeting() {
+  const t = useExtracted();
+  return <div>{t('Hey!')}{t('Hello!')}</div>;
+}
+`
+    );
+
+    await page.goto('/');
+    const content = await expectPo('en.po', (poContent) => {
+      return (
+        poContent.includes('msgid "+YJVTi"') &&
+        poContent.includes('msgstr "Hey!"') &&
+        poContent.includes('msgid "OpKKos"') &&
+        poContent.includes('msgstr "Hello!"')
+      );
+    });
+    expect(content).toContain('msgid "+YJVTi"');
+    expect(content).toContain('msgid "OpKKos"');
+    expect(content).toContain('msgstr "Hello!"');
   });
 
   it('tracks all line numbers when same message appears multiple times in one file', async ({
@@ -48,11 +85,11 @@ export default function Greeting() {
     );
 
     await page.goto('/');
-    const content = await expectPo('en.po', (c) => {
+    const content = await expectPo('en.po', (poContent) => {
       return (
-        c.includes('msgid "OpKKos"') &&
-        c.includes('msgstr "Hello!"') &&
-        c.includes('Greeting.tsx')
+        poContent.includes('msgid "OpKKos"') &&
+        poContent.includes('msgstr "Hello!"') &&
+        poContent.includes('Greeting.tsx')
       );
     });
     const greetingRefs = content.match(/#: [^\n]*Greeting\.tsx[^\n]*/g) ?? [];
@@ -63,7 +100,7 @@ export default function Greeting() {
 
   it('saves changes to descriptions', async ({page}) => {
     await page.goto('/');
-    await expectPo('en.po', (c) => c.includes('msgid "+YJVTi"'));
+    await expectPo('en.po', (poContent) => poContent.includes('msgid "+YJVTi"'));
 
     await using _ = await withTempEditApp(
       'src/components/Greeting.tsx',
@@ -86,9 +123,10 @@ export default function Greeting() {
     );
 
     await page.goto('/');
-    const content = await expectPo('en.po', (c) => {
+    const content = await expectPo('en.po', (poContent) => {
       return (
-        c.includes('#. Shown on home screen') && c.includes('msgid "+YJVTi"')
+        poContent.includes('#. Shown on home screen') &&
+        poContent.includes('msgid "+YJVTi"')
       );
     });
     expect(content).toContain('#. Shown on home screen');
@@ -97,11 +135,11 @@ export default function Greeting() {
 
   it('combines references from multiple files', async ({page}) => {
     await page.goto('/');
-    const content = await expectPo('en.po', (c) => {
+    const content = await expectPo('en.po', (poContent) => {
       return (
-        c.includes('msgid "+YJVTi"') &&
-        c.includes('Footer.tsx') &&
-        c.includes('Greeting.tsx')
+        poContent.includes('msgid "+YJVTi"') &&
+        poContent.includes('Footer.tsx') &&
+        poContent.includes('Greeting.tsx')
       );
     });
     expect(content).toContain('src/components/Footer.tsx');
@@ -111,7 +149,7 @@ export default function Greeting() {
 
   it('supports namespaces', async ({page}) => {
     await page.goto('/');
-    await expectPo('en.po', (c) => c.includes('msgid "+YJVTi"'));
+    await expectPo('en.po', (poContent) => poContent.includes('msgid "+YJVTi"'));
 
     await using _ = await withTempEditApp(
       'src/components/Greeting.tsx',
@@ -127,8 +165,10 @@ export default function Greeting() {
     );
 
     await page.goto('/');
-    const content = await expectPo('en.po', (c) => {
-      return c.includes('msgctxt "ui"') && c.includes('msgid "OpKKos"');
+    const content = await expectPo('en.po', (poContent) => {
+      return (
+        poContent.includes('msgctxt "ui"') && poContent.includes('msgid "OpKKos"')
+      );
     });
     expect(content).toContain('msgctxt "ui"');
     expect(content).toContain('msgid "OpKKos"');
@@ -157,8 +197,11 @@ export default function Greeting() {
     );
 
     await page.goto('/');
-    await expectPo('en.po', (c) => {
-      return c.includes('msgid "+YJVTi"') && c.includes('msgid "4xqPlJ"');
+    await expectPo('en.po', (poContent) => {
+      return (
+        poContent.includes('msgid "+YJVTi"') &&
+        poContent.includes('msgid "4xqPlJ"')
+      );
     });
 
     await using __ = await withTempEditApp(
@@ -175,11 +218,11 @@ export default function Greeting() {
     );
 
     await page.goto('/');
-    const content = await expectPo('en.po', (c) => {
+    const content = await expectPo('en.po', (poContent) => {
       return (
-        c.includes('msgid "+YJVTi"') &&
-        c.includes('msgid "4xqPlJ"') &&
-        c.includes('Footer.tsx')
+        poContent.includes('msgid "+YJVTi"') &&
+        poContent.includes('msgid "4xqPlJ"') &&
+        poContent.includes('Footer.tsx')
       );
     });
     expect(content).toContain('msgid "+YJVTi"');
