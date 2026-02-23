@@ -49,36 +49,6 @@ export default function Greeting() {
   expect(content).toContain('Newly extracted');
 });
 
-it("saves catalog when it's missing", async ({page}) => {
-  await page.goto('/');
-  await expectCatalog(
-    'en.po',
-    (content) => getPoEntry(content, '+YJVTi') != null
-  );
-
-  await using _ = await withTempRemoveApp('messages/en.po');
-
-  await using __ = await withTempEditApp(
-    'src/components/Greeting.tsx',
-    `'use client';
-
-import {useExtracted} from 'next-intl';
-
-export default function Greeting() {
-  const t = useExtracted();
-  return <div>{t('Hey!')}{t('Hello!')}</div>;
-}
-`
-  );
-
-  await expectCatalog(
-    'en.po',
-    (content) =>
-      getPoEntry(content, '+YJVTi') != null &&
-      getPoEntry(content, 'OpKKos') != null
-  );
-});
-
 it('tracks all line numbers when same message appears multiple times in one file', async ({
   page
 }) => {
@@ -112,6 +82,36 @@ export default function Greeting() {
   expect(entry).toMatch(/Greeting\.tsx/);
   const greetingRefs = entry!.match(/#: [^\n]*Greeting\.tsx[^\n]*/g) ?? [];
   expect(greetingRefs.length).toBeGreaterThanOrEqual(2);
+});
+
+it("saves catalog when it's missing", async ({page}) => {
+  await page.goto('/');
+  await expectCatalog(
+    'en.po',
+    (content) => getPoEntry(content, '+YJVTi') != null
+  );
+
+  await using _ = await withTempRemoveApp('messages/en.po');
+
+  await using __ = await withTempEditApp(
+    'src/components/Greeting.tsx',
+    `'use client';
+
+import {useExtracted} from 'next-intl';
+
+export default function Greeting() {
+  const t = useExtracted();
+  return <div>{t('Hey!')}{t('Hello!')}</div>;
+}
+`
+  );
+
+  await expectCatalog(
+    'en.po',
+    (content) =>
+      getPoEntry(content, '+YJVTi') != null &&
+      getPoEntry(content, 'OpKKos') != null
+  );
 });
 
 it('saves changes to descriptions', async ({page}) => {
