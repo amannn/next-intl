@@ -6,7 +6,6 @@ export default defineConfig({
   fullyParallel: false,
   testDir: './tests',
   timeout: 120_000,
-  retries: process.env.CI ? 2 : 0,
   use: {
     ...devices['Desktop Chrome'],
     baseURL: `http://localhost:${PORT}`

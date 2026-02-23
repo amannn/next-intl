@@ -477,11 +477,6 @@ export default class CatalogManager implements Disposable {
     added: Array<Locale>;
     removed: Array<Locale>;
   }): Promise<void> => {
-    if (process.env.NEXT_INTL_EXTRACT_DEBUG) {
-      console.log(
-        `[CatalogManager] onLocalesChange: added=${params.added} removed=${params.removed}`
-      );
-    }
     // Chain to existing promise
     this.loadCatalogsPromise = Promise.all([
       this.loadCatalogsPromise,
