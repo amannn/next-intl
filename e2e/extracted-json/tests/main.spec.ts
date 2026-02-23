@@ -23,6 +23,30 @@ const withTempFileApp = (filePath: string, content: string) =>
 const withTempRemoveApp = (filePath: string) =>
   withTempRemove(APP_ROOT, filePath);
 
+it('extracts newly referenced messages in components', async ({page}) => {
+  await page.goto('/');
+  await expectCatalog('en.json', {'+YJVTi': 'Hey!', NhX4DJ: 'Hello'});
+
+  await using _ = await withTempEditApp(
+    'src/components/Greeting.tsx',
+    `'use client';
+
+import {useExtracted} from 'next-intl';
+
+export default function Greeting() {
+  const t = useExtracted();
+  return <div>{t('Hey!')}{t('Newly extracted')}</div>;
+}
+`
+  );
+
+  await page.goto('/');
+  const en = await expectCatalogPredicate('en.json', (json) =>
+    JSON.stringify(json).includes('Newly extracted')
+  );
+  expect(JSON.stringify(en)).toContain('Newly extracted');
+});
+
 it('writes to newly added catalog file', async ({page}) => {
   await page.goto('/');
   await expectCatalog('en.json', {'+YJVTi': 'Hey!', NhX4DJ: 'Hello'});
@@ -30,9 +54,13 @@ it('writes to newly added catalog file', async ({page}) => {
   await using _ = await withTempFileApp('messages/fr.json', '');
 
   await page.goto('/');
-  const fr = await expectCatalog('fr.json', {'+YJVTi': '', NhX4DJ: ''}, {
-    timeout: 15_000
-  });
+  const fr = await expectCatalog(
+    'fr.json',
+    {'+YJVTi': '', NhX4DJ: ''},
+    {
+      timeout: 15_000
+    }
+  );
   expect(fr['+YJVTi']).toBe('');
   expect(fr['NhX4DJ']).toBe('');
 });
@@ -196,7 +224,6 @@ export default function Greeting() {
   expect(en['+YJVTi']).toBe('Hey!');
 });
 
-// broken
 it('restores previous translations when messages are added back', async ({
   page
 }) => {

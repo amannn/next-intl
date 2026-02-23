@@ -21,6 +21,34 @@ const withTempFileApp = (filePath: string, content: string) =>
 const withTempRemoveApp = (filePath: string) =>
   withTempRemove(APP_ROOT, filePath);
 
+it('extracts newly referenced messages in components', async ({page}) => {
+  await page.goto('/');
+  await expectCatalog(
+    'en.po',
+    (content) => getPoEntry(content, '+YJVTi') != null
+  );
+
+  await using _ = await withTempEditApp(
+    'src/components/Greeting.tsx',
+    `'use client';
+
+import {useExtracted} from 'next-intl';
+
+export default function Greeting() {
+  const t = useExtracted();
+  return <div>{t('Hey!')}{t('Newly extracted')}</div>;
+}
+`
+  );
+
+  await page.goto('/');
+  const content = await expectCatalog(
+    'en.po',
+    (content) => content.includes('Newly extracted')
+  );
+  expect(content).toContain('Newly extracted');
+});
+
 it("saves catalog when it's missing", async ({page}) => {
   await page.goto('/');
   await expectCatalog(
