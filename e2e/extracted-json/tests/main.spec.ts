@@ -17,9 +17,12 @@ const MESSAGES_DIR = path.join(APP_ROOT, 'messages');
 
 const {expectJson, expectJsonPredicate} = createExtractionHelpers(MESSAGES_DIR);
 
-const withTempEditApp = (p: string, c: string) => withTempEdit(APP_ROOT, p, c);
-const withTempFileApp = (p: string, c: string) => withTempFile(APP_ROOT, p, c);
-const withTempRemoveApp = (p: string) => withTempRemove(APP_ROOT, p);
+const withTempEditApp = (filePath: string, content: string) =>
+  withTempEdit(APP_ROOT, filePath, content);
+const withTempFileApp = (filePath: string, content: string) =>
+  withTempFile(APP_ROOT, filePath, content);
+const withTempRemoveApp = (filePath: string) =>
+  withTempRemove(APP_ROOT, filePath);
 
 describe('extraction json format', () => {
   it('saves messages initially', async ({page}) => {
@@ -187,10 +190,10 @@ export default function Footer() {
     );
 
     await page.goto('/');
-    const en = await expectJsonPredicate('en.json', (j) => {
+    const en = await expectJsonPredicate('en.json', (json) => {
       return (
-        j['NhX4DJ'] === 'Hello' &&
-        (j['+YJVTi'] === undefined || j['+YJVTi'] === null)
+        json['NhX4DJ'] === 'Hello' &&
+        (json['+YJVTi'] === undefined || json['+YJVTi'] === null)
       );
     });
     expect(en['+YJVTi']).toBeUndefined();
@@ -250,10 +253,10 @@ export default function Footer() {
     );
 
     await page.goto('/');
-    await expectJsonPredicate('en.json', (j) => {
+    await expectJsonPredicate('en.json', (json) => {
       return (
-        j['NhX4DJ'] === 'Hello' &&
-        (j['+YJVTi'] === undefined || j['+YJVTi'] === null)
+        json['NhX4DJ'] === 'Hello' &&
+        (json['+YJVTi'] === undefined || json['+YJVTi'] === null)
       );
     });
 
@@ -325,8 +328,8 @@ export default function Invalid() {
     );
 
     await page.goto('/');
-    await expectJsonPredicate('en.json', (j) => {
-      return j['Initially invalid'] === undefined;
+    await expectJsonPredicate('en.json', (json) => {
+      return json['Initially invalid'] === undefined;
     });
   });
 });

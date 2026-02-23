@@ -15,8 +15,10 @@ const APP_ROOT = path.join(__dirname, '..');
 const MESSAGES_DIR = path.join(APP_ROOT, 'messages');
 
 const {expectPo} = createExtractionHelpers(MESSAGES_DIR);
-const withTempEditApp = (p: string, c: string) => withTempEdit(APP_ROOT, p, c);
-const withTempRemoveApp = (p: string) => withTempRemove(APP_ROOT, p);
+const withTempEditApp = (filePath: string, content: string) =>
+  withTempEdit(APP_ROOT, filePath, content);
+const withTempRemoveApp = (filePath: string) =>
+  withTempRemove(APP_ROOT, filePath);
 
 describe('extraction po format', () => {
   it('saves messages initially', async ({page}) => {
@@ -63,9 +65,12 @@ export default function Greeting() {
     expect(greetingRefs.length).toBeGreaterThanOrEqual(2);
   });
 
-  it('saves catalog when it\'s missing', async ({page}) => {
+  it("saves catalog when it's missing", async ({page}) => {
     await page.goto('/');
-    await expectPo('en.po', (poContent) => getPoEntry(poContent, '+YJVTi') != null);
+    await expectPo(
+      'en.po',
+      (poContent) => getPoEntry(poContent, '+YJVTi') != null
+    );
 
     await using _ = await withTempRemoveApp('messages/en.po');
 
@@ -97,7 +102,10 @@ export default function Greeting() {
 
   it('saves changes to descriptions', async ({page}) => {
     await page.goto('/');
-    await expectPo('en.po', (poContent) => getPoEntry(poContent, '+YJVTi') != null);
+    await expectPo(
+      'en.po',
+      (poContent) => getPoEntry(poContent, '+YJVTi') != null
+    );
 
     await using _ = await withTempEditApp(
       'src/components/Greeting.tsx',
@@ -146,7 +154,10 @@ export default function Greeting() {
 
   it('supports namespaces', async ({page}) => {
     await page.goto('/');
-    await expectPo('en.po', (poContent) => getPoEntry(poContent, '+YJVTi') != null);
+    await expectPo(
+      'en.po',
+      (poContent) => getPoEntry(poContent, '+YJVTi') != null
+    );
 
     await using _ = await withTempEditApp(
       'src/components/Greeting.tsx',
