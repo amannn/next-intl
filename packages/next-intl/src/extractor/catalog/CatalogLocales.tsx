@@ -66,6 +66,13 @@ export default class CatalogLocales {
     }
   }
 
+  /** Ensures the messages-dir watcher is active. Call before relying on new-catalog detection. */
+  public async ensureWatcherReady(): Promise<void> {
+    if (this.locales === 'infer' && !this.watcher) {
+      await this.startWatcher();
+    }
+  }
+
   public unsubscribeLocalesChange(callback: LocaleChangeCallback): void {
     this.onChangeCallbacks.delete(callback);
     if (this.onChangeCallbacks.size === 0) {
@@ -80,6 +87,9 @@ export default class CatalogLocales {
 
     await fsPromises.mkdir(this.messagesDir, {recursive: true});
 
+    if (process.env.NEXT_INTL_EXTRACT_DEBUG) {
+      console.log(`[CatalogLocales] starting watcher on ${this.messagesDir}`);
+    }
     this.watcher = fs.watch(
       this.messagesDir,
       {persistent: false, recursive: false},
@@ -89,6 +99,11 @@ export default class CatalogLocales {
           filename.endsWith(this.extension) &&
           !filename.includes(path.sep);
 
+        if (process.env.NEXT_INTL_EXTRACT_DEBUG) {
+          console.log(
+            `[CatalogLocales] fs.watch event: ${event} filename=${filename} isCatalogFile=${isCatalogFile}`
+          );
+        }
         if (isCatalogFile) {
           void this.onChange();
         }
@@ -115,6 +130,11 @@ export default class CatalogLocales {
       (locale) => !newLocalesSet.has(locale)
     );
 
+    if (process.env.NEXT_INTL_EXTRACT_DEBUG) {
+      console.log(
+        `[CatalogLocales] onChange: old=${[...oldLocales]} new=${this.targetLocales} added=${added} removed=${removed} callbacks=${this.onChangeCallbacks.size}`
+      );
+    }
     if (added.length > 0 || removed.length > 0) {
       for (const callback of this.onChangeCallbacks) {
         callback({added, removed});
