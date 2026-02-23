@@ -312,7 +312,7 @@ export default function Greeting() {
     expect((en['ui'] as Record<string, unknown>)['OpKKos']).toBe('Hello!');
   });
 
-  it('throws on parse error for invalid file', async ({page}) => {
+  it('skips file with parse error', async ({page}) => {
     await using _ = await withTempFileApp(
       'src/components/Invalid.tsx',
       `'use client';
