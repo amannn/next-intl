@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unnecessary-condition -- Loader context varies (webpack/turbopack) */
 import fs from 'fs/promises';
 import path from 'path';
 import compile from 'icu-minify/compile';
@@ -18,7 +17,8 @@ import type {TurbopackLoaderContext} from '../types.js';
 // The module scope is safe for some caching, but Next.js can
 // create multiple loader instances so don't expect a singleton.
 let cachedCodec: ExtractorCodec | null = null;
-const compilerCacheByProject = new Map<string, ExtractionCompiler>();
+
+let compiler: ExtractionCompiler | null = null;
 
 type CompiledMessageCacheEntry = {
   compiledMessage: unknown;
@@ -52,10 +52,6 @@ async function getCodec(
 /**
  * Parses and optimizes catalog files.
  *
- * When extract enabled and this is the source locale catalog: adds
- * addContextDependency for srcPaths, runs extraction, then decodes.
- * Target locale catalogs decode only.
- *
  * Note that if we use a dynamic import like `import(`${locale}.json`)`, then
  * the loader will optimistically run for all candidates in this folder (both
  * during dev as well as at build time).
@@ -68,26 +64,25 @@ export default function catalogLoader(
   const callback = this.async();
   const extension = getFormatExtension(options.messages.format);
   const locale = path.basename(this.resourcePath, extension);
-  const projectRoot = this.rootContext ?? process.cwd();
-
-  const runExtraction =
-    options.sourceLocale && options.srcPath && locale === options.sourceLocale;
-  const srcPaths = runExtraction
-    ? (Array.isArray(options.srcPath) ? options.srcPath : [options.srcPath])
-        .filter((p): p is string => typeof p === 'string')
-        .map((p) => path.resolve(projectRoot, p))
-    : [];
+  const projectRoot = this.rootContext;
 
   Promise.resolve()
     .then(async () => {
       let contentToDecode = source;
-      if (runExtraction && srcPaths.length > 0) {
+
+      const runExtraction =
+        options.sourceLocale &&
+        options.srcPath &&
+        locale === options.sourceLocale;
+      if (runExtraction) {
+        const srcPaths = (
+          Array.isArray(options.srcPath) ? options.srcPath : [options.srcPath]
+        ) as Array<string>;
         for (const srcPath of srcPaths) {
-          this.addContextDependency?.(srcPath);
+          this.addContextDependency(srcPath);
         }
         const messagesDir = path.resolve(projectRoot, options.messages.path);
-        this.addContextDependency?.(messagesDir);
-        let compiler = compilerCacheByProject.get(projectRoot);
+        this.addContextDependency(messagesDir);
         if (!compiler) {
           compiler = new ExtractionCompiler(
             {
@@ -97,9 +92,11 @@ export default function catalogLoader(
             },
             {isDevelopment: false, projectRoot}
           );
-          compilerCacheByProject.set(projectRoot, compiler);
         }
+
+        // TODO: Incremental caching
         await compiler.extractAll();
+
         contentToDecode = await fs.readFile(this.resourcePath, 'utf8');
       }
 

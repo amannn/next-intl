@@ -1,3 +1,4 @@
+import fs from 'fs/promises';
 import path from 'path';
 import {fileURLToPath} from 'url';
 import {expect, test as it} from '@playwright/test';
@@ -21,6 +22,41 @@ const withTempFileApp = (filePath: string, content: string) =>
 const withTempRemoveApp = (filePath: string) =>
   withTempRemove(APP_ROOT, filePath);
 
+it.afterEach(async () => {
+  const poHeader = (lang: string) =>
+    `msgid ""
+msgstr ""
+"Language: ${lang}\\n"
+"Content-Type: text/plain; charset=utf-8\\n"
+"Content-Transfer-Encoding: 8bit\\n"
+
+`;
+  await fs.writeFile(
+    path.join(MESSAGES_DIR, 'en.po'),
+    poHeader('en') +
+      `#: src/app/page.tsx:9
+msgid "NhX4DJ"
+msgstr "Hello"
+
+#: src/components/Footer.tsx:7
+msgid "+YJVTi"
+msgstr "Hey!"
+`
+  );
+  await fs.writeFile(
+    path.join(MESSAGES_DIR, 'de.po'),
+    poHeader('de') +
+      `#: src/app/page.tsx:9
+msgid "NhX4DJ"
+msgstr "Hallo"
+
+#: src/components/Footer.tsx:7
+msgid "+YJVTi"
+msgstr ""
+`
+  );
+});
+
 it('extracts newly referenced messages in components', async ({page}) => {
   await page.goto('/');
   await expectCatalog(
@@ -42,9 +78,8 @@ export default function Greeting() {
   );
 
   await page.goto('/');
-  const content = await expectCatalog(
-    'en.po',
-    (content) => content.includes('Newly extracted')
+  const content = await expectCatalog('en.po', (content) =>
+    content.includes('Newly extracted')
   );
   expect(content).toContain('Newly extracted');
 });
@@ -332,11 +367,7 @@ export default function Page() {
   expect(content).toMatch(/FileZ\.tsx/);
 });
 
-// Loader-based extraction: file delete/rename detection relies on addContextDependency
-// invalidation; these tests flake with cached compiler. TODO: fix or remove.
-it.skip('removes messages when a file is deleted during dev', async ({
-  page
-}) => {
+it('removes messages when a file is deleted during dev', async ({page}) => {
   await using _ = await withTempFileApp(
     'src/components/ComponentB.tsx',
     `'use client';
@@ -402,9 +433,7 @@ export default function Page() {
   );
 });
 
-it.skip('updates references after file rename during dev', async ({
-  page
-}) => {
+it('updates references after file rename during dev', async ({page}) => {
   await using _ = await withTempFileApp(
     'src/components/OldName.tsx',
     `'use client';

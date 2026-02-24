@@ -23,6 +23,31 @@ const withTempFileApp = (filePath: string, content: string) =>
 const withTempRemoveApp = (filePath: string) =>
   withTempRemove(APP_ROOT, filePath);
 
+it.afterEach(async () => {
+  await fs.writeFile(
+    path.join(MESSAGES_DIR, 'en.json'),
+    JSON.stringify(
+      {
+        NhX4DJ: 'Hello',
+        '+YJVTi': 'Hey!'
+      },
+      null,
+      2
+    ) + '\n'
+  );
+  await fs.writeFile(
+    path.join(MESSAGES_DIR, 'de.json'),
+    JSON.stringify(
+      {
+        NhX4DJ: 'Hallo',
+        '+YJVTi': ''
+      },
+      null,
+      2
+    ) + '\n'
+  );
+});
+
 it('extracts newly referenced messages in components', async ({page}) => {
   await page.goto('/');
   await expectCatalog('en.json', {'+YJVTi': 'Hey!', NhX4DJ: 'Hello'});

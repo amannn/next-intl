@@ -154,12 +154,6 @@ export default class CatalogManager implements Disposable {
     })();
 
     await this.scanCompletePromise;
-
-    if (this.isDevelopment) {
-      const catalogLocales = this.getCatalogLocales();
-      catalogLocales.subscribeLocalesChange(this.onLocalesChange);
-      await catalogLocales.ensureWatcherReady();
-    }
   }
 
   private async loadSourceMessages(): Promise<Map<string, ExtractorMessage>> {
@@ -480,8 +474,5 @@ export default class CatalogManager implements Disposable {
 
   public [Symbol.dispose](): void {
     this.saveScheduler[Symbol.dispose]();
-    if (this.catalogLocales && this.isDevelopment) {
-      this.catalogLocales.unsubscribeLocalesChange(this.onLocalesChange);
-    }
   }
 }
