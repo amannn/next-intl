@@ -142,6 +142,11 @@ export default class CatalogManager implements Disposable {
     await this.loadCatalogsPromise;
 
     this.scanCompletePromise = (async () => {
+      // Ensure we're starting fresh, this enables removing
+      // messages for files that are removed
+      this.messagesByFile.clear();
+      this.messagesById.clear();
+
       const sourceFiles = await SourceFileScanner.getSourceFiles(
         this.getSrcPaths()
       );

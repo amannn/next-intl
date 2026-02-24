@@ -14,6 +14,12 @@ import type {
 import {setNestedProperty} from '../../extractor/utils.js';
 import type {TurbopackLoaderContext} from '../types.js';
 
+function log(projectRoot: string, ...args: Array<unknown>) {
+  const logPath = path.join(projectRoot, 'catalog-loader.log');
+  const line = [new Date().toISOString(), ...args.map(String)].join(' ') + '\n';
+  fs.appendFile(logPath, line);
+}
+
 // The module scope is safe for some caching, but Next.js can
 // create multiple loader instances so don't expect a singleton.
 let cachedCodec: ExtractorCodec | null = null;
@@ -65,6 +71,7 @@ export default function catalogLoader(
   const extension = getFormatExtension(options.messages.format);
   const locale = path.basename(this.resourcePath, extension);
   const projectRoot = this.rootContext;
+  log(projectRoot, 'catalogLoader', this.resourcePath);
 
   Promise.resolve()
     .then(async () => {
@@ -80,9 +87,13 @@ export default function catalogLoader(
         ) as Array<string>;
         for (const srcPath of srcPaths) {
           this.addContextDependency(srcPath);
+          log(projectRoot, 'addContextDependency', srcPath);
         }
+
         const messagesDir = path.resolve(projectRoot, options.messages.path);
         this.addContextDependency(messagesDir);
+        log(projectRoot, 'addContextDependency', messagesDir);
+
         if (!compiler) {
           compiler = new ExtractionCompiler(
             {
