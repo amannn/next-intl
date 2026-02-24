@@ -313,12 +313,8 @@ describe('po format', () => {
 
     await compiler.extractAll();
 
-    await waitForWriteFileCalls(3);
-    const calls = vi.mocked(fs.writeFile).mock.calls;
-    const catalogCalls = calls.filter(
-      (c) => !String(c[0]).includes('next-intl-extractor-orphaned')
-    );
-    expect(catalogCalls).toMatchInlineSnapshot(`
+    await waitForWriteFileCalls(2);
+    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
       [
         [
           "messages/en.po",
@@ -352,13 +348,6 @@ describe('po format', () => {
         ],
       ]
     `);
-    const orphanedCall = calls.find((c) =>
-      String(c[0]).includes('next-intl-extractor-orphaned')
-    );
-    expect(orphanedCall).toBeDefined();
-    expect(JSON.parse(orphanedCall![1] as string)).toEqual({
-      de: {OpKKos: {message: 'Hallo!'}}
-    });
   });
 
   it('removes obsolete references after a file rename during build', async () => {

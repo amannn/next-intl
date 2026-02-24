@@ -9,17 +9,19 @@ type LocaleChangeCallback = (params: {
 }) => unknown;
 
 type CatalogLocalesParams = {
+  extension: string;
+  isDevelopment: boolean;
+  locales: MessagesConfig['locales'];
   messagesDir: string;
   sourceLocale: Locale;
-  extension: string;
-  locales: MessagesConfig['locales'];
 };
 
 export default class CatalogLocales {
-  private messagesDir: string;
   private extension: string;
-  private sourceLocale: Locale;
+  private isDevelopment: boolean;
   private locales: MessagesConfig['locales'];
+  private messagesDir: string;
+  private sourceLocale: Locale;
   private watcher?: fs.FSWatcher;
   private targetLocales?: Array<Locale>;
   private onChangeCallbacks: Set<LocaleChangeCallback> = new Set();
@@ -29,21 +31,24 @@ export default class CatalogLocales {
     this.sourceLocale = params.sourceLocale;
     this.extension = params.extension;
     this.locales = params.locales;
+    this.isDevelopment = params.isDevelopment;
   }
 
   public async getTargetLocales(): Promise<Array<Locale>> {
-    if (this.targetLocales) {
+    if (this.isDevelopment && this.targetLocales != null) {
       return this.targetLocales;
     }
 
     if (this.locales === 'infer') {
-      this.targetLocales = await this.readTargetLocales();
-    } else {
-      this.targetLocales = this.locales.filter(
-        (locale) => locale !== this.sourceLocale
-      );
+      const locales = await this.readTargetLocales();
+      if (this.isDevelopment) this.targetLocales = locales;
+      return locales;
     }
-    return this.targetLocales;
+    const locales = this.locales.filter(
+      (locale) => locale !== this.sourceLocale
+    );
+    this.targetLocales = locales;
+    return locales;
   }
 
   private async readTargetLocales(): Promise<Array<Locale>> {

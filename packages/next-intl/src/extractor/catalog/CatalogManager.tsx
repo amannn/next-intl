@@ -18,7 +18,6 @@ import {
 } from '../utils.js';
 import CatalogLocales from './CatalogLocales.js';
 import CatalogPersister from './CatalogPersister.js';
-import OrphanedTranslationsCache from './OrphanedTranslationsCache.js';
 import SaveScheduler from './SaveScheduler.js';
 
 export default class CatalogManager implements Disposable {
@@ -56,7 +55,6 @@ export default class CatalogManager implements Disposable {
   private isDevelopment: boolean;
 
   // Cached instances
-  private orphanedCache: OrphanedTranslationsCache;
   private persister?: CatalogPersister;
   private codec?: ExtractorCodec;
   private catalogLocales?: CatalogLocales;
@@ -81,7 +79,6 @@ export default class CatalogManager implements Disposable {
     this.saveScheduler = new SaveScheduler<void>(50);
     this.projectRoot = opts.projectRoot ?? getDefaultProjectRoot();
     this.isDevelopment = opts.isDevelopment ?? false;
-    this.orphanedCache = new OrphanedTranslationsCache(this.projectRoot);
     this.extractor = opts.extractor;
   }
 
@@ -117,10 +114,11 @@ export default class CatalogManager implements Disposable {
         this.config.messages.path
       );
       this.catalogLocales = new CatalogLocales({
-        messagesDir,
-        sourceLocale: this.config.sourceLocale,
         extension: getFormatExtension(this.config.messages.format),
-        locales: this.config.messages.locales
+        isDevelopment: this.isDevelopment,
+        locales: this.config.messages.locales,
+        messagesDir,
+        sourceLocale: this.config.sourceLocale
       });
       return this.catalogLocales;
     }
@@ -238,51 +236,22 @@ export default class CatalogManager implements Disposable {
         }
       }
     } else {
-      // For target: disk wins completely, BUT preserve existing translations
-      // if we read empty (likely a write in progress by an external tool
-      // that causes the file to temporarily be empty)
+      // For target: disk wins, BUT preserve orphaned translations (those in
+      // existing but not on disk) so they can be restored when message re-added
       const existingTranslations = this.translationsByTargetLocale.get(locale);
-      const hasExistingTranslations =
-        existingTranslations && existingTranslations.size > 0;
-
-      if (diskMessages.length > 0) {
-        // We got content from disk, replace with it
-        const translations = new Map<string, ExtractorMessage>();
-        for (const message of diskMessages) {
-          translations.set(message.id, message);
-        }
-        this.translationsByTargetLocale.set(locale, translations);
-      } else if (hasExistingTranslations) {
-        // Likely a write in progress, preserve existing translations
-      } else {
-        // We read empty and have no existing translations
-        const translations = new Map<string, ExtractorMessage>();
-        this.translationsByTargetLocale.set(locale, translations);
+      const translations = new Map<string, ExtractorMessage>();
+      for (const message of diskMessages) {
+        translations.set(message.id, message);
       }
-    }
-  }
-
-  private async restoreOrphanedTranslations(
-    messageId: string,
-    targetLocales: Array<Locale>
-  ): Promise<boolean> {
-    let restored = false;
-    for (const locale of targetLocales) {
-      const entry = await this.orphanedCache.get(locale, messageId);
-      if (entry) {
-        let translations = this.translationsByTargetLocale.get(locale);
-        if (!translations) {
-          translations = new Map();
-          this.translationsByTargetLocale.set(locale, translations);
+      if (existingTranslations) {
+        for (const [id, msg] of existingTranslations) {
+          if (!translations.has(id) && msg.message) {
+            translations.set(id, msg);
+          }
         }
-        translations.set(messageId, {
-          id: messageId,
-          message: entry.message
-        });
-        restored = true;
       }
+      this.translationsByTargetLocale.set(locale, translations);
     }
-    return restored;
   }
 
   private mergeSourceDiskMetadata(
@@ -332,13 +301,8 @@ export default class CatalogManager implements Disposable {
     // Replace existing messages with new ones
     const fileMessages = new Map<string, ExtractorMessage>();
 
-    const targetLocales = await this.getTargetLocales();
     for (let message of messages) {
       const prevMessage = this.messagesById.get(message.id);
-
-      if (!prevMessage) {
-        await this.restoreOrphanedTranslations(message.id, targetLocales);
-      }
 
       // Merge with previous message if it exists
       if (prevMessage) {
@@ -379,16 +343,6 @@ export default class CatalogManager implements Disposable {
       );
 
       if (!hasOtherReferences) {
-        for (const locale of targetLocales) {
-          const translation = this.translationsByTargetLocale
-            .get(locale)
-            ?.get(id);
-          if (translation?.message) {
-            await this.orphanedCache.add(locale, id, {
-              message: translation.message
-            });
-          }
-        }
         this.messagesById.delete(id);
       } else {
         message.references = message.references?.filter(
@@ -510,16 +464,6 @@ export default class CatalogManager implements Disposable {
     const localeMessages = isSourceLocale
       ? this.messagesById
       : this.translationsByTargetLocale.get(locale);
-
-    if (!isSourceLocale && localeMessages) {
-      for (const [id, translation] of localeMessages) {
-        if (!this.messagesById.has(id) && translation.message) {
-          await this.orphanedCache.add(locale, id, {
-            message: translation.message
-          });
-        }
-      }
-    }
 
     const messagesToPersist = messages.map((message) => {
       const localeMessage = localeMessages?.get(message.id);

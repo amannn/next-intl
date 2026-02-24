@@ -19,6 +19,7 @@ import type {TurbopackLoaderContext} from '../types.js';
 // The module scope is safe for some caching, but Next.js can
 // create multiple loader instances so don't expect a singleton.
 let cachedCodec: ExtractorCodec | null = null;
+const compilerCacheByProject = new Map<string, ExtractionCompiler>();
 
 type CompiledMessageCacheEntry = {
   compiledMessage: unknown;
@@ -104,26 +105,25 @@ export default function catalogLoader(
           projectRoot,
           resourcePath: this.resourcePath
         });
-        const compiler = new ExtractionCompiler(
-          {
-            srcPath: options.srcPath!,
-            sourceLocale: options.sourceLocale!,
-            messages: options.messages
-          },
-          {isDevelopment: false, projectRoot}
-        );
-        let stats: {filesScanned: number; filesChanged: number} | undefined;
-        try {
-          stats = await compiler.extractAll();
-        } finally {
-          compiler[Symbol.dispose]();
+        let compiler = compilerCacheByProject.get(projectRoot);
+        if (!compiler) {
+          compiler = new ExtractionCompiler(
+            {
+              srcPath: options.srcPath!,
+              sourceLocale: options.sourceLocale!,
+              messages: options.messages
+            },
+            {isDevelopment: false, projectRoot}
+          );
+          compilerCacheByProject.set(projectRoot, compiler);
         }
+        const stats = await compiler.extractAll();
         extractorLogger.extractionEnd({
           projectRoot,
           resourcePath: this.resourcePath,
           durationMs: Date.now() - extractionStart,
-          filesScanned: stats?.filesScanned,
-          filesChanged: stats?.filesChanged
+          filesScanned: stats.filesScanned,
+          filesChanged: stats.filesChanged
         });
         contentToDecode = await fs.readFile(this.resourcePath, 'utf8');
       }
