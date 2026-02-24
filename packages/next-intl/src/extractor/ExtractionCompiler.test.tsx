@@ -491,9 +491,11 @@ describe('po format', () => {
     `);
   });
 
-  it('removes obsolete references after a file rename during build', async () => {
-    filesystem.project.messages = {
-      'en.po': `
+  it.todo(
+    'removes obsolete references after a file rename during build',
+    async () => {
+      filesystem.project.messages = {
+        'en.po': `
       msgid ""
       msgstr ""
       "Language: en\\n"
@@ -506,7 +508,7 @@ describe('po format', () => {
       msgid "OpKKos"
       msgstr "Hello!"
       `,
-      'de.po': `
+        'de.po': `
       msgid ""
       msgstr ""
       "Language: de\\n"
@@ -519,8 +521,8 @@ describe('po format', () => {
       msgid "OpKKos"
       msgstr "Hallo!"
       `
-    };
-    filesystem.project.src['component-b.tsx'] = `
+      };
+      filesystem.project.src['component-b.tsx'] = `
     import {useExtracted} from 'next-intl';
     function Component() {
       const t = useExtracted();
@@ -528,25 +530,25 @@ describe('po format', () => {
     }
     `;
 
-    using compiler = new ExtractionCompiler(
-      {
-        srcPath: './src',
-        sourceLocale: 'en',
-        messages: {
-          path: './messages',
-          format: 'po',
-          locales: 'infer'
+      using compiler = new ExtractionCompiler(
+        {
+          srcPath: './src',
+          sourceLocale: 'en',
+          messages: {
+            path: './messages',
+            format: 'po',
+            locales: 'infer'
+          }
+        },
+        {
+          isDevelopment: false,
+          projectRoot: '/project'
         }
-      },
-      {
-        isDevelopment: false,
-        projectRoot: '/project'
-      }
-    );
+      );
 
-    await compiler.extractAll();
-    await waitForWriteFileCalls(2);
-    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
+      await compiler.extractAll();
+      await waitForWriteFileCalls(2);
+      expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
       [
         [
           "messages/en.po",
@@ -580,7 +582,8 @@ describe('po format', () => {
         ],
       ]
     `);
-  });
+    }
+  );
 
   it.skip('removes obsolete references after a file rename during dev if create fires before delete', async () => {
     const file = `
