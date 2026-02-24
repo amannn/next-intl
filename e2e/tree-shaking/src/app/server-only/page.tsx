@@ -1,5 +1,12 @@
+import DebugMessages from '@/components/DebugMessages';
+import {NextIntlClientProvider} from 'next-intl';
 import ServerOnlyPageContent from './ServerOnlyPageContent';
 
 export default function ServerOnlyPage() {
-  return <ServerOnlyPageContent />;
+  return (
+    <NextIntlClientProvider messages="infer">
+      <DebugMessages />
+      <ServerOnlyPageContent />
+    </NextIntlClientProvider>
+  );
 }

@@ -19,9 +19,13 @@ function isSourceFile(filePath: string): boolean {
   return SUPPORTED_EXTENSIONS.has(path.extname(filePath));
 }
 
-type TranslationUse = {
-  id: string;
-  references: Array<{path: string; line: number}>;
+type FileAnalysis = {
+  hasUseClient: boolean;
+  hasUseServer: boolean;
+  translations: Array<{
+    id: string;
+    references: Array<{path: string; line: number}>;
+  }>;
 };
 
 type PluginOutput = {
@@ -46,7 +50,7 @@ type PluginOutput = {
 
 export type ScannerConfig = {
   projectRoot: string;
-  entry: string;
+  entry: string | Array<string>;
   srcPaths?: Array<string>;
   tsconfigPath?: string;
 };
@@ -55,14 +59,7 @@ export type ScanResult = {
   files: Set<string>;
   graph: {adjacency: Map<string, Set<string>>};
   messagesByFile: Map<string, Array<ExtractorMessage>>;
-  analysisByFile: Map<
-    string,
-    {
-      translations: Array<TranslationUse>;
-      hasUseClient: boolean;
-      hasUseServer: boolean;
-    }
-  >;
+  analysisByFile: Map<string, FileAnalysis>;
 };
 
 async function runPluginOnFile(
@@ -128,13 +125,15 @@ function createSrcMatcher(
 
 export default class Scanner {
   private projectRoot: string;
-  private entry: string;
+  private entry: string | Array<string>;
   private resolve: (context: string, request: string) => Promise<string | null>;
   private srcMatcher: ((filePath: string) => boolean) | null;
 
   public constructor(config: ScannerConfig) {
     this.projectRoot = path.resolve(config.projectRoot);
-    this.entry = path.resolve(this.projectRoot, config.entry);
+    this.entry = Array.isArray(config.entry)
+      ? config.entry.map((entry) => path.resolve(this.projectRoot, entry))
+      : path.resolve(this.projectRoot, config.entry);
     this.resolve = createModuleResolver({
       projectRoot: this.projectRoot,
       tsconfigPath:
@@ -147,27 +146,54 @@ export default class Scanner {
   }
 
   public async scan(): Promise<ScanResult> {
-    const stats = await fs.stat(this.entry).catch(() => null);
+    const entries = Array.isArray(this.entry) ? this.entry : [this.entry];
+    const results = await Promise.all(
+      entries.map((entry) => this.scanEntry(entry))
+    );
+    return this.mergeScanResults(results);
+  }
+
+  private mergeScanResults(results: Array<ScanResult>): ScanResult {
+    const files = new Set<string>();
+    const adjacency = new Map<string, Set<string>>();
+    const messagesByFile = new Map<string, Array<ExtractorMessage>>();
+    const analysisByFile = new Map<string, FileAnalysis>();
+    for (const result of results) {
+      for (const file of result.files) files.add(file);
+      for (const [file, deps] of result.graph.adjacency) {
+        adjacency.set(file, new Set(deps));
+      }
+      for (const [file, messages] of result.messagesByFile) {
+        messagesByFile.set(file, messages);
+      }
+      for (const [file, analysis] of result.analysisByFile) {
+        analysisByFile.set(file, analysis);
+      }
+    }
+
+    return {
+      files,
+      graph: {adjacency},
+      messagesByFile,
+      analysisByFile
+    };
+  }
+
+  private async scanEntry(entryPath: string): Promise<ScanResult> {
+    const stats = await fs.stat(entryPath).catch(() => null);
     const isDirectory = stats?.isDirectory() ?? false;
 
     if (isDirectory) {
-      return this.scanFolder();
+      return this.scanFolder(entryPath);
     }
-    return this.scanFromEntry();
+    return this.scanFromEntry(entryPath);
   }
 
-  private async scanFolder(): Promise<ScanResult> {
-    const files = await SourceFileScanner.getSourceFiles([this.entry]);
+  private async scanFolder(entryPath: string): Promise<ScanResult> {
+    const files = await SourceFileScanner.getSourceFiles([entryPath]);
     const adjacency = new Map<string, Set<string>>();
     const messagesByFile = new Map<string, Array<ExtractorMessage>>();
-    const analysisByFile = new Map<
-      string,
-      {
-        translations: Array<TranslationUse>;
-        hasUseClient: boolean;
-        hasUseServer: boolean;
-      }
-    >();
+    const analysisByFile = new Map<string, FileAnalysis>();
 
     for (const filePath of files) {
       const normalized = path.normalize(filePath);
@@ -247,24 +273,20 @@ export default class Scanner {
     };
   }
 
-  private async scanFromEntry(): Promise<ScanResult> {
-    const entryPath = path.normalize(this.entry);
+  private async scanFromEntry(entryPath: string): Promise<ScanResult> {
+    const normalizedEntry = path.normalize(entryPath);
     const adjacency = new Map<string, Set<string>>();
     const files = new Set<string>();
     const messagesByFile = new Map<string, Array<ExtractorMessage>>();
-    const analysisByFile = new Map<
-      string,
-      {
-        translations: Array<TranslationUse>;
-        hasUseClient: boolean;
-        hasUseServer: boolean;
-      }
-    >();
-
+    const analysisByFile = new Map<string, FileAnalysis>();
     const visited = new Set<string>();
 
-    const visit = async (filePath: string): Promise<void> => {
+    const visit = async (
+      filePath: string,
+      ancestors: Set<string>
+    ): Promise<void> => {
       const normalized = path.normalize(filePath);
+      if (ancestors.has(normalized)) return;
       if (visited.has(normalized)) return;
       visited.add(normalized);
       files.add(normalized);
@@ -334,16 +356,18 @@ export default class Scanner {
       if (!adjacency.has(normalized)) {
         adjacency.set(normalized, new Set());
       }
+      const nextAncestors = new Set([...ancestors, normalized]);
       for (const child of children) {
-        adjacency.get(normalized)!.add(path.normalize(child));
-        await visit(path.normalize(child));
+        const normalizedChild = path.normalize(child);
+        adjacency.get(normalized)!.add(normalizedChild);
+        await visit(normalizedChild, nextAncestors);
       }
     };
 
-    await visit(entryPath);
+    await visit(normalizedEntry, new Set());
 
-    if (!adjacency.has(entryPath)) {
-      adjacency.set(entryPath, new Set());
+    if (!adjacency.has(normalizedEntry)) {
+      adjacency.set(normalizedEntry, new Set());
     }
 
     return {

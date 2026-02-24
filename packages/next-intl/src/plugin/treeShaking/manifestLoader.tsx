@@ -20,8 +20,7 @@ function setPathTrue(
   for (let index = 0; index < pathParts.length; index++) {
     const part = pathParts[index];
     const isLeaf = index === pathParts.length - 1;
-    const existing = current[part];
-    if (existing === true) return;
+    if (current[part] === true) return;
     if (isLeaf) {
       current[part] = true;
       return;
@@ -31,10 +30,7 @@ function setPathTrue(
   }
 }
 
-function addToManifest(
-  namespaces: Record<string, unknown>,
-  id: string
-) {
+function addToManifest(namespaces: Record<string, unknown>, id: string) {
   if (!id) return;
   setPathTrue(namespaces, splitPath(id));
 }

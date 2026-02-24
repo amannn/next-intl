@@ -141,6 +141,42 @@ function Component() {
 }
 
 #[test]
+fn output_contains_dynamic_import_dependencies() {
+    run_test(|| {
+        let cm = SourceMap::default();
+        let output = parse_and_run(
+            &cm,
+            r#"
+"use client";
+
+import dynamic from "next/dynamic";
+import { lazy } from "react";
+
+const DynamicContent = dynamic(() => import("./DynamicContent"));
+const LazyContent = lazy(() => import("./LazyContent"));
+
+function Component() {
+  return null;
+}
+"#,
+            "Component.tsx",
+        );
+
+        let deps = output["dependencies"].as_array().unwrap();
+        assert!(
+            deps.iter().any(|v| v == "./DynamicContent"),
+            "expected ./DynamicContent in {:?}",
+            deps
+        );
+        assert!(
+            deps.iter().any(|v| v == "./LazyContent"),
+            "expected ./LazyContent in {:?}",
+            deps
+        );
+    });
+}
+
+#[test]
 fn output_has_use_client_when_directive_present() {
     run_test(|| {
         let cm = SourceMap::default();

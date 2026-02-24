@@ -638,6 +638,13 @@ impl TransformVisitor {
                     Self::collect_dynamic_imports_stmt(self, s);
                 }
             }
+            Stmt::Decl(Decl::Var(var_decl)) => {
+                for decl in &var_decl.decls {
+                    if let Some(init) = &decl.init {
+                        Self::collect_dynamic_imports_expr(self, init);
+                    }
+                }
+            }
             _ => {}
         }
     }
@@ -650,6 +657,27 @@ impl TransformVisitor {
                         if let Some(s) = extract_static_string(&arg.expr) {
                             self.dependencies.push(s.to_string_lossy().to_string());
                         }
+                    }
+                } else {
+                    for arg in &call.args {
+                        Self::collect_dynamic_imports_expr(self, &arg.expr);
+                    }
+                }
+            }
+            Expr::Arrow(arrow) => {
+                match &*arrow.body {
+                    BlockStmtOrExpr::BlockStmt(block) => {
+                        for s in &block.stmts {
+                            Self::collect_dynamic_imports_stmt(self, s);
+                        }
+                    }
+                    BlockStmtOrExpr::Expr(expr) => Self::collect_dynamic_imports_expr(self, expr),
+                }
+            }
+            Expr::Fn(fn_expr) => {
+                if let Some(body) = &fn_expr.function.body {
+                    for s in &body.stmts {
+                        Self::collect_dynamic_imports_stmt(self, s);
                     }
                 }
             }

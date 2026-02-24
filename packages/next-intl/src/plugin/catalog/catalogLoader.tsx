@@ -85,13 +85,12 @@ async function runExtractionAndPersist(
   projectRoot: string,
   options: CatalogLoaderConfig
 ): Promise<void> {
-  const srcPath = Array.isArray(options.srcPath)
-    ? options.srcPath[0]
-    : options.srcPath!;
   if (!scanner) {
     scanner = new Scanner({
       projectRoot,
-      entry: srcPath,
+      entry: (Array.isArray(options.srcPath)
+        ? options.srcPath
+        : [options.srcPath]) as Array<string>,
       tsconfigPath: path.join(projectRoot, 'tsconfig.json')
     });
   }
@@ -117,6 +116,7 @@ async function runExtractionAndPersist(
 
   const messages = Array.from(messagesById.values());
 
+  await persister.read(options.sourceLocale!);
   await persister.write(messages, {
     locale: options.sourceLocale!,
     sourceMessagesById: messagesById
