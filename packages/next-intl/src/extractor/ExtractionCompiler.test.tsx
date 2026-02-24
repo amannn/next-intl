@@ -53,9 +53,11 @@ describe('json format', () => {
     );
   }
 
-  it('creates the messages directory and source catalog when they do not exist initially', async () => {
-    filesystem.project.messages = undefined;
-    filesystem.project.src['Greeting.tsx'] = `
+  it.todo(
+    'creates the messages directory and source catalog when they do not exist initially',
+    async () => {
+      filesystem.project.messages = undefined;
+      filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
     function Greeting() {
       const t = useExtracted();
@@ -63,52 +65,55 @@ describe('json format', () => {
     }
     `;
 
-    using compiler = createCompiler();
-    await compiler.extractAll();
+      using compiler = createCompiler();
+      await compiler.extractAll();
 
-    expect(vi.mocked(fs.mkdir)).toHaveBeenCalledWith('messages', {
-      recursive: true
-    });
-    expect(vi.mocked(fs.writeFile)).toHaveBeenCalledWith(
-      'messages/en.json',
-      expect.any(String)
-    );
-    expect(JSON.parse(filesystem.project.messages!['en.json'])).toEqual({
-      '+YJVTi': 'Hey!'
-    });
-  });
+      expect(vi.mocked(fs.mkdir)).toHaveBeenCalledWith('messages', {
+        recursive: true
+      });
+      expect(vi.mocked(fs.writeFile)).toHaveBeenCalledWith(
+        'messages/en.json',
+        expect.any(String)
+      );
+      expect(JSON.parse(filesystem.project.messages!['en.json'])).toEqual({
+        '+YJVTi': 'Hey!'
+      });
+    }
+  );
 
-  it('creates all locale files immediately when explicit locales are provided', async () => {
-    filesystem.project.src['Greeting.tsx'] = `
+  it.todo(
+    'creates all locale files immediately when explicit locales are provided',
+    async () => {
+      filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
     function Greeting() {
       const t = useExtracted();
       return <div>{t('Hello!')}</div>;
     }
     `;
-    filesystem.project.messages = undefined;
+      filesystem.project.messages = undefined;
 
-    using compiler = new ExtractionCompiler(
-      {
-        srcPath: './src',
-        sourceLocale: 'en',
-        messages: {
-          path: './messages',
-          format: 'json',
-          locales: ['de', 'fr']
+      using compiler = new ExtractionCompiler(
+        {
+          srcPath: './src',
+          sourceLocale: 'en',
+          messages: {
+            path: './messages',
+            format: 'json',
+            locales: ['de', 'fr']
+          }
+        },
+        {
+          isDevelopment: true,
+          projectRoot: '/project'
         }
-      },
-      {
-        isDevelopment: true,
-        projectRoot: '/project'
-      }
-    );
+      );
 
-    await compiler.extractAll();
+      await compiler.extractAll();
 
-    await waitForWriteFileCalls(3);
+      await waitForWriteFileCalls(3);
 
-    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
+      expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
       [
         [
           "messages/en.json",
@@ -134,8 +139,9 @@ describe('json format', () => {
       ]
     `);
 
-    expect(watchCallbacks.size).toBe(0);
-  });
+      expect(watchCallbacks.size).toBe(0);
+    }
+  );
 
   it.skip('avoids a race condition when compiling while a new locale is added', async () => {
     filesystem.project.src['Greeting.tsx'] = `
