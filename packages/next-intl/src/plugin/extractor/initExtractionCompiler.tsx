@@ -1,5 +1,4 @@
 import ExtractionCompiler from '../../extractor/ExtractionCompiler.js';
-import {extractorLogger} from '../../extractor/extractorLogger.js';
 import type {ExtractorConfig} from '../../extractor/types.js';
 import {isDevelopment, isDevelopmentOrNextBuild} from '../config.js';
 import type {PluginConfig} from '../types.js';
@@ -33,15 +32,9 @@ export default function initExtractionCompiler(pluginConfig: PluginConfig) {
 
   // Dev: catalog loader + addContextDependency handles extraction.
   // Build: run extraction once before build.
-  if (isDevelopment) {
-    extractorLogger.initExtractionSkipped({
-      reason: 'dev mode - catalog loader handles extraction'
-    });
-    return;
-  }
+  if (isDevelopment) return;
 
   runOnce(() => {
-    extractorLogger.initExtractionRun({projectRoot: process.cwd()});
     const extractorConfig: ExtractorConfig = {
       srcPath: experimental.srcPath!,
       sourceLocale: experimental.extract!.sourceLocale,

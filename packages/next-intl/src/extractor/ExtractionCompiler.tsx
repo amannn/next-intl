@@ -23,13 +23,11 @@ export default class ExtractionCompiler implements Disposable {
     this.installExitHandlers();
   }
 
-  public async extractAll(): Promise<{
-    filesScanned: number;
-    filesChanged: number;
-  }> {
-    const stats = await this.manager.loadMessages();
+  public async extractAll() {
+    // We can't rely on all files being compiled (e.g. due to persistent
+    // caching), so loading the messages initially is necessary.
+    await this.manager.loadMessages();
     await this.manager.save();
-    return stats;
   }
 
   public [Symbol.dispose](): void {

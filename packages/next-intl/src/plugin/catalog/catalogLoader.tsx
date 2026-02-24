@@ -3,7 +3,6 @@ import fs from 'fs/promises';
 import path from 'path';
 import compile from 'icu-minify/compile';
 import ExtractionCompiler from '../../extractor/ExtractionCompiler.js';
-import {extractorLogger} from '../../extractor/extractorLogger.js';
 import type ExtractorCodec from '../../extractor/format/ExtractorCodec.js';
 import {
   getFormatExtension,
@@ -73,21 +72,11 @@ export default function catalogLoader(
 
   const runExtraction =
     options.sourceLocale && options.srcPath && locale === options.sourceLocale;
-  const isSourceLocale = locale === (options.sourceLocale ?? '');
   const srcPaths = runExtraction
     ? (Array.isArray(options.srcPath) ? options.srcPath : [options.srcPath])
         .filter((p): p is string => typeof p === 'string')
         .map((p) => path.resolve(projectRoot, p))
     : [];
-
-  extractorLogger.catalogLoaderRun({
-    projectRoot,
-    resourcePath: this.resourcePath,
-    locale,
-    isSourceLocale,
-    runExtraction: Boolean(runExtraction),
-    srcPaths
-  });
 
   Promise.resolve()
     .then(async () => {
@@ -95,16 +84,9 @@ export default function catalogLoader(
       if (runExtraction && srcPaths.length > 0) {
         for (const srcPath of srcPaths) {
           this.addContextDependency?.(srcPath);
-          extractorLogger.addContextDependency({projectRoot, path: srcPath});
         }
         const messagesDir = path.resolve(projectRoot, options.messages.path);
         this.addContextDependency?.(messagesDir);
-        extractorLogger.addContextDependency({projectRoot, path: messagesDir});
-        const extractionStart = Date.now();
-        extractorLogger.extractionStart({
-          projectRoot,
-          resourcePath: this.resourcePath
-        });
         let compiler = compilerCacheByProject.get(projectRoot);
         if (!compiler) {
           compiler = new ExtractionCompiler(
@@ -117,14 +99,7 @@ export default function catalogLoader(
           );
           compilerCacheByProject.set(projectRoot, compiler);
         }
-        const stats = await compiler.extractAll();
-        extractorLogger.extractionEnd({
-          projectRoot,
-          resourcePath: this.resourcePath,
-          durationMs: Date.now() - extractionStart,
-          filesScanned: stats.filesScanned,
-          filesChanged: stats.filesChanged
-        });
+        await compiler.extractAll();
         contentToDecode = await fs.readFile(this.resourcePath, 'utf8');
       }
 

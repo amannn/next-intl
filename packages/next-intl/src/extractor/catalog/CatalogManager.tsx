@@ -1,7 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
 import type MessageExtractor from '../extractor/MessageExtractor.js';
-import {extractorLogger} from '../extractorLogger.js';
 import type ExtractorCodec from '../format/ExtractorCodec.js';
 import {getFormatExtension, resolveCodec} from '../format/index.js';
 import SourceFileScanner from '../source/SourceFileScanner.js';
@@ -79,6 +78,7 @@ export default class CatalogManager implements Disposable {
     this.saveScheduler = new SaveScheduler<void>(50);
     this.projectRoot = opts.projectRoot ?? getDefaultProjectRoot();
     this.isDevelopment = opts.isDevelopment ?? false;
+
     this.extractor = opts.extractor;
   }
 
@@ -114,11 +114,10 @@ export default class CatalogManager implements Disposable {
         this.config.messages.path
       );
       this.catalogLocales = new CatalogLocales({
-        extension: getFormatExtension(this.config.messages.format),
-        isDevelopment: this.isDevelopment,
-        locales: this.config.messages.locales,
         messagesDir,
-        sourceLocale: this.config.sourceLocale
+        sourceLocale: this.config.sourceLocale,
+        extension: getFormatExtension(this.config.messages.format),
+        locales: this.config.messages.locales
       });
       return this.catalogLocales;
     }
@@ -136,50 +135,31 @@ export default class CatalogManager implements Disposable {
     ).map((srcPath) => path.join(this.projectRoot, srcPath));
   }
 
-  public async loadMessages(): Promise<{
-    filesScanned: number;
-    filesChanged: number;
-  }> {
-    extractorLogger.catalogManagerLoadStart({projectRoot: this.projectRoot});
-
+  public async loadMessages() {
     const sourceDiskMessages = await this.loadSourceMessages();
 
     this.loadCatalogsPromise = this.loadTargetMessages();
     await this.loadCatalogsPromise;
 
-    const scanStart = Date.now();
-    let filesChanged = 0;
-    let totalFilesScanned = 0;
     this.scanCompletePromise = (async () => {
       const sourceFiles = await SourceFileScanner.getSourceFiles(
         this.getSrcPaths()
       );
-      totalFilesScanned = sourceFiles.size;
-      for (const filePath of sourceFiles) {
-        const changed = await this.processFile(filePath);
-        if (changed) filesChanged++;
-      }
+      await Promise.all(
+        Array.from(sourceFiles).map(async (filePath) =>
+          this.processFile(filePath)
+        )
+      );
       this.mergeSourceDiskMetadata(sourceDiskMessages);
     })();
 
     await this.scanCompletePromise;
-
-    extractorLogger.catalogManagerScanComplete({
-      projectRoot: this.projectRoot,
-      totalFilesScanned,
-      fileCount: this.messagesByFile.size,
-      filesChanged,
-      messageCount: this.messagesById.size,
-      durationMs: Date.now() - scanStart
-    });
 
     if (this.isDevelopment) {
       const catalogLocales = this.getCatalogLocales();
       catalogLocales.subscribeLocalesChange(this.onLocalesChange);
       await catalogLocales.ensureWatcherReady();
     }
-
-    return {filesScanned: totalFilesScanned, filesChanged};
   }
 
   private async loadSourceMessages(): Promise<Map<string, ExtractorMessage>> {
@@ -236,21 +216,27 @@ export default class CatalogManager implements Disposable {
         }
       }
     } else {
-      // For target: disk wins, BUT preserve orphaned translations (those in
-      // existing but not on disk) so they can be restored when message re-added
+      // For target: disk wins completely, BUT preserve existing translations
+      // if we read empty (likely a write in progress by an external tool
+      // that causes the file to temporarily be empty)
       const existingTranslations = this.translationsByTargetLocale.get(locale);
-      const translations = new Map<string, ExtractorMessage>();
-      for (const message of diskMessages) {
-        translations.set(message.id, message);
-      }
-      if (existingTranslations) {
-        for (const [id, msg] of existingTranslations) {
-          if (!translations.has(id) && msg.message) {
-            translations.set(id, msg);
-          }
+      const hasExistingTranslations =
+        existingTranslations && existingTranslations.size > 0;
+
+      if (diskMessages.length > 0) {
+        // We got content from disk, replace with it
+        const translations = new Map<string, ExtractorMessage>();
+        for (const message of diskMessages) {
+          translations.set(message.id, message);
         }
+        this.translationsByTargetLocale.set(locale, translations);
+      } else if (hasExistingTranslations) {
+        // Likely a write in progress, preserve existing translations
+      } else {
+        // We read empty and have no existing translations
+        const translations = new Map<string, ExtractorMessage>();
+        this.translationsByTargetLocale.set(locale, translations);
       }
-      this.translationsByTargetLocale.set(locale, translations);
     }
   }
 
@@ -334,22 +320,25 @@ export default class CatalogManager implements Disposable {
     }
 
     // Clean up removed messages from `messagesById`
-    for (const id of idsToRemove) {
+    idsToRemove.forEach((id) => {
       const message = this.messagesById.get(id);
-      if (!message) continue;
+      if (!message) return;
 
       const hasOtherReferences = message.references?.some(
         (ref) => ref.path !== relativeFilePath
       );
 
       if (!hasOtherReferences) {
+        // No other references, delete the message entirely
         this.messagesById.delete(id);
       } else {
+        // Message is used elsewhere, remove this file from references
+        // Mutate the existing object to keep `messagesById` and `messagesByFile` in sync
         message.references = message.references?.filter(
           (ref) => ref.path !== relativeFilePath
         );
       }
-    }
+    });
 
     // Update the stored messages
     if (messages.length > 0) {
@@ -362,13 +351,6 @@ export default class CatalogManager implements Disposable {
       prevFileMessages,
       fileMessages
     );
-
-    extractorLogger.catalogManagerFileProcessed({
-      projectRoot: this.projectRoot,
-      filePath: absoluteFilePath,
-      messageCount: messages.length,
-      changed
-    });
     return changed;
   }
 
@@ -429,21 +411,9 @@ export default class CatalogManager implements Disposable {
   }
 
   private async saveImpl(): Promise<void> {
-    extractorLogger.catalogManagerSaveStart({
-      projectRoot: this.projectRoot
-    });
-    const saveStart = Date.now();
-
     await this.saveLocale(this.config.sourceLocale);
     const targetLocales = await this.getTargetLocales();
-    const localesWritten = [this.config.sourceLocale, ...targetLocales];
     await Promise.all(targetLocales.map((locale) => this.saveLocale(locale)));
-
-    extractorLogger.catalogManagerSaveComplete({
-      projectRoot: this.projectRoot,
-      localesWritten,
-      durationMs: Date.now() - saveStart
-    });
   }
 
   private async saveLocale(locale: Locale): Promise<void> {
