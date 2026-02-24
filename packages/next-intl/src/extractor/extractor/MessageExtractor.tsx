@@ -81,16 +81,39 @@ export default class MessageExtractor {
       filename: filePath
     });
 
-    // TODO: Improve the typing of @swc/core
-    const output = (result as any).output as string;
-    const messages = JSON.parse(
-      JSON.parse(output).results
-    ) as Array<StrictExtractedMessage>;
+    const rawOutput = (result as {output?: string}).output;
+    const outer =
+      typeof rawOutput === 'string' ? JSON.parse(rawOutput) : rawOutput;
+    const parsed =
+      typeof outer?.output === 'string'
+        ? JSON.parse(outer.output)
+        : (outer ?? {});
+    const messages = (parsed.messages ?? []) as Array<
+      | {
+          type: 'Extracted';
+          id: string;
+          message: string;
+          description?: string;
+          references: Array<{path: string; line: number}>;
+        }
+      | {type: 'Translations'}
+    >;
+    const extracted = messages
+      .filter(
+        (cur): cur is Extract<(typeof messages)[0], {type: 'Extracted'}> =>
+          cur.type === 'Extracted'
+      )
+      .map((cur) => ({
+        id: cur.id,
+        message: cur.message,
+        description: cur.description,
+        references: cur.references
+      }));
 
     const extractionResult = {
       code: result.code,
       map: result.map,
-      messages
+      messages: extracted
     };
 
     this.compileCache.set(cacheKey, extractionResult);

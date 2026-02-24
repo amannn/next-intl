@@ -17,6 +17,29 @@ use swc_ecma_utils::ExprFactory;
 use swc_ecma_visit::{VisitMut, VisitMutWith};
 use swc_plugin_macro::plugin_transform;
 
+#[derive(Debug, Clone, Serialize)]
+#[serde(tag = "type")]
+enum MessageItem {
+    Extracted(StrictExtractedMessage),
+    Translations(TranslationUse),
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct TranslationUse {
+    pub id: String,
+    pub references: Vec<Reference>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct PluginOutput {
+    messages: Vec<MessageItem>,
+    dependencies: Vec<String>,
+    #[serde(rename = "hasUseClient")]
+    has_use_client: bool,
+    #[serde(rename = "hasUseServer")]
+    has_use_server: bool,
+}
+
 #[plugin_transform]
 fn next_intl_plugin(mut program: Program, data: TransformPluginProgramMetadata) -> Program {
     let config = serde_json::from_str::<Config>(
@@ -33,10 +56,8 @@ fn next_intl_plugin(mut program: Program, data: TransformPluginProgramMetadata) 
     );
     program.visit_mut_with(&mut visitor);
 
-    experimental_emit(
-        "results".into(),
-        serde_json::to_string(&visitor.get_results()).unwrap(),
-    );
+    let output = visitor.get_output();
+    experimental_emit("output".into(), serde_json::to_string(&output).unwrap());
 
     program
 }
@@ -50,17 +71,28 @@ struct Config {
     file_path: String,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum TranslatorKind {
+    Extracted,
+    Translations,
+}
+
 pub struct TransformVisitor {
     is_development: bool,
     file_path: String,
     source_map: Option<Box<dyn SourceMapper>>,
 
     hook_local_names: FxHashMap<Id, HookType>,
+    translations_hook_names: FxHashMap<Id, ()>,
 
-    translator_map: FxHashMap<Id, TranslatorInfo>,
+    translator_map: FxHashMap<Id, (TranslatorKind, Option<Wtf8Atom>)>,
 
-    /// Messages keyed by ID to aggregate duplicate usages (IndexMap preserves insertion order)
     results_by_id: IndexMap<Wtf8Atom, StrictExtractedMessage>,
+    translations: Vec<TranslationUse>,
+
+    dependencies: Vec<String>,
+    has_use_client: bool,
+    has_use_server: bool,
 }
 
 impl TransformVisitor {
@@ -74,8 +106,13 @@ impl TransformVisitor {
             file_path,
             source_map,
             hook_local_names: Default::default(),
+            translations_hook_names: Default::default(),
             translator_map: Default::default(),
             results_by_id: Default::default(),
+            translations: Default::default(),
+            dependencies: Default::default(),
+            has_use_client: false,
+            has_use_server: false,
         }
     }
 
@@ -83,15 +120,31 @@ impl TransformVisitor {
         self.results_by_id.values().cloned().collect()
     }
 
-    fn define_translator(&mut self, name: Id, namespace: Option<Wtf8Atom>) {
-        self.translator_map
-            .insert(name, TranslatorInfo { namespace });
+    pub fn get_output_json(&self) -> String {
+        serde_json::to_string(&self.get_output()).unwrap()
     }
-}
 
-#[derive(Debug, Clone)]
-struct TranslatorInfo {
-    namespace: Option<Wtf8Atom>,
+    fn get_output(&self) -> PluginOutput {
+        let mut messages: Vec<MessageItem> = self
+            .results_by_id
+            .values()
+            .cloned()
+            .map(MessageItem::Extracted)
+            .collect();
+        for t in &self.translations {
+            messages.push(MessageItem::Translations(t.clone()));
+        }
+        PluginOutput {
+            messages,
+            dependencies: self.dependencies.clone(),
+            has_use_client: self.has_use_client,
+            has_use_server: self.has_use_server,
+        }
+    }
+
+    fn define_translator(&mut self, name: Id, kind: TranslatorKind, namespace: Option<Wtf8Atom>) {
+        self.translator_map.insert(name, (kind, namespace));
+    }
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -142,37 +195,64 @@ impl HookType {
 
 impl VisitMut for TransformVisitor {
     fn visit_mut_call_expr(&mut self, call: &mut CallExpr) {
-        let mut is_translator_call = false;
-        let mut namespace = None;
-
-        // Handle Identifier case: t("message")
-        match &call.callee {
+        let translator_info = match &call.callee {
             Callee::Expr(box Expr::Ident(ident)) => {
-                if let Some(translator) = self.translator_map.get(&ident.to_id()) {
-                    is_translator_call = true;
-                    namespace = translator.namespace.clone();
-                }
+                self.translator_map.get(&ident.to_id()).cloned()
             }
-
             Callee::Expr(box Expr::Member(MemberExpr {
                 obj: box Expr::Ident(obj),
                 prop: MemberProp::Ident(prop),
                 ..
-            })) => {
-                if matches!(&*prop.sym, "rich" | "markup" | "has") {
-                    if let Some(translator) = self.translator_map.get(&obj.to_id()) {
-                        is_translator_call = true;
-                        namespace = translator.namespace.clone();
-                    }
-                }
+            })) if matches!(&*prop.sym, "rich" | "markup" | "has") => {
+                self.translator_map.get(&obj.to_id()).cloned()
             }
+            _ => None,
+        };
 
-            _ => {}
-        }
-
-        if is_translator_call {
+        if let Some((kind, namespace)) = translator_info {
             let arg0 = call.args.first();
 
+            if kind == TranslatorKind::Translations {
+                let key = arg0.and_then(|a| extract_static_string(&a.expr));
+                if namespace.is_none() && key.is_none() {
+                    HANDLER.with(|handler| {
+                        handler
+                            .struct_span_err(
+                                call.span(),
+                                "useTranslations() without a namespace and a dynamic key cannot be statically analyzed. \
+                                 Make the message statically analyzable or use a namespace: useTranslations('namespace').",
+                            )
+                            .emit();
+                    });
+                } else {
+                    let id = match (namespace.as_ref(), key.as_ref()) {
+                        (Some(ns), Some(k)) => format!(
+                            "{}.{}",
+                            ns.to_string_lossy(),
+                            k.to_string_lossy()
+                        ),
+                        (Some(ns), None) => ns.to_string_lossy().to_string(),
+                        (None, Some(k)) => k.to_string_lossy().to_string(),
+                        (None, None) => unreachable!(),
+                    };
+                    let line = self
+                        .source_map
+                        .as_ref()
+                        .map_or(0, |sm| sm.lookup_char_pos(call.span.lo).line);
+                    self.translations.push(TranslationUse {
+                        id,
+                        references: vec![Reference {
+                            path: self.file_path.clone(),
+                            line,
+                        }],
+                    });
+                }
+                call.visit_mut_children_with(self);
+                return;
+            }
+
+            // Extracted path
+            let arg0 = call.args.first();
             let mut message_text = None;
             let mut explicit_id = None;
             let mut description = None;
@@ -354,8 +434,40 @@ impl VisitMut for TransformVisitor {
     }
 
     fn visit_mut_module(&mut self, module: &mut Module) {
-        for import in module.body.iter_mut() {
-            if let ModuleItem::ModuleDecl(ModuleDecl::Import(import)) = import {
+        for item in &module.body {
+            match item {
+                ModuleItem::ModuleDecl(ModuleDecl::Import(import)) => {
+                    if !import.type_only {
+                        self.dependencies
+                            .push(import.src.value.to_string_lossy().to_string());
+                    }
+                }
+                ModuleItem::ModuleDecl(ModuleDecl::ExportNamed(export)) => {
+                    if let Some(src) = &export.src {
+                        self.dependencies
+                            .push(src.value.to_string_lossy().to_string());
+                    }
+                }
+                ModuleItem::ModuleDecl(ModuleDecl::ExportAll(export)) => {
+                    self.dependencies
+                        .push(export.src.value.to_string_lossy().to_string());
+                }
+                ModuleItem::Stmt(Stmt::Expr(ExprStmt { expr, .. })) => {
+                    if let Expr::Lit(Lit::Str(s)) = &**expr {
+                        let val = s.value.to_string_lossy();
+                        if val == "use client" {
+                            self.has_use_client = true;
+                        } else if val == "use server" {
+                            self.has_use_server = true;
+                        }
+                    }
+                }
+                _ => {}
+            }
+        }
+
+        for item in module.body.iter_mut() {
+            if let ModuleItem::ModuleDecl(ModuleDecl::Import(import)) = item {
                 match import.src.value.as_bytes() {
                     b"next-intl" => {
                         for specifier in &mut import.specifiers {
@@ -382,6 +494,9 @@ impl VisitMut for TransformVisitor {
                                         DUMMY_SP,
                                         named_spec.local.ctxt,
                                     );
+                                } else if orig_name == "useTranslations" {
+                                    self.translations_hook_names
+                                        .insert(named_spec.local.to_id(), ());
                                 }
                             }
                         }
@@ -403,7 +518,6 @@ impl VisitMut for TransformVisitor {
                                 if orig_name == HookType::GetTranslation.extracted_name() {
                                     self.hook_local_names
                                         .insert(named_spec.local.to_id(), HookType::GetTranslation);
-
                                     named_spec.imported = Some(ModuleExportName::Ident(
                                         HookType::GetTranslation.target_name().into(),
                                     ));
@@ -412,6 +526,9 @@ impl VisitMut for TransformVisitor {
                                         DUMMY_SP,
                                         named_spec.local.ctxt,
                                     );
+                                } else if orig_name == "getTranslations" {
+                                    self.translations_hook_names
+                                        .insert(named_spec.local.to_id(), ());
                                 }
                             }
                         }
@@ -422,14 +539,14 @@ impl VisitMut for TransformVisitor {
             }
         }
 
+        Self::collect_dynamic_imports(self, &module.body);
         module.visit_mut_children_with(self);
     }
 
     fn visit_mut_var_declarator(&mut self, node: &mut VarDeclarator) {
         if let Some(name) = node.name.as_ident() {
             let mut call_expr = None;
-
-            // Handle direct CallExpression: const t = useExtracted();
+            let mut kind = None;
 
             if let Some(init) = &mut node.init {
                 match &mut **init {
@@ -441,6 +558,10 @@ impl VisitMut for TransformVisitor {
                                         .into(),
                                 );
                                 call_expr = Some(init_call);
+                                kind = Some(TranslatorKind::Extracted);
+                            } else if self.translations_hook_names.contains_key(&callee.to_id()) {
+                                call_expr = Some(init_call);
+                                kind = Some(TranslatorKind::Translations);
                             }
                         }
                     }
@@ -460,6 +581,10 @@ impl VisitMut for TransformVisitor {
                                         .into(),
                                 );
                                 call_expr = Some(arg);
+                                kind = Some(TranslatorKind::Extracted);
+                            } else if self.translations_hook_names.contains_key(&callee.to_id()) {
+                                call_expr = Some(arg);
+                                kind = Some(TranslatorKind::Translations);
                             }
                         }
                     }
@@ -468,7 +593,7 @@ impl VisitMut for TransformVisitor {
                 }
             }
 
-            if let Some(call_expr) = call_expr {
+            if let (Some(call_expr), Some(k)) = (call_expr, kind) {
                 let namespace = call_expr.args.first().and_then(|arg| match &*arg.expr {
                     Expr::Lit(Lit::Str(s)) => Some(s.value.clone()),
                     Expr::Object(ObjectLit { props, .. }) => props.iter().find_map(|prop| {
@@ -487,11 +612,49 @@ impl VisitMut for TransformVisitor {
                     _ => None,
                 });
 
-                self.define_translator(name.to_id(), namespace)
+                self.define_translator(name.to_id(), k, namespace);
             }
         }
 
         node.visit_mut_children_with(self);
+    }
+}
+
+impl TransformVisitor {
+    fn collect_dynamic_imports(&mut self, body: &[ModuleItem]) {
+        for item in body {
+            match item {
+                ModuleItem::Stmt(stmt) => Self::collect_dynamic_imports_stmt(self, stmt),
+                _ => {}
+            }
+        }
+    }
+
+    fn collect_dynamic_imports_stmt(&mut self, stmt: &Stmt) {
+        match stmt {
+            Stmt::Expr(ExprStmt { expr, .. }) => Self::collect_dynamic_imports_expr(self, expr),
+            Stmt::Block(block) => {
+                for s in &block.stmts {
+                    Self::collect_dynamic_imports_stmt(self, s);
+                }
+            }
+            _ => {}
+        }
+    }
+
+    fn collect_dynamic_imports_expr(&mut self, expr: &Expr) {
+        match expr {
+            Expr::Call(call) => {
+                if let Callee::Import(_) = &call.callee {
+                    if let Some(arg) = call.args.first() {
+                        if let Some(s) = extract_static_string(&arg.expr) {
+                            self.dependencies.push(s.to_string_lossy().to_string());
+                        }
+                    }
+                }
+            }
+            _ => {}
+        }
     }
 }
 

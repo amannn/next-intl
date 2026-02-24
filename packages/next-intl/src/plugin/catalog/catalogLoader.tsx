@@ -1,7 +1,8 @@
 import fs from 'fs/promises';
 import path from 'path';
 import compile from 'icu-minify/compile';
-import ExtractionCompiler from '../../extractor/ExtractionCompiler.js';
+import CatalogLocales from '../../extractor/catalog/CatalogLocales.js';
+import CatalogPersister from '../../extractor/catalog/CatalogPersister.js';
 import type ExtractorCodec from '../../extractor/format/ExtractorCodec.js';
 import {
   getFormatExtension,
@@ -9,22 +10,15 @@ import {
 } from '../../extractor/format/index.js';
 import type {
   CatalogLoaderConfig,
-  ExtractorMessage
+  ExtractorMessage,
+  Locale
 } from '../../extractor/types.js';
-import {setNestedProperty} from '../../extractor/utils.js';
+import {compareReferences, setNestedProperty} from '../../extractor/utils.js';
+import Scanner from '../../scanner/Scanner.js';
 import type {TurbopackLoaderContext} from '../types.js';
 
-function log(projectRoot: string, ...args: Array<unknown>) {
-  const logPath = path.join(projectRoot, 'catalog-loader.log');
-  const line = [new Date().toISOString(), ...args.map(String)].join(' ') + '\n';
-  fs.appendFile(logPath, line);
-}
-
-// The module scope is safe for some caching, but Next.js can
-// create multiple loader instances so don't expect a singleton.
 let cachedCodec: ExtractorCodec | null = null;
-
-let compiler: ExtractionCompiler | null = null;
+let scanner: Scanner | null = null;
 
 type CompiledMessageCacheEntry = {
   compiledMessage: unknown;
@@ -55,6 +49,102 @@ async function getCodec(
   return cachedCodec;
 }
 
+function mergeMessagesByFile(
+  messagesByFile: Map<string, Array<ExtractorMessage>>,
+  projectRoot: string
+): Map<string, ExtractorMessage> {
+  const messagesById = new Map<string, ExtractorMessage>();
+  for (const [filePath, messages] of messagesByFile) {
+    const relativePath = path
+      .relative(projectRoot, filePath)
+      .split(path.sep)
+      .join('/');
+    for (let message of messages) {
+      const prev = messagesById.get(message.id);
+      if (prev) {
+        message = {...message};
+        if (message.references && prev.references) {
+          const otherRefs = prev.references.filter(
+            (ref) => ref.path !== relativePath
+          );
+          message.references = [...otherRefs, ...message.references].sort(
+            compareReferences
+          );
+        }
+        for (const key of Object.keys(prev)) {
+          if (message[key] == null) message[key] = prev[key];
+        }
+      }
+      messagesById.set(message.id, message);
+    }
+  }
+  return messagesById;
+}
+
+async function runExtractionAndPersist(
+  projectRoot: string,
+  options: CatalogLoaderConfig
+): Promise<void> {
+  const srcPath = Array.isArray(options.srcPath)
+    ? options.srcPath[0]
+    : options.srcPath!;
+  if (!scanner) {
+    scanner = new Scanner({
+      projectRoot,
+      entry: srcPath,
+      tsconfigPath: path.join(projectRoot, 'tsconfig.json')
+    });
+  }
+  const result = await scanner.scan();
+
+  const messagesById = mergeMessagesByFile(result.messagesByFile, projectRoot);
+
+  const codec = await getCodec(options, projectRoot);
+  const extension = getFormatExtension(options.messages.format);
+  const persister = new CatalogPersister({
+    messagesPath: path.resolve(projectRoot, options.messages.path),
+    codec,
+    extension
+  });
+
+  const catalogLocales = new CatalogLocales({
+    messagesDir: path.resolve(projectRoot, options.messages.path),
+    sourceLocale: options.sourceLocale!,
+    extension,
+    locales: options.messages.locales
+  });
+  const targetLocales = await catalogLocales.getTargetLocales();
+
+  const messages = Array.from(messagesById.values());
+
+  await persister.write(messages, {
+    locale: options.sourceLocale!,
+    sourceMessagesById: messagesById
+  });
+
+  for (const locale of targetLocales) {
+    const diskMessages = await persister.read(locale);
+    const translationsByTarget = new Map<string, ExtractorMessage>();
+    for (const m of diskMessages) {
+      translationsByTarget.set(m.id, m);
+    }
+    const messagesToPersist = messages.map((msg) => {
+      const localeMsg = translationsByTarget.get(msg.id);
+      return {
+        ...localeMsg,
+        id: msg.id,
+        description: msg.description,
+        references: msg.references,
+        message: localeMsg?.message ?? ''
+      };
+    });
+    await persister.write(messagesToPersist, {
+      locale: locale as Locale,
+      sourceMessagesById: messagesById
+    });
+  }
+}
+
 /**
  * Parses and optimizes catalog files.
  *
@@ -71,7 +161,6 @@ export default function catalogLoader(
   const extension = getFormatExtension(options.messages.format);
   const locale = path.basename(this.resourcePath, extension);
   const projectRoot = this.rootContext;
-  log(projectRoot, 'catalogLoader', this.resourcePath);
 
   Promise.resolve()
     .then(async () => {
@@ -86,27 +175,12 @@ export default function catalogLoader(
           Array.isArray(options.srcPath) ? options.srcPath : [options.srcPath]
         ) as Array<string>;
         for (const srcPath of srcPaths) {
-          this.addContextDependency(srcPath);
-          log(projectRoot, 'addContextDependency', srcPath);
+          this.addContextDependency(path.resolve(projectRoot, srcPath));
         }
-
         const messagesDir = path.resolve(projectRoot, options.messages.path);
         this.addContextDependency(messagesDir);
-        log(projectRoot, 'addContextDependency', messagesDir);
 
-        if (!compiler) {
-          compiler = new ExtractionCompiler(
-            {
-              srcPath: options.srcPath!,
-              sourceLocale: options.sourceLocale!,
-              messages: options.messages
-            },
-            {isDevelopment: false, projectRoot}
-          );
-        }
-
-        // TODO: Incremental caching
-        await compiler.extractAll();
+        await runExtractionAndPersist(projectRoot, options);
 
         contentToDecode = await fs.readFile(this.resourcePath, 'utf8');
       }
