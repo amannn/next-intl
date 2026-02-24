@@ -452,26 +452,6 @@ export default class CatalogManager implements Disposable {
     this.lastWriteByLocale.set(locale, newTime);
   }
 
-  private onLocalesChange = async (params: {
-    added: Array<Locale>;
-    removed: Array<Locale>;
-  }): Promise<void> => {
-    // Chain to existing promise
-    this.loadCatalogsPromise = Promise.all([
-      this.loadCatalogsPromise,
-      ...params.added.map((locale) => this.reloadLocaleCatalog(locale))
-    ]);
-
-    for (const locale of params.added) {
-      await this.saveLocale(locale);
-    }
-
-    for (const locale of params.removed) {
-      this.translationsByTargetLocale.delete(locale);
-      this.lastWriteByLocale.delete(locale);
-    }
-  };
-
   public [Symbol.dispose](): void {
     this.saveScheduler[Symbol.dispose]();
   }
