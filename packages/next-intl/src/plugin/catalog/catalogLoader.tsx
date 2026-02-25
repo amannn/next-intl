@@ -57,6 +57,8 @@ export default function catalogLoader(
         for (const srcPath of options.srcPaths!) {
           this.addContextDependency(path.resolve(projectRoot, srcPath));
         }
+        const messagesDir = path.resolve(projectRoot, options.messages.path);
+        this.addContextDependency(messagesDir);
 
         const result = await extractMessages(projectRoot, {
           ...options,
