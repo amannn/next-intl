@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import POParser, {Entry} from 'po-parser';
+import POParser from 'po-parser';
+import type {Entry} from 'po-parser';
 import {defineCodec} from 'next-intl/extractor';
 
 type ExtractedMessage = {
