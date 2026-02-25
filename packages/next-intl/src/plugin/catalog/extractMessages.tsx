@@ -52,8 +52,23 @@ export default async function extractMessages(
 
   const messages = Array.from(messagesById.values());
 
-  await persister.read(options.sourceLocale);
-  const sourceContent = await persister.write(messages, {
+  const sourceDiskMessages = await persister.read(options.sourceLocale);
+  const sourceByDisk = new Map<string, ExtractorMessage>();
+  for (const cur of sourceDiskMessages) {
+    sourceByDisk.set(cur.id, cur);
+  }
+  // Merge with disk so unknown properties (e.g. flags like fuzzy, c-format) are preserved
+  const sourceMessagesToPersist = messages.map((msg) => {
+    const diskMsg = sourceByDisk.get(msg.id);
+    return {
+      ...diskMsg,
+      description: msg.description,
+      id: msg.id,
+      message: msg.message,
+      references: msg.references
+    };
+  });
+  const sourceContent = await persister.write(sourceMessagesToPersist, {
     locale: options.sourceLocale,
     sourceMessagesById: messagesById
   });

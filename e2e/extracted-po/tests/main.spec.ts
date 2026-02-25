@@ -325,7 +325,7 @@ export default function Greeting() {
   expect(greetingRefs.length).toBeGreaterThanOrEqual(2);
 });
 
-it.skip('preserves flags', async ({page}) => {
+it('preserves flags', async ({page}) => {
   await page.goto('/');
   await expectCatalog(
     'en.po',
