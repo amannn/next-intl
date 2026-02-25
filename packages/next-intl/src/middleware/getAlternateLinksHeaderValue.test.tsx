@@ -590,6 +590,118 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
         `<https://example.com${basePath}/about>; rel="alternate"; hreflang="x-default"`
       ]);
     });
+
+    describe('per-domain localePrefix override', () => {
+      it("respects domain-level 'always' override with global 'as-needed'", () => {
+        const routing = receiveRoutingConfig({
+          defaultLocale: 'en',
+          locales: ['en', 'de'],
+          localePrefix: 'as-needed',
+          domains: [
+            {
+              domain: 'us.example.com',
+              defaultLocale: 'en',
+              locales: ['en'],
+              localePrefix: 'never'
+            },
+            {
+              domain: 'de.example.com',
+              defaultLocale: 'de',
+              locales: ['de', 'en'],
+              localePrefix: 'always'
+            }
+          ]
+        });
+
+        expect(
+          getAlternateLinksHeaderValue({
+            routing,
+            request: getMockRequest('https://us.example.com/'),
+            resolvedLocale: 'en'
+          }).split(', ')
+        ).toEqual([
+          `<https://us.example.com${
+            basePath || '/'
+          }>; rel="alternate"; hreflang="en"`,
+          `<https://de.example.com${basePath}/en>; rel="alternate"; hreflang="en"`,
+          `<https://de.example.com${basePath}/de>; rel="alternate"; hreflang="de"`
+        ]);
+      });
+
+      it("respects domain-level 'never' override with global 'always'", () => {
+        const routing = receiveRoutingConfig({
+          defaultLocale: 'en',
+          locales: ['en', 'de'],
+          localePrefix: 'always',
+          domains: [
+            {
+              domain: 'us.example.com',
+              defaultLocale: 'en',
+              locales: ['en'],
+              localePrefix: 'never'
+            },
+            {
+              domain: 'de.example.com',
+              defaultLocale: 'de',
+              locales: ['de', 'en'],
+              localePrefix: 'as-needed'
+            }
+          ]
+        });
+
+        expect(
+          getAlternateLinksHeaderValue({
+            routing,
+            request: getMockRequest('https://us.example.com/'),
+            resolvedLocale: 'en'
+          }).split(', ')
+        ).toEqual([
+          `<https://us.example.com${
+            basePath || '/'
+          }>; rel="alternate"; hreflang="en"`,
+          `<https://de.example.com${basePath}/en>; rel="alternate"; hreflang="en"`,
+          `<https://de.example.com${
+            basePath || '/'
+          }>; rel="alternate"; hreflang="de"`
+        ]);
+      });
+
+      it("respects domain-level 'as-needed' override with global 'never'", () => {
+        const routing = receiveRoutingConfig({
+          defaultLocale: 'en',
+          locales: ['en', 'de'],
+          localePrefix: 'never',
+          domains: [
+            {
+              domain: 'us.example.com',
+              defaultLocale: 'en',
+              locales: ['en'],
+              localePrefix: 'always'
+            },
+            {
+              domain: 'de.example.com',
+              defaultLocale: 'de',
+              locales: ['de', 'en'],
+              localePrefix: 'as-needed'
+            }
+          ]
+        });
+
+        expect(
+          getAlternateLinksHeaderValue({
+            routing,
+            request: getMockRequest('https://us.example.com/'),
+            resolvedLocale: 'en'
+          }).split(', ')
+        ).toEqual([
+          `<https://us.example.com${basePath}/en>; rel="alternate"; hreflang="en"`,
+          `<https://de.example.com${basePath}/en>; rel="alternate"; hreflang="en"`,
+          `<https://de.example.com${
+            basePath || '/'
+          }>; rel="alternate"; hreflang="de"`
+        ]);
+      });
+    });
   }
 );
 
