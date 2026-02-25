@@ -3,10 +3,10 @@ import path from 'path';
 import type {Locale, MessagesConfig} from '../types.js';
 
 type CatalogLocalesParams = {
-  messagesDir: string;
-  sourceLocale: Locale;
   extension: string;
   locales: MessagesConfig['locales'];
+  messagesDir: string;
+  sourceLocale: Locale;
 };
 
 export default class CatalogLocales {
@@ -25,9 +25,8 @@ export default class CatalogLocales {
   public async getTargetLocales(): Promise<Array<Locale>> {
     if (this.locales === 'infer') {
       return await this.readTargetLocales();
-    } else {
-      return this.locales.filter((locale) => locale !== this.sourceLocale);
     }
+    return this.locales.filter((locale) => locale !== this.sourceLocale);
   }
 
   private async readTargetLocales(): Promise<Array<Locale>> {

@@ -110,10 +110,10 @@ export default class CatalogManager implements Disposable {
         this.config.messages.path
       );
       this.catalogLocales = new CatalogLocales({
-        messagesDir,
-        sourceLocale: this.config.sourceLocale,
         extension: getFormatExtension(this.config.messages.format),
-        locales: this.config.messages.locales
+        locales: this.config.messages.locales,
+        messagesDir,
+        sourceLocale: this.config.sourceLocale
       });
       return this.catalogLocales;
     }
@@ -209,27 +209,21 @@ export default class CatalogManager implements Disposable {
         }
       }
     } else {
-      // For target: disk wins completely, BUT preserve existing translations
-      // if we read empty (likely a write in progress by an external tool
-      // that causes the file to temporarily be empty)
+      // For target: disk wins, BUT preserve orphaned translations (those in
+      // existing but not on disk) so they can be restored when message re-added
       const existingTranslations = this.translationsByTargetLocale.get(locale);
-      const hasExistingTranslations =
-        existingTranslations && existingTranslations.size > 0;
-
-      if (diskMessages.length > 0) {
-        // We got content from disk, replace with it
-        const translations = new Map<string, ExtractorMessage>();
-        for (const message of diskMessages) {
-          translations.set(message.id, message);
-        }
-        this.translationsByTargetLocale.set(locale, translations);
-      } else if (hasExistingTranslations) {
-        // Likely a write in progress, preserve existing translations
-      } else {
-        // We read empty and have no existing translations
-        const translations = new Map<string, ExtractorMessage>();
-        this.translationsByTargetLocale.set(locale, translations);
+      const translations = new Map<string, ExtractorMessage>();
+      for (const message of diskMessages) {
+        translations.set(message.id, message);
       }
+      if (existingTranslations) {
+        for (const [id, msg] of existingTranslations) {
+          if (!translations.has(id) && msg.message) {
+            translations.set(id, msg);
+          }
+        }
+      }
+      this.translationsByTargetLocale.set(locale, translations);
     }
   }
 
