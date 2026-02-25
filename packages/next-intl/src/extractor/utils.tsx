@@ -60,7 +60,3 @@ export function compareReferences(
   if (pathCompare !== 0) return pathCompare;
   return (refA.line ?? 0) - (refB.line ?? 0);
 }
-
-export function getDefaultProjectRoot() {
-  return process.cwd();
-}

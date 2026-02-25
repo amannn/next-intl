@@ -1,11 +1,14 @@
-/* eslint-disable @typescript-eslint/no-unnecessary-condition -- Loader context varies (webpack/turbopack) */
 import path from 'path';
 import SourceFileFilter from '../../extractor/source/SourceFileFilter.js';
 import Scanner from '../../scanner/Scanner.js';
 import type {ManifestNamespaces} from '../../tree-shaking/Manifest.js';
 import type {TurbopackLoaderContext} from '../types.js';
 import {PROVIDER_NAME, injectManifestProp} from './injectManifest.js';
-import type {ManifestLoaderConfig} from './manifestLoaderConfig.js';
+
+export type ManifestLoaderConfig = {
+  srcPaths: Array<string>;
+  tsconfigPath: string;
+};
 
 function splitPath(input: string): Array<string> {
   return input.split('.').filter(Boolean);
@@ -102,35 +105,27 @@ export default async function manifestLoader(
   this: TurbopackLoaderContext<ManifestLoaderConfig>,
   source: string
 ): Promise<string | void> {
-  const callback = this.async?.();
+  const callback = this.async();
   const inputFile = this.resourcePath;
-  const rootContext = this.rootContext ?? process.cwd();
+  const projectRoot = this.rootContext;
+
+  const options = this.getOptions() as ManifestLoaderConfig;
+  const srcPaths = options.srcPaths;
+
+  const inSrcPaths = srcPaths.some((cur) =>
+    SourceFileFilter.isWithinPath(inputFile, path.resolve(projectRoot, cur))
+  );
+  if (!inSrcPaths) {
+    callback(null, source);
+    return source;
+  }
 
   const hasInferProvider =
     /messages\s*=\s*["']infer["']|messages\s*=\s*\{\s*["']infer["']\s*\}/.test(
       source
     ) && new RegExp(PROVIDER_NAME).test(source);
   if (!hasInferProvider) {
-    callback?.(null, source);
-    return source;
-  }
-
-  const options = (this.getOptions?.() ?? {}) as Partial<ManifestLoaderConfig>;
-  const srcPaths = options.srcPaths;
-  const projectRoot = options.projectRoot ?? rootContext;
-  if (!srcPaths || !Array.isArray(srcPaths)) {
-    callback?.(null, source);
-    return source;
-  }
-
-  const srcRoots = srcPaths.map((cur) =>
-    path.resolve(projectRoot, cur.endsWith('/') ? cur.slice(0, -1) : cur)
-  );
-  const inSrcPaths = srcRoots.some((root) =>
-    SourceFileFilter.isWithinPath(inputFile, root)
-  );
-  if (!inSrcPaths) {
-    callback?.(null, source);
+    callback(null, source);
     return source;
   }
 
@@ -139,12 +134,12 @@ export default async function manifestLoader(
       projectRoot,
       entry: inputFile,
       srcPaths,
-      tsconfigPath: path.join(projectRoot, 'tsconfig.json')
+      tsconfigPath: options.tsconfigPath
     });
     const result = await scanner.scan();
 
     for (const filePath of result.files) {
-      this.addDependency?.(filePath);
+      this.addDependency(filePath);
     }
 
     const namespaces = collectNamespaces(
@@ -158,7 +153,7 @@ export default async function manifestLoader(
       namespaces === true ||
       (typeof namespaces === 'object' && Object.keys(namespaces).length > 0);
     if (!hasNamespaces) {
-      callback?.(null, source);
+      callback(null, source);
       return source;
     }
 
@@ -166,10 +161,9 @@ export default async function manifestLoader(
       filename: inputFile,
       sourceMap: this.sourceMap
     });
-    callback?.(null, code, map ?? undefined);
+    callback(null, code, map ?? undefined);
     return code;
   } catch (error) {
-    callback?.(error as Error);
-    throw error;
+    callback(error as Error);
   }
 }

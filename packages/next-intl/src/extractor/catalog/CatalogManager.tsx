@@ -10,11 +10,7 @@ import type {
   ExtractorMessageReference,
   Locale
 } from '../types.js';
-import {
-  compareReferences,
-  getDefaultProjectRoot,
-  normalizePathToPosix
-} from '../utils.js';
+import {compareReferences, normalizePathToPosix} from '../utils.js';
 import CatalogLocales from './CatalogLocales.js';
 import CatalogPersister from './CatalogPersister.js';
 import SaveScheduler from './SaveScheduler.js';
@@ -68,7 +64,7 @@ export default class CatalogManager implements Disposable {
   public constructor(
     config: ExtractorConfig,
     opts: {
-      projectRoot?: string;
+      projectRoot: string;
       isDevelopment?: boolean;
       sourceMap?: boolean;
       extractor: MessageExtractor;
@@ -76,7 +72,7 @@ export default class CatalogManager implements Disposable {
   ) {
     this.config = config;
     this.saveScheduler = new SaveScheduler<void>(50);
-    this.projectRoot = opts.projectRoot ?? getDefaultProjectRoot();
+    this.projectRoot = opts.projectRoot;
     this.isDevelopment = opts.isDevelopment ?? false;
 
     this.extractor = opts.extractor;
@@ -128,11 +124,9 @@ export default class CatalogManager implements Disposable {
   }
 
   private getSrcPaths(): Array<string> {
-    return (
-      Array.isArray(this.config.srcPath)
-        ? this.config.srcPath
-        : [this.config.srcPath]
-    ).map((srcPath) => path.join(this.projectRoot, srcPath));
+    return this.config.srcPaths.map((srcPath) =>
+      path.join(this.projectRoot, srcPath)
+    );
   }
 
   public async loadMessages() {

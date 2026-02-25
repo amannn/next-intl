@@ -1,13 +1,19 @@
 import ExtractionCompiler from './ExtractionCompiler.js';
 import MessageExtractor from './extractor/MessageExtractor.js';
-import type {ExtractorConfig} from './types.js';
-import {getDefaultProjectRoot} from './utils.js';
+import type {ExtractMessagesParams, ExtractorConfig} from './types.js';
 
-export default async function extractMessages(params: ExtractorConfig) {
-  const compiler = new ExtractionCompiler(params, {
+export default async function extractMessages(params: ExtractMessagesParams) {
+  const {srcPath, ...rest} = params;
+  const config: ExtractorConfig = {
+    ...rest,
+    srcPaths: Array.isArray(srcPath) ? srcPath : [srcPath]
+  };
+  const projectRoot = process.cwd();
+  const compiler = new ExtractionCompiler(config, {
+    projectRoot,
     extractor: new MessageExtractor({
       isDevelopment: false,
-      projectRoot: getDefaultProjectRoot()
+      projectRoot
     })
   });
   await compiler.extractAll();

@@ -38,7 +38,7 @@ describe('json format', () => {
   function createCompiler() {
     return new ExtractionCompiler(
       {
-        srcPath: './src',
+        srcPaths: ['./src'],
         sourceLocale: 'en',
         messages: {
           path: './messages',
@@ -95,7 +95,7 @@ describe('json format', () => {
 
       using compiler = new ExtractionCompiler(
         {
-          srcPath: './src',
+          srcPaths: ['./src'],
           sourceLocale: 'en',
           messages: {
             path: './messages',
@@ -347,7 +347,7 @@ describe('po format', () => {
   function createCompiler() {
     return new ExtractionCompiler(
       {
-        srcPath: './src',
+        srcPaths: ['./src'],
         sourceLocale: 'en',
         messages: {
           path: './messages',
@@ -438,7 +438,7 @@ describe('po format', () => {
 
     using compiler = new ExtractionCompiler(
       {
-        srcPath: './src',
+        srcPaths: ['./src'],
         sourceLocale: 'en',
         messages: {
           path: './messages',
@@ -532,7 +532,7 @@ describe('po format', () => {
 
       using compiler = new ExtractionCompiler(
         {
-          srcPath: './src',
+          srcPaths: ['./src'],
           sourceLocale: 'en',
           messages: {
             path: './messages',
@@ -1581,7 +1581,7 @@ msgstr "Hallo!"`
   });
 });
 
-describe('`srcPath` filtering', () => {
+describe('`srcPaths` filtering', () => {
   beforeEach(() => {
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
@@ -1626,10 +1626,10 @@ describe('`srcPath` filtering', () => {
     };
   });
 
-  function createCompiler(srcPath: string | Array<string>) {
+  function createCompiler(srcPaths: Array<string>) {
     return new ExtractionCompiler(
       {
-        srcPath,
+        srcPaths,
         sourceLocale: 'en',
         messages: {
           path: './messages',
@@ -1645,7 +1645,7 @@ describe('`srcPath` filtering', () => {
   }
 
   it('skips node_modules, .next and .git by default', async () => {
-    using compiler = createCompiler('./');
+    using compiler = createCompiler(['./']);
     await compiler.extractAll();
     await waitForWriteFileCalls(1);
     expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
@@ -1706,7 +1706,7 @@ describe('custom format', () => {
 
     using compiler = new ExtractionCompiler(
       {
-        srcPath: './src',
+        srcPaths: ['./src'],
         sourceLocale: 'en',
         messages: {
           path: './messages',
@@ -1773,7 +1773,7 @@ describe('custom format', () => {
 
     using compiler = new ExtractionCompiler(
       {
-        srcPath: './src',
+        srcPaths: ['./src'],
         sourceLocale: 'en',
         messages: {
           path: './messages',

@@ -6,6 +6,7 @@ import SourceFileFilter from '../extractor/source/SourceFileFilter.js';
 import SourceFileScanner from '../extractor/source/SourceFileScanner.js';
 import type {ExtractorMessage} from '../extractor/types.js';
 import {normalizePathToPosix} from '../extractor/utils.js';
+import {isDevelopment} from '../plugin/config.js';
 import createModuleResolver from '../tree-shaking/createModuleResolver.js';
 
 const require = createRequire(import.meta.url);
@@ -70,7 +71,6 @@ async function runPluginOnFile(
   const filePathPosix = normalizePathToPosix(
     path.relative(projectRoot, filePath)
   );
-  const isDevelopment = process.env['NODE_ENV'.trim()] === 'development';
 
   const result = await transform(source, {
     jsc: {
@@ -116,9 +116,7 @@ function createSrcMatcher(
   projectRoot: string,
   srcPaths: Array<string>
 ): (filePath: string) => boolean {
-  const roots = srcPaths.map((cur) =>
-    path.resolve(projectRoot, cur.endsWith('/') ? cur.slice(0, -1) : cur)
-  );
+  const roots = srcPaths.map((cur) => path.resolve(projectRoot, cur));
   return (filePath: string) =>
     roots.some((root) => SourceFileFilter.isWithinPath(filePath, root));
 }

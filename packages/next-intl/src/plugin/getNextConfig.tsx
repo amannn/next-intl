@@ -10,10 +10,11 @@ import type {
 import type {Configuration} from 'webpack';
 import {getFormatExtension} from '../extractor/format/index.js';
 import SourceFileFilter from '../extractor/source/SourceFileFilter.js';
-import type {CatalogLoaderConfig, ExtractorConfig} from '../extractor/types.js';
+import type {ExtractorConfig} from '../extractor/types.js';
+import type {CatalogLoaderConfig} from './catalog/catalogLoader.js';
 import {isDevelopmentOrNextBuild} from './config.js';
 import {hasStableTurboConfig, isNextJs16OrHigher} from './nextFlags.js';
-import type {ManifestLoaderConfig} from './treeShaking/manifestLoaderConfig.js';
+import type {ManifestLoaderConfig} from './treeShaking/manifestLoader.js';
 import type {PluginConfig} from './types.js';
 import {throwError} from './utils.js';
 
@@ -124,20 +125,30 @@ export default function getNextConfig(
     return {
       loader: 'next-intl/extractor/extractionLoader',
       options: {
-        srcPath: experimental.srcPath,
+        srcPaths: getConfiguredSrcPaths(experimental.srcPath),
         sourceLocale: experimental.extract!.sourceLocale,
         messages: pluginConfig.experimental.messages
       } satisfies ExtractorConfig as TurbopackLoaderOptions
     };
   }
 
+  function getTsconfigPath() {
+    return (
+      nextConfig?.typescript?.tsconfigPath ??
+      path.join(process.cwd(), 'tsconfig.json')
+    );
+  }
+
   function getCatalogLoaderConfig() {
     const options: CatalogLoaderConfig = {
-      messages: pluginConfig.experimental!.messages!
+      messages: pluginConfig.experimental!.messages!,
+      tsconfigPath: getTsconfigPath()
     };
     if (pluginConfig.experimental?.extract) {
       options.sourceLocale = pluginConfig.experimental.extract.sourceLocale;
-      options.srcPath = pluginConfig.experimental.srcPath;
+      options.srcPaths = getConfiguredSrcPaths(
+        pluginConfig.experimental.srcPath!
+      );
     }
     return {
       loader: 'next-intl/extractor/catalogLoader',
@@ -153,8 +164,8 @@ export default function getNextConfig(
     return {
       loader: 'next-intl/treeShaking/manifestLoader',
       options: {
-        projectRoot: process.cwd(),
-        srcPaths
+        srcPaths,
+        tsconfigPath: getTsconfigPath()
       } satisfies ManifestLoaderConfig as TurbopackLoaderOptions
     };
   }

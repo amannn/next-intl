@@ -3,7 +3,7 @@ import path from 'path';
 import {transform} from '@swc/core';
 import LRUCache from '../../utils/LRUCache.js';
 import type {ExtractorMessage} from '../types.js';
-import {getDefaultProjectRoot, normalizePathToPosix} from '../utils.js';
+import {normalizePathToPosix} from '../utils.js';
 
 const require = createRequire(import.meta.url);
 
@@ -22,12 +22,12 @@ export default class MessageExtractor {
   }>(750);
 
   public constructor(opts: {
+    projectRoot: string;
     isDevelopment?: boolean;
-    projectRoot?: string;
     sourceMap?: boolean;
   }) {
     this.isDevelopment = opts.isDevelopment ?? false;
-    this.projectRoot = opts.projectRoot ?? getDefaultProjectRoot();
+    this.projectRoot = opts.projectRoot;
     this.sourceMap = opts.sourceMap ?? false;
   }
 

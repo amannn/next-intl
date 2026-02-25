@@ -27,13 +27,11 @@ export type MessagesConfig = {
 };
 
 export type ExtractorConfig = {
-  srcPath: string | Array<string>;
+  srcPaths: Array<string>;
   sourceLocale: string;
   messages: MessagesConfig;
 };
 
-export type CatalogLoaderConfig = {
-  messages: MessagesConfig;
-  sourceLocale?: string;
-  srcPath?: string | Array<string>;
+export type ExtractMessagesParams = Omit<ExtractorConfig, 'srcPaths'> & {
+  srcPath: string | Array<string>;
 };

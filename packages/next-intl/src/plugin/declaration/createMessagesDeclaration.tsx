@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import {isDevelopment} from '../config.js';
 import {once, throwError} from '../utils.js';
 import watchFile from '../watchFile.js';
 
@@ -44,13 +45,9 @@ export default function createMessagesDeclaration(
         );
       }
 
-      // Keep this as a runtime check and don't replace
-      // this with a constant during the build process
-      const env = process.env['NODE_ENV'.trim()];
-
       compileDeclaration(messagesPath);
 
-      if (env === 'development') {
+      if (isDevelopment) {
         startWatching(messagesPath);
       }
     }

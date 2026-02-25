@@ -64,7 +64,7 @@ export default class CatalogPersister {
       locale: Locale;
       sourceMessagesById: Map<string, ExtractorMessage>;
     }
-  ): Promise<void> {
+  ): Promise<string> {
     const filePath = this.getFilePath(context.locale);
     const content = this.codec.encode(messages, context);
 
@@ -75,6 +75,7 @@ export default class CatalogPersister {
     } catch (error) {
       console.error(`❌ Failed to write catalog: ${error}`);
     }
+    return content;
   }
 
   public async getLastModified(locale: Locale): Promise<Date | undefined> {
