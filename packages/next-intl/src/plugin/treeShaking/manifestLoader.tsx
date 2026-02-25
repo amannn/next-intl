@@ -1,6 +1,6 @@
 import path from 'path';
 import SourceFileFilter from '../../extractor/source/SourceFileFilter.js';
-import Scanner from '../../scanner/Scanner.js';
+import Scanner, {type ScanResult} from '../../scanner/Scanner.js';
 import type {ManifestNamespaces} from '../../tree-shaking/Manifest.js';
 import type {TurbopackLoaderContext} from '../types.js';
 import {PROVIDER_NAME, injectManifestProp} from './injectManifest.js';
@@ -51,16 +51,7 @@ function hasAncestor(node: TraversalNode, target: string): boolean {
 
 function collectNamespaces(
   inputFile: string,
-  graph: {adjacency: Map<string, Set<string>>},
-  analysisByFile: Map<
-    string,
-    {
-      translations: Array<{id: string}>;
-      hasUseClient: boolean;
-      hasUseServer: boolean;
-    }
-  >,
-  messagesByFile: Map<string, Array<{id: string}>>
+  result: ScanResult
 ): ManifestNamespaces {
   const namespaces: ManifestNamespaces = {};
   const queue: Array<TraversalNode> = [{file: inputFile, inClient: false}];
@@ -73,25 +64,19 @@ function collectNamespaces(
     if (visited.has(visitKey)) continue;
     visited.add(visitKey);
 
-    const analysis = analysisByFile.get(file);
-    if (!analysis) continue;
+    const entry = result.get(file);
+    if (!entry) continue;
 
-    const nowClient = inClient || analysis.hasUseClient;
-    const effectiveClient = nowClient && !analysis.hasUseServer;
+    const nowClient = inClient || entry.hasUseClient;
+    const effectiveClient = nowClient && !entry.hasUseServer;
 
     if (effectiveClient) {
-      for (const t of analysis.translations) {
-        addToManifest(namespaces as Record<string, unknown>, t.id);
-      }
-      const extracted = messagesByFile.get(file) ?? [];
-      for (const m of extracted) {
+      for (const m of entry.messages) {
         addToManifest(namespaces as Record<string, unknown>, m.id);
       }
     }
 
-    const deps = graph.adjacency.get(file);
-    if (!deps) continue;
-    for (const dep of deps) {
+    for (const dep of entry.dependencies) {
       if (dep.endsWith('.d.ts')) continue;
       if (hasAncestor(node, dep)) continue;
       queue.push({file: dep, inClient: effectiveClient, parent: node});
@@ -138,16 +123,11 @@ export default async function manifestLoader(
     });
     const result = await scanner.scan();
 
-    for (const filePath of result.files) {
+    for (const filePath of result.keys()) {
       this.addDependency(filePath);
     }
 
-    const namespaces = collectNamespaces(
-      inputFile,
-      result.graph,
-      result.analysisByFile,
-      result.messagesByFile
-    );
+    const namespaces = collectNamespaces(inputFile, result);
 
     const hasNamespaces =
       namespaces === true ||

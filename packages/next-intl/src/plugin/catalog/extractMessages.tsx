@@ -8,8 +8,7 @@ import type {
   Locale,
   MessagesConfig
 } from '../../extractor/types.js';
-import {compareReferences} from '../../extractor/utils.js';
-import Scanner from '../../scanner/Scanner.js';
+import Scanner, {type ScanResult} from '../../scanner/Scanner.js';
 
 export type ExtractMessagesConfig = {
   codec: ExtractorCodec;
@@ -34,7 +33,7 @@ export default async function extractMessages(
   }
   const result = await scanner.scan();
 
-  const messagesById = mergeMessagesByFile(result.messagesByFile, projectRoot);
+  const messagesById = getMessagesById(result);
 
   const extension = getFormatExtension(options.messages.format);
   const persister = new CatalogPersister({
@@ -83,33 +82,24 @@ export default async function extractMessages(
   return sourceContent;
 }
 
-function mergeMessagesByFile(
-  messagesByFile: Map<string, Array<ExtractorMessage>>,
-  projectRoot: string
-): Map<string, ExtractorMessage> {
+function getMessagesById(result: ScanResult): Map<string, ExtractorMessage> {
   const messagesById = new Map<string, ExtractorMessage>();
-  for (const [filePath, messages] of messagesByFile) {
-    const relativePath = path
-      .relative(projectRoot, filePath)
-      .split(path.sep)
-      .join('/');
-    for (let message of messages) {
-      const prev = messagesById.get(message.id);
+  for (const entry of result.values()) {
+    for (const m of entry.messages) {
+      if (m.type !== 'Extracted') continue;
+      const prev = messagesById.get(m.id);
+      const message: ExtractorMessage = {
+        id: m.id,
+        message: m.message ?? prev?.message ?? '',
+        description: m.description ?? prev?.description,
+        references: m.references
+      };
       if (prev) {
-        message = {...message};
-        if (message.references && prev.references) {
-          const otherRefs = prev.references.filter(
-            (ref) => ref.path !== relativePath
-          );
-          message.references = [...otherRefs, ...message.references].sort(
-            compareReferences
-          );
-        }
         for (const key of Object.keys(prev)) {
           if (message[key] == null) message[key] = prev[key];
         }
       }
-      messagesById.set(message.id, message);
+      messagesById.set(m.id, message);
     }
   }
   return messagesById;

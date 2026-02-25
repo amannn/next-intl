@@ -4,8 +4,7 @@ import path from 'path';
 import {transform} from '@swc/core';
 import SourceFileFilter from '../extractor/source/SourceFileFilter.js';
 import SourceFileScanner from '../extractor/source/SourceFileScanner.js';
-import type {ExtractorMessage} from '../extractor/types.js';
-import {normalizePathToPosix} from '../extractor/utils.js';
+import {compareReferences, normalizePathToPosix} from '../extractor/utils.js';
 import {isDevelopment} from '../plugin/config.js';
 import createModuleResolver from '../tree-shaking/createModuleResolver.js';
 
@@ -20,14 +19,22 @@ function isSourceFile(filePath: string): boolean {
   return SUPPORTED_EXTENSIONS.has(path.extname(filePath));
 }
 
-type FileAnalysis = {
+export type ScanMessage = {
+  type: 'Extracted' | 'Translations';
+  id: string;
+  references: Array<{path: string; line: number}>;
+  message?: string;
+  description?: string;
+};
+
+export type FileEntry = {
+  dependencies: Set<string>;
   hasUseClient: boolean;
   hasUseServer: boolean;
-  translations: Array<{
-    id: string;
-    references: Array<{path: string; line: number}>;
-  }>;
+  messages: Array<ScanMessage>;
 };
+
+export type ScanResult = Map<string, FileEntry>;
 
 type PluginOutput = {
   messages: Array<
@@ -54,13 +61,6 @@ export type ScannerConfig = {
   entry: string | Array<string>;
   srcPaths?: Array<string>;
   tsconfigPath?: string;
-};
-
-export type ScanResult = {
-  files: Set<string>;
-  graph: {adjacency: Map<string, Set<string>>};
-  messagesByFile: Map<string, Array<ExtractorMessage>>;
-  analysisByFile: Map<string, FileAnalysis>;
 };
 
 async function runPluginOnFile(
@@ -121,6 +121,36 @@ function createSrcMatcher(
     roots.some((root) => SourceFileFilter.isWithinPath(filePath, root));
 }
 
+function mergeReferences(result: ScanResult): void {
+  const refsByKey = new Map<
+    string,
+    {refs: Array<{path: string; line: number}>; seen: Set<string>}
+  >();
+  for (const entry of result.values()) {
+    for (const m of entry.messages) {
+      const key = `${m.type}:${m.id}`;
+      let bucket = refsByKey.get(key);
+      if (!bucket) {
+        bucket = {refs: [], seen: new Set()};
+        refsByKey.set(key, bucket);
+      }
+      for (const ref of m.references) {
+        const refKey = `${ref.path}:${ref.line}`;
+        if (!bucket.seen.has(refKey)) {
+          bucket.seen.add(refKey);
+          bucket.refs.push(ref);
+        }
+      }
+    }
+  }
+  for (const entry of result.values()) {
+    for (const m of entry.messages) {
+      const bucket = refsByKey.get(`${m.type}:${m.id}`)!;
+      m.references = bucket.refs.toSorted(compareReferences);
+    }
+  }
+}
+
 export default class Scanner {
   private projectRoot: string;
   private entry: string | Array<string>;
@@ -148,33 +178,30 @@ export default class Scanner {
     const results = await Promise.all(
       entries.map((entry) => this.scanEntry(entry))
     );
-    return this.mergeScanResults(results);
+    const merged = this.mergeScanResults(results);
+    mergeReferences(merged);
+    return merged;
   }
 
   private mergeScanResults(results: Array<ScanResult>): ScanResult {
-    const files = new Set<string>();
-    const adjacency = new Map<string, Set<string>>();
-    const messagesByFile = new Map<string, Array<ExtractorMessage>>();
-    const analysisByFile = new Map<string, FileAnalysis>();
+    const out = new Map<string, FileEntry>();
     for (const result of results) {
-      for (const file of result.files) files.add(file);
-      for (const [file, deps] of result.graph.adjacency) {
-        adjacency.set(file, new Set(deps));
-      }
-      for (const [file, messages] of result.messagesByFile) {
-        messagesByFile.set(file, messages);
-      }
-      for (const [file, analysis] of result.analysisByFile) {
-        analysisByFile.set(file, analysis);
+      for (const [file, entry] of result) {
+        const existing = out.get(file);
+        if (existing) {
+          for (const dep of entry.dependencies) existing.dependencies.add(dep);
+          existing.messages.push(...entry.messages);
+        } else {
+          out.set(file, {
+            dependencies: new Set(entry.dependencies),
+            hasUseClient: entry.hasUseClient,
+            hasUseServer: entry.hasUseServer,
+            messages: [...entry.messages]
+          });
+        }
       }
     }
-
-    return {
-      files,
-      graph: {adjacency},
-      messagesByFile,
-      analysisByFile
-    };
+    return out;
   }
 
   private async scanEntry(entryPath: string): Promise<ScanResult> {
@@ -189,9 +216,7 @@ export default class Scanner {
 
   private async scanFolder(entryPath: string): Promise<ScanResult> {
     const files = await SourceFileScanner.getSourceFiles([entryPath]);
-    const adjacency = new Map<string, Set<string>>();
-    const messagesByFile = new Map<string, Array<ExtractorMessage>>();
-    const analysisByFile = new Map<string, FileAnalysis>();
+    const result = new Map<string, FileEntry>();
 
     for (const filePath of files) {
       const normalized = path.normalize(filePath);
@@ -208,75 +233,51 @@ export default class Scanner {
         this.projectRoot
       );
 
-      const extracted = output.messages
-        .filter(
-          (
-            cur
-          ): cur is Extract<(typeof output.messages)[0], {type: 'Extracted'}> =>
-            cur.type === 'Extracted'
-        )
-        .map((cur) => ({
-          id: cur.id,
-          message: cur.message,
-          description: cur.description,
-          references: cur.references
-        }));
-      if (extracted.length > 0) {
-        messagesByFile.set(normalized, extracted);
-      }
-
-      const translations = output.messages
-        .filter(
-          (
-            cur
-          ): cur is Extract<
-            (typeof output.messages)[0],
-            {type: 'Translations'}
-          > => cur.type === 'Translations'
-        )
-        .map((cur) => ({
-          id: cur.id,
-          references: cur.references
-        }));
-      analysisByFile.set(normalized, {
-        translations,
-        hasUseClient: output.hasUseClient,
-        hasUseServer: output.hasUseServer
-      });
+      const messages: Array<ScanMessage> = output.messages.map((cur) =>
+        cur.type === 'Extracted'
+          ? {
+              type: 'Extracted' as const,
+              id: cur.id,
+              message: cur.message,
+              description: cur.description,
+              references: cur.references
+            }
+          : {
+              type: 'Translations' as const,
+              id: cur.id,
+              references: cur.references
+            }
+      );
 
       const context = path.dirname(normalized);
       const resolved = await Promise.all(
         output.dependencies.map((req) => this.resolve(context, req))
       );
-      const children = resolved.filter(
-        (res): res is string =>
-          res != null &&
-          isSourceFile(res) &&
-          (!this.srcMatcher || this.srcMatcher(res))
+      const dependencies = new Set(
+        resolved
+          .filter(
+            (res): res is string =>
+              res != null &&
+              isSourceFile(res) &&
+              (!this.srcMatcher || this.srcMatcher(res))
+          )
+          .map((child) => path.normalize(child))
       );
 
-      if (!adjacency.has(normalized)) {
-        adjacency.set(normalized, new Set());
-      }
-      for (const child of children) {
-        adjacency.get(normalized)!.add(path.normalize(child));
-      }
+      result.set(normalized, {
+        dependencies,
+        hasUseClient: output.hasUseClient,
+        hasUseServer: output.hasUseServer,
+        messages
+      });
     }
 
-    return {
-      files,
-      graph: {adjacency},
-      messagesByFile,
-      analysisByFile
-    };
+    return result;
   }
 
   private async scanFromEntry(entryPath: string): Promise<ScanResult> {
     const normalizedEntry = path.normalize(entryPath);
-    const adjacency = new Map<string, Set<string>>();
-    const files = new Set<string>();
-    const messagesByFile = new Map<string, Array<ExtractorMessage>>();
-    const analysisByFile = new Map<string, FileAnalysis>();
+    const result = new Map<string, FileEntry>();
     const visited = new Set<string>();
 
     const visit = async (
@@ -287,7 +288,6 @@ export default class Scanner {
       if (ancestors.has(normalized)) return;
       if (visited.has(normalized)) return;
       visited.add(normalized);
-      files.add(normalized);
 
       if (this.srcMatcher && !this.srcMatcher(normalized)) return;
 
@@ -304,41 +304,21 @@ export default class Scanner {
         this.projectRoot
       );
 
-      const extracted = output.messages
-        .filter(
-          (
-            cur
-          ): cur is Extract<(typeof output.messages)[0], {type: 'Extracted'}> =>
-            cur.type === 'Extracted'
-        )
-        .map((cur) => ({
-          id: cur.id,
-          message: cur.message,
-          description: cur.description,
-          references: cur.references
-        }));
-      if (extracted.length > 0) {
-        messagesByFile.set(normalized, extracted);
-      }
-
-      const translations = output.messages
-        .filter(
-          (
-            cur
-          ): cur is Extract<
-            (typeof output.messages)[0],
-            {type: 'Translations'}
-          > => cur.type === 'Translations'
-        )
-        .map((cur) => ({
-          id: cur.id,
-          references: cur.references
-        }));
-      analysisByFile.set(normalized, {
-        translations,
-        hasUseClient: output.hasUseClient,
-        hasUseServer: output.hasUseServer
-      });
+      const messages: Array<ScanMessage> = output.messages.map((cur) =>
+        cur.type === 'Extracted'
+          ? {
+              type: 'Extracted' as const,
+              id: cur.id,
+              message: cur.message,
+              description: cur.description,
+              references: cur.references
+            }
+          : {
+              type: 'Translations' as const,
+              id: cur.id,
+              references: cur.references
+            }
+      );
 
       const context = path.dirname(normalized);
       const resolved = await Promise.all(
@@ -351,28 +331,33 @@ export default class Scanner {
           (!this.srcMatcher || this.srcMatcher(res))
       );
 
-      if (!adjacency.has(normalized)) {
-        adjacency.set(normalized, new Set());
-      }
+      const dependencies = new Set<string>();
       const nextAncestors = new Set([...ancestors, normalized]);
       for (const child of children) {
         const normalizedChild = path.normalize(child);
-        adjacency.get(normalized)!.add(normalizedChild);
+        dependencies.add(normalizedChild);
         await visit(normalizedChild, nextAncestors);
       }
+
+      result.set(normalized, {
+        dependencies,
+        hasUseClient: output.hasUseClient,
+        hasUseServer: output.hasUseServer,
+        messages
+      });
     };
 
     await visit(normalizedEntry, new Set());
 
-    if (!adjacency.has(normalizedEntry)) {
-      adjacency.set(normalizedEntry, new Set());
+    if (!result.has(normalizedEntry)) {
+      result.set(normalizedEntry, {
+        dependencies: new Set(),
+        hasUseClient: false,
+        hasUseServer: false,
+        messages: []
+      });
     }
 
-    return {
-      files,
-      graph: {adjacency},
-      messagesByFile,
-      analysisByFile
-    };
+    return result;
   }
 }
