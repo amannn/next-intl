@@ -115,10 +115,11 @@ export default function getAlternateLinksHeaderValue<
         // a `basePath` that automatically gets applied to the pathname
         url.pathname = getLocalizedPathname(normalizedUrl.pathname, locale);
 
-        if (
-          locale !== domainConfig.defaultLocale ||
-          routing.localePrefix.mode === 'always'
-        ) {
+        // Use domain-specific localePrefix mode if available
+        const domainMode =
+          domainConfig.localePrefix || routing.localePrefix.mode;
+
+        if (locale !== domainConfig.defaultLocale || domainMode === 'always') {
           url.pathname = prefixPathname(url.pathname);
         }
 

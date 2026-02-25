@@ -285,19 +285,23 @@ export function applyPathnamePrefix<
     >,
   force?: boolean
 ): string {
-  const {mode} = routing.localePrefix;
+  const {mode: routingMode} = routing.localePrefix;
 
   let shouldPrefix;
   if (force !== undefined) {
     shouldPrefix = force;
   } else if (isLocalizableHref(pathname)) {
+    // Since locales are unique per domain, there should be
+    // only one domain that contains the locale
+    const domain = routing.domains?.find((cur) => cur.locales.includes(locale));
+    // the domain can override the mode
+    const mode = domain?.localePrefix || routingMode;
+
     if (mode === 'always') {
       shouldPrefix = true;
     } else if (mode === 'as-needed') {
-      shouldPrefix = routing.domains
-        ? // Since locales are unique per domain, any locale that is a
-          // default locale of a domain doesn't require a prefix
-          !routing.domains.some((cur) => cur.defaultLocale === locale)
+      shouldPrefix = domain
+        ? locale !== domain.defaultLocale
         : locale !== routing.defaultLocale;
     }
   }
