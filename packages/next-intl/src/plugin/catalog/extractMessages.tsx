@@ -61,8 +61,8 @@ export default async function extractMessages(
   for (const locale of targetLocales) {
     const diskMessages = await persister.read(locale);
     const translationsByTarget = new Map<string, ExtractorMessage>();
-    for (const m of diskMessages) {
-      translationsByTarget.set(m.id, m);
+    for (const cur of diskMessages) {
+      translationsByTarget.set(cur.id, cur);
     }
     const messagesToPersist = messages.map((msg) => {
       const localeMsg = translationsByTarget.get(msg.id);

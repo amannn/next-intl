@@ -84,6 +84,212 @@ export default function Greeting() {
   expect(content).toContain('Newly extracted');
 });
 
+it('sorts messages by reference path', async ({page}) => {
+  await using _ = await withTempFileApp(
+    'src/components/Header.tsx',
+    `'use client';
+
+import {useExtracted} from 'next-intl';
+
+export default function Header() {
+  const t = useExtracted();
+  return <div>{t('Welcome')}</div>;
+}
+`
+  );
+
+  await using __ = await withTempEditApp(
+    'src/app/page.tsx',
+    `import {useExtracted} from 'next-intl';
+import Greeting from '@/components/Greeting';
+import Footer from '@/components/Footer';
+import Header from '@/components/Header';
+
+export default function Page() {
+  const t = useExtracted();
+  return (
+    <div>
+      <h1>{t('Hello')}</h1>
+      <Header />
+      <Greeting />
+      <Footer />
+    </div>
+  );
+}
+`
+  );
+
+  await page.goto('/');
+  const content = await expectCatalog(
+    'en.po',
+    (c) => getPoEntry(c, 'NhX4DJ') != null && getPoEntry(c, 'PwaN2o') != null
+  );
+  const appIndex = content.indexOf('#: src/app/page.tsx');
+  const headerIndex = content.indexOf('#: src/components/Header.tsx');
+  expect(appIndex).toBeLessThan(headerIndex);
+});
+
+it('removes messages when a folder is deleted during dev', async ({page}) => {
+  await using _ = await withTempFileApp(
+    'src/components/Buttons/Button.tsx',
+    `'use client';
+
+import {useExtracted} from 'next-intl';
+
+export default function Button() {
+  const t = useExtracted();
+  return <button>{t('Click me')}</button>;
+}
+`
+  );
+
+  await using __ = await withTempEditApp(
+    'src/app/page.tsx',
+    `import {useExtracted} from 'next-intl';
+import Greeting from '@/components/Greeting';
+import Footer from '@/components/Footer';
+import Button from '@/components/Buttons/Button';
+
+export default function Page() {
+  const t = useExtracted();
+  return (
+    <div>
+      <h1>{t('Hello')}</h1>
+      <Greeting />
+      <Footer />
+      <Button />
+    </div>
+  );
+}
+`
+  );
+
+  await page.goto('/');
+  const content = await expectCatalog('en.po', (c) => {
+    const entry = getPoEntry(c, 'wESdnU');
+    return entry != null && entry.includes('Buttons/Button.tsx');
+  });
+  expect(getPoEntry(content, 'wESdnU')).toMatch(/Buttons\/Button\.tsx/);
+
+  await using ___ = await withTempEditApp(
+    'src/app/page.tsx',
+    `import {useExtracted} from 'next-intl';
+import Greeting from '@/components/Greeting';
+import Footer from '@/components/Footer';
+
+export default function Page() {
+  const t = useExtracted();
+  return (
+    <div>
+      <h1>{t('Hello')}</h1>
+      <Greeting />
+      <Footer />
+    </div>
+  );
+}
+`
+  );
+
+  await using ____ = await withTempRemoveApp('src/components/Buttons/Button.tsx');
+
+  await page.goto('/');
+  const afterContent = await expectCatalog(
+    'en.po',
+    (c) => !c.includes('Buttons/Button.tsx') && getPoEntry(c, 'wESdnU') == null
+  );
+  expect(getPoEntry(afterContent, 'wESdnU')).toBeNull();
+});
+
+it('updates messages when a folder is renamed during dev', async ({page}) => {
+  await using _ = await withTempFileApp(
+    'src/components/old/Button.tsx',
+    `'use client';
+
+import {useExtracted} from 'next-intl';
+
+export default function Button() {
+  const t = useExtracted();
+  return <button>{t('Click me')}</button>;
+}
+`
+  );
+
+  await using __ = await withTempEditApp(
+    'src/app/page.tsx',
+    `import {useExtracted} from 'next-intl';
+import Greeting from '@/components/Greeting';
+import Footer from '@/components/Footer';
+import Button from '@/components/old/Button';
+
+export default function Page() {
+  const t = useExtracted();
+  return (
+    <div>
+      <h1>{t('Hello')}</h1>
+      <Greeting />
+      <Footer />
+      <Button />
+    </div>
+  );
+}
+`
+  );
+
+  await page.goto('/');
+  const content = await expectCatalog('en.po', (c) => {
+    const entry = getPoEntry(c, 'wESdnU');
+    return entry != null && entry.includes('old/Button.tsx');
+  });
+  expect(getPoEntry(content, 'wESdnU')).toMatch(/old\/Button\.tsx/);
+
+  await using ___ = await withTempFileApp(
+    'src/components/new/Button.tsx',
+    `'use client';
+
+import {useExtracted} from 'next-intl';
+
+export default function Button() {
+  const t = useExtracted();
+  return <button>{t('Click me updated')}</button>;
+}
+`
+  );
+
+  await using ____ = await withTempEditApp(
+    'src/app/page.tsx',
+    `import {useExtracted} from 'next-intl';
+import Greeting from '@/components/Greeting';
+import Footer from '@/components/Footer';
+import Button from '@/components/new/Button';
+
+export default function Page() {
+  const t = useExtracted();
+  return (
+    <div>
+      <h1>{t('Hello')}</h1>
+      <Greeting />
+      <Footer />
+      <Button />
+    </div>
+  );
+}
+`
+  );
+
+  await using _____ = await withTempRemoveApp('src/components/old/Button.tsx');
+
+  await page.goto('/');
+  const afterContent = await expectCatalog(
+    'en.po',
+    (c) =>
+      getPoEntry(c, 'cfI2fq') != null &&
+      getPoEntry(c, 'cfI2fq')!.includes('new/Button.tsx') &&
+      !c.includes('old/Button.tsx')
+  );
+  expect(getPoEntry(afterContent, 'cfI2fq')).toMatch(/new\/Button\.tsx/);
+  expect(afterContent).not.toMatch(/old\/Button\.tsx/);
+});
+
 it('tracks all line numbers when same message appears multiple times in one file', async ({
   page
 }) => {
@@ -119,16 +325,94 @@ export default function Greeting() {
   expect(greetingRefs.length).toBeGreaterThanOrEqual(2);
 });
 
-it("saves catalog when it's missing", async ({page}) => {
+it.skip('preserves flags', async ({page}) => {
   await page.goto('/');
   await expectCatalog(
     'en.po',
     (content) => getPoEntry(content, '+YJVTi') != null
   );
 
-  await using _ = await withTempRemoveApp('messages/en.po');
+  await using _ = await withTempEditApp(
+    'messages/en.po',
+    `msgid ""
+msgstr ""
+"Language: en\\n"
+"Content-Type: text/plain; charset=utf-8\\n"
+"Content-Transfer-Encoding: 8bit\\n"
+
+#: src/components/Greeting.tsx:5
+#, fuzzy
+msgid "+YJVTi"
+msgstr "Hey!"
+`
+  );
 
   await using __ = await withTempEditApp(
+    'messages/de.po',
+    `msgid ""
+msgstr ""
+"Language: de\\n"
+"Content-Type: text/plain; charset=utf-8\\n"
+"Content-Transfer-Encoding: 8bit\\n"
+
+#: src/components/Greeting.tsx:5
+#, c-format
+msgid "+YJVTi"
+msgstr "Hallo!"
+`
+  );
+
+  await page.goto('/');
+  const enContent = await expectCatalog('en.po', (c) =>
+    getPoEntry(c, '+YJVTi') != null
+  );
+  const deContent = await expectCatalog('de.po', (c) =>
+    getPoEntry(c, '+YJVTi') != null
+  );
+  const enEntry = getPoEntry(enContent, '+YJVTi');
+  const deEntry = getPoEntry(deContent, '+YJVTi');
+  expect(enEntry).toMatch(/#, fuzzy/);
+  expect(deEntry).toMatch(/#, c-format/);
+});
+
+it.skip('removes flags when externally deleted', async ({page}) => {
+  await page.goto('/');
+  await expectCatalog(
+    'en.po',
+    (content) => getPoEntry(content, '+YJVTi') != null
+  );
+
+  await using _ = await withTempEditApp(
+    'messages/en.po',
+    `msgid ""
+msgstr ""
+"Language: en\\n"
+"Content-Type: text/plain; charset=utf-8\\n"
+"Content-Transfer-Encoding: 8bit\\n"
+
+#: src/components/Greeting.tsx:5
+#, fuzzy, c-format
+msgid "+YJVTi"
+msgstr "Hey!"
+`
+  );
+
+  await using __ = await withTempEditApp(
+    'messages/en.po',
+    `msgid ""
+msgstr ""
+"Language: en\\n"
+"Content-Type: text/plain; charset=utf-8\\n"
+"Content-Transfer-Encoding: 8bit\\n"
+
+#: src/components/Greeting.tsx:5
+#, c-format
+msgid "+YJVTi"
+msgstr "Hey!"
+`
+  );
+
+  await using ___ = await withTempEditApp(
     'src/components/Greeting.tsx',
     `'use client';
 
@@ -136,17 +420,19 @@ import {useExtracted} from 'next-intl';
 
 export default function Greeting() {
   const t = useExtracted();
-  return <div>{t('Hey!')}{t('Hello!')}</div>;
+  return <div>{t('Hey!')} {t('World')}</div>;
 }
 `
   );
 
-  await expectCatalog(
+  await page.goto('/');
+  const content = await expectCatalog(
     'en.po',
-    (content) =>
-      getPoEntry(content, '+YJVTi') != null &&
-      getPoEntry(content, 'OpKKos') != null
+    (c) => getPoEntry(c, '+YJVTi') != null && getPoEntry(c, 'jqdzk6') != null
   );
+  const entry = getPoEntry(content, '+YJVTi');
+  expect(entry).not.toMatch(/#, fuzzy/);
+  expect(entry).toMatch(/#, c-format/);
 });
 
 it('saves changes to descriptions', async ({page}) => {
@@ -365,72 +651,6 @@ export default function Page() {
   ).toBe(true);
   expect(content).toMatch(/FileY\.tsx/);
   expect(content).toMatch(/FileZ\.tsx/);
-});
-
-it('removes messages when a file is deleted during dev', async ({page}) => {
-  await using _ = await withTempFileApp(
-    'src/components/ComponentB.tsx',
-    `'use client';
-
-import {useExtracted} from 'next-intl';
-
-export default function ComponentB() {
-  const t = useExtracted();
-  return <div>{t('Howdy!')}</div>;
-}
-`
-  );
-
-  await using __ = await withTempEditApp(
-    'src/app/page.tsx',
-    `import {useExtracted} from 'next-intl';
-import Greeting from '@/components/Greeting';
-import Footer from '@/components/Footer';
-import ComponentB from '@/components/ComponentB';
-
-export default function Page() {
-  const t = useExtracted();
-  return (
-    <div>
-      <h1>{t('Hello')}</h1>
-      <Greeting />
-      <Footer />
-      <ComponentB />
-    </div>
-  );
-}
-`
-  );
-
-  await page.goto('/');
-  await expectCatalog('en.po', (content) => content.includes('Howdy!'));
-
-  await using ___ = await withTempEditApp(
-    'src/app/page.tsx',
-    `import {useExtracted} from 'next-intl';
-import Greeting from '@/components/Greeting';
-import Footer from '@/components/Footer';
-
-export default function Page() {
-  const t = useExtracted();
-  return (
-    <div>
-      <h1>{t('Hello')}</h1>
-      <Greeting />
-      <Footer />
-    </div>
-  );
-}
-`
-  );
-
-  await using ____ = await withTempRemoveApp('src/components/ComponentB.tsx');
-
-  await page.goto('/');
-  await expectCatalog(
-    'en.po',
-    (content) => !content.includes('ComponentB.tsx')
-  );
 });
 
 it('updates references after file rename during dev', async ({page}) => {

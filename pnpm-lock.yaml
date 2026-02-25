@@ -114,6 +114,52 @@ importers:
         specifier: ^5.5.3
         version: 5.9.3
 
+  e2e/extracted-custom:
+    dependencies:
+      next:
+        specifier: ^16.0.10
+        version: 16.1.2(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      next-intl:
+        specifier: workspace:*
+        version: link:../../packages/next-intl
+      po-parser:
+        specifier: ^2.1.1
+        version: 2.1.1
+      react:
+        specifier: ^19.2.3
+        version: 19.2.3
+      react-dom:
+        specifier: ^19.2.3
+        version: 19.2.3(react@19.2.3)
+      shared-ui:
+        specifier: workspace:*
+        version: link:../shared-ui
+    devDependencies:
+      '@eslint/eslintrc':
+        specifier: ^3.1.0
+        version: 3.3.3
+      '@playwright/test':
+        specifier: ^1.51.1
+        version: 1.57.0
+      '@types/react':
+        specifier: ^19.2.3
+        version: 19.2.8
+      '@types/react-dom':
+        specifier: ^19.2.3
+        version: 19.2.3(@types/react@19.2.8)
+      eslint:
+        specifier: ^9.38.0
+        version: 9.39.2(jiti@2.6.1)
+      eslint-config-next:
+        specifier: ^16.0.10
+        version: 16.1.2(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3)
+      prettier:
+        specifier: ^3.3.3
+        version: 3.8.0
+      typescript:
+        specifier: ^5.5.3
+        version: 5.9.3
+
   e2e/extracted-json:
     dependencies:
       next:
