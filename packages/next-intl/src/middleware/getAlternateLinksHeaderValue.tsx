@@ -119,10 +119,7 @@ export default function getAlternateLinksHeaderValue<
         const domainMode =
           domainConfig.localePrefix || routing.localePrefix.mode;
 
-        if (
-          locale !== domainConfig.defaultLocale ||
-          domainMode === 'always'
-        ) {
+        if (locale !== domainConfig.defaultLocale || domainMode === 'always') {
           url.pathname = prefixPathname(url.pathname);
         }
 

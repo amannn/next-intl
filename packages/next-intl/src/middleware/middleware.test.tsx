@@ -3476,4 +3476,175 @@ describe('domain-based routing', () => {
       });
     });
   });
+
+  describe('per-domain localePrefix override', () => {
+    describe("global 'as-needed' with domain overrides", () => {
+      const middleware = createMiddleware({
+        defaultLocale: 'en',
+        locales: ['en', 'de', 'ja'],
+        localePrefix: 'as-needed',
+        domains: [
+          {
+            defaultLocale: 'en',
+            domain: 'us.example.com',
+            locales: ['en'],
+            localePrefix: 'never'
+          },
+          {
+            defaultLocale: 'de',
+            domain: 'de.example.com',
+            locales: ['de', 'en'],
+            localePrefix: 'always'
+          },
+          {
+            defaultLocale: 'ja',
+            domain: 'jp.example.com',
+            locales: ['ja', 'en']
+            // No override, uses global 'as-needed'
+          }
+        ]
+      });
+
+      it("respects 'never' override - serves default locale without prefix", () => {
+        middleware(createMockRequest('/', 'en', 'http://us.example.com'));
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://us.example.com/en'
+        );
+      });
+
+      it("respects 'never' override - redirects prefixed default locale to unprefixed", () => {
+        middleware(createMockRequest('/en', 'en', 'http://us.example.com'));
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://us.example.com/'
+        );
+      });
+
+      it("respects 'always' override - redirects default locale root to prefixed", () => {
+        middleware(createMockRequest('/', 'de', 'http://de.example.com'));
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://de.example.com/de'
+        );
+      });
+
+      it("respects 'always' override - serves prefixed default locale", () => {
+        middleware(createMockRequest('/de', 'de', 'http://de.example.com'));
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).toHaveBeenCalled();
+      });
+
+      it("respects 'always' override - serves prefixed secondary locale", () => {
+        middleware(createMockRequest('/en', 'en', 'http://de.example.com'));
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).toHaveBeenCalled();
+      });
+
+      it('uses global as-needed when no override - serves default locale without prefix', () => {
+        middleware(createMockRequest('/', 'ja', 'http://jp.example.com'));
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://jp.example.com/ja'
+        );
+      });
+
+      it('uses global as-needed when no override - serves secondary locale with prefix', () => {
+        middleware(createMockRequest('/en', 'en', 'http://jp.example.com'));
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).toHaveBeenCalled();
+      });
+    });
+
+    describe("global 'always' with domain overrides", () => {
+      const middleware = createMiddleware({
+        defaultLocale: 'en',
+        locales: ['en', 'de'],
+        localePrefix: 'always',
+        domains: [
+          {
+            defaultLocale: 'en',
+            domain: 'us.example.com',
+            locales: ['en'],
+            localePrefix: 'never'
+          },
+          {
+            defaultLocale: 'de',
+            domain: 'de.example.com',
+            locales: ['de', 'en'],
+            localePrefix: 'as-needed'
+          }
+        ]
+      });
+
+      it("overrides 'always' with 'never' - serves unprefixed default locale", () => {
+        middleware(createMockRequest('/', 'en', 'http://us.example.com'));
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://us.example.com/en'
+        );
+      });
+
+      it("overrides 'always' with 'as-needed' - serves default locale without prefix", () => {
+        middleware(createMockRequest('/', 'de', 'http://de.example.com'));
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://de.example.com/de'
+        );
+      });
+
+      it("overrides 'always' with 'as-needed' - serves secondary locale with prefix", () => {
+        middleware(createMockRequest('/en', 'en', 'http://de.example.com'));
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).toHaveBeenCalled();
+      });
+    });
+
+    describe("global 'never' with domain overrides", () => {
+      const middleware = createMiddleware({
+        defaultLocale: 'en',
+        locales: ['en', 'de'],
+        localePrefix: 'never',
+        domains: [
+          {
+            defaultLocale: 'en',
+            domain: 'us.example.com',
+            locales: ['en'],
+            localePrefix: 'always'
+          },
+          {
+            defaultLocale: 'de',
+            domain: 'de.example.com',
+            locales: ['de', 'en'],
+            localePrefix: 'as-needed'
+          }
+        ]
+      });
+
+      it("overrides 'never' with 'always' - redirects root to prefixed", () => {
+        middleware(createMockRequest('/', 'en', 'http://us.example.com'));
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://us.example.com/en'
+        );
+      });
+
+      it("overrides 'never' with 'always' - serves prefixed default locale", () => {
+        middleware(createMockRequest('/en', 'en', 'http://us.example.com'));
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).toHaveBeenCalled();
+      });
+
+      it("overrides 'never' with 'as-needed' - serves default locale without prefix", () => {
+        middleware(createMockRequest('/', 'de', 'http://de.example.com'));
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://de.example.com/de'
+        );
+      });
+
+      it("overrides 'never' with 'as-needed' - serves secondary locale with prefix", () => {
+        middleware(createMockRequest('/en', 'en', 'http://de.example.com'));
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).toHaveBeenCalled();
+      });
+    });
+  });
 });
