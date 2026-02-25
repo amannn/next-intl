@@ -58,6 +58,7 @@ export default function catalogLoader(
           this.addContextDependency(path.resolve(projectRoot, srcPath));
         }
         const messagesDir = path.resolve(projectRoot, options.messages.path);
+        // Invalidate when catalogs are added/removed so getTargetLocales sees new files
         this.addContextDependency(messagesDir);
 
         const result = await extractMessages(projectRoot, {
