@@ -1,6 +1,6 @@
 import compile from 'icu-minify/compile';
-import type ExtractorCodec from '../../extractor/format/ExtractorCodec.js';
-import {setNestedProperty} from '../../node/utils.js';
+import type {ExtractorMessage} from '../../extractor/types.js';
+import {setNestedProperty, throwError} from '../../node/utils.js';
 
 type CompiledMessageCacheEntry = {
   compiledMessage: unknown;
@@ -26,32 +26,25 @@ function getMessageCache(catalogId: string) {
  * using icu-minify/compile for smaller runtime bundles.
  */
 export default function precompileMessages(
-  contentToDecode: string,
-  options: {
-    codec: ExtractorCodec;
-    locale: string;
-    resourcePath: string;
-  }
+  messages: Array<ExtractorMessage>,
+  options: {resourcePath: string}
 ): string {
-  const decoded = options.codec.decode(contentToDecode, {
-    locale: options.locale
-  });
   const cache = getMessageCache(options.resourcePath);
   const result: Record<string, unknown> = {};
   const cacheKeysToEvict = new Set(cache.keys());
 
-  for (const message of decoded) {
+  for (const message of messages) {
     cacheKeysToEvict.delete(message.id);
     const messageValue = message.message;
 
     if (Array.isArray(messageValue)) {
-      throw new Error(
+      throwError(
         `Message at \`${message.id}\` resolved to an array, but only strings are supported. See https://next-intl.dev/docs/usage/translations#arrays-of-messages`
       );
     }
 
     if (typeof messageValue === 'object') {
-      throw new Error(
+      throwError(
         `Message at \`${message.id}\` resolved to \`${typeof messageValue}\`, but only strings are supported. Use a \`.\` to retrieve nested messages. See https://next-intl.dev/docs/usage/translations#structuring-messages`
       );
     }

@@ -28,6 +28,8 @@ async function getCodec(
   return cachedCodec;
 }
 
+let compiler: ExtractionCompiler | null = null;
+
 /**
  * Parses and optimizes catalog files.
  *
@@ -50,36 +52,38 @@ export default function catalogLoader(
       const codec = await getCodec(options, projectRoot);
       let contentToDecode = source;
 
-      const runExtraction =
+      const shouldExtract =
         options.sourceLocale &&
         options.srcPaths &&
         locale === options.sourceLocale;
-      if (runExtraction) {
+      if (shouldExtract) {
         for (const srcPath of options.srcPaths!) {
           this.addContextDependency(path.resolve(projectRoot, srcPath));
         }
 
-        // Invalidate when catalogs are added/removed so getTargetLocales sees new files
+        // Invalidate when catalogs are added/removed so `getTargetLocales` sees new files
         const messagesDir = path.resolve(projectRoot, options.messages.path);
         this.addContextDependency(messagesDir);
 
-        const compiler = new ExtractionCompiler({
-          codec,
-          isDevelopment,
-          messages: options.messages,
-          projectRoot,
-          sourceLocale: options.sourceLocale!,
-          srcPaths: options.srcPaths!,
-          tsconfigPath: options.tsconfigPath
-        });
+        if (!compiler) {
+          compiler = new ExtractionCompiler({
+            codec,
+            isDevelopment,
+            messages: options.messages,
+            projectRoot,
+            sourceLocale: options.sourceLocale!,
+            srcPaths: options.srcPaths!,
+            tsconfigPath: options.tsconfigPath
+          });
+        }
+
         contentToDecode = await compiler.extract();
       }
 
       let outputString: string;
       if (options.messages.precompile) {
-        outputString = precompileMessages(contentToDecode, {
-          codec,
-          locale,
+        const decoded = codec.decode(contentToDecode, {locale});
+        outputString = precompileMessages(decoded, {
           resourcePath: this.resourcePath
         });
       } else {
