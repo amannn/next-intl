@@ -569,6 +569,7 @@ export default function Greeting() {
   await fs.writeFile(enPoPath, enPoContent);
 
   await page.goto('/');
+  await page.waitForLoadState('networkidle');
   await fs.writeFile(enPoPath, enPoContent);
   await page.goto(`/?_=${Date.now()}`);
   const content = await expectCatalog(
