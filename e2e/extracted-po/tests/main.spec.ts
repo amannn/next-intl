@@ -562,10 +562,12 @@ export default function Greeting() {
 `
   );
 
-  // First goto may be served before file watcher detects edit. Wait for
-  // network idle then navigate again so loader re-runs with updated src
-  await page.goto('/');
-  await page.waitForLoadState('networkidle');
+  // Touch en.po to force catalog loader invalidation; file watcher may not
+  // detect src/ edit before first request, so loader can run with stale src
+  const enPoPath = path.join(MESSAGES_DIR, 'en.po');
+  const enPoContent = await fs.readFile(enPoPath, 'utf-8');
+  await fs.writeFile(enPoPath, enPoContent);
+
   await page.goto('/');
   const content = await expectCatalog(
     'en.po',
@@ -579,7 +581,6 @@ export default function Greeting() {
         !heyEntry.includes('Greeting.tsx')
       );
     },
-    {debugLabel: 'removes-refs'}
   );
   const heyEntry = getPoEntry(content, '+YJVTi');
   const howdyEntry = getPoEntry(content, '4xqPlJ');
