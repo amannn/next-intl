@@ -520,8 +520,7 @@ export default function Greeting() {
   expect(entry).toMatch(/msgctxt "ui"\s+msgid "OpKKos"\s+msgstr "Hello!"/);
 });
 
-// Flaky in CI: extraction/HMR timing; predicate times out waiting for refs to update
-it.skip('removes references when a message is dropped from a single file', async ({
+it('removes references when a message is dropped from a single file', async ({
   page
 }) => {
   await using _ = await withTempEditApp(
@@ -576,7 +575,7 @@ export default function Greeting() {
         !heyEntry.includes('Greeting.tsx')
       );
     },
-    {timeout: 15000}
+    {debugLabel: 'removes-refs'}
   );
   const heyEntry = getPoEntry(content, '+YJVTi');
   const howdyEntry = getPoEntry(content, '4xqPlJ');
