@@ -1,5 +1,5 @@
 import {bench} from 'vitest';
-import MessageExtractor from './MessageExtractor.js';
+import FileScanner from './FileScanner.js';
 
 const testCode = `
   import {useExtracted} from 'next-intl';
@@ -20,22 +20,22 @@ const testCode = `
   }
 `;
 
-bench('extract messages without source maps', async () => {
-  const extractor = new MessageExtractor({
+bench('scan file without source maps', async () => {
+  const fileScanner = new FileScanner({
     isDevelopment: true,
     projectRoot: '/project',
     sourceMap: false
   });
 
-  await extractor.extract('/project/test.tsx', testCode);
+  await fileScanner.scan('/project/test.tsx', testCode);
 });
 
-bench('extract messages with source maps', async () => {
-  const extractor = new MessageExtractor({
+bench('scan file with source maps', async () => {
+  const fileScanner = new FileScanner({
     isDevelopment: true,
     projectRoot: '/project',
     sourceMap: true
   });
 
-  await extractor.extract('/project/test.tsx', testCode);
+  await fileScanner.scan('/project/test.tsx', testCode);
 });

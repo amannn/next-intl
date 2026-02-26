@@ -1,5 +1,5 @@
+import FileScanner from '../scanner/FileScanner.js';
 import ExtractionCompiler from './ExtractionCompiler.js';
-import MessageExtractor from './extractor/MessageExtractor.js';
 import type {ExtractMessagesParams, ExtractorConfig} from './types.js';
 
 export default async function extractMessages(params: ExtractMessagesParams) {
@@ -11,7 +11,7 @@ export default async function extractMessages(params: ExtractMessagesParams) {
   const projectRoot = process.cwd();
   const compiler = new ExtractionCompiler(config, {
     projectRoot,
-    extractor: new MessageExtractor({
+    fileScanner: new FileScanner({
       isDevelopment: false,
       projectRoot
     })

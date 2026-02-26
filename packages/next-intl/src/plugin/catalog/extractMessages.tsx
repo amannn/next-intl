@@ -13,6 +13,7 @@ import Scanner, {type ScanResult} from '../../scanner/Scanner.js';
 export type ExtractMessagesConfig = {
   codec: ExtractorCodec;
   messages: MessagesConfig;
+  projectRoot: string;
   sourceLocale: string;
   srcPaths: Array<string>;
   tsconfigPath: string;
@@ -27,13 +28,12 @@ const translationsCache: Record<
 > = {};
 
 export default async function extractMessages(
-  projectRoot: string,
   options: ExtractMessagesConfig
 ): Promise<string> {
   if (!scanner) {
     scanner = new Scanner({
       entry: options.srcPaths,
-      projectRoot,
+      projectRoot: options.projectRoot,
       tsconfigPath: options.tsconfigPath
     });
   }
@@ -45,13 +45,13 @@ export default async function extractMessages(
   const persister = new CatalogPersister({
     codec: options.codec,
     extension,
-    messagesPath: path.resolve(projectRoot, options.messages.path)
+    messagesPath: path.resolve(options.projectRoot, options.messages.path)
   });
 
   const catalogLocales = new CatalogLocales({
     extension,
     locales: options.messages.locales,
-    messagesDir: path.resolve(projectRoot, options.messages.path),
+    messagesDir: path.resolve(options.projectRoot, options.messages.path),
     sourceLocale: options.sourceLocale
   });
   const targetLocales = await catalogLocales.getTargetLocales();

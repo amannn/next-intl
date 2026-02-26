@@ -1,9 +1,9 @@
-import MessageExtractor from '../../extractor/extractor/MessageExtractor.js';
 import type {ExtractorConfig} from '../../extractor/types.js';
+import FileScanner from '../../scanner/FileScanner.js';
 import {isDevelopment} from '../config.js';
 import type {TurbopackLoaderContext} from '../types.js';
 
-let extractor: MessageExtractor | undefined;
+let fileScanner: FileScanner | undefined;
 
 export default function extractionLoader(
   this: TurbopackLoaderContext<ExtractorConfig>,
@@ -11,16 +11,16 @@ export default function extractionLoader(
 ) {
   const callback = this.async();
 
-  if (!extractor) {
-    extractor = new MessageExtractor({
+  if (!fileScanner) {
+    fileScanner = new FileScanner({
       projectRoot: this.rootContext,
       sourceMap: this.sourceMap,
       isDevelopment
     });
   }
 
-  extractor
-    .extract(this.resourcePath, source)
+  fileScanner
+    .scan(this.resourcePath, source)
     .then((result) => {
       callback(null, result.code, result.map);
     })

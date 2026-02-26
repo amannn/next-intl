@@ -1,15 +1,15 @@
 import {describe, expect, it} from 'vitest';
-import MessageExtractor from './MessageExtractor.js';
+import FileScanner from './FileScanner.js';
 
 async function process(
   code: string,
-  opts?: Partial<ConstructorParameters<typeof MessageExtractor>[0]>
+  opts?: Partial<ConstructorParameters<typeof FileScanner>[0]>
 ) {
-  return await new MessageExtractor({
+  return await new FileScanner({
     isDevelopment: true,
     projectRoot: '/project',
     ...opts
-  }).extract('/project/test.tsx', code);
+  }).scan('/project/test.tsx', code);
 }
 
 it('can extract with source maps', async () => {
@@ -63,6 +63,7 @@ it('extracts same message used multiple times in one file with all references', 
             "path": "test.tsx",
           },
         ],
+        "type": "Extracted",
       },
     ]
   `);
@@ -88,6 +89,11 @@ it('does not add a fallback message in production', async () => {
         t("+YJVTi");
     }
     ",
+      "dependencies": [
+        "next-intl",
+      ],
+      "hasUseClient": false,
+      "hasUseServer": false,
       "map": undefined,
       "messages": [
         {
@@ -100,6 +106,7 @@ it('does not add a fallback message in production', async () => {
               "path": "test.tsx",
             },
           ],
+          "type": "Extracted",
         },
       ],
     }

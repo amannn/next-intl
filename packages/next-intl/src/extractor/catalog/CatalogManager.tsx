@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
-import type MessageExtractor from '../extractor/MessageExtractor.js';
+import type FileScanner from '../../scanner/FileScanner.js';
 import type ExtractorCodec from '../format/ExtractorCodec.js';
 import {getFormatExtension, resolveCodec} from '../format/index.js';
 import SourceFileScanner from '../source/SourceFileScanner.js';
@@ -53,7 +53,7 @@ export default class CatalogManager implements Disposable {
   private persister?: CatalogPersister;
   private codec?: ExtractorCodec;
   private catalogLocales?: CatalogLocales;
-  private extractor: MessageExtractor;
+  private fileScanner: FileScanner;
 
   // Resolves when all catalogs are loaded
   private loadCatalogsPromise?: Promise<unknown>;
@@ -67,7 +67,7 @@ export default class CatalogManager implements Disposable {
       projectRoot: string;
       isDevelopment?: boolean;
       sourceMap?: boolean;
-      extractor: MessageExtractor;
+      fileScanner: FileScanner;
     }
   ) {
     this.config = config;
@@ -75,7 +75,7 @@ export default class CatalogManager implements Disposable {
     this.projectRoot = opts.projectRoot;
     this.isDevelopment = opts.isDevelopment ?? false;
 
-    this.extractor = opts.extractor;
+    this.fileScanner = opts.fileScanner;
   }
 
   private async getCodec(): Promise<ExtractorCodec> {
@@ -255,13 +255,23 @@ export default class CatalogManager implements Disposable {
     let messages: Array<ExtractorMessage> = [];
     try {
       const content = await fs.readFile(absoluteFilePath, 'utf8');
-      let extraction: Awaited<ReturnType<typeof this.extractor.extract>>;
+      let scanResult: Awaited<ReturnType<typeof this.fileScanner.scan>>;
       try {
-        extraction = await this.extractor.extract(absoluteFilePath, content);
+        scanResult = await this.fileScanner.scan(absoluteFilePath, content);
       } catch {
         return false;
       }
-      messages = extraction.messages;
+      messages = scanResult.messages
+        .filter(
+          (cur): cur is Extract<typeof cur, {type: 'Extracted'}> =>
+            cur.type === 'Extracted'
+        )
+        .map((cur) => ({
+          id: cur.id,
+          message: cur.message,
+          description: cur.description,
+          references: cur.references
+        }));
     } catch (err) {
       if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
         throw err;

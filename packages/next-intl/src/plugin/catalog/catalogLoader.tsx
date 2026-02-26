@@ -62,11 +62,13 @@ export default function catalogLoader(
         const messagesDir = path.resolve(projectRoot, options.messages.path);
         this.addContextDependency(messagesDir);
 
-        const result = await extractMessages(projectRoot, {
-          ...options,
-          codec,
+        const result = await extractMessages({
+          messages: options.messages,
           sourceLocale: options.sourceLocale!,
-          srcPaths: options.srcPaths!
+          srcPaths: options.srcPaths!,
+          tsconfigPath: options.tsconfigPath,
+          codec,
+          projectRoot
         });
         contentToDecode = result;
       }

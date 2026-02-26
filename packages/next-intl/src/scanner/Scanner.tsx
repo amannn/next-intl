@@ -1,14 +1,11 @@
 import fs from 'fs/promises';
-import {createRequire} from 'module';
 import path from 'path';
-import {transform} from '@swc/core';
 import SourceFileFilter from '../extractor/source/SourceFileFilter.js';
 import SourceFileScanner from '../extractor/source/SourceFileScanner.js';
-import {compareReferences, normalizePathToPosix} from '../extractor/utils.js';
+import {compareReferences} from '../extractor/utils.js';
 import {isDevelopment} from '../plugin/config.js';
 import createModuleResolver from '../tree-shaking/createModuleResolver.js';
-
-const require = createRequire(import.meta.url);
+import FileScanner from './FileScanner.js';
 
 const SUPPORTED_EXTENSIONS = new Set(
   SourceFileFilter.EXTENSIONS.map((ext) => `.${ext}`)
@@ -27,34 +24,14 @@ export type ScanMessage = {
   description?: string;
 };
 
-export type FileEntry = {
+export type ScanFileEntry = {
   dependencies: Set<string>;
   hasUseClient: boolean;
   hasUseServer: boolean;
   messages: Array<ScanMessage>;
 };
 
-export type ScanResult = Map<string, FileEntry>;
-
-type PluginOutput = {
-  messages: Array<
-    | {
-        type: 'Extracted';
-        id: string;
-        message: string;
-        description?: string;
-        references: Array<{path: string; line: number}>;
-      }
-    | {
-        type: 'Translations';
-        id: string;
-        references: Array<{path: string; line: number}>;
-      }
-  >;
-  dependencies: Array<string>;
-  hasUseClient: boolean;
-  hasUseServer: boolean;
-};
+export type ScanResult = Map</* absolute file path */ string, ScanFileEntry>;
 
 export type ScannerConfig = {
   projectRoot: string;
@@ -62,55 +39,6 @@ export type ScannerConfig = {
   srcPaths?: Array<string>;
   tsconfigPath?: string;
 };
-
-async function runPluginOnFile(
-  filePath: string,
-  source: string,
-  projectRoot: string
-): Promise<PluginOutput> {
-  const filePathPosix = normalizePathToPosix(
-    path.relative(projectRoot, filePath)
-  );
-
-  const result = await transform(source, {
-    jsc: {
-      target: 'esnext',
-      parser: {
-        syntax: 'typescript',
-        tsx: true,
-        decorators: true
-      },
-      experimental: {
-        cacheRoot: 'node_modules/.cache/swc',
-        disableBuiltinTransformsForInternalTesting: true,
-        disableAllLints: true,
-        plugins: [
-          [
-            require.resolve('next-intl-swc-plugin-extractor'),
-            {isDevelopment, filePath: filePathPosix}
-          ]
-        ]
-      }
-    },
-    sourceMaps: false,
-    sourceFileName: filePathPosix,
-    filename: filePathPosix
-  });
-
-  const rawOutput = (result as {output?: string}).output;
-  const outer =
-    typeof rawOutput === 'string' ? JSON.parse(rawOutput) : rawOutput;
-  const parsed =
-    typeof outer?.output === 'string'
-      ? JSON.parse(outer.output)
-      : (outer ?? {});
-  return {
-    messages: parsed.messages ?? [],
-    dependencies: parsed.dependencies ?? [],
-    hasUseClient: parsed.hasUseClient ?? false,
-    hasUseServer: parsed.hasUseServer ?? false
-  };
-}
 
 function createSrcMatcher(
   projectRoot: string,
@@ -152,8 +80,9 @@ function mergeReferences(result: ScanResult): void {
 }
 
 export default class Scanner {
-  private projectRoot: string;
   private entry: string | Array<string>;
+  private fileScanner: FileScanner;
+  private projectRoot: string;
   private resolve: (context: string, request: string) => Promise<string | null>;
   private srcMatcher: ((filePath: string) => boolean) | null;
 
@@ -171,6 +100,11 @@ export default class Scanner {
       config.srcPaths && config.srcPaths.length > 0
         ? createSrcMatcher(this.projectRoot, config.srcPaths)
         : null;
+    this.fileScanner = new FileScanner({
+      isDevelopment,
+      projectRoot: this.projectRoot,
+      sourceMap: false
+    });
   }
 
   public async scan(): Promise<ScanResult> {
@@ -184,7 +118,7 @@ export default class Scanner {
   }
 
   private mergeScanResults(results: Array<ScanResult>): ScanResult {
-    const out = new Map<string, FileEntry>();
+    const out = new Map<string, ScanFileEntry>();
     for (const result of results) {
       for (const [file, entry] of result) {
         const existing = out.get(file);
@@ -216,7 +150,7 @@ export default class Scanner {
 
   private async scanFolder(entryPath: string): Promise<ScanResult> {
     const files = await SourceFileScanner.getSourceFiles([entryPath]);
-    const result = new Map<string, FileEntry>();
+    const result = new Map<string, ScanFileEntry>();
 
     for (const filePath of files) {
       const normalized = path.normalize(filePath);
@@ -227,11 +161,7 @@ export default class Scanner {
         continue;
       }
 
-      const output = await runPluginOnFile(
-        normalized,
-        source,
-        this.projectRoot
-      );
+      const output = await this.fileScanner.scan(normalized, source);
 
       const messages: Array<ScanMessage> = output.messages.map((cur) =>
         cur.type === 'Extracted'
@@ -277,7 +207,7 @@ export default class Scanner {
 
   private async scanFromEntry(entryPath: string): Promise<ScanResult> {
     const normalizedEntry = path.normalize(entryPath);
-    const result = new Map<string, FileEntry>();
+    const result = new Map<string, ScanFileEntry>();
     const visited = new Set<string>();
 
     const visit = async (
@@ -298,11 +228,7 @@ export default class Scanner {
         return;
       }
 
-      const output = await runPluginOnFile(
-        normalized,
-        source,
-        this.projectRoot
-      );
+      const output = await this.fileScanner.scan(normalized, source);
 
       const messages: Array<ScanMessage> = output.messages.map((cur) =>
         cur.type === 'Extracted'

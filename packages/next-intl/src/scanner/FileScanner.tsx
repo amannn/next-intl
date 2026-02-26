@@ -1,25 +1,39 @@
 import {createRequire} from 'module';
 import path from 'path';
 import {transform} from '@swc/core';
-import LRUCache from '../../utils/LRUCache.js';
-import type {ExtractorMessage} from '../types.js';
-import {normalizePathToPosix} from '../utils.js';
+import {normalizePathToPosix} from '../extractor/utils.js';
+import LRUCache from '../utils/LRUCache.js';
 
 const require = createRequire(import.meta.url);
 
-type StrictExtractedMessage = ExtractorMessage & {
-  references: NonNullable<ExtractorMessage['references']>;
+export type FileScanMessage =
+  | {
+      type: 'Extracted';
+      id: string;
+      message: string;
+      description?: string;
+      references: Array<{path: string; line: number}>;
+    }
+  | {
+      type: 'Translations';
+      id: string;
+      references: Array<{path: string; line: number}>;
+    };
+
+export type FileScanResult = {
+  code: string;
+  dependencies: Array<string>;
+  hasUseClient: boolean;
+  hasUseServer: boolean;
+  map?: string;
+  messages: Array<FileScanMessage>;
 };
 
-export default class MessageExtractor {
+export default class FileScanner {
   private isDevelopment: boolean;
   private projectRoot: string;
   private sourceMap: boolean;
-  private compileCache = new LRUCache<{
-    messages: Array<StrictExtractedMessage>;
-    code: string;
-    map?: string;
-  }>(750);
+  private compileCache = new LRUCache<FileScanResult>(750);
 
   public constructor(opts: {
     projectRoot: string;
@@ -31,24 +45,13 @@ export default class MessageExtractor {
     this.sourceMap = opts.sourceMap ?? false;
   }
 
-  public async extract(
+  public async scan(
     absoluteFilePath: string,
     source: string
-  ): Promise<{
-    messages: Array<StrictExtractedMessage>;
-    code: string;
-    map?: string;
-  }> {
+  ): Promise<FileScanResult> {
     const cacheKey = [source, absoluteFilePath].join('!');
     const cached = this.compileCache.get(cacheKey);
     if (cached) return cached;
-
-    // Shortcut parsing if hook is not used. The Turbopack integration already
-    // pre-filters this, but for webpack this feature doesn't exist, so we need
-    // to do it here.
-    if (!source.includes('useExtracted') && !source.includes('getExtracted')) {
-      return {messages: [], code: source};
-    }
 
     const filePath = normalizePathToPosix(
       path.relative(this.projectRoot, absoluteFilePath)
@@ -68,10 +71,7 @@ export default class MessageExtractor {
           plugins: [
             [
               require.resolve('next-intl-swc-plugin-extractor'),
-              {
-                isDevelopment: this.isDevelopment,
-                filePath
-              }
+              {isDevelopment: this.isDevelopment, filePath}
             ]
           ]
         }
@@ -88,35 +88,18 @@ export default class MessageExtractor {
       typeof outer?.output === 'string'
         ? JSON.parse(outer.output)
         : (outer ?? {});
-    const messages = (parsed.messages ?? []) as Array<
-      | {
-          type: 'Extracted';
-          id: string;
-          message: string;
-          description?: string;
-          references: Array<{path: string; line: number}>;
-        }
-      | {type: 'Translations'}
-    >;
-    const extracted = messages
-      .filter(
-        (cur): cur is Extract<(typeof messages)[0], {type: 'Extracted'}> =>
-          cur.type === 'Extracted'
-      )
-      .map((cur) => ({
-        id: cur.id,
-        message: cur.message,
-        description: cur.description,
-        references: cur.references
-      }));
+    const messages = (parsed.messages ?? []) as Array<FileScanMessage>;
 
-    const extractionResult = {
+    const scanResult: FileScanResult = {
       code: result.code,
+      dependencies: parsed.dependencies ?? [],
+      hasUseClient: parsed.hasUseClient ?? false,
+      hasUseServer: parsed.hasUseServer ?? false,
       map: result.map,
-      messages: extracted
+      messages
     };
 
-    this.compileCache.set(cacheKey, extractionResult);
-    return extractionResult;
+    this.compileCache.set(cacheKey, scanResult);
+    return scanResult;
   }
 }
