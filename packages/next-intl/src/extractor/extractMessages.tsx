@@ -1,20 +1,23 @@
-import FileScanner from '../scanner/FileScanner.js';
+import path from 'path';
 import ExtractionCompiler from './ExtractionCompiler.js';
-import type {ExtractMessagesParams, ExtractorConfig} from './types.js';
+import {resolveCodec} from './format/index.js';
+import type {ExtractMessagesParams} from './types.js';
 
 export default async function extractMessages(params: ExtractMessagesParams) {
   const {srcPath, ...rest} = params;
-  const config: ExtractorConfig = {
-    ...rest,
-    srcPaths: Array.isArray(srcPath) ? srcPath : [srcPath]
-  };
   const projectRoot = process.cwd();
-  const compiler = new ExtractionCompiler(config, {
+  const srcPaths = Array.isArray(srcPath) ? srcPath : [srcPath];
+  const codec = await resolveCodec(rest.messages.format, projectRoot);
+  const tsconfigPath = path.join(projectRoot, 'tsconfig.json');
+
+  const compiler = new ExtractionCompiler({
+    isDevelopment: false,
+    messages: rest.messages,
+    sourceLocale: rest.sourceLocale,
+    codec,
     projectRoot,
-    fileScanner: new FileScanner({
-      isDevelopment: false,
-      projectRoot
-    })
+    srcPaths,
+    tsconfigPath
   });
-  await compiler.extractAll();
+  await compiler.extract();
 }

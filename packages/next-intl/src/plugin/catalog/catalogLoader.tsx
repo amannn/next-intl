@@ -1,12 +1,13 @@
 import path from 'path';
+import ExtractionCompiler from '../../extractor/ExtractionCompiler.js';
 import type ExtractorCodec from '../../extractor/format/ExtractorCodec.js';
 import {
   getFormatExtension,
   resolveCodec
 } from '../../extractor/format/index.js';
 import type {MessagesConfig} from '../../extractor/types.js';
+import {isDevelopment} from '../config.js';
 import type {TurbopackLoaderContext} from '../types.js';
-import extractMessages from './extractMessages.js';
 import precompileMessages from './precompileMessages.js';
 
 export type CatalogLoaderConfig = {
@@ -62,15 +63,16 @@ export default function catalogLoader(
         const messagesDir = path.resolve(projectRoot, options.messages.path);
         this.addContextDependency(messagesDir);
 
-        const result = await extractMessages({
+        const compiler = new ExtractionCompiler({
+          codec,
+          isDevelopment,
           messages: options.messages,
+          projectRoot,
           sourceLocale: options.sourceLocale!,
           srcPaths: options.srcPaths!,
-          tsconfigPath: options.tsconfigPath,
-          codec,
-          projectRoot
+          tsconfigPath: options.tsconfigPath
         });
-        contentToDecode = result;
+        contentToDecode = await compiler.extract();
       }
 
       let outputString: string;

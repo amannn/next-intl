@@ -1,11 +1,10 @@
 import fs from 'fs/promises';
 import path from 'path';
-import SourceFileFilter from '../extractor/source/SourceFileFilter.js';
-import SourceFileScanner from '../extractor/source/SourceFileScanner.js';
 import {compareReferences} from '../extractor/utils.js';
-import {isDevelopment} from '../plugin/config.js';
 import createModuleResolver from '../tree-shaking/createModuleResolver.js';
 import FileScanner from './FileScanner.js';
+import SourceFileFilter from './SourceFileFilter.js';
+import SourceFileScanner from './SourceFileScanner.js';
 
 const SUPPORTED_EXTENSIONS = new Set(
   SourceFileFilter.EXTENSIONS.map((ext) => `.${ext}`)
@@ -34,8 +33,9 @@ export type ScanFileEntry = {
 export type ScanResult = Map</* absolute file path */ string, ScanFileEntry>;
 
 export type ScannerConfig = {
-  projectRoot: string;
   entry: string | Array<string>;
+  isDevelopment: boolean;
+  projectRoot: string;
   srcPaths?: Array<string>;
   tsconfigPath?: string;
 };
@@ -101,7 +101,7 @@ export default class Scanner {
         ? createSrcMatcher(this.projectRoot, config.srcPaths)
         : null;
     this.fileScanner = new FileScanner({
-      isDevelopment,
+      isDevelopment: config.isDevelopment,
       projectRoot: this.projectRoot,
       sourceMap: false
     });

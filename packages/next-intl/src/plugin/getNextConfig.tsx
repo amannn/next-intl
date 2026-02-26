@@ -9,14 +9,14 @@ import type {
 } from 'next/dist/server/config-shared.js';
 import type {Configuration} from 'webpack';
 import {getFormatExtension} from '../extractor/format/index.js';
-import SourceFileFilter from '../extractor/source/SourceFileFilter.js';
 import type {ExtractorConfig} from '../extractor/types.js';
+import {throwError} from '../node/utils.js';
+import SourceFileFilter from '../scanner/SourceFileFilter.js';
 import type {CatalogLoaderConfig} from './catalog/catalogLoader.js';
 import {isDevelopmentOrNextBuild} from './config.js';
 import {hasStableTurboConfig, isNextJs16OrHigher} from './nextFlags.js';
 import type {ManifestLoaderConfig} from './treeShaking/manifestLoader.js';
 import type {PluginConfig} from './types.js';
-import {throwError} from './utils.js';
 
 const require = createRequire(import.meta.url);
 

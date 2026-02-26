@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
+import {once, throwError} from '../../node/utils.js';
 import {isDevelopment} from '../config.js';
-import {once, throwError} from '../utils.js';
 import watchFile from '../watchFile.js';
 
 const runOnce = once('_NEXT_INTL_COMPILE_MESSAGES');

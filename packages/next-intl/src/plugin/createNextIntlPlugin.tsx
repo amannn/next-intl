@@ -1,8 +1,8 @@
 import type {NextConfig} from 'next';
+import {warn} from '../node/utils.js';
 import createMessagesDeclaration from './declaration/index.js';
 import getNextConfig from './getNextConfig.js';
 import type {PluginConfig} from './types.js';
-import {warn} from './utils.js';
 
 function initPlugin(
   pluginConfig: PluginConfig,

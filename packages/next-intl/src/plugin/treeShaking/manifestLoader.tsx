@@ -1,7 +1,8 @@
 import path from 'path';
-import SourceFileFilter from '../../extractor/source/SourceFileFilter.js';
 import Scanner, {type ScanResult} from '../../scanner/Scanner.js';
+import SourceFileFilter from '../../scanner/SourceFileFilter.js';
 import type {ManifestNamespaces} from '../../tree-shaking/Manifest.js';
+import {isDevelopment} from '../config.js';
 import type {TurbopackLoaderContext} from '../types.js';
 import {PROVIDER_NAME, injectManifestProp} from './injectManifest.js';
 
@@ -116,8 +117,9 @@ export default async function manifestLoader(
 
   try {
     const scanner = new Scanner({
-      projectRoot,
       entry: inputFile,
+      isDevelopment,
+      projectRoot,
       srcPaths,
       tsconfigPath: options.tsconfigPath
     });
