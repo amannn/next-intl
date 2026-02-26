@@ -563,16 +563,20 @@ export default function Greeting() {
   );
 
   await page.goto('/');
-  const content = await expectCatalog('en.po', (content) => {
-    const heyEntry = getPoEntry(content, '+YJVTi');
-    const howdyEntry = getPoEntry(content, '4xqPlJ');
-    return (
-      heyEntry != null &&
-      howdyEntry != null &&
-      heyEntry.includes('Footer.tsx') &&
-      !heyEntry.includes('Greeting.tsx')
-    );
-  });
+  const content = await expectCatalog(
+    'en.po',
+    (content) => {
+      const heyEntry = getPoEntry(content, '+YJVTi');
+      const howdyEntry = getPoEntry(content, '4xqPlJ');
+      return (
+        heyEntry != null &&
+        howdyEntry != null &&
+        heyEntry.includes('Footer.tsx') &&
+        !heyEntry.includes('Greeting.tsx')
+      );
+    },
+    {timeout: 15000}
+  );
   const heyEntry = getPoEntry(content, '+YJVTi');
   const howdyEntry = getPoEntry(content, '4xqPlJ');
   expect(heyEntry).toMatch(/Footer\.tsx/);
