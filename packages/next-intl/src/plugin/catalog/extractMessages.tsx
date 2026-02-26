@@ -20,6 +20,12 @@ export type ExtractMessagesConfig = {
 
 let scanner: Scanner | null = null;
 
+// Allows to re-add orphaned translations
+const translationsCache: Record<
+  /* locale */ string,
+  Record</* id */ string, /* translation */ string>
+> = {};
+
 export default async function extractMessages(
   projectRoot: string,
   options: ExtractMessagesConfig
@@ -74,18 +80,26 @@ export default async function extractMessages(
   });
 
   for (const locale of targetLocales) {
+    translationsCache[locale] ??= {};
     const diskMessages = await persister.read(locale);
     const translationsByTarget = new Map<string, ExtractorMessage>();
     for (const cur of diskMessages) {
       translationsByTarget.set(cur.id, cur);
+      if (!messagesById.has(cur.id) && cur.message) {
+        translationsCache[locale][cur.id] = cur.message;
+      }
     }
+    const localeOrphans = translationsCache[locale];
     const messagesToPersist = messages.map((msg) => {
       const localeMsg = translationsByTarget.get(msg.id);
+      const orphaned = localeOrphans[msg.id];
+      const message = (localeMsg?.message ?? orphaned) || '';
+      if (orphaned) delete translationsCache[locale]![msg.id];
       return {
         ...localeMsg,
         description: msg.description,
         id: msg.id,
-        message: localeMsg?.message ?? '',
+        message,
         references: msg.references
       };
     });

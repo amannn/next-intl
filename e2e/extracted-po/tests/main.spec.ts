@@ -190,7 +190,9 @@ export default function Page() {
 `
   );
 
-  await using ____ = await withTempRemoveApp('src/components/Buttons/Button.tsx');
+  await using ____ = await withTempRemoveApp(
+    'src/components/Buttons/Button.tsx'
+  );
 
   await page.goto('/');
   const afterContent = await expectCatalog(
@@ -363,11 +365,13 @@ msgstr "Hallo!"
   );
 
   await page.goto('/');
-  const enContent = await expectCatalog('en.po', (c) =>
-    getPoEntry(c, '+YJVTi') != null
+  const enContent = await expectCatalog(
+    'en.po',
+    (c) => getPoEntry(c, '+YJVTi') != null
   );
-  const deContent = await expectCatalog('de.po', (c) =>
-    getPoEntry(c, '+YJVTi') != null
+  const deContent = await expectCatalog(
+    'de.po',
+    (c) => getPoEntry(c, '+YJVTi') != null
   );
   const enEntry = getPoEntry(enContent, '+YJVTi');
   const deEntry = getPoEntry(deContent, '+YJVTi');
@@ -375,7 +379,7 @@ msgstr "Hallo!"
   expect(deEntry).toMatch(/#, c-format/);
 });
 
-it.skip('removes flags when externally deleted', async ({page}) => {
+it('removes flags when externally deleted', async ({page}) => {
   await page.goto('/');
   await expectCatalog(
     'en.po',

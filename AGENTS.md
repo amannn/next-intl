@@ -9,6 +9,7 @@
 ### Always
 
 - If running a test with vitest, use "run" to avoid being stuck in watch mode.
+- When making a change to something in `./packages` and you want to test the updated behavior in consuming apps, you need to build the packages first (`pnpm -w build-packages`)
 
 ### When committing
 
