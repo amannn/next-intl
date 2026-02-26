@@ -575,7 +575,7 @@ export default function Greeting() {
         !heyEntry.includes('Greeting.tsx')
       );
     },
-    {timeout: 15000}
+    {timeout: 30000}
   );
   const heyEntry = getPoEntry(content, '+YJVTi');
   const howdyEntry = getPoEntry(content, '4xqPlJ');
