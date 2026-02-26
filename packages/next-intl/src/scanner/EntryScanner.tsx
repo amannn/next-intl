@@ -74,6 +74,23 @@ export default class EntryScanner {
       roots.some((root) => SourceFileFilter.isWithinPath(filePath, root));
   }
 
+  private async resolveDependencies(
+    context: string,
+    rawDeps: Array<string>
+  ): Promise<Array<string>> {
+    const resolved = await Promise.all(
+      rawDeps.map((req) => this.resolve(context, req))
+    );
+    return resolved
+      .filter(
+        (res): res is string =>
+          res != null &&
+          SourceFileFilter.isSourceFile(res) &&
+          (!this.srcMatcher || this.srcMatcher(res))
+      )
+      .map((child) => path.normalize(child));
+  }
+
   private mergeReferences(result: EntryScanResult): void {
     const refsByKey = new Map<
       string,
@@ -150,19 +167,11 @@ export default class EntryScanner {
 
       const output = await this.fileScanner.scan(normalized, source);
 
-      const context = path.dirname(normalized);
-      const resolved = await Promise.all(
-        output.dependencies.map((req) => this.resolve(context, req))
-      );
       const dependencies = new Set(
-        resolved
-          .filter(
-            (res): res is string =>
-              res != null &&
-              SourceFileFilter.isSourceFile(res) &&
-              (!this.srcMatcher || this.srcMatcher(res))
-          )
-          .map((child) => path.normalize(child))
+        await this.resolveDependencies(
+          path.dirname(normalized),
+          output.dependencies
+        )
       );
 
       result.set(normalized, {
@@ -201,23 +210,16 @@ export default class EntryScanner {
 
       const output = await this.fileScanner.scan(normalized, source);
 
-      const context = path.dirname(normalized);
-      const resolved = await Promise.all(
-        output.dependencies.map((req) => this.resolve(context, req))
-      );
-      const children = resolved.filter(
-        (res): res is string =>
-          res != null &&
-          SourceFileFilter.isSourceFile(res) &&
-          (!this.srcMatcher || this.srcMatcher(res))
+      const children = await this.resolveDependencies(
+        path.dirname(normalized),
+        output.dependencies
       );
 
       const dependencies = new Set<string>();
       const nextAncestors = new Set([...ancestors, normalized]);
       for (const child of children) {
-        const normalizedChild = path.normalize(child);
-        dependencies.add(normalizedChild);
-        await visit(normalizedChild, nextAncestors);
+        dependencies.add(child);
+        await visit(child, nextAncestors);
       }
 
       result.set(normalized, {
