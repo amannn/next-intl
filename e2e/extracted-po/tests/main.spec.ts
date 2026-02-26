@@ -562,6 +562,9 @@ export default function Greeting() {
 `
   );
 
+  // First goto may be served before file watcher detects edit; second ensures
+  // loader re-runs with updated src and extraction produces correct refs
+  await page.goto('/');
   await page.goto('/');
   const content = await expectCatalog(
     'en.po',
@@ -575,7 +578,6 @@ export default function Greeting() {
         !heyEntry.includes('Greeting.tsx')
       );
     },
-    {debugLabel: 'removes-refs'}
   );
   const heyEntry = getPoEntry(content, '+YJVTi');
   const howdyEntry = getPoEntry(content, '4xqPlJ');
