@@ -1,24 +1,17 @@
 import fs from 'fs/promises';
 import path from 'path';
+import type {ExtractorMessageReference} from '../extractor/types.js';
 import {compareReferences} from '../extractor/utils.js';
-import FileScanner from './FileScanner.js';
+import FileScanner, {type FileScanMessage} from './FileScanner.js';
 import SourceFileFilter from './SourceFileFilter.js';
 import SourceFileScanner from './SourceFileScanner.js';
 import createModuleResolver from './createModuleResolver.js';
-
-export type ScanMessage = {
-  type: 'Extracted' | 'Translations';
-  id: string;
-  references: Array<{path: string; line: number}>;
-  message?: string;
-  description?: string;
-};
 
 export type FileScanResult = {
   dependencies: Set<string>;
   hasUseClient: boolean;
   hasUseServer: boolean;
-  messages: Array<ScanMessage>;
+  messages: Array<FileScanMessage>;
 };
 
 export type EntryScanResult = Map<
@@ -84,17 +77,17 @@ export default class EntryScanner {
   private mergeReferences(result: EntryScanResult): void {
     const refsByKey = new Map<
       string,
-      {refs: Array<{path: string; line: number}>; seen: Set<string>}
+      {refs: Array<ExtractorMessageReference>; seen: Set<string>}
     >();
     for (const entry of result.values()) {
-      for (const m of entry.messages) {
-        const key = `${m.type}:${m.id}`;
+      for (const message of entry.messages) {
+        const key = `${message.type}:${message.id}`;
         let bucket = refsByKey.get(key);
         if (!bucket) {
           bucket = {refs: [], seen: new Set()};
           refsByKey.set(key, bucket);
         }
-        for (const ref of m.references) {
+        for (const ref of message.references) {
           const refKey = `${ref.path}:${ref.line}`;
           if (!bucket.seen.has(refKey)) {
             bucket.seen.add(refKey);
@@ -104,9 +97,9 @@ export default class EntryScanner {
       }
     }
     for (const entry of result.values()) {
-      for (const m of entry.messages) {
-        const bucket = refsByKey.get(`${m.type}:${m.id}`)!;
-        m.references = bucket.refs.toSorted(compareReferences);
+      for (const message of entry.messages) {
+        const bucket = refsByKey.get(`${message.type}:${message.id}`)!;
+        message.references = bucket.refs.toSorted(compareReferences);
       }
     }
   }
@@ -157,22 +150,6 @@ export default class EntryScanner {
 
       const output = await this.fileScanner.scan(normalized, source);
 
-      const messages: Array<ScanMessage> = output.messages.map((cur) =>
-        cur.type === 'Extracted'
-          ? {
-              type: 'Extracted' as const,
-              id: cur.id,
-              message: cur.message,
-              description: cur.description,
-              references: cur.references
-            }
-          : {
-              type: 'Translations' as const,
-              id: cur.id,
-              references: cur.references
-            }
-      );
-
       const context = path.dirname(normalized);
       const resolved = await Promise.all(
         output.dependencies.map((req) => this.resolve(context, req))
@@ -192,7 +169,7 @@ export default class EntryScanner {
         dependencies,
         hasUseClient: output.hasUseClient,
         hasUseServer: output.hasUseServer,
-        messages
+        messages: output.messages
       });
     }
 
@@ -224,22 +201,6 @@ export default class EntryScanner {
 
       const output = await this.fileScanner.scan(normalized, source);
 
-      const messages: Array<ScanMessage> = output.messages.map((cur) =>
-        cur.type === 'Extracted'
-          ? {
-              type: 'Extracted' as const,
-              id: cur.id,
-              message: cur.message,
-              description: cur.description,
-              references: cur.references
-            }
-          : {
-              type: 'Translations' as const,
-              id: cur.id,
-              references: cur.references
-            }
-      );
-
       const context = path.dirname(normalized);
       const resolved = await Promise.all(
         output.dependencies.map((req) => this.resolve(context, req))
@@ -263,7 +224,7 @@ export default class EntryScanner {
         dependencies,
         hasUseClient: output.hasUseClient,
         hasUseServer: output.hasUseServer,
-        messages
+        messages: output.messages
       });
     };
 

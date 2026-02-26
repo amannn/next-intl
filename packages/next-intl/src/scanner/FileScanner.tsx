@@ -1,26 +1,24 @@
 import {createRequire} from 'module';
 import path from 'path';
 import {transform} from '@swc/core';
+import type {
+  ExtractorMessage,
+  ExtractorMessageReference
+} from '../extractor/types.js';
 import {normalizePathToPosix} from '../node/utils.js';
 import LRUCache from '../utils/LRUCache.js';
 
 const require = createRequire(import.meta.url);
 
-export type FileScanMessage =
-  | {
-      type: 'Extracted';
-      id: string;
-      message: string;
-      description?: string;
-      references: Array<{path: string; line: number}>;
-    }
-  | {
-      type: 'Translations';
-      id: string;
-      references: Array<{path: string; line: number}>;
-    };
+export type FileScanMessage = {
+  type: 'Extracted' | 'Translations';
+  id: ExtractorMessage['id'];
+  references: Array<ExtractorMessageReference>;
+  message?: ExtractorMessage['message'];
+  description?: ExtractorMessage['description'];
+};
 
-export type FileScanResult = {
+type FileScanResult = {
   code: string;
   dependencies: Array<string>;
   hasUseClient: boolean;
