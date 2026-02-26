@@ -1,5 +1,5 @@
 import path from 'path';
-import {getInstrumentation} from '../instrumentation/index.js';
+import Instrumentation from '../instrumentation/index.js';
 import EntryScanner, {type EntryScanResult} from '../scanner/EntryScanner.js';
 import CatalogLocales from './catalog/CatalogLocales.js';
 import CatalogPersister from './catalog/CatalogPersister.js';
@@ -33,7 +33,7 @@ export default class ExtractionCompiler {
   }
 
   public async extract(): Promise<string> {
-    const I = getInstrumentation();
+    using I = new Instrumentation();
     I.start('[ExtractionCompiler.extract]');
 
     const result = await this.scanner.scan();
@@ -110,11 +110,10 @@ export default class ExtractionCompiler {
       });
     }
 
-    I.end('[ExtractionCompiler.extract]', {
-      filesScanned: result.size,
-      messagesExtracted: messagesById.size,
-      targetLocales: targetLocales.length
-    });
+    I.end(
+      '[ExtractionCompiler.extract]',
+      `${result.size} files scanned, ${messagesById.size} messages extracted`
+    );
     return sourceContent;
   }
 

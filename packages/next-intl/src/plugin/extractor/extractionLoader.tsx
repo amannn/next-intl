@@ -1,6 +1,6 @@
 import path from 'path';
 import type {ExtractorConfig} from '../../extractor/types.js';
-import {getInstrumentation} from '../../instrumentation/index.js';
+import Instrumentation from '../../instrumentation/index.js';
 import FileScanner from '../../scanner/FileScanner.js';
 import {isDevelopment} from '../config.js';
 import type {TurbopackLoaderContext} from '../types.js';
@@ -13,7 +13,7 @@ export default function extractionLoader(
 ) {
   const callback = this.async();
   const projectRoot = this.rootContext;
-  const I = getInstrumentation();
+  using I = new Instrumentation();
   const resourceRelative = path.relative(projectRoot, this.resourcePath);
 
   I.start(`[extractionLoader] ${resourceRelative}`);
@@ -33,7 +33,7 @@ export default function extractionLoader(
       callback(null, result.code, result.map);
     })
     .catch((error) => {
-      I.end(`[extractionLoader] ${resourceRelative}`);
+      I.end(`[extractionLoader] ${resourceRelative}`, `error: ${error}`);
       callback(error);
     });
 }

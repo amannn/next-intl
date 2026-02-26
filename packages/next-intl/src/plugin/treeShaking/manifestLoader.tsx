@@ -1,5 +1,5 @@
 import path from 'path';
-import {getInstrumentation} from '../../instrumentation/index.js';
+import Instrumentation from '../../instrumentation/index.js';
 import EntryScanner, {
   type EntryScanResult
 } from '../../scanner/EntryScanner.js';
@@ -118,7 +118,7 @@ export default async function manifestLoader(
     return source;
   }
 
-  const I = getInstrumentation();
+  using I = new Instrumentation();
   const resourceRelative = path.relative(projectRoot, inputFile);
   I.start(`[manifestLoader] ${resourceRelative}`);
 
@@ -142,7 +142,7 @@ export default async function manifestLoader(
       namespaces === true ||
       (typeof namespaces === 'object' && Object.keys(namespaces).length > 0);
     if (!hasNamespaces) {
-      I.end(`[manifestLoader] ${resourceRelative}`, {skipped: 'no namespaces'});
+      I.end(`[manifestLoader] ${resourceRelative}`, 'no namespaces');
       callback(null, source);
       return source;
     }
@@ -151,13 +151,14 @@ export default async function manifestLoader(
       filename: inputFile,
       sourceMap: this.sourceMap
     });
-    I.end(`[manifestLoader] ${resourceRelative}`, {
-      filesScanned: result.size
-    });
+    I.end(
+      `[manifestLoader] ${resourceRelative}`,
+      `${result.size} files scanned`
+    );
     callback(null, code, map ?? undefined);
     return code;
   } catch (error) {
-    I.end(`[manifestLoader] ${resourceRelative}`, {error: String(error)});
+    I.end(`[manifestLoader] ${resourceRelative}`, `error: ${error}`);
     callback(error as Error);
   }
 }

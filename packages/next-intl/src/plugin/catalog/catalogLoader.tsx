@@ -6,7 +6,7 @@ import {
   resolveCodec
 } from '../../extractor/format/index.js';
 import type {MessagesConfig} from '../../extractor/types.js';
-import {getInstrumentation} from '../../instrumentation/index.js';
+import Instrumentation from '../../instrumentation/index.js';
 import {isDevelopment} from '../config.js';
 import type {TurbopackLoaderContext} from '../types.js';
 import precompileMessages from './precompileMessages.js';
@@ -47,7 +47,7 @@ export default function catalogLoader(
   const extension = getFormatExtension(options.messages.format);
   const locale = path.basename(this.resourcePath, extension);
   const projectRoot = this.rootContext;
-  const I = getInstrumentation();
+  using I = new Instrumentation();
   const resourceRelative = path.relative(projectRoot, this.resourcePath);
 
   Promise.resolve()
@@ -92,19 +92,15 @@ export default function catalogLoader(
         outputString = precompileMessages(decoded, {
           resourcePath: this.resourcePath
         });
-        I.end(`[precompileMessages] ${resourceRelative}`, {
-          messageCount: decoded.length
-        });
+        I.end(
+          `[precompileMessages] ${resourceRelative}`,
+          `${decoded.length} messages precompiled`
+        );
       } else {
         outputString = codec.toJSONString(contentToDecode, {locale});
       }
 
-      I.end(`[catalogLoader] ${resourceRelative}`, {
-        locale,
-        isSourceLocale: !!(
-          options.sourceLocale && locale === options.sourceLocale
-        )
-      });
+      I.end(`[catalogLoader] ${resourceRelative}`);
 
       // https://v8.dev/blog/cost-of-javascript-2019#json
       const result = `export default JSON.parse(${JSON.stringify(outputString)});`;
