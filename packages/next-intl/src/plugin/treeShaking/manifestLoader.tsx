@@ -1,4 +1,5 @@
 import path from 'path';
+import {getInstrumentation} from '../../instrumentation/index.js';
 import EntryScanner, {
   type EntryScanResult
 } from '../../scanner/EntryScanner.js';
@@ -117,6 +118,10 @@ export default async function manifestLoader(
     return source;
   }
 
+  const I = getInstrumentation();
+  const resourceRelative = path.relative(projectRoot, inputFile);
+  I.start(`[manifestLoader] ${resourceRelative}`);
+
   try {
     const scanner = new EntryScanner({
       entry: inputFile,
@@ -137,6 +142,7 @@ export default async function manifestLoader(
       namespaces === true ||
       (typeof namespaces === 'object' && Object.keys(namespaces).length > 0);
     if (!hasNamespaces) {
+      I.end(`[manifestLoader] ${resourceRelative}`, {skipped: 'no namespaces'});
       callback(null, source);
       return source;
     }
@@ -145,9 +151,13 @@ export default async function manifestLoader(
       filename: inputFile,
       sourceMap: this.sourceMap
     });
+    I.end(`[manifestLoader] ${resourceRelative}`, {
+      filesScanned: result.size
+    });
     callback(null, code, map ?? undefined);
     return code;
   } catch (error) {
+    I.end(`[manifestLoader] ${resourceRelative}`, {error: String(error)});
     callback(error as Error);
   }
 }

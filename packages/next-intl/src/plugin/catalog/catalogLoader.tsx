@@ -6,6 +6,7 @@ import {
   resolveCodec
 } from '../../extractor/format/index.js';
 import type {MessagesConfig} from '../../extractor/types.js';
+import {getInstrumentation} from '../../instrumentation/index.js';
 import {isDevelopment} from '../config.js';
 import type {TurbopackLoaderContext} from '../types.js';
 import precompileMessages from './precompileMessages.js';
@@ -46,9 +47,13 @@ export default function catalogLoader(
   const extension = getFormatExtension(options.messages.format);
   const locale = path.basename(this.resourcePath, extension);
   const projectRoot = this.rootContext;
+  const I = getInstrumentation();
+  const resourceRelative = path.relative(projectRoot, this.resourcePath);
 
   Promise.resolve()
     .then(async () => {
+      I.start(`[catalogLoader] ${resourceRelative}`);
+
       const codec = await getCodec(options, projectRoot);
       let contentToDecode = source;
 
@@ -83,12 +88,23 @@ export default function catalogLoader(
       let outputString: string;
       if (options.messages.precompile) {
         const decoded = codec.decode(contentToDecode, {locale});
+        I.start(`[precompileMessages] ${resourceRelative}`);
         outputString = precompileMessages(decoded, {
           resourcePath: this.resourcePath
+        });
+        I.end(`[precompileMessages] ${resourceRelative}`, {
+          messageCount: decoded.length
         });
       } else {
         outputString = codec.toJSONString(contentToDecode, {locale});
       }
+
+      I.end(`[catalogLoader] ${resourceRelative}`, {
+        locale,
+        isSourceLocale: !!(
+          options.sourceLocale && locale === options.sourceLocale
+        )
+      });
 
       // https://v8.dev/blog/cost-of-javascript-2019#json
       const result = `export default JSON.parse(${JSON.stringify(outputString)});`;

@@ -2,6 +2,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import type {ExtractorMessageReference} from '../extractor/types.js';
 import {compareReferences} from '../extractor/utils.js';
+import {getInstrumentation} from '../instrumentation/index.js';
 import FileScanner, {type FileScanMessage} from './FileScanner.js';
 import SourceFileFilter from './SourceFileFilter.js';
 import SourceFileScanner from './SourceFileScanner.js';
@@ -56,12 +57,25 @@ export default class EntryScanner {
   }
 
   public async scan(): Promise<EntryScanResult> {
+    const I = getInstrumentation();
     const entries = Array.isArray(this.entry) ? this.entry : [this.entry];
+    const entryRelative = entries
+      .map((entry) => path.relative(this.projectRoot, entry))
+      .join(', ');
+
+    I.start('[EntryScanner.scan]');
+
     const results = await Promise.all(
       entries.map((entry) => this.scanEntry(entry))
     );
     const merged = this.mergeScanResults(results);
     this.mergeReferences(merged);
+
+    I.end('[EntryScanner.scan]', {
+      entry: entryRelative,
+      filesScanned: merged.size,
+      mode: this.srcMatcher ? 'fromEntry' : 'folder'
+    });
     return merged;
   }
 

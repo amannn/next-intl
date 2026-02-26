@@ -5,6 +5,7 @@ import type {
   ExtractorMessage,
   ExtractorMessageReference
 } from '../extractor/types.js';
+import {getInstrumentation} from '../instrumentation/index.js';
 import {normalizePathToPosix} from '../node/utils.js';
 import LRUCache from '../utils/LRUCache.js';
 
@@ -47,9 +48,16 @@ export default class FileScanner {
     absoluteFilePath: string,
     source: string
   ): Promise<FileScanResult> {
+    const I = getInstrumentation();
+    const fileRelative = path.relative(this.projectRoot, absoluteFilePath);
+    I.start(`[FileScanner.scan] ${fileRelative}`);
+
     const cacheKey = [source, absoluteFilePath].join('!');
     const cached = this.compileCache.get(cacheKey);
-    if (cached) return cached;
+    if (cached) {
+      I.end(`[FileScanner.scan] ${fileRelative}`, {cacheHit: true});
+      return cached;
+    }
 
     const filePath = normalizePathToPosix(
       path.relative(this.projectRoot, absoluteFilePath)
@@ -98,6 +106,7 @@ export default class FileScanner {
     };
 
     this.compileCache.set(cacheKey, scanResult);
+    I.end(`[FileScanner.scan] ${fileRelative}`, {cacheHit: false});
     return scanResult;
   }
 }
