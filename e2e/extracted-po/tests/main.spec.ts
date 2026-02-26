@@ -564,14 +564,13 @@ export default function Greeting() {
 
   // Touch en.po to force catalog loader invalidation; file watcher may not
   // detect src/ edit before first request, so loader can run with stale src.
-  // Two gotos give the watcher two chances to process the touch.
   const enPoPath = path.join(MESSAGES_DIR, 'en.po');
   const enPoContent = await fs.readFile(enPoPath, 'utf-8');
   await fs.writeFile(enPoPath, enPoContent);
 
   await page.goto('/');
   await fs.writeFile(enPoPath, enPoContent);
-  await page.goto('/');
+  await page.goto(`/?_=${Date.now()}`);
   const content = await expectCatalog(
     'en.po',
     (content) => {
