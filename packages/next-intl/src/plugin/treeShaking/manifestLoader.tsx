@@ -1,7 +1,9 @@
 import path from 'path';
-import Scanner, {type ScanResult} from '../../scanner/Scanner.js';
+import EntryScanner, {
+  type EntryScanResult
+} from '../../scanner/EntryScanner.js';
 import SourceFileFilter from '../../scanner/SourceFileFilter.js';
-import type {ManifestNamespaces} from '../../tree-shaking/Manifest.js';
+import type {ManifestNamespaces} from '../../tree-shaking/types.js';
 import {isDevelopment} from '../config.js';
 import type {TurbopackLoaderContext} from '../types.js';
 import {PROVIDER_NAME, injectManifestProp} from './injectManifest.js';
@@ -52,7 +54,7 @@ function hasAncestor(node: TraversalNode, target: string): boolean {
 
 function collectNamespaces(
   inputFile: string,
-  result: ScanResult
+  result: EntryScanResult
 ): ManifestNamespaces {
   const namespaces: ManifestNamespaces = {};
   const queue: Array<TraversalNode> = [{file: inputFile, inClient: false}];
@@ -116,7 +118,7 @@ export default async function manifestLoader(
   }
 
   try {
-    const scanner = new Scanner({
+    const scanner = new EntryScanner({
       entry: inputFile,
       isDevelopment,
       projectRoot,

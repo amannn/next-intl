@@ -6,15 +6,6 @@ import SourceFileFilter from './SourceFileFilter.js';
 import SourceFileScanner from './SourceFileScanner.js';
 import createModuleResolver from './createModuleResolver.js';
 
-const SUPPORTED_EXTENSIONS = new Set(
-  SourceFileFilter.EXTENSIONS.map((ext) => `.${ext}`)
-);
-
-function isSourceFile(filePath: string): boolean {
-  if (filePath.endsWith('.d.ts')) return false;
-  return SUPPORTED_EXTENSIONS.has(path.extname(filePath));
-}
-
 export type ScanMessage = {
   type: 'Extracted' | 'Translations';
   id: string;
@@ -23,14 +14,17 @@ export type ScanMessage = {
   description?: string;
 };
 
-export type ScanFileEntry = {
+export type FileScanResult = {
   dependencies: Set<string>;
   hasUseClient: boolean;
   hasUseServer: boolean;
   messages: Array<ScanMessage>;
 };
 
-export type ScanResult = Map</* absolute file path */ string, ScanFileEntry>;
+export type EntryScanResult = Map<
+  /* absolute file path */ string,
+  FileScanResult
+>;
 
 export type ScannerConfig = {
   entry: string | Array<string>;
@@ -40,46 +34,7 @@ export type ScannerConfig = {
   tsconfigPath?: string;
 };
 
-function createSrcMatcher(
-  projectRoot: string,
-  srcPaths: Array<string>
-): (filePath: string) => boolean {
-  const roots = srcPaths.map((cur) => path.resolve(projectRoot, cur));
-  return (filePath: string) =>
-    roots.some((root) => SourceFileFilter.isWithinPath(filePath, root));
-}
-
-function mergeReferences(result: ScanResult): void {
-  const refsByKey = new Map<
-    string,
-    {refs: Array<{path: string; line: number}>; seen: Set<string>}
-  >();
-  for (const entry of result.values()) {
-    for (const m of entry.messages) {
-      const key = `${m.type}:${m.id}`;
-      let bucket = refsByKey.get(key);
-      if (!bucket) {
-        bucket = {refs: [], seen: new Set()};
-        refsByKey.set(key, bucket);
-      }
-      for (const ref of m.references) {
-        const refKey = `${ref.path}:${ref.line}`;
-        if (!bucket.seen.has(refKey)) {
-          bucket.seen.add(refKey);
-          bucket.refs.push(ref);
-        }
-      }
-    }
-  }
-  for (const entry of result.values()) {
-    for (const m of entry.messages) {
-      const bucket = refsByKey.get(`${m.type}:${m.id}`)!;
-      m.references = bucket.refs.toSorted(compareReferences);
-    }
-  }
-}
-
-export default class Scanner {
+export default class EntryScanner {
   private entry: string | Array<string>;
   private fileScanner: FileScanner;
   private projectRoot: string;
@@ -98,7 +53,7 @@ export default class Scanner {
     });
     this.srcMatcher =
       config.srcPaths && config.srcPaths.length > 0
-        ? createSrcMatcher(this.projectRoot, config.srcPaths)
+        ? this.createSrcMatcher(this.projectRoot, config.srcPaths)
         : null;
     this.fileScanner = new FileScanner({
       isDevelopment: config.isDevelopment,
@@ -107,18 +62,57 @@ export default class Scanner {
     });
   }
 
-  public async scan(): Promise<ScanResult> {
+  public async scan(): Promise<EntryScanResult> {
     const entries = Array.isArray(this.entry) ? this.entry : [this.entry];
     const results = await Promise.all(
       entries.map((entry) => this.scanEntry(entry))
     );
     const merged = this.mergeScanResults(results);
-    mergeReferences(merged);
+    this.mergeReferences(merged);
     return merged;
   }
 
-  private mergeScanResults(results: Array<ScanResult>): ScanResult {
-    const out = new Map<string, ScanFileEntry>();
+  private createSrcMatcher(
+    projectRoot: string,
+    srcPaths: Array<string>
+  ): (filePath: string) => boolean {
+    const roots = srcPaths.map((cur) => path.resolve(projectRoot, cur));
+    return (filePath: string) =>
+      roots.some((root) => SourceFileFilter.isWithinPath(filePath, root));
+  }
+
+  private mergeReferences(result: EntryScanResult): void {
+    const refsByKey = new Map<
+      string,
+      {refs: Array<{path: string; line: number}>; seen: Set<string>}
+    >();
+    for (const entry of result.values()) {
+      for (const m of entry.messages) {
+        const key = `${m.type}:${m.id}`;
+        let bucket = refsByKey.get(key);
+        if (!bucket) {
+          bucket = {refs: [], seen: new Set()};
+          refsByKey.set(key, bucket);
+        }
+        for (const ref of m.references) {
+          const refKey = `${ref.path}:${ref.line}`;
+          if (!bucket.seen.has(refKey)) {
+            bucket.seen.add(refKey);
+            bucket.refs.push(ref);
+          }
+        }
+      }
+    }
+    for (const entry of result.values()) {
+      for (const m of entry.messages) {
+        const bucket = refsByKey.get(`${m.type}:${m.id}`)!;
+        m.references = bucket.refs.toSorted(compareReferences);
+      }
+    }
+  }
+
+  private mergeScanResults(results: Array<EntryScanResult>): EntryScanResult {
+    const out = new Map<string, FileScanResult>();
     for (const result of results) {
       for (const [file, entry] of result) {
         const existing = out.get(file);
@@ -138,7 +132,7 @@ export default class Scanner {
     return out;
   }
 
-  private async scanEntry(entryPath: string): Promise<ScanResult> {
+  private async scanEntry(entryPath: string): Promise<EntryScanResult> {
     const stats = await fs.stat(entryPath).catch(() => null);
     const isDirectory = stats?.isDirectory() ?? false;
 
@@ -148,9 +142,9 @@ export default class Scanner {
     return this.scanFromEntry(entryPath);
   }
 
-  private async scanFolder(entryPath: string): Promise<ScanResult> {
+  private async scanFolder(entryPath: string): Promise<EntryScanResult> {
     const files = await SourceFileScanner.getSourceFiles([entryPath]);
-    const result = new Map<string, ScanFileEntry>();
+    const result = new Map<string, FileScanResult>();
 
     for (const filePath of files) {
       const normalized = path.normalize(filePath);
@@ -188,7 +182,7 @@ export default class Scanner {
           .filter(
             (res): res is string =>
               res != null &&
-              isSourceFile(res) &&
+              SourceFileFilter.isSourceFile(res) &&
               (!this.srcMatcher || this.srcMatcher(res))
           )
           .map((child) => path.normalize(child))
@@ -205,9 +199,9 @@ export default class Scanner {
     return result;
   }
 
-  private async scanFromEntry(entryPath: string): Promise<ScanResult> {
+  private async scanFromEntry(entryPath: string): Promise<EntryScanResult> {
     const normalizedEntry = path.normalize(entryPath);
-    const result = new Map<string, ScanFileEntry>();
+    const result = new Map<string, FileScanResult>();
     const visited = new Set<string>();
 
     const visit = async (
@@ -253,7 +247,7 @@ export default class Scanner {
       const children = resolved.filter(
         (res): res is string =>
           res != null &&
-          isSourceFile(res) &&
+          SourceFileFilter.isSourceFile(res) &&
           (!this.srcMatcher || this.srcMatcher(res))
       );
 

@@ -1,8 +1,8 @@
 import MagicString from 'magic-string';
-import type {ManifestNamespaces} from '../../tree-shaking/Manifest.js';
+import {INFERRED_MANIFEST_PROP} from '../../tree-shaking/config.js';
+import type {ManifestNamespaces} from '../../tree-shaking/types.js';
 
 export const PROVIDER_NAME = 'NextIntlClientProvider';
-export const INFERRED_MANIFEST_PROP = '__inferredManifest';
 
 export type InjectManifestResult = {
   code: string;

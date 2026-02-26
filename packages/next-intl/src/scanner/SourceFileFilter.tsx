@@ -3,6 +3,8 @@ import path from 'path';
 export default class SourceFileFilter {
   public static readonly EXTENSIONS = ['ts', 'tsx', 'js', 'jsx'];
 
+  public static readonly IGNORED_EXTENSIONS = ['.d.ts'];
+
   // Will not be entered, except if explicitly asked for
   // TODO: At some point we should infer these from .gitignore
   public static readonly IGNORED_DIRECTORIES = [
@@ -12,8 +14,17 @@ export default class SourceFileFilter {
   ];
 
   public static isSourceFile(filePath: string) {
-    const ext = path.extname(filePath);
-    return SourceFileFilter.EXTENSIONS.map((cur) => '.' + cur).includes(ext);
+    if (
+      SourceFileFilter.IGNORED_EXTENSIONS.some((ignored) =>
+        filePath.endsWith(ignored)
+      )
+    ) {
+      return false;
+    }
+    const pathExt = path.extname(filePath);
+    return SourceFileFilter.EXTENSIONS.map((cur) => '.' + cur).includes(
+      pathExt
+    );
   }
 
   public static shouldEnterDirectory(

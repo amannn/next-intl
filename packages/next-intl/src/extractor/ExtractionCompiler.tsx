@@ -1,5 +1,5 @@
 import path from 'path';
-import Scanner, {type ScanResult} from '../scanner/Scanner.js';
+import EntryScanner, {type EntryScanResult} from '../scanner/EntryScanner.js';
 import CatalogLocales from './catalog/CatalogLocales.js';
 import CatalogPersister from './catalog/CatalogPersister.js';
 import type ExtractorCodec from './format/ExtractorCodec.js';
@@ -18,12 +18,12 @@ export type ExtractionCompilerConfig = {
 
 export default class ExtractionCompiler {
   private config: ExtractionCompilerConfig;
-  private scanner: Scanner;
+  private scanner: EntryScanner;
   private translationsCache: Record<string, Record<string, string>> = {};
 
   public constructor(config: ExtractionCompilerConfig) {
     this.config = config;
-    this.scanner = new Scanner({
+    this.scanner = new EntryScanner({
       entry: config.srcPaths,
       isDevelopment: config.isDevelopment,
       projectRoot: config.projectRoot,
@@ -108,7 +108,9 @@ export default class ExtractionCompiler {
     return sourceContent;
   }
 
-  private getMessagesById(result: ScanResult): Map<string, ExtractorMessage> {
+  private getMessagesById(
+    result: EntryScanResult
+  ): Map<string, ExtractorMessage> {
     const messagesById = new Map<string, ExtractorMessage>();
     for (const entry of result.values()) {
       for (const m of entry.messages) {
