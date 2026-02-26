@@ -5,10 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "lint": "eslint src && prettier src --check",
-    "build": "pnpm run compile:codec && next build",
+    "build": "next build",
     "start": "next start",
-    "test": "playwright test",
-    "compile:codec": "tsc -p tsconfig.codec.json"
+    "test": "playwright test"
   },
   "dependencies": {
     "next": "^16.0.10",

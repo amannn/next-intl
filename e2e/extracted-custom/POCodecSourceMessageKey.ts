@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import POParser from 'po-parser';
 import type {Entry} from 'po-parser';
 import {defineCodec} from 'next-intl/extractor';
@@ -99,8 +98,10 @@ export default defineCodec(() => {
 
 // Essentialls lodash/set, but we avoid this dependency
 function setNestedProperty(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   obj: Record<string, any>,
   keyPath: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any
 ): void {
   const keys = keyPath.split('.');

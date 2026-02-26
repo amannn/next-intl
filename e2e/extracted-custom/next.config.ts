@@ -8,7 +8,7 @@ const withNextIntl = createNextIntlPlugin({
     messages: {
       path: './messages',
       format: {
-        codec: './POCodecSourceMessageKey.js',
+        codec: './POCodecSourceMessageKey.ts',
         extension: '.po'
       },
       locales: 'infer'

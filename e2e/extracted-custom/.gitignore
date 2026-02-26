@@ -1,6 +1,4 @@
 node_modules/
 .next/
-POCodecSourceMessageKey.js
-tsconfig.codec.tsbuildinfo
 playwright-report/
 test-results/
