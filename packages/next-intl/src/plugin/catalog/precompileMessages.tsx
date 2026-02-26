@@ -1,6 +1,6 @@
 import compile from 'icu-minify/compile';
 import type ExtractorCodec from '../../extractor/format/ExtractorCodec.js';
-import {setNestedProperty} from '../../extractor/utils.js';
+import {setNestedProperty} from '../../node/utils.js';
 
 type CompiledMessageCacheEntry = {
   compiledMessage: unknown;

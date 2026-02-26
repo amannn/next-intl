@@ -1,37 +1,4 @@
-import path from 'path';
 import type {ExtractorMessage, ExtractorMessageReference} from './types.js';
-
-export function normalizePathToPosix(filePath: string): string {
-  // `path.relative` uses OS-specific separators. For stable `.po` references we
-  // always use POSIX separators, regardless of the OS that ran extraction.
-  return path.posix.normalize(
-    filePath.split(path.win32.sep).join(path.posix.sep)
-  );
-}
-
-// Essentialls lodash/set, but we avoid this dependency
-export function setNestedProperty(
-  obj: Record<string, any>,
-  keyPath: string,
-  value: any
-): void {
-  const keys = keyPath.split('.');
-  let current = obj;
-
-  for (let i = 0; i < keys.length - 1; i++) {
-    const key = keys[i];
-    if (
-      !(key in current) ||
-      typeof current[key] !== 'object' ||
-      current[key] === null
-    ) {
-      current[key] = {};
-    }
-    current = current[key];
-  }
-
-  current[keys[keys.length - 1]] = value;
-}
 
 export function getSortedMessages(
   messages: Array<ExtractorMessage>

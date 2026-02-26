@@ -1,7 +1,7 @@
 import {createRequire} from 'module';
 import path from 'path';
 import {transform} from '@swc/core';
-import {normalizePathToPosix} from '../extractor/utils.js';
+import {normalizePathToPosix} from '../node/utils.js';
 import LRUCache from '../utils/LRUCache.js';
 
 const require = createRequire(import.meta.url);

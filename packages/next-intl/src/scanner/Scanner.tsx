@@ -1,10 +1,10 @@
 import fs from 'fs/promises';
 import path from 'path';
 import {compareReferences} from '../extractor/utils.js';
-import createModuleResolver from '../tree-shaking/createModuleResolver.js';
 import FileScanner from './FileScanner.js';
 import SourceFileFilter from './SourceFileFilter.js';
 import SourceFileScanner from './SourceFileScanner.js';
+import createModuleResolver from './createModuleResolver.js';
 
 const SUPPORTED_EXTENSIONS = new Set(
   SourceFileFilter.EXTENSIONS.map((ext) => `.${ext}`)

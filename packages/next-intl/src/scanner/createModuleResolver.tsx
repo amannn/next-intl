@@ -1,6 +1,6 @@
 import path from 'path';
 import enhancedResolve from 'enhanced-resolve';
-import SourceFileFilter from '../scanner/SourceFileFilter.js';
+import SourceFileFilter from './SourceFileFilter.js';
 
 const EXTENSIONS = SourceFileFilter.EXTENSIONS.map((ext) => `.${ext}`);
 
