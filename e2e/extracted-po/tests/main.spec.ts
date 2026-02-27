@@ -550,10 +550,6 @@ export default function Greeting() {
   );
 
   await page.waitForLoadState('networkidle');
-  // CI: wait before edit so server is idle; reduces race with watcher
-  if (process.env.CI) {
-    await page.waitForTimeout(1000);
-  }
   await using __ = await withTempEditApp(
     'src/components/Greeting.tsx',
     `'use client';
@@ -569,16 +565,16 @@ export default function Greeting() {
 
   const enPoPath = path.join(MESSAGES_DIR, 'en.po');
   const enPoContent = await fs.readFile(enPoPath, 'utf-8');
-  // Modify content to ensure watcher detects change (mtime-only touch may not fire in CI)
-  await fs.writeFile(enPoPath, enPoContent + '\n');
-  await fs.writeFile(enPoPath, enPoContent);
 
-  // CI file watcher needs time to process before goto; locally ~1ms is enough
-  if (process.env.CI) {
-    await page.waitForTimeout(1000);
+  // CI: multiple touch+wait+goto cycles; watcher may need several chances to process
+  const cycles = process.env.CI ? 3 : 1;
+  for (let i = 0; i < cycles; i++) {
+    await fs.writeFile(enPoPath, enPoContent);
+    if (process.env.CI) {
+      await page.waitForTimeout(500);
+    }
+    await page.goto(`/?_=${Date.now()}`);
   }
-
-  await page.goto('/');
   const content = await expectCatalog(
     'en.po',
     (content) => {
