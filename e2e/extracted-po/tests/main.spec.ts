@@ -567,9 +567,9 @@ export default function Greeting() {
   const enPoContent = await fs.readFile(enPoPath, 'utf-8');
   await fs.writeFile(enPoPath, enPoContent);
 
-  // CI: wait for src/ file watcher to detect edit before goto (addContextDependency)
+  // CI: wait for file watcher to detect edit before goto (addContextDependency on src/)
   if (process.env.CI) {
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(5000);
   }
 
   await page.goto('/');
