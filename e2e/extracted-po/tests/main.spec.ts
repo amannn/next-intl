@@ -14,7 +14,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = path.join(__dirname, '..');
 const MESSAGES_DIR = path.join(APP_ROOT, 'messages');
 
-const {expectCatalog} = createExtractionHelpers(MESSAGES_DIR);
+const {expectCatalog, logCatalogState} = createExtractionHelpers(MESSAGES_DIR);
 const withTempEditApp = (filePath: string, content: string) =>
   withTempEdit(APP_ROOT, filePath, content);
 const withTempFileApp = (filePath: string, content: string) =>
@@ -523,6 +523,14 @@ export default function Greeting() {
 it('removes references when a message is dropped from a single file', async ({
   page
 }) => {
+  const t0 = Date.now();
+  const logStep = (step: string) => {
+    if (process.env.DEBUG_EXTRACTION_PO || process.env.CI) {
+      console.log(`[extraction-debug] t=${Date.now() - t0}ms ${step}`);
+    }
+  };
+
+  logStep('phase1: edit Greeting to add Hey!+Howdy!');
   await using _ = await withTempEditApp(
     'src/components/Greeting.tsx',
     `'use client';
@@ -540,15 +548,22 @@ export default function Greeting() {
 }
 `
   );
+  await logCatalogState('en.po', 'phase1 after edit:');
 
+  logStep('phase1: goto');
   await page.goto('/');
+  logStep('phase1: expectCatalog both entries');
   await expectCatalog(
     'en.po',
     (content) =>
       getPoEntry(content, '+YJVTi') != null &&
       getPoEntry(content, '4xqPlJ') != null
   );
+  logStep('phase1 complete');
 
+  logStep('phase2: wait networkidle');
+  await page.waitForLoadState('networkidle');
+  logStep('phase2: edit Greeting to remove Hey!');
   await using __ = await withTempEditApp(
     'src/components/Greeting.tsx',
     `'use client';
@@ -561,17 +576,18 @@ export default function Greeting() {
 }
 `
   );
+  await logCatalogState('en.po', 'phase2 after edit (before goto):');
 
-  // Touch en.po to force catalog loader invalidation; file watcher may not
-  // detect src/ edit before first request, so loader can run with stale src.
+  logStep('phase2: touch en.po');
   const enPoPath = path.join(MESSAGES_DIR, 'en.po');
   const enPoContent = await fs.readFile(enPoPath, 'utf-8');
   await fs.writeFile(enPoPath, enPoContent);
 
+  logStep('phase2: goto');
   await page.goto('/');
-  await page.waitForLoadState('networkidle');
-  await fs.writeFile(enPoPath, enPoContent);
-  await page.goto(`/?_=${Date.now()}`);
+  await logCatalogState('en.po', 'phase2 after goto:');
+
+  logStep('phase2: expectCatalog correct refs');
   const content = await expectCatalog(
     'en.po',
     (content) => {
@@ -584,6 +600,7 @@ export default function Greeting() {
         !heyEntry.includes('Greeting.tsx')
       );
     },
+    {debugLabel: 'phase2-poll'}
   );
   const heyEntry = getPoEntry(content, '+YJVTi');
   const howdyEntry = getPoEntry(content, '4xqPlJ');

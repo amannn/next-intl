@@ -16,11 +16,12 @@ export function getPoEntry(poContent: string, msgid: string): string | null {
   return block ? block.trim() : null;
 }
 
+const EXTRACTION_DEBUG =
+  process.env.DEBUG_EXTRACTION_PO !== undefined || process.env.CI === 'true';
 export function createExtractionHelpers(messagesDir: string) {
-  const log =
-    process.env.DEBUG_EXTRACTION_PO !== undefined
-      ? (msg: string) => console.log(msg)
-      : () => {};
+  const log = (msg: string) => {
+    if (EXTRACTION_DEBUG) console.log(`[extraction-debug] ${msg}`);
+  };
   return {
     async expectCatalog(
       file: string,
@@ -65,6 +66,19 @@ export function createExtractionHelpers(messagesDir: string) {
         )
         .toBe(true);
       return fs.readFile(filePath, 'utf-8');
+    },
+
+    async logCatalogState(file: string, label: string): Promise<void> {
+      if (!EXTRACTION_DEBUG) return;
+      const filePath = path.join(messagesDir, file);
+      const content = await fs.readFile(filePath, 'utf-8');
+      const heyEntry = getPoEntry(content, '+YJVTi');
+      const howdyEntry = getPoEntry(content, '4xqPlJ');
+      log(
+        `${label} heyEntry=${heyEntry != null} howdyEntry=${howdyEntry != null} ` +
+          `heyHasFooter=${heyEntry?.includes('Footer.tsx') ?? false} ` +
+          `heyHasGreeting=${heyEntry?.includes('Greeting.tsx') ?? false}`
+      );
     }
   };
 }
