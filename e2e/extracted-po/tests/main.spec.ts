@@ -550,6 +550,10 @@ export default function Greeting() {
   );
 
   await page.waitForLoadState('networkidle');
+  // CI: wait before edit so server is idle; reduces race with watcher
+  if (process.env.CI) {
+    await page.waitForTimeout(1000);
+  }
   await using __ = await withTempEditApp(
     'src/components/Greeting.tsx',
     `'use client';
@@ -565,11 +569,13 @@ export default function Greeting() {
 
   const enPoPath = path.join(MESSAGES_DIR, 'en.po');
   const enPoContent = await fs.readFile(enPoPath, 'utf-8');
+  // Modify content to ensure watcher detects change (mtime-only touch may not fire in CI)
+  await fs.writeFile(enPoPath, enPoContent + '\n');
   await fs.writeFile(enPoPath, enPoContent);
 
-  // CI file watcher needs time to process touch before goto; locally ~1ms is enough
+  // CI file watcher needs time to process before goto; locally ~1ms is enough
   if (process.env.CI) {
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(1000);
   }
 
   await page.goto('/');
