@@ -16,8 +16,7 @@ export function getPoEntry(poContent: string, msgid: string): string | null {
   return block ? block.trim() : null;
 }
 
-const EXTRACTION_DEBUG =
-  process.env.DEBUG_EXTRACTION_PO !== undefined || process.env.CI === 'true';
+const EXTRACTION_DEBUG = process.env.DEBUG_EXTRACTION_PO !== undefined;
 export function createExtractionHelpers(messagesDir: string) {
   const log = (msg: string) => {
     if (EXTRACTION_DEBUG) console.log(`[extraction-debug] ${msg}`);
