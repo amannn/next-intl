@@ -569,7 +569,7 @@ export default function Greeting() {
 
   // CI file watcher needs time to process touch before goto; locally ~1ms is enough
   if (process.env.CI) {
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(2000);
   }
 
   await page.goto('/');
