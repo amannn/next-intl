@@ -1,5 +1,6 @@
 import fs from 'fs/promises';
 import fsPath from 'path';
+import Instrumentation from '../../instrumentation/index.js';
 import type ExtractorCodec from '../format/ExtractorCodec.js';
 import type {ExtractorMessage, Locale} from '../types.js';
 
@@ -76,12 +77,17 @@ export default class CatalogPersister {
       return nextContent;
     }
 
+    const resourceRelative = fsPath.relative(process.cwd(), filePath);
+    using I = new Instrumentation();
+    I.start(`[CatalogPersister.write] ${resourceRelative}`);
     try {
       const outputDir = fsPath.dirname(filePath);
       await fs.mkdir(outputDir, {recursive: true});
       await fs.writeFile(filePath, nextContent);
     } catch (error) {
       console.error(`❌ Failed to write catalog: ${error}`);
+    } finally {
+      I.end(`[CatalogPersister.write] ${resourceRelative}`);
     }
     return nextContent;
   }

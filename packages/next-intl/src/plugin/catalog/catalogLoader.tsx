@@ -31,6 +31,12 @@ async function getCodec(
 
 let compiler: ExtractionCompiler | null = null;
 
+// Single-flight: coalesce concurrent extract() calls so multiple consumers
+// (e.g. route segments) share one run. Edge case: if src changes during an
+// in-flight extract, new requests await the old run and may get stale content
+// until the next invalidation.
+let pendingExtract: Promise<string> | null = null;
+
 /**
  * Parses and optimizes catalog files.
  *
@@ -82,7 +88,16 @@ export default function catalogLoader(
           });
         }
 
-        contentToDecode = await compiler.extract();
+        if (pendingExtract) {
+          contentToDecode = await pendingExtract;
+        } else {
+          pendingExtract = compiler.extract();
+          try {
+            contentToDecode = await pendingExtract;
+          } finally {
+            pendingExtract = null;
+          }
+        }
       }
 
       let outputString: string;

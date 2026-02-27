@@ -7,6 +7,10 @@ function formatDuration(ms: number): string {
   return `[${(ms.toFixed(2) + 'ms').padStart(DURATION_WIDTH)}]`;
 }
 
+function formatTimestamp(): string {
+  return new Date().toISOString();
+}
+
 type TimerEntry = {name: string; start: bigint};
 
 type BufferedEntry = {line: string; start: bigint};
@@ -47,7 +51,7 @@ export default class Instrumentation implements Disposable {
     const durationMs = Number(elapsed) / 1e6;
     const duration = formatDuration(durationMs);
     const prefix = depth === 0 ? '' : '  '.repeat(depth) + '↳ ';
-    let line = `${duration} ${prefix}${name}`;
+    let line = `${formatTimestamp()} ${duration} ${prefix}${name}`;
     if (metadata) {
       line += ` — ${metadata}`;
     }
