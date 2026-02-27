@@ -549,7 +549,6 @@ export default function Greeting() {
       getPoEntry(content, '4xqPlJ') != null
   );
 
-  await page.waitForLoadState('networkidle');
   await using __ = await withTempEditApp(
     'src/components/Greeting.tsx',
     `'use client';
@@ -563,33 +562,17 @@ export default function Greeting() {
 `
   );
 
-  const enPoPath = path.join(MESSAGES_DIR, 'en.po');
-  const enPoContent = await fs.readFile(enPoPath, 'utf-8');
-  await fs.writeFile(enPoPath, enPoContent);
-
-  // CI: wait for file watcher to detect edit before goto (addContextDependency on src/)
-  if (process.env.CI) {
-    await page.waitForTimeout(1000);
-  }
-
   await page.goto('/');
-  // CI: second request in case first was served from cache
-  if (process.env.CI) {
-    await page.reload({waitUntil: 'networkidle'});
-  }
-  const content = await expectCatalog(
-    'en.po',
-    (content) => {
-      const heyEntry = getPoEntry(content, '+YJVTi');
-      const howdyEntry = getPoEntry(content, '4xqPlJ');
-      return (
-        heyEntry != null &&
-        howdyEntry != null &&
-        heyEntry.includes('Footer.tsx') &&
-        !heyEntry.includes('Greeting.tsx')
-      );
-    },
-  );
+  const content = await expectCatalog('en.po', (content) => {
+    const heyEntry = getPoEntry(content, '+YJVTi');
+    const howdyEntry = getPoEntry(content, '4xqPlJ');
+    return (
+      heyEntry != null &&
+      howdyEntry != null &&
+      heyEntry.includes('Footer.tsx') &&
+      !heyEntry.includes('Greeting.tsx')
+    );
+  });
   const heyEntry = getPoEntry(content, '+YJVTi');
   const howdyEntry = getPoEntry(content, '4xqPlJ');
   expect(heyEntry).toMatch(/Footer\.tsx/);
