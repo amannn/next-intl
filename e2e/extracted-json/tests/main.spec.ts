@@ -23,6 +23,31 @@ const withTempFileApp = (filePath: string, content: string) =>
 const withTempRemoveApp = (filePath: string) =>
   withTempRemove(APP_ROOT, filePath);
 
+it.afterEach(async () => {
+  await fs.writeFile(
+    path.join(MESSAGES_DIR, 'en.json'),
+    JSON.stringify(
+      {
+        NhX4DJ: 'Hello',
+        '+YJVTi': 'Hey!'
+      },
+      null,
+      2
+    ) + '\n'
+  );
+  await fs.writeFile(
+    path.join(MESSAGES_DIR, 'de.json'),
+    JSON.stringify(
+      {
+        NhX4DJ: 'Hallo',
+        '+YJVTi': ''
+      },
+      null,
+      2
+    ) + '\n'
+  );
+});
+
 it('extracts newly referenced messages in components', async ({page}) => {
   await page.goto('/');
   await expectCatalog('en.json', {'+YJVTi': 'Hey!', NhX4DJ: 'Hello'});
@@ -45,6 +70,28 @@ export default function Greeting() {
     JSON.stringify(json).includes('Newly extracted')
   );
   expect(JSON.stringify(en)).toContain('Newly extracted');
+});
+
+it("saves catalog when it's missing", async ({page}) => {
+  await page.goto('/');
+  await expectCatalog('en.json', {'+YJVTi': 'Hey!', NhX4DJ: 'Hello'});
+
+  await using _ = await withTempRemoveApp('messages/en.json');
+
+  await using __ = await withTempEditApp(
+    'src/components/Greeting.tsx',
+    `'use client';
+
+import {useExtracted} from 'next-intl';
+
+export default function Greeting() {
+  const t = useExtracted();
+  return <div>{t('Hey!')}{t('Hello!')}</div>;
+}
+`
+  );
+
+  await expectCatalog('en.json', {'+YJVTi': 'Hey!', OpKKos: 'Hello!'});
 });
 
 it('writes to newly added catalog file', async ({page}) => {
@@ -103,6 +150,69 @@ export default function Greeting() {
   expect(de['+YJVTi']).toBe('Hallo');
   expect(de['NhX4DJ']).toBe('Hallo');
   expect(de['OpKKos']).toBe('');
+});
+
+it('removes messages when a file is deleted during dev', async ({page}) => {
+  await using _ = await withTempFileApp(
+    'src/components/ComponentB.tsx',
+    `'use client';
+
+import {useExtracted} from 'next-intl';
+
+export default function ComponentB() {
+  const t = useExtracted();
+  return <div>{t('Howdy!')}</div>;
+}
+`
+  );
+
+  await using __ = await withTempEditApp(
+    'src/app/page.tsx',
+    `import {useExtracted} from 'next-intl';
+import Greeting from '@/components/Greeting';
+import Footer from '@/components/Footer';
+import ComponentB from '@/components/ComponentB';
+
+export default function Page() {
+  const t = useExtracted();
+  return (
+    <div>
+      <h1>{t('Hello')}</h1>
+      <Greeting />
+      <Footer />
+      <ComponentB />
+    </div>
+  );
+}
+`
+  );
+
+  await page.goto('/');
+  await expectCatalog('en.json', {'4xqPlJ': 'Howdy!'});
+
+  await using ___ = await withTempEditApp(
+    'src/app/page.tsx',
+    `import {useExtracted} from 'next-intl';
+import Greeting from '@/components/Greeting';
+import Footer from '@/components/Footer';
+
+export default function Page() {
+  const t = useExtracted();
+  return (
+    <div>
+      <h1>{t('Hello')}</h1>
+      <Greeting />
+      <Footer />
+    </div>
+  );
+}
+`
+  );
+
+  await using ____ = await withTempRemoveApp('src/components/ComponentB.tsx');
+
+  await page.goto('/');
+  await expectCatalogPredicate('en.json', (json) => json['4xqPlJ'] == null);
 });
 
 it('stops writing to removed catalog file', async ({page}) => {
@@ -297,7 +407,48 @@ export default function Greeting() {
   expect((en['ui'] as Record<string, unknown>)['OpKKos']).toBe('Hello!');
 });
 
-it('handles parse errors', async ({page}) => {
+it('removes obsolete messages when catalog has extraneous messages', async ({
+  page
+}) => {
+  await page.goto('/');
+  await expectCatalog('en.json', {'+YJVTi': 'Hey!', NhX4DJ: 'Hello'});
+
+  await using _ = await withTempEditApp(
+    'messages/en.json',
+    JSON.stringify(
+      {
+        '+YJVTi': 'Hey!',
+        NhX4DJ: 'Hello',
+        ObsoleteKey: 'Obsolete message'
+      },
+      null,
+      2
+    ) + '\n'
+  );
+
+  await using __ = await withTempEditApp(
+    'src/components/Greeting.tsx',
+    `'use client';
+
+import {useExtracted} from 'next-intl';
+
+export default function Greeting() {
+  const t = useExtracted();
+  return <div>{t('Hey!')}</div>;
+}
+`
+  );
+
+  await page.goto('/');
+  await expectCatalogPredicate(
+    'en.json',
+    (json) => json['ObsoleteKey'] == null && json['+YJVTi'] === 'Hey!'
+  );
+});
+
+it('omits file with parse error during initial scan but continues processing others', async ({
+  page
+}) => {
   await using _ = await withTempFileApp(
     'src/components/Invalid.tsx',
     `'use client';
@@ -313,6 +464,16 @@ export default function Invalid() {
   );
 
   await page.goto('/');
+  const enWithError = await expectCatalogPredicate('en.json', (json) => {
+    const keys = Object.keys(json);
+    return (
+      keys.includes('NhX4DJ') &&
+      keys.includes('+YJVTi') &&
+      !JSON.stringify(json).includes('Initially invalid')
+    );
+  });
+  expect(enWithError['NhX4DJ']).toBe('Hello');
+  expect(enWithError['+YJVTi']).toBe('Hey!');
 
   await using __ = await withTempEditApp(
     'src/components/Invalid.tsx',
@@ -328,8 +489,8 @@ export default function Invalid() {
   );
 
   await page.goto('/');
-  const en = await expectCatalogPredicate('en.json', (json) => {
-    return JSON.stringify(json).includes('Now valid');
-  });
+  const en = await expectCatalogPredicate('en.json', (json) =>
+    JSON.stringify(json).includes('Now valid')
+  );
   expect(JSON.stringify(en)).toContain('Now valid');
 });

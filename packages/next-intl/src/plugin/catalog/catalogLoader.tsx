@@ -1,40 +1,24 @@
 import path from 'path';
-import compile from 'icu-minify/compile';
+import ExtractionCompiler from '../../extractor/ExtractionCompiler.js';
 import type ExtractorCodec from '../../extractor/format/ExtractorCodec.js';
 import {
   getFormatExtension,
   resolveCodec
 } from '../../extractor/format/index.js';
-import type {
-  CatalogLoaderConfig,
-  ExtractorMessage
-} from '../../extractor/types.js';
-import {setNestedProperty} from '../../extractor/utils.js';
+import type {MessagesConfig} from '../../extractor/types.js';
+import Instrumentation from '../../instrumentation/index.js';
+import {isDevelopment} from '../config.js';
 import type {TurbopackLoaderContext} from '../types.js';
+import precompileMessages from './precompileMessages.js';
 
-// The module scope is safe for some caching, but Next.js can
-// create multiple loader instances so don't expect a singleton.
-let cachedCodec: ExtractorCodec | null = null;
-
-type CompiledMessageCacheEntry = {
-  compiledMessage: unknown;
-  messageValue: string;
+export type CatalogLoaderConfig = {
+  messages: MessagesConfig;
+  sourceLocale?: string;
+  srcPaths?: Array<string>;
+  tsconfigPath: string;
 };
 
-const messageCacheByCatalog = new Map<
-  string,
-  Map<string, CompiledMessageCacheEntry>
->();
-
-function getMessageCache(catalogId: string) {
-  let cache = messageCacheByCatalog.get(catalogId);
-  if (!cache) {
-    cache = new Map();
-    messageCacheByCatalog.set(catalogId, cache);
-  }
-  return cache;
-}
-
+let cachedCodec: ExtractorCodec | null = null;
 async function getCodec(
   options: CatalogLoaderConfig,
   projectRoot: string
@@ -44,6 +28,14 @@ async function getCodec(
   }
   return cachedCodec;
 }
+
+let compiler: ExtractionCompiler | null = null;
+
+// Single-flight: coalesce concurrent extract() calls so multiple consumers
+// (e.g. route segments) share one run. Edge case: if src changes during an
+// in-flight extract, new requests await the old run and may get stale content
+// until the next invalidation.
+let pendingExtract: Promise<string> | null = null;
 
 /**
  * Parses and optimizes catalog files.
@@ -59,20 +51,71 @@ export default function catalogLoader(
   const options = this.getOptions();
   const callback = this.async();
   const extension = getFormatExtension(options.messages.format);
+  const locale = path.basename(this.resourcePath, extension);
+  const projectRoot = this.rootContext;
+  using I = new Instrumentation();
+  const resourceRelative = path.relative(projectRoot, this.resourcePath);
 
-  getCodec(options, this.rootContext)
-    .then((codec) => {
-      const locale = path.basename(this.resourcePath, extension);
-      let outputString: string;
+  Promise.resolve()
+    .then(async () => {
+      I.start(`[catalogLoader] ${resourceRelative}`);
 
-      if (options.messages.precompile) {
-        const decoded = codec.decode(source, {locale});
-        const cache = getMessageCache(this.resourcePath);
-        const precompiled = precompileMessages(decoded, cache);
-        outputString = JSON.stringify(precompiled);
-      } else {
-        outputString = codec.toJSONString(source, {locale});
+      const codec = await getCodec(options, projectRoot);
+      let contentToDecode = source;
+
+      const shouldExtract =
+        options.sourceLocale &&
+        options.srcPaths &&
+        locale === options.sourceLocale;
+      if (shouldExtract) {
+        for (const srcPath of options.srcPaths!) {
+          this.addContextDependency(path.resolve(projectRoot, srcPath));
+        }
+
+        // Invalidate when catalogs are added/removed so `getTargetLocales` sees new files
+        const messagesDir = path.resolve(projectRoot, options.messages.path);
+        this.addContextDependency(messagesDir);
+
+        if (!compiler) {
+          compiler = new ExtractionCompiler({
+            codec,
+            isDevelopment,
+            messages: options.messages,
+            projectRoot,
+            sourceLocale: options.sourceLocale!,
+            srcPaths: options.srcPaths!,
+            tsconfigPath: options.tsconfigPath
+          });
+        }
+
+        if (pendingExtract) {
+          contentToDecode = await pendingExtract;
+        } else {
+          pendingExtract = compiler.extract();
+          try {
+            contentToDecode = await pendingExtract;
+          } finally {
+            pendingExtract = null;
+          }
+        }
       }
+
+      let outputString: string;
+      if (options.messages.precompile) {
+        const decoded = codec.decode(contentToDecode, {locale});
+        I.start(`[precompileMessages] ${resourceRelative}`);
+        outputString = precompileMessages(decoded, {
+          resourcePath: this.resourcePath
+        });
+        I.end(
+          `[precompileMessages] ${resourceRelative}`,
+          `${decoded.length} messages precompiled`
+        );
+      } else {
+        outputString = codec.toJSONString(contentToDecode, {locale});
+      }
+
+      I.end(`[catalogLoader] ${resourceRelative}`);
 
       // https://v8.dev/blog/cost-of-javascript-2019#json
       const result = `export default JSON.parse(${JSON.stringify(outputString)});`;
@@ -80,53 +123,4 @@ export default function catalogLoader(
       callback(null, result);
     })
     .catch(callback);
-}
-
-/**
- * Recursively precompiles all ICU message strings in a messages object
- * using icu-minify/compile for smaller runtime bundles.
- */
-function precompileMessages(
-  messages: Array<ExtractorMessage>,
-  cache: Map<string, CompiledMessageCacheEntry>
-): Record<string, unknown> {
-  const result: Record<string, unknown> = {};
-  const cacheKeysToEvict = new Set(cache.keys());
-
-  for (const message of messages) {
-    cacheKeysToEvict.delete(message.id);
-    const messageValue = message.message;
-
-    if (Array.isArray(messageValue)) {
-      throw new Error(
-        `Message at \`${message.id}\` resolved to an array, but only strings are supported. See https://next-intl.dev/docs/usage/translations#arrays-of-messages`
-      );
-    }
-
-    if (typeof messageValue === 'object') {
-      throw new Error(
-        `Message at \`${message.id}\` resolved to \`${typeof messageValue}\`, but only strings are supported. Use a \`.\` to retrieve nested messages. See https://next-intl.dev/docs/usage/translations#structuring-messages`
-      );
-    }
-
-    const cachedEntry = cache.get(message.id);
-    const hasCacheMatch = cachedEntry?.messageValue === messageValue;
-
-    let compiledMessage;
-    if (hasCacheMatch) {
-      compiledMessage = cachedEntry.compiledMessage;
-    } else {
-      compiledMessage = compile(messageValue);
-      cache.set(message.id, {compiledMessage, messageValue});
-    }
-
-    setNestedProperty(result, message.id, compiledMessage);
-  }
-
-  // Evict unused cache entries
-  for (const cachedId of cacheKeysToEvict) {
-    cache.delete(cachedId);
-  }
-
-  return result;
 }

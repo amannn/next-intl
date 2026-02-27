@@ -1,5 +1,6 @@
 import fs from 'fs/promises';
 import fsPath from 'path';
+import Instrumentation from '../../instrumentation/index.js';
 import type ExtractorCodec from '../format/ExtractorCodec.js';
 import type {ExtractorMessage, Locale} from '../types.js';
 
@@ -26,11 +27,10 @@ export default class CatalogPersister {
     return fsPath.join(this.messagesPath, this.getFileName(locale));
   }
 
-  public async read(locale: Locale): Promise<Array<ExtractorMessage>> {
+  private async readRaw(locale: Locale): Promise<string | null> {
     const filePath = this.getFilePath(locale);
-    let content: string;
     try {
-      content = await fs.readFile(filePath, 'utf8');
+      return await fs.readFile(filePath, 'utf8');
     } catch (error) {
       if (
         error &&
@@ -38,14 +38,18 @@ export default class CatalogPersister {
         'code' in error &&
         error.code === 'ENOENT'
       ) {
-        return [];
+        return null;
       }
       throw new Error(
         `Error while reading ${this.getFileName(locale)}:\n> ${error}`,
         {cause: error}
       );
     }
-    if (content.trim() === '') {
+  }
+
+  public async read(locale: Locale): Promise<Array<ExtractorMessage>> {
+    const content = await this.readRaw(locale);
+    if (content === null || content.trim() === '') {
       return [];
     }
     try {
@@ -64,17 +68,28 @@ export default class CatalogPersister {
       locale: Locale;
       sourceMessagesById: Map<string, ExtractorMessage>;
     }
-  ): Promise<void> {
+  ): Promise<string> {
     const filePath = this.getFilePath(context.locale);
-    const content = this.codec.encode(messages, context);
+    const nextContent = this.codec.encode(messages, context);
 
+    const curContent = await this.readRaw(context.locale);
+    if (curContent !== null && curContent === nextContent) {
+      return nextContent;
+    }
+
+    const resourceRelative = fsPath.relative(process.cwd(), filePath);
+    using I = new Instrumentation();
+    I.start(`[CatalogPersister.write] ${resourceRelative}`);
     try {
       const outputDir = fsPath.dirname(filePath);
       await fs.mkdir(outputDir, {recursive: true});
-      await fs.writeFile(filePath, content);
+      await fs.writeFile(filePath, nextContent);
     } catch (error) {
       console.error(`❌ Failed to write catalog: ${error}`);
+    } finally {
+      I.end(`[CatalogPersister.write] ${resourceRelative}`);
     }
+    return nextContent;
   }
 
   public async getLastModified(locale: Locale): Promise<Date | undefined> {

@@ -28,6 +28,7 @@ export async function withTempFile(
   } catch {
     existed = false;
   }
+  await fs.mkdir(path.dirname(fullPath), {recursive: true});
   await fs.writeFile(fullPath, content);
   return {
     [Symbol.asyncDispose]: async () => {

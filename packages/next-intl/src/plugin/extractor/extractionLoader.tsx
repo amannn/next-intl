@@ -1,12 +1,11 @@
-import MessageExtractor from '../../extractor/extractor/MessageExtractor.js';
+import path from 'path';
 import type {ExtractorConfig} from '../../extractor/types.js';
+import Instrumentation from '../../instrumentation/index.js';
+import FileScanner from '../../scanner/FileScanner.js';
+import {isDevelopment} from '../config.js';
 import type {TurbopackLoaderContext} from '../types.js';
 
-// Module-level extractor instance for transformation caching.
-// Note: Next.js/Turbopack may create multiple loader instances, but each
-// only handles file transformation. The ExtractionCompiler (which manages
-// catalogs) is initialized separately in createNextIntlPlugin.
-let extractor: MessageExtractor | undefined;
+let fileScanner: FileScanner | undefined;
 
 export default function extractionLoader(
   this: TurbopackLoaderContext<ExtractorConfig>,
@@ -14,22 +13,27 @@ export default function extractionLoader(
 ) {
   const callback = this.async();
   const projectRoot = this.rootContext;
+  using I = new Instrumentation();
+  const resourceRelative = path.relative(projectRoot, this.resourcePath);
 
-  // Avoid rollup's `replace` plugin to compile this away
-  const isDevelopment = process.env['NODE_ENV'.trim()] === 'development';
+  I.start(`[extractionLoader] ${resourceRelative}`);
 
-  if (!extractor) {
-    extractor = new MessageExtractor({
-      isDevelopment,
-      projectRoot,
-      sourceMap: this.sourceMap
+  if (!fileScanner) {
+    fileScanner = new FileScanner({
+      projectRoot: this.rootContext,
+      sourceMap: this.sourceMap,
+      isDevelopment
     });
   }
 
-  extractor
-    .extract(this.resourcePath, source)
+  fileScanner
+    .scan(this.resourcePath, source)
     .then((result) => {
+      I.end(`[extractionLoader] ${resourceRelative}`);
       callback(null, result.code, result.map);
     })
-    .catch(callback);
+    .catch((error) => {
+      I.end(`[extractionLoader] ${resourceRelative}`, `error: ${error}`);
+      callback(error);
+    });
 }

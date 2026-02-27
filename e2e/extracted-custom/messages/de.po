@@ -1,0 +1,17 @@
+msgid ""
+msgstr ""
+"Language: de\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: next-intl\n"
+
+#: src/app/page.tsx:9
+msgctxt "NhX4DJ"
+msgid "Hello"
+msgstr "Hallo"
+
+#: src/components/Footer.tsx:7
+#: src/components/Greeting.tsx:7
+msgctxt "+YJVTi"
+msgid "Hey!"
+msgstr ""
