@@ -573,6 +573,10 @@ export default function Greeting() {
   }
 
   await page.goto('/');
+  // CI: second request in case first was served from cache
+  if (process.env.CI) {
+    await page.reload({waitUntil: 'networkidle'});
+  }
   const content = await expectCatalog(
     'en.po',
     (content) => {
