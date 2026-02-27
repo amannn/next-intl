@@ -565,16 +565,14 @@ export default function Greeting() {
 
   const enPoPath = path.join(MESSAGES_DIR, 'en.po');
   const enPoContent = await fs.readFile(enPoPath, 'utf-8');
+  await fs.writeFile(enPoPath, enPoContent);
 
-  // CI: multiple touch+wait+goto cycles; watcher may need several chances to process
-  const cycles = process.env.CI ? 3 : 1;
-  for (let i = 0; i < cycles; i++) {
-    await fs.writeFile(enPoPath, enPoContent);
-    if (process.env.CI) {
-      await page.waitForTimeout(500);
-    }
-    await page.goto(`/?_=${Date.now()}`);
+  // CI: wait for src/ file watcher to detect edit before goto (addContextDependency)
+  if (process.env.CI) {
+    await page.waitForTimeout(2000);
   }
+
+  await page.goto('/');
   const content = await expectCatalog(
     'en.po',
     (content) => {
