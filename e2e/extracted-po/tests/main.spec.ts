@@ -569,7 +569,7 @@ export default function Greeting() {
 
   // CI: wait for file watcher to detect edit before goto (addContextDependency on src/)
   if (process.env.CI) {
-    await page.waitForTimeout(5000);
+    await page.waitForTimeout(1000);
   }
 
   await page.goto('/');
