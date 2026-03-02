@@ -83,10 +83,10 @@ it('uses localePrefix as-needed mode on as-needed.example.com', async () => {
   // Default locale (ja) should have no prefix
   await page.goto('http://as-needed.example.com');
   await expect(page).toHaveURL('http://as-needed.example.com');
-  await expect(page.getByRole('heading', {name: 'ホーム'})).toBeVisible();
+  await expect(page.getByRole('heading', {name: 'Home (ja)'})).toBeVisible();
 
   // Non-default locale (en) should have prefix
-  await page.getByRole('link', {name: '英語に切り替える'}).click();
+  await page.getByRole('link', {name: 'Switch to English'}).click();
   await expect(page).toHaveURL('http://as-needed.example.com/en');
   await expect(page.getByRole('heading', {name: 'Home'})).toBeVisible();
 
