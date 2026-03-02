@@ -6,6 +6,7 @@ const useCases = [
   'trailing-slash',
   'base-path',
   'domains',
+  'domains-locale-prefix',
   'locale-cookie-false'
 ];
 
