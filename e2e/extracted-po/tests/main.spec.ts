@@ -563,21 +563,19 @@ export default function Greeting() {
   );
 
   await page.goto('/');
-  const content = await expectCatalog('en.po', (content) => {
+
+  await expectCatalog('en.po', (content) => {
     const heyEntry = getPoEntry(content, '+YJVTi');
     const howdyEntry = getPoEntry(content, '4xqPlJ');
     return (
       heyEntry != null &&
       howdyEntry != null &&
       heyEntry.includes('Footer.tsx') &&
-      !heyEntry.includes('Greeting.tsx')
+      !heyEntry.includes('Greeting.tsx') &&
+      howdyEntry.includes('Greeting.tsx') &&
+      !howdyEntry.includes('Footer.tsx')
     );
   });
-  const heyEntry = getPoEntry(content, '+YJVTi');
-  const howdyEntry = getPoEntry(content, '4xqPlJ');
-  expect(heyEntry).toMatch(/Footer\.tsx/);
-  expect(heyEntry).not.toMatch(/Greeting\.tsx/);
-  expect(howdyEntry).toMatch(/Greeting\.tsx/);
 });
 
 it('merges descriptions when message appears in multiple files with different descriptions', async ({
