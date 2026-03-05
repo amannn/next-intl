@@ -24,19 +24,26 @@ export function createExtractionHelpers(messagesDir: string) {
       opts?: {timeout?: number}
     ): Promise<string> {
       const filePath = path.join(messagesDir, file);
-      await expect
-        .poll(
-          async () => {
-            try {
-              const content = await fs.readFile(filePath, 'utf-8');
-              return predicate(content);
-            } catch {
-              return false;
-            }
-          },
-          opts?.timeout ? {timeout: opts.timeout} : undefined
-        )
-        .toBe(true);
+      try {
+        await expect
+          .poll(
+            async () => {
+              try {
+                const content = await fs.readFile(filePath, 'utf-8');
+                return predicate(content);
+              } catch {
+                return false;
+              }
+            },
+            opts?.timeout ? {timeout: opts.timeout} : undefined
+          )
+          .toBe(true);
+      } catch (error) {
+        const content = await fs.readFile(filePath, 'utf-8').catch(() => '');
+        throw new Error(
+          `expectCatalog timed out. Current ${file} content:\n\n${content}\n\n---\n${error instanceof Error ? error.message : String(error)}`
+        );
+      }
       return fs.readFile(filePath, 'utf-8');
     }
   };
