@@ -240,7 +240,7 @@ describe('provider client messages', () => {
   }) => {
     await page.goto('/feed');
     await page.locator('a[href="/photo/alpha"]').first().click();
-    await expect(page).toHaveURL('/photo/alpha');
+    await expect(page).toHaveURL('/photo/alpha', {timeout: 5000});
 
     const messages = await readProviderClientMessages(page);
     const photoExpected = {Ax7uMP: ['Intercepted photo modal: ', ['id']]};

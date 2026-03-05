@@ -124,11 +124,11 @@ msgstr "Parallel activity default (client)"
 msgid "eoEXj3"
 msgstr "Parallel activity page (client)"
 
-#: src/app/parallel/@team/default.tsx:7
+#: src/app/parallel/@team/default.tsx:5
 msgid "qzdMio"
 msgstr "Parallel team default (server)"
 
-#: src/app/parallel/@team/page.tsx:7
+#: src/app/parallel/@team/page.tsx:5
 msgid "siB/XG"
 msgstr "Parallel team page (server)"
 

@@ -1,5 +1,5 @@
 import path from 'path';
-import {throwError} from '../../plugin/utils.js';
+import {throwError} from '../../node/utils.js';
 import type ExtractorCodec from './ExtractorCodec.js';
 import type {BuiltInMessagesFormat, MessagesFormat} from './types.js';
 

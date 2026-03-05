@@ -2,3 +2,4 @@ node_modules/
 .next/
 playwright-report/
 test-results/
+next-intl-extractor.log
