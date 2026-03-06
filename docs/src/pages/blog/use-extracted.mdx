@@ -11,11 +11,11 @@ import BlogVideo from '@/components/BlogVideo';
 
 <small>Nov 7, 2025 · by Jan Amann</small>
 
-For quite some time, I used to be a Tailwind skeptic. But one day, I decided to _give it five minutes_ — and I was hooked. It's core idea is just so irresistibly pragmatic. Once you've tried it, you just can't go back.
+For quite some time, I used to be a Tailwind skeptic. But one day, I decided to _give it five minutes_ — and I was hooked. Its core idea is just so irresistibly pragmatic. Once you've tried it, you just can't go back.
 
 It made me wonder: "What would the Tailwind for i18n look like?"
 
-Now first of all, `next-intl` is doing very well and has recently crossed [1M weekly downloads](https://www.npmjs.com/package/next-intl) (thank you everyone!). So it seems like there are plenty of people who are quite happy with how it works today. And it's core APIs like `useTranslations` are surely here to stay.
+Now first of all, `next-intl` is doing very well and has recently crossed [1M weekly downloads](https://www.npmjs.com/package/next-intl) (thank you everyone!). So it seems like there are plenty of people who are quite happy with how it works today. And its core APIs like `useTranslations` are surely here to stay.
 
 But will we continue to write code the same way tomorrow, as we do today?
 
@@ -33,7 +33,7 @@ If we consider the design of Tailwind, we can see that an i18n solution that fol
 2. **Local reasoning**: Generative AI is very good at Tailwind since it only requires very small context windows. Having to read entire message catalogs leads to context pollution and should therefore be avoided (at least not without tool calls).
 3. **No naming of things**: Not having to come up with names is a major productivity boost, therefore manual keys should be avoided as much as possible.
 4. **Purging**: When code is quickly changed, there shouldn't be any dead code left behind. Similar to how Tailwind can purge unused styles, we should purge unused messages automatically.
-5. **Minification**: Tailwind class names have a tiny bundle footprint. In the same way, messages should also use minified keys that ensures bundles are as small as possible.
+5. **Minification**: Tailwind class names have a tiny bundle footprint. In the same way, messages should also use minified keys that ensure bundles are as small as possible.
 6. **Prototype-friendly, production-ready**: Tailwind looks exactly the same, regardless of whether it's used for a quick prototype or a production app. In the same way, there should be a single API that avoids upfront structural decisions related to the project's size and complexity.
 7. **Refactoring-friendly**: Moving code across components is seamless with Tailwind, this should be the case for your messages as well.
 
@@ -97,7 +97,7 @@ export default async function ProfilePage() {
 
 ---
 
-Ok, now let's take a step back. Components that use inline messages appear to be easy to generate for AIs, all without having to load lengthy message catalogs into its precious context window.
+Ok, now let's take a step back. Components that use inline messages appear to be easy to generate for AIs, all without having to load lengthy message catalogs into their precious context window.
 
 But what about using AI to _translate_ your messages?
 
@@ -158,11 +158,11 @@ More on this in the [localization management docs](/docs/workflows/localization-
 
 Behind the scenes, `useExtracted` integrates with Next.js at two touch points:
 
-**1. Turbopack loader for extration**
+**1. Turbopack loader for extraction**
 
 The core piece is a loader that will be called for source files containing `useExtracted` calls.
 
-Note that only Next.js 16+ is supported, since it introduced an optimization for Turbopack that allows to peak inside files to check if they even use the `useExtracted` hook before actually processing the file.
+Note that only Next.js 16+ is supported, since it introduced an optimization for Turbopack that allows to peek inside files to check if they even use the `useExtracted` hook before actually processing the file.
 
 If `useExtracted` is found, then SWC—the Rust-based compiler that powers Next.js—will parse the file, followed by a JavaScript transformer that will compile the file to a `useTranslations` call:
 
@@ -214,7 +214,7 @@ As the feature stabilizes, you'll of course be the first to hear about best prac
 
 — Jan
 
-PS: A special thank you goes to projects & companies like [gettext](https://en.wikipedia.org/wiki/Gettext), [Lingui](https://lingui.dev/), [FormatJS](https://formatjs.github.io/), [Wordpress](https://www.npmjs.com/package/@wordpress/i18n), and [Zendesk](https://www.youtube.com/watch?v=fUQAXo2DayQ) for their pioneering work in the space of message extraction. I'd also like to thank [Jan Nicklas](https://x.com/jantimon) for his work on [`next-yak`](https://github.com/DigitecGalaxus/next-yak), pushing the boundaries of Turbopack and sharing his insights.
+PS: A special thank you goes to projects & companies like [gettext](https://en.wikipedia.org/wiki/Gettext), [Lingui](https://lingui.dev/), [FormatJS](https://formatjs.github.io/), [WordPress](https://www.npmjs.com/package/@wordpress/i18n), and [Zendesk](https://www.youtube.com/watch?v=fUQAXo2DayQ) for their pioneering work in the space of message extraction. I'd also like to thank [Jan Nicklas](https://x.com/jantimon) for his work on [`next-yak`](https://github.com/DigitecGalaxus/next-yak), pushing the boundaries of Turbopack and sharing his insights.
 
 **Further reading:**
 
