@@ -162,7 +162,7 @@ Behind the scenes, `useExtracted` integrates with Next.js at two touch points:
 
 The core piece is a loader that will be called for source files containing `useExtracted` calls.
 
-Note that only Next.js 16+ is supported, since it introduced an optimization for Turbopack that allows it to peek inside files to check if they even use the `useExtracted` hook before actually processing the file.
+Note that only Next.js 16+ is supported, since it introduced an optimization for Turbopack that allows to peek inside files to check if they even use the `useExtracted` hook before actually processing the file.
 
 If `useExtracted` is found, then SWC—the Rust-based compiler that powers Next.js—will parse the file, followed by a JavaScript transformer that will compile the file to a `useTranslations` call:
 
