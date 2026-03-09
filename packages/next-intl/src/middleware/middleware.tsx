@@ -104,6 +104,18 @@ export default function createMiddleware<
 
       urlObj.pathname = normalizeTrailingSlash(urlObj.pathname);
 
+      function createRedirectResponse() {
+        if (request.nextUrl.basePath) {
+          urlObj.pathname = applyBasePath(
+            urlObj.pathname,
+            request.nextUrl.basePath
+          );
+        }
+
+        hasRedirected = true;
+        return NextResponse.redirect(urlObj.toString());
+      }
+
       if (domainsConfig.length > 0 && !redirectDomain && domain) {
         const bestMatchingDomain = getBestMatchingDomain(
           domain,
@@ -125,6 +137,10 @@ export default function createMiddleware<
         }
       }
 
+      // Priority for redirect origins:
+      // 1) explicit domain routing (`redirectDomain`)
+      // 2) reverse proxy host (`x-forwarded-host`)
+      // 3) fallback to `request.url`
       if (redirectDomain) {
         urlObj.host = redirectDomain;
 
@@ -139,17 +155,22 @@ export default function createMiddleware<
           urlObj.port =
             redirectDomainPort ?? request.headers.get('x-forwarded-port') ?? '';
         }
+        return createRedirectResponse();
       }
 
-      if (request.nextUrl.basePath) {
-        urlObj.pathname = applyBasePath(
-          urlObj.pathname,
-          request.nextUrl.basePath
-        );
+      if (request.headers.get('x-forwarded-host')) {
+        urlObj.host = request.headers.get('x-forwarded-host');
+        urlObj.protocol =
+          request.headers.get('x-forwarded-proto') ?? request.nextUrl.protocol;
+        const redirectDomainPort = request.headers
+          .get('x-forwarded-host')
+          .match(/:(\d+)$/)?.[1];
+        urlObj.port =
+          redirectDomainPort ?? request.headers.get('x-forwarded-port') ?? '';
+        return createRedirectResponse();
       }
 
-      hasRedirected = true;
-      return NextResponse.redirect(urlObj.toString());
+      return createRedirectResponse();
     }
 
     const unprefixedExternalPathname = getNormalizedPathname(
