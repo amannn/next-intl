@@ -31,19 +31,19 @@ export const routing = defineRouting({
             {
               domain: 'never.example.com',
               defaultLocale: 'en',
-              locales: ['en', 'de'],
+              locales: ['en'],
               localePrefix: 'never'
             },
             {
               domain: 'always.example.com',
               defaultLocale: 'de',
-              locales: ['de', 'en'],
+              locales: ['de'],
               localePrefix: 'always'
             },
             {
               domain: 'as-needed.example.com',
               defaultLocale: 'ja',
-              locales: ['ja', 'en'],
+              locales: ['ja', 'es'],
               localePrefix: 'as-needed'
             }
           ]

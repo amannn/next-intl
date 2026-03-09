@@ -23,10 +23,9 @@ it('uses localePrefix never mode on never.example.com', async () => {
   await expect(page).toHaveURL('http://never.example.com');
   await expect(page.getByRole('heading', {name: 'Home'})).toBeVisible();
 
-  // Non-default locale (de) should also have no prefix
-  await page.goto('http://never.example.com/de');
-  await expect(page).toHaveURL('http://never.example.com');
-  await expect(page.getByRole('heading', {name: 'Start'})).toBeVisible();
+  // Navigate to client page - should have no prefix
+  await page.getByRole('link', {name: 'Client page'}).click();
+  await expect(page).toHaveURL('http://never.example.com/client');
 
   await browser.close();
 });
@@ -49,15 +48,14 @@ it('uses localePrefix always mode on always.example.com', async () => {
     })
   );
 
-  // Default locale (de) should have prefix
+  // Default locale (de) should have prefix with always mode
   await page.goto('http://always.example.com');
   await expect(page).toHaveURL('http://always.example.com/de');
   await expect(page.getByRole('heading', {name: 'Start'})).toBeVisible();
 
-  // Non-default locale (en) should also have prefix
-  await page.getByRole('link', {name: 'Zu Englisch wechseln'}).click();
-  await expect(page).toHaveURL('http://always.example.com/en');
-  await expect(page.getByRole('heading', {name: 'Home'})).toBeVisible();
+  // Navigate to client page - should have /de prefix
+  await page.getByRole('link', {name: 'Client-Seite'}).click();
+  await expect(page).toHaveURL('http://always.example.com/de/client');
 
   await browser.close();
 });
@@ -85,10 +83,10 @@ it('uses localePrefix as-needed mode on as-needed.example.com', async () => {
   await expect(page).toHaveURL('http://as-needed.example.com');
   await expect(page.getByRole('heading', {name: 'Home (ja)'})).toBeVisible();
 
-  // Non-default locale (en) should have prefix
-  await page.getByRole('link', {name: 'Switch to English'}).click();
-  await expect(page).toHaveURL('http://as-needed.example.com/en');
-  await expect(page.getByRole('heading', {name: 'Home'})).toBeVisible();
+  // Non-default locale (es) should have prefix
+  await page.getByRole('link', {name: 'Switch to Spanish'}).click();
+  await expect(page).toHaveURL('http://as-needed.example.com/spain');
+  await expect(page.getByRole('heading', {name: 'Inicio'})).toBeVisible();
 
   await browser.close();
 });
@@ -118,20 +116,33 @@ it('navigates between domains with different localePrefix modes', async () => {
   // Start on never.example.com (no prefix for en)
   await page.goto('http://never.example.com');
   await expect(page).toHaveURL('http://never.example.com');
-
-  // Switch to German - should stay on never.example.com with no prefix
-  await page.getByRole('link', {name: 'Switch to German'}).click();
-  await expect(page).toHaveURL('http://never.example.com');
-  await expect(page.getByRole('heading', {name: 'Start'})).toBeVisible();
-
-  // Navigate to always.example.com with accept-language: en - should redirect to /en
-  await page.goto('http://always.example.com');
-  await expect(page).toHaveURL('http://always.example.com/en');
   await expect(page.getByRole('heading', {name: 'Home'})).toBeVisible();
 
-  // Switch to German - should have /de prefix
-  await page.getByRole('link', {name: 'Switch to German'}).click();
+  // Navigate to always.example.com with accept-language: de
+  await page.route('**/*', (route) =>
+    route.continue({
+      headers: {
+        'accept-language': 'de',
+        'x-forwarded-port': '80'
+      }
+    })
+  );
+  await page.goto('http://always.example.com');
   await expect(page).toHaveURL('http://always.example.com/de');
+  await expect(page.getByRole('heading', {name: 'Start'})).toBeVisible();
+
+  // Navigate to as-needed.example.com with accept-language: ja
+  await page.route('**/*', (route) =>
+    route.continue({
+      headers: {
+        'accept-language': 'ja',
+        'x-forwarded-port': '80'
+      }
+    })
+  );
+  await page.goto('http://as-needed.example.com');
+  await expect(page).toHaveURL('http://as-needed.example.com');
+  await expect(page.getByRole('heading', {name: 'Home (ja)'})).toBeVisible();
 
   await browser.close();
 });
