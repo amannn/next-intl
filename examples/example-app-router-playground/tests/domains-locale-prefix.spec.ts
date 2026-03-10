@@ -12,19 +12,19 @@ it('uses localePrefix never mode on never.example.com', async () => {
   await page.route('**/*', (route) =>
     route.continue({
       headers: {
-        'accept-language': 'en',
+        'accept-language': 'nl',
         'x-forwarded-port': '80'
       }
     })
   );
 
-  // Default locale (en) should have no prefix
+  // Default locale (nl) should have no prefix
   await page.goto('http://never.example.com');
   await expect(page).toHaveURL('http://never.example.com');
   await expect(page.getByRole('heading', {name: 'Home'})).toBeVisible();
 
   // Navigate to client page - should have no prefix
-  await page.getByRole('link', {name: 'Client page'}).click();
+  await page.getByRole('link', {name: 'Client pagina'}).click();
   await expect(page).toHaveURL('http://never.example.com/client');
 
   await browser.close();
@@ -42,21 +42,21 @@ it('uses localePrefix always mode on always.example.com', async () => {
   await page.route('**/*', (route) =>
     route.continue({
       headers: {
-        'accept-language': 'nl',
+        'accept-language': 'de',
         'x-forwarded-port': '80'
       }
     })
   );
 
-  // Default locale (nl) should have prefix with always mode
+  // Default locale (de) should have prefix with always mode
   await page.goto('http://always.example.com');
-  await expect(page).toHaveURL('http://always.example.com/nl');
-  await expect(page.getByRole('heading', {name: 'Home'})).toBeVisible();
-
-  // Non-default locale (de) should also have prefix
-  await page.getByRole('link', {name: 'Schakel naar Duits'}).click();
   await expect(page).toHaveURL('http://always.example.com/de');
   await expect(page.getByRole('heading', {name: 'Start'})).toBeVisible();
+
+  // Non-default locale (en) should also have prefix
+  await page.getByRole('link', {name: 'Zu Englisch wechseln'}).click();
+  await expect(page).toHaveURL('http://always.example.com/en');
+  await expect(page.getByRole('heading', {name: 'Home'})).toBeVisible();
 
   await browser.close();
 });
@@ -108,29 +108,29 @@ it('navigates between domains with different localePrefix modes', async () => {
   await page.route('**/*', (route) =>
     route.continue({
       headers: {
-        'accept-language': 'en',
-        'x-forwarded-port': '80'
-      }
-    })
-  );
-
-  // Start on never.example.com (no prefix for en)
-  await page.goto('http://never.example.com');
-  await expect(page).toHaveURL('http://never.example.com');
-  await expect(page.getByRole('heading', {name: 'Home'})).toBeVisible();
-
-  // Navigate to always.example.com with accept-language: nl
-  await page.route('**/*', (route) =>
-    route.continue({
-      headers: {
         'accept-language': 'nl',
         'x-forwarded-port': '80'
       }
     })
   );
-  await page.goto('http://always.example.com');
-  await expect(page).toHaveURL('http://always.example.com/nl');
+
+  // Start on never.example.com (no prefix for nl)
+  await page.goto('http://never.example.com');
+  await expect(page).toHaveURL('http://never.example.com');
   await expect(page.getByRole('heading', {name: 'Home'})).toBeVisible();
+
+  // Navigate to always.example.com with accept-language: de
+  await page.route('**/*', (route) =>
+    route.continue({
+      headers: {
+        'accept-language': 'de',
+        'x-forwarded-port': '80'
+      }
+    })
+  );
+  await page.goto('http://always.example.com');
+  await expect(page).toHaveURL('http://always.example.com/de');
+  await expect(page.getByRole('heading', {name: 'Start'})).toBeVisible();
 
   // Navigate to as-needed.example.com with accept-language: ja
   await page.route('**/*', (route) =>

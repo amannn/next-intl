@@ -32,7 +32,7 @@
     "title": "next-intl voorbeeld"
   },
   "LocaleSwitcher": {
-    "switchLocale": "Schakel naar {locale, select, de {Duits} en {Engels} nl {Nederlands} other {Onbekend}}"
+    "switchLocale": "Schakel naar {locale, select, de {Duits} en {Engels} es {Spaans} ja {Japans} nl {Nederlands} other {Onbekend}}"
   },
   "Navigation": {
     "about": "Over (MDX)",
