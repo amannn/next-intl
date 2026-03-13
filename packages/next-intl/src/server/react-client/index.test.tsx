@@ -11,7 +11,7 @@ describe('getRequestConfig', () => {
     );
   });
 
-  it('can not call the returned function', () => {
+  it('cannot call the returned function', () => {
     const getConfig = getRequestConfig(async ({requestLocale}) => ({
       locale: (await requestLocale) || 'en',
       messages: {hello: 'Hello '}

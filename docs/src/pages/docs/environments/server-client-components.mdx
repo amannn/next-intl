@@ -39,7 +39,7 @@ In a typical app, you'll likely find both types of components. `next-intl` provi
 
 ### Async components
 
-These are primarly concerned with fetching data and [can not use hooks](https://github.com/reactjs/rfcs/blob/main/text/0188-server-components.md#capabilities--constraints-of-server-and-client-components). Due to this, `next-intl` provides a set of awaitable versions of the functions that you usually call as hooks from within components.
+These are primarily concerned with fetching data and [cannot use hooks](https://github.com/reactjs/rfcs/blob/main/text/0188-server-components.md#capabilities--constraints-of-server-and-client-components). Due to this, `next-intl` provides a set of awaitable versions of the functions that you usually call as hooks from within components.
 
 ```tsx filename="page.tsx"
 import {getTranslations} from 'next-intl/server';
@@ -96,9 +96,9 @@ If you import `useTranslations`, `useFormatter`, `useLocale`, `useNow` and `useT
 
 `next-intl` uses [`react-server` conditional exports](https://github.com/reactjs/rfcs/blob/main/text/0227-server-module-conventions.md#react-server-conditional-exports) to load code that is optimized for the usage in Server or Client Components. While configuration for hooks like `useTranslations` is read via `useContext` on the client side, on the server side it is loaded via [`i18n/request.ts`](/docs/usage/configuration#i18n-request).
 
-Hooks are currently primarly known for being used in Client Components since they are typically stateful or don't apply to a server environment. However, hooks like [`useId`](https://react.dev/reference/react/useId) can be used in Server Components too. Similarly, `next-intl` provides a hooks-based API that looks identical, regardless of if it's used in a Server or Client Component.
+Hooks are currently primarily known for being used in Client Components since they are typically stateful or don't apply to a server environment. However, hooks like [`useId`](https://react.dev/reference/react/useId) can be used in Server Components too. Similarly, `next-intl` provides a hooks-based API that looks identical, regardless of if it's used in a Server or Client Component.
 
-The one restriction that currently comes with this pattern is that hooks can not be called from `async` components. `next-intl` therefore provides a separate set of [awaitable APIs](#async-components) for this use case.
+The one restriction that currently comes with this pattern is that hooks cannot be called from `async` components. `next-intl` therefore provides a separate set of [awaitable APIs](#async-components) for this use case.
 
 </Details>
 
@@ -291,7 +291,7 @@ In particular, page and search params are often a great option because they offe
 
 ### Option 3: Providing individual messages
 
-If you need to incorporate dynamic state into components that can not be moved to the server side, you can wrap these components with `NextIntlClientProvider` and provide the relevant messages.
+If you need to incorporate dynamic state into components that cannot be moved to the server side, you can wrap these components with `NextIntlClientProvider` and provide the relevant messages.
 
 ```tsx filename="Counter.tsx"
 import pick from 'lodash/pick';
