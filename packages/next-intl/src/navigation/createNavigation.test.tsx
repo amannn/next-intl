@@ -405,7 +405,7 @@ describe.each([
         createNavigation();
       });
 
-      it('can not be used with `pathnames`', () => {
+      it('cannot be used with `pathnames`', () => {
         // @ts-expect-error -- Missing locales
         createNavigation({pathnames});
       });
@@ -560,6 +560,24 @@ describe.each([
         );
       });
 
+      it("doesn't double-encode already encoded params", () => {
+        const markup = renderToString(
+          <Link
+            href={{
+              pathname: '/news/[articleSlug]-[articleId]',
+              params: {
+                articleId: 3,
+                articleSlug: encodeURIComponent('launch / party')
+              }
+            }}
+            locale="en"
+          >
+            Create
+          </Link>
+        );
+        expect(markup).toContain('href="/en/news/launch%20%2F%20party-3"');
+      });
+
       it('handles relative pathnames', () => {
         // @ts-expect-error -- Validation is still on
         const markup = renderToString(<Link href="test">Test</Link>);
@@ -621,7 +639,7 @@ describe.each([
         ).toBe('/en/news/launch-party-3?foo=bar');
       });
 
-      it('can not be called with an arbitrary pathname', () => {
+      it('cannot be called with an arbitrary pathname', () => {
         // @ts-expect-error -- Unknown pathname
         expect(getPathname({locale: 'en', href: '/unknown'}))
           // Works regardless
@@ -682,7 +700,7 @@ describe.each([
         );
       });
 
-      it('can not be called with an arbitrary pathname', () => {
+      it('cannot be called with an arbitrary pathname', () => {
         // @ts-expect-error -- Unknown pathname
         runInRender(() => redirectFn({href: '/unknown', locale: 'en'}));
         // Works regardless

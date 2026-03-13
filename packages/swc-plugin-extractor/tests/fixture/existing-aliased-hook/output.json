@@ -1,0 +1,13 @@
+[
+  {
+    "id": "piskIR",
+    "message": "Hello from extracted!",
+    "description": null,
+    "references": [
+      {
+        "path": "input.js",
+        "line": 6
+      }
+    ]
+  }
+]

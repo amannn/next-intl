@@ -71,6 +71,11 @@ export default withNextra({
       permanent: true
     },
     {
+      source: '/docs/usage/messages',
+      destination: '/docs/usage/translations',
+      permanent: true
+    },
+    {
       source: '/docs/usage/production-checklist',
       destination: '/docs/environments/runtime-requirements',
       permanent: true

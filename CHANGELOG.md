@@ -3,6 +3,150 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.8.3 (2026-02-16)
+
+### Bug Fixes
+
+* Update `@formatjs/intl-localematcher` ([#2265](https://github.com/amannn/next-intl/issues/2265)) ([196f1f3](https://github.com/amannn/next-intl/commit/196f1f3093fa629c8379c67ac1f67cf0f4906dc0)) – by @amannn
+
+## 4.8.2 (2026-02-02)
+
+### Bug Fixes
+
+* Avoid throwing config errors for non-Next.js consumers of `next.config.ts` ([#2245](https://github.com/amannn/next-intl/issues/2245)) ([f57800e](https://github.com/amannn/next-intl/commit/f57800ecd43ab9ab928a6c3839e24fed68bc6d24)) – by @amannn
+
+## 4.8.1 (2026-01-30)
+
+### Bug Fixes
+
+* Fix `precompile` alias on Windows ([#2237](https://github.com/amannn/next-intl/issues/2237)) ([8e7151a](https://github.com/amannn/next-intl/commit/8e7151aec3a5d50ec7b431175fa89739c0238bb5)) – by @amannn
+
+## 4.8.0 (2026-01-28)
+
+### Features
+
+* Ahead-of-time compilation for messages ([#2220](https://github.com/amannn/next-intl/issues/2220)) ([02149c1](https://github.com/amannn/next-intl/commit/02149c19ee52a581fdc52f3160550bf957256488)) – by @amannn
+
+## 4.7.0 (2026-01-01)
+
+### Features
+
+* Improvements for `useExtracted` ([#2200](https://github.com/amannn/next-intl/issues/2200)) ([ebc5e43](https://github.com/amannn/next-intl/commit/ebc5e43e41be1712f621ed6d19d752bcf993e163)) – by @amannn
+
+## 4.6.1 (2025-12-16)
+
+### Bug Fixes
+
+* Improvements for `useExtracted` ([#2176](https://github.com/amannn/next-intl/issues/2176)) ([3937e44](https://github.com/amannn/next-intl/commit/3937e449c4adcc1e6d308d76aa69787daba59cdc)) – by @amannn
+
+## 4.6.0 (2025-12-12)
+
+### Features
+
+* Custom formats for `useExtracted`, consistency fixes for file references, pruning of messages and sorting of keys ([#2155](https://github.com/amannn/next-intl/issues/2155)) ([c02818e](https://github.com/amannn/next-intl/commit/c02818ed97f78521e9ef6a3ee8c936336f61aaa8)) – by @amannn
+
+## 4.5.8 (2025-12-03)
+
+### Bug Fixes
+
+* Improvements for `useExtracted` ([#2152](https://github.com/amannn/next-intl/issues/2152)) ([9b7c9fe](https://github.com/amannn/next-intl/commit/9b7c9fe73af2cccf20b25ad009a835db432df1df)) – by @amannn
+
+## 4.5.7 (2025-12-01)
+
+### Bug Fixes
+
+* Skip `accept-language` parsing when locale cookie is already present ([#2143](https://github.com/amannn/next-intl/issues/2143)) ([0d1331b](https://github.com/amannn/next-intl/commit/0d1331b4bc0cd1da5a24bdda10977c353f3133cf)), closes [#2116](https://github.com/amannn/next-intl/issues/2116) – by @lxup
+
+## 4.5.6 (2025-11-27)
+
+### Bug Fixes
+
+* Improvements for `useExtracted` ([#2133](https://github.com/amannn/next-intl/issues/2133)) ([5397c49](https://github.com/amannn/next-intl/commit/5397c49bc886fb2c8e44ac2f0e417d8a6f78811e)) – by @amannn
+
+## 4.5.5 (2025-11-19)
+
+### Bug Fixes
+
+* Move SWC cache to `node_modules` ([#2120](https://github.com/amannn/next-intl/issues/2120)) ([0ba9105](https://github.com/amannn/next-intl/commit/0ba91054df2f40eae69eb4f4fa7e7455b3c8d9f2)) – by @amannn
+
+## 4.5.4 (2025-11-19)
+
+### Bug Fixes
+
+* Move AST transformer of `useExtracted` to SWC plugin & handle source maps ([#2114](https://github.com/amannn/next-intl/issues/2114)) ([e63fbc5](https://github.com/amannn/next-intl/commit/e63fbc5951b538a3ca1d0ae77c93d5bddcf1e47e)) – by @amannn
+
+## 4.5.3 (2025-11-13)
+
+### Bug Fixes
+
+* Fix inconsistent ordering of messages for `useExtracted` pt. 2 ([#2103](https://github.com/amannn/next-intl/issues/2103)) ([5cbd5da](https://github.com/amannn/next-intl/commit/5cbd5daceb62d26656f89ac66f587a56a34c3cd5)) – by @amannn
+
+## 4.5.2 (2025-11-12)
+
+### Bug Fixes
+
+* Bug fixes for `useExtracted` ([#2099](https://github.com/amannn/next-intl/issues/2099)) ([b1ff1fa](https://github.com/amannn/next-intl/commit/b1ff1fa34573b6b7e7cb408528cf4e6fe276be15)) – by @amannn
+
+## 4.5.1 (2025-11-11)
+
+### Bug Fixes
+
+* Avoid partial matches in overlapping localized pathnames ([#2090](https://github.com/amannn/next-intl/issues/2090)) ([c276c80](https://github.com/amannn/next-intl/commit/c276c807b433288c995755f000e69db240f8f80f)), closes [#2089](https://github.com/amannn/next-intl/issues/2089) [#2089](https://github.com/amannn/next-intl/issues/2089) – by @amannn
+
+## 4.5.0 (2025-11-07)
+
+### Features
+
+* Add `useExtracted` (experimental) ([#2080](https://github.com/amannn/next-intl/issues/2080)) ([7a85644](https://github.com/amannn/next-intl/commit/7a8564478596a2ad487e553ff1160fff9b0a039e)) – by @amannn
+
+## 4.4.0 (2025-10-22)
+
+### Features
+
+* Next.js 16 update ([#2054](https://github.com/amannn/next-intl/issues/2054)) ([c397e92](https://github.com/amannn/next-intl/commit/c397e92ed9de98371cdecaebaed47da3a3129870)) – by @amannn
+
+## 4.3.12 (2025-10-09)
+
+### Bug Fixes
+
+* Use correct return type for `getTimeZone` ([#2053](https://github.com/amannn/next-intl/issues/2053)) ([bdc2af4](https://github.com/amannn/next-intl/commit/bdc2af450e0cefa4bd88c5b1584ec24d25421c14)), closes [#2052](https://github.com/amannn/next-intl/issues/2052) – by @amannn
+
+## 4.3.11 (2025-10-07)
+
+### Bug Fixes
+
+* Only call `NextResponse.rewrite` if really necessary ([#2051](https://github.com/amannn/next-intl/issues/2051)) ([43ed4aa](https://github.com/amannn/next-intl/commit/43ed4aa791bb8c1aa9ea941a9017b322b6bc9f82)) – by @amannn
+
+## 4.3.10 (2025-10-07)
+
+### Bug Fixes
+
+* Bump `@types/react` version ([#2050](https://github.com/amannn/next-intl/issues/2050)) ([c1e997e](https://github.com/amannn/next-intl/commit/c1e997e66c590fe6ccd24dd0884a0cb4048469df)), closes [#2044](https://github.com/amannn/next-intl/issues/2044) [#2044](https://github.com/amannn/next-intl/issues/2044) – by @amannn
+
+## 4.3.9 (2025-09-15)
+
+### Bug Fixes
+
+* Prefix pathnames when switching with `useRouter` to another locale ([#2021](https://github.com/amannn/next-intl/issues/2021)) ([c82d0af](https://github.com/amannn/next-intl/commit/c82d0af59461f0309150fbe7a9919ce72d4d76e0)), closes [#2020](https://github.com/amannn/next-intl/issues/2020) – by @amannn
+
+## 4.3.8 (2025-09-12)
+
+### Bug Fixes
+
+* Avoid double-encoding of already encoded params ([#2017](https://github.com/amannn/next-intl/issues/2017)) ([31265b4](https://github.com/amannn/next-intl/commit/31265b4a4d670c750eae3a7a7b2b9bc85c259577)), closes [#2014](https://github.com/amannn/next-intl/issues/2014) – by @amannn
+
+## 4.3.7 (2025-09-09)
+
+### Bug Fixes
+
+* Avoid `usePathname` inconsistency in Next.js leading to a hydration error with custom prefixes, `localePrefix: 'always'` and static rendering ([#2012](https://github.com/amannn/next-intl/issues/2012)) ([bc9cb62](https://github.com/amannn/next-intl/commit/bc9cb624df28577d5d5d3a7e3e821a9f4b8fa2bb)), closes [#2011](https://github.com/amannn/next-intl/issues/2011) [vercel/next.js#73085](https://github.com/vercel/next.js/issues/73085) [#1571](https://github.com/amannn/next-intl/issues/1571) – by @hugotiger
+
+## 4.3.6 (2025-09-04)
+
+### Bug Fixes
+
+* Ensure messages declaration continues working in `next dev` for upcoming `next@15.5.1` ([#2008](https://github.com/amannn/next-intl/issues/2008)) ([2bf09ec](https://github.com/amannn/next-intl/commit/2bf09ecefbfe6f3eb57a166d257c4a0cc11724c6)) – by @amannn
+
 ## 4.3.5 (2025-08-21)
 
 ### Bug Fixes

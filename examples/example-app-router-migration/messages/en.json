@@ -1,12 +1,13 @@
 {
-  "Index": {
-    "title": "Home",
-    "description": "This is the home page.",
-    "navigateToAbout": "Navigate to about"
-  },
   "About": {
-    "title": "About",
-    "description": "This is the about page."
+    "description": "This is the about page.",
+    "navigateToHome": "Navigate to home",
+    "title": "About"
+  },
+  "Index": {
+    "description": "This is the home page.",
+    "navigateToAbout": "Navigate to about",
+    "title": "Home"
   },
   "LocaleSwitcher": {
     "switchLocale": "Switch to {locale, select, de {German} en {English} other {Unknown}}"

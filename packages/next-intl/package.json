@@ -1,6 +1,6 @@
 {
   "name": "next-intl",
-  "version": "4.3.5",
+  "version": "4.8.3",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.work>",
   "funding": [
@@ -14,7 +14,7 @@
   "homepage": "https://next-intl.dev",
   "repository": {
     "type": "git",
-    "url": "https://github.com/amannn/next-intl"
+    "url": "git+https://github.com/amannn/next-intl.git"
   },
   "scripts": {
     "build": "rm -rf dist && rollup -c",
@@ -84,17 +84,31 @@
         "default": "./dist/cjs/development/plugin.cjs"
       },
       "default": "./dist/esm/production/plugin.js"
+    },
+    "./extractor": {
+      "types": "./dist/types/extractor.d.ts",
+      "default": "./dist/esm/production/extractor.js"
+    },
+    "./extractor/extractionLoader": {
+      "types": "./dist/types/plugin/extractor/extractionLoader.d.ts",
+      "default": "./dist/esm/production/extractor/extractionLoader.js"
+    },
+    "./extractor/catalogLoader": {
+      "types": "./dist/types/plugin/catalog/catalogLoader.d.ts",
+      "default": "./dist/esm/production/extractor/catalogLoader.js"
     }
   },
   "files": [
     "dist",
+    "extractor",
     "server.d.ts",
     "navigation.d.ts",
     "middleware.d.ts",
     "plugin.d.ts",
     "plugin.d.cts",
     "routing.d.ts",
-    "config.d.ts"
+    "config.d.ts",
+    "extractor.d.ts"
   ],
   "keywords": [
     "react",
@@ -110,12 +124,17 @@
     "next.js"
   ],
   "dependencies": {
-    "@formatjs/intl-localematcher": "^0.5.4",
+    "@formatjs/intl-localematcher": "^0.8.1",
+    "@parcel/watcher": "^2.4.1",
+    "@swc/core": "^1.15.2",
+    "icu-minify": "workspace:^",
     "negotiator": "^1.0.0",
+    "next-intl-swc-plugin-extractor": "workspace:^",
+    "po-parser": "^2.1.1",
     "use-intl": "workspace:^"
   },
   "peerDependencies": {
-    "next": "^12.0.0 || ^13.0.0 || ^14.0.0 || ^15.0.0",
+    "next": "^12.0.0 || ^13.0.0 || ^14.0.0 || ^15.0.0 || ^16.0.0",
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0 || ^19.0.0",
     "typescript": "^5.0.0"
   },
@@ -131,17 +150,18 @@
     "@testing-library/react": "^16.2.0",
     "@types/negotiator": "^0.6.3",
     "@types/node": "^20.14.5",
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
+    "@types/react": "^19.2.3",
+    "@types/react-dom": "^19.2.3",
+    "@types/webpack": "^5.28.5",
     "eslint": "9.11.1",
     "eslint-config-molindo": "^8.0.0",
     "eslint-plugin-react-compiler": "0.0.0-experimental-8e3b87c-20240822",
-    "next": "^15.5.0",
+    "next": "^16.0.10",
     "path-to-regexp": "^6.2.2",
     "prettier": "^3.3.3",
     "publint": "^0.2.8",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
     "rollup": "^4.18.0",
     "rollup-plugin-preserve-directives": "0.4.0",
     "size-limit": "^11.2.0",

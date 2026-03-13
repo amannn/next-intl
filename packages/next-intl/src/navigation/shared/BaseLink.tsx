@@ -33,6 +33,9 @@ function BaseLink(
   const pathname = usePathname() as ReturnType<typeof usePathname> | null;
 
   function onLinkClick(event: MouseEvent<HTMLAnchorElement>) {
+    // Even though we force a prefix when changing locales,
+    // this could be a cache hit of the client-side router,
+    // therefore we sync the cookie to ensure it's up to date.
     syncLocaleCookie(localeCookie, pathname, curLocale, locale);
     if (onClick) onClick(event);
   }

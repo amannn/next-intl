@@ -1,4 +1,5 @@
 import type {
+  getExtracted as getExtracted_type,
   getFormatter as getFormatter_type,
   getLocale as getLocale_type,
   getMessages as getMessages_type,
@@ -39,6 +40,9 @@ export const getMessages = notSupported(
   'getMessages'
 ) as typeof getMessages_type;
 export const getLocale = notSupported('getLocale') as typeof getLocale_type;
+export const getExtracted = notSupported(
+  'getExtracted'
+) as typeof getExtracted_type;
 
 // The type of `getTranslations` is not assigned here because it
 // causes a type error. The types use the `react-server` entry

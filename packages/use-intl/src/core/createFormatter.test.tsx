@@ -1,5 +1,5 @@
 import {parseISO} from 'date-fns';
-import {describe, expect, it} from 'vitest';
+import {describe, expect, it, vi} from 'vitest';
 import createFormatter from './createFormatter.js';
 
 describe('dateTime', () => {
@@ -360,7 +360,8 @@ describe('dateTimeRange', () => {
   it('returns a reasonable fallback if an invalid format is provided', () => {
     const formatter = createFormatter({
       locale: 'en',
-      timeZone: 'Europe/Berlin'
+      timeZone: 'Europe/Berlin',
+      onError: vi.fn()
     });
     expect(
       formatter.dateTimeRange(

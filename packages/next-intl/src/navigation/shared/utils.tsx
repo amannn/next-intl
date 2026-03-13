@@ -26,12 +26,13 @@ type SearchParamValue = ParsedUrlQueryInput[keyof ParsedUrlQueryInput];
 type HrefOrHrefWithParamsImpl<Pathname, Other> =
   Pathname extends `${string}[[...${string}`
     ? // Optional catch-all
-      Pathname | ({pathname: Pathname; params?: StrictParams<Pathname>} & Other)
+        | Pathname
+        | ({pathname: Pathname; params?: StrictParams<Pathname>} & Other)
     : Pathname extends `${string}[${string}`
       ? // Required catch-all & regular params
         {pathname: Pathname; params: StrictParams<Pathname>} & Other
       : // No params
-        Pathname | ({pathname: Pathname} & Other);
+          Pathname | ({pathname: Pathname} & Other);
 
 // For `Link`
 export type HrefOrUrlObjectWithParams<Pathname> = HrefOrHrefWithParamsImpl<
@@ -206,10 +207,7 @@ function encodePathname(pathname: string) {
   //
   // Therefore, the bottom line is that next-intl should take care of encoding non-ASCII
   // characters in all cases, but can rely on `new URL()` to not double-encode characters.
-  return pathname
-    .split('/')
-    .map((segment) => encodeURIComponent(segment))
-    .join('/');
+  return new URL(pathname, 'http://l').pathname;
 }
 
 export function getRoute<AppLocales extends Locales>(

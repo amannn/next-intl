@@ -9,7 +9,7 @@ import AsyncComponentWithNamespaceAndLocale from '../../components/AsyncComponen
 import AsyncComponentWithoutNamespace from '../../components/AsyncComponentWithoutNamespace';
 import AsyncComponentWithoutNamespaceAndLocale from '../../components/AsyncComponentWithoutNamespaceAndLocale';
 import ClientLink from '../../components/ClientLink';
-import ClientRouterWithoutProvider from '../../components/ClientRouterWithoutProvider';
+import ClientRouter from '../../components/ClientRouter';
 import CoreLibrary from '../../components/CoreLibrary';
 import LocaleSwitcher from '../../components/LocaleSwitcher';
 import PageLayout from '../../components/PageLayout';
@@ -50,7 +50,7 @@ export default function Index(props: Props) {
       <MessagesAsPropsCounter />
       <MessagesOnClientCounter />
       <CoreLibrary />
-      <ClientRouterWithoutProvider />
+      <ClientRouter />
       <div>
         <Link href={{pathname: '/', query: {test: true}}}>
           Go to home with query param

@@ -1,6 +1,7 @@
 import {GetStaticPropsContext} from 'next';
 import {useTranslations} from 'next-intl';
 import PageLayout from '@/components/PageLayout';
+import {Link} from '@/i18n/navigation';
 
 export default function About() {
   const t = useTranslations('About');
@@ -8,6 +9,7 @@ export default function About() {
   return (
     <PageLayout title={t('title')}>
       <p>{t('description')}</p>
+      <Link href="/">{t('navigateToHome')}</Link>
     </PageLayout>
   );
 }

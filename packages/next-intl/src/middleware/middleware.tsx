@@ -76,7 +76,7 @@ export default function createMiddleware<
       ) || [];
     const hasUnknownHost = resolvedRouting.domains != null && !domain;
 
-    function rewrite(url: string) {
+    function next(url: string) {
       const urlObj = new URL(url, request.url);
 
       if (request.nextUrl.basePath) {
@@ -88,7 +88,15 @@ export default function createMiddleware<
 
       const headers = new Headers(request.headers);
       headers.set(HEADER_LOCALE_NAME, locale);
-      return NextResponse.rewrite(urlObj, {request: {headers}});
+
+      const isRewriteNecessary =
+        normalizeTrailingSlash(request.nextUrl.pathname) !==
+        normalizeTrailingSlash(urlObj.pathname);
+      if (isRewriteNecessary) {
+        return NextResponse.rewrite(urlObj, {request: {headers}});
+      } else {
+        return NextResponse.next({request: {headers}});
+      }
     }
 
     function redirect(url: string, redirectDomain?: string) {
@@ -228,7 +236,7 @@ export default function createMiddleware<
     if (!response) {
       if (unprefixedInternalPathname === '/' && !hasLocalePrefix) {
         if (isUnprefixedRouting) {
-          response = rewrite(
+          response = next(
             formatPathname(
               unprefixedInternalPathname,
               getLocaleAsPrefix(locale),
@@ -286,10 +294,10 @@ export default function createMiddleware<
                 if (domain?.domain !== pathDomain?.domain && !hasUnknownHost) {
                   response = redirect(externalHref, pathDomain?.domain);
                 } else {
-                  response = rewrite(internalHref);
+                  response = next(internalHref);
                 }
               } else {
-                response = rewrite(internalHref);
+                response = next(internalHref);
               }
             }
           } else {
@@ -297,7 +305,7 @@ export default function createMiddleware<
           }
         } else {
           if (isUnprefixedRouting) {
-            response = rewrite(internalHref);
+            response = next(internalHref);
           } else {
             response = redirect(
               formatPathname(

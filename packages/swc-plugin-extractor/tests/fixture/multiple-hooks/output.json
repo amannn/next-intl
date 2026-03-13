@@ -1,0 +1,90 @@
+[
+  {
+    "id": "tnuBMt",
+    "message": "Page title",
+    "description": null,
+    "references": [
+      {
+        "path": "input.js",
+        "line": 7
+      }
+    ]
+  },
+  {
+    "id": "OpKKos",
+    "message": "Hello!",
+    "description": null,
+    "references": [
+      {
+        "path": "input.js",
+        "line": 13
+      }
+    ]
+  },
+  {
+    "id": "mOPTEA",
+    "message": "Server data message",
+    "description": null,
+    "references": [
+      {
+        "path": "input.js",
+        "line": 18
+      }
+    ]
+  },
+  {
+    "id": "MgvtBu",
+    "message": "Component message",
+    "description": null,
+    "references": [
+      {
+        "path": "input.js",
+        "line": 23
+      }
+    ]
+  },
+  {
+    "id": "sJK5Uk",
+    "message": "Another one 1",
+    "description": null,
+    "references": [
+      {
+        "path": "input.js",
+        "line": 28
+      }
+    ]
+  },
+  {
+    "id": "2k7cS1",
+    "message": "Another one 2",
+    "description": null,
+    "references": [
+      {
+        "path": "input.js",
+        "line": 33
+      }
+    ]
+  },
+  {
+    "id": "another.6jb0KP",
+    "message": "Two 1",
+    "description": null,
+    "references": [
+      {
+        "path": "input.js",
+        "line": 38
+      }
+    ]
+  },
+  {
+    "id": "another.KVQtmd",
+    "message": "Two 2",
+    "description": null,
+    "references": [
+      {
+        "path": "input.js",
+        "line": 43
+      }
+    ]
+  }
+]

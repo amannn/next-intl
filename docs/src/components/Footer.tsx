@@ -26,12 +26,12 @@ export default function Footer() {
           <FooterVersionSelector />
         </div>
         <div>
-          <FooterLink href={config.blueskyUrl} target="_blank">
-            Bluesky
-          </FooterLink>
-          <FooterSeparator />
           <FooterLink href={config.xUrl} target="_blank">
             X
+          </FooterLink>
+          <FooterSeparator />
+          <FooterLink href={config.blueskyUrl} target="_blank">
+            Bluesky
           </FooterLink>
           <FooterSeparator />
           <FooterLink href={config.githubUrl} target="_blank">

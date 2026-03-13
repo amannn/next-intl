@@ -353,7 +353,7 @@ describe('type safety', () => {
 
     it('validates selects', () => {
       const t = translateMessage(
-        '{gender, select, female {She} male {He} other {They}} is online.'
+        '{gender, select, female {She is} male {He is} other {They are}} online.'
       );
 
       t('msg', {gender: 'female'});
@@ -417,7 +417,7 @@ describe('type safety', () => {
 
     it('validates escaped', () => {
       const t = translateMessage(
-        "Escape curly braces with single quotes (e.g. '{name')"
+        "Escape curly braces with single quotes (e.g. '{name}')"
       );
 
       t('msg');
@@ -515,7 +515,7 @@ describe('type safety', () => {
           ordinalMessage:
             "It's your {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!",
           selectMessage:
-            '{gender, select, female {She} male {He} other {They}} is online.',
+            '{gender, select, female {She is} male {He is} other {They are}} online.',
           escapedParam:
             "Escape curly braces with single quotes (e.g. '{name'})",
           simpleRichText:

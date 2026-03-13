@@ -468,11 +468,19 @@ describe("localePrefix: 'always', custom `prefixes`", () => {
       renderPathname();
       screen.getByText('/about');
     });
+
+    // https://github.com/vercel/next.js/issues/73085
+    it('is tolerant when a locale is used in the pathname', () => {
+      mockCurrentLocale('en');
+      mockLocation({pathname: '/en/about'});
+      renderPathname();
+      screen.getByText('/about');
+    });
   });
 });
 
 describe("localePrefix: 'as-needed'", () => {
-  const {usePathname, useRouter} = createNavigation({
+  const {Link, usePathname, useRouter} = createNavigation({
     locales,
     defaultLocale,
     localePrefix: 'as-needed'
@@ -484,6 +492,20 @@ describe("localePrefix: 'as-needed'", () => {
     }
     render(<Component />);
   }
+
+  describe('Link', () => {
+    it('sets a cookie when switching to the default locale', () => {
+      mockCurrentLocale('de');
+      global.document.cookie = 'NEXT_LOCALE=de';
+      render(
+        <Link href="/" locale="en">
+          Test
+        </Link>
+      );
+      fireEvent.click(screen.getByRole('link', {name: 'Test'}));
+      expect(document.cookie).toContain('NEXT_LOCALE=en');
+    });
+  });
 
   describe('useRouter', () => {
     const invokeRouter = getInvokeRouter(useRouter);
@@ -506,9 +528,16 @@ describe("localePrefix: 'as-needed'", () => {
         expect(useNextRouter()[method]).toHaveBeenCalledWith('/de/about');
       });
 
-      it('does not prefix the default locale when being switched to', () => {
+      it('does prefix the default locale when being switched to', () => {
         invokeRouter((router) => router[method]('/about', {locale: 'en'}));
-        expect(useNextRouter()[method]).toHaveBeenCalledWith('/about');
+        expect(useNextRouter()[method]).toHaveBeenCalledWith('/en/about');
+      });
+
+      it('sets a cookie when switching to the default locale', () => {
+        global.document.cookie = 'NEXT_LOCALE=de';
+        mockCurrentLocale('de');
+        invokeRouter((router) => router[method]('/about', {locale: 'en'}));
+        expect(document.cookie).toContain('NEXT_LOCALE=en');
       });
     });
 
@@ -598,7 +627,7 @@ describe("localePrefix: 'as-needed', with `basePath` and `domains`", () => {
     it('can compute the correct pathname when on a secondary locale and navigating to the default locale', () => {
       mockCurrentLocale('ja');
       invokeRouter((router) => router.push('/test', {locale: 'en'}));
-      expect(useNextRouter().push).toHaveBeenCalledWith('/test');
+      expect(useNextRouter().push).toHaveBeenCalledWith('/en/test');
     });
   });
 });
@@ -729,9 +758,9 @@ describe("localePrefix: 'never'", () => {
         expect(useNextRouter()[method]).toHaveBeenCalledWith('/about');
       });
 
-      it('does not prefix a secondary locale', () => {
+      it('does prefix a pathname when switching to another locale', () => {
         invokeRouter((router) => router[method]('/about', {locale: 'de'}));
-        expect(useNextRouter()[method]).toHaveBeenCalledWith('/about');
+        expect(useNextRouter()[method]).toHaveBeenCalledWith('/de/about');
       });
     });
 
@@ -763,9 +792,9 @@ describe("localePrefix: 'never'", () => {
         expect(useNextRouter().prefetch).toHaveBeenCalledWith('/about');
       });
 
-      it('does not prefix a secondary locale', () => {
+      it('does prefix a pathname when switching to another locale', () => {
         invokeRouter((router) => router.prefetch('/about', {locale: 'de'}));
-        expect(useNextRouter().prefetch).toHaveBeenCalledWith('/about');
+        expect(useNextRouter().prefetch).toHaveBeenCalledWith('/de/about');
       });
     });
   });

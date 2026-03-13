@@ -1,10 +1,13 @@
 {
   "Index": {
-    "title": "Start",
-    "description": "Das ist die Startseite."
+    "description": "Das ist die Startseite.",
+    "title": "Start"
   },
   "LocaleSwitcher": {
     "switchLocale": "Zu {locale, select, de {Deutsch} en {Englisch} other {Unbekannt}} wechseln"
+  },
+  "NotFound": {
+    "title": "Seite nicht gefunden (404)"
   },
   "PageLayout": {
     "pageTitle": "next-intl"

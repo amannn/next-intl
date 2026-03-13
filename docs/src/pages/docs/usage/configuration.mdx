@@ -1,4 +1,3 @@
-import PartnerContentLink from '@/components/PartnerContentLink';
 import Callout from '@/components/Callout';
 import {Tabs} from 'nextra/components';
 import Details from '@/components/Details';
@@ -34,22 +33,6 @@ export default getRequestConfig(async ({requestLocale}) => {
 The configuration object is created once for each request by internally using React's [`cache`](https://react.dev/reference/react/cache). The first component to use internationalization will call the function defined with `getRequestConfig`.
 
 Since this function is executed during the Server Components render pass, you can call functions like [`cookies()`](https://nextjs.org/docs/app/api-reference/functions/cookies) and [`headers()`](https://nextjs.org/docs/app/api-reference/functions/headers) to return configuration that is request-specific.
-
-<Details id="i18n-request-path">
-<summary>Can I move this file somewhere else?</summary>
-
-This file is supported out-of-the-box as `./i18n/request.ts` both in the `src` folder as well as in the project root with the extensions `.ts`, `.tsx`, `.js` and `.jsx`.
-
-If you prefer to move this file somewhere else, you can optionally provide a path to the plugin:
-
-```js filename="next.config.ts"
-const withNextIntl = createNextIntlPlugin(
-  // Specify a custom path here
-  './somewhere/else/request.ts'
-);
-```
-
-</Details>
 
 ### `NextIntlClientProvider`
 
@@ -199,7 +182,7 @@ While the `requestLocale` parameter typically corresponds to the `[locale]` segm
 
 1. **Overrides**: When an explicit `locale` is passed to [awaitable functions](/docs/environments/actions-metadata-route-handlers) like `getTranslations({locale: 'en'})`, then this value will be used instead of the segment.
 1. **`undefined`**: The value can be `undefined` when a page outside of the `[locale]` segment renders (e.g. a language selection page at `app/page.tsx`).
-1. **Invalid values**: Since the `[locale]` segment effectively acts like a catch-all for unknown routes (e.g. `/unknown.txt`), invalid values should be replaced with a valid locale. In addition to this, you might want to call `notFound()` in the[root layout](/docs/routing/setup#layout) to abort the render in this case.
+1. **Invalid values**: Since the `[locale]` segment effectively acts like a catch-all for unknown routes (e.g. `/unknown.txt`), invalid values should be replaced with a valid locale. In addition to this, you might want to call `notFound()` in the [root layout](/docs/routing/setup#layout) to abort the render in this case.
 
 </Details>
 
@@ -344,7 +327,7 @@ export default getRequestConfig(async () => {
 });
 ```
 
-After messages are configured, they can be used via [`useTranslations`](/docs/usage/messages#rendering-messages-with-usetranslations).
+After messages are configured, they can be used via [`useTranslations`](/docs/usage/translations#rendering-messages-with-usetranslations).
 
 Since `getRequestConfig` can execute arbitrary code, you can also:
 

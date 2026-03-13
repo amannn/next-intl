@@ -1,0 +1,17 @@
+[
+  {
+    "id": "OpKKos",
+    "message": "Hello!",
+    "description": null,
+    "references": [
+      {
+        "path": "input.js",
+        "line": 5
+      },
+      {
+        "path": "input.js",
+        "line": 10
+      }
+    ]
+  }
+]

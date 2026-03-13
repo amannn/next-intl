@@ -1,0 +1,13 @@
+[
+  {
+    "id": "ui.greeting",
+    "message": "Hello!",
+    "description": null,
+    "references": [
+      {
+        "path": "input.js",
+        "line": 5
+      }
+    ]
+  }
+]

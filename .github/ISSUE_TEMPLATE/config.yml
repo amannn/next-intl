@@ -3,6 +3,9 @@ contact_links:
   - name: View documentation
     url: https://next-intl.dev
     about: Check out the official docs for answers to common questions
+  - name: learn.next-intl.dev
+    url: https://learn.next-intl.dev
+    about: Learn everything from the fundamentals to advanced patterns to build internationalized apps
   - name: Get community support on the Next.js Discord
     url: https://discord.com/invite/nextjs
     about: Join the Next.js community on Discord to get real-time help and connect with other developers

@@ -1,0 +1,13 @@
+[
+  {
+    "id": "C+nN8a",
+    "message": "Hello <b>Alice</b>!",
+    "description": null,
+    "references": [
+      {
+        "path": "input.js",
+        "line": 5
+      }
+    ]
+  }
+]

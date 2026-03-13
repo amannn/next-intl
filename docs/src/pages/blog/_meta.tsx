@@ -3,7 +3,11 @@ export default {
     title: 'Overview'
   },
   'nextjs-root-params': {
-    title: 'New in Next.js 15.X: rootParams',
+    title: 'Using next/root-params in Next.js 16.2',
+    display: 'hidden'
+  },
+  'use-extracted': {
+    title: 'useExtracted: The Tailwind of i18n?',
     display: 'hidden'
   },
   'next-intl-4-0': {

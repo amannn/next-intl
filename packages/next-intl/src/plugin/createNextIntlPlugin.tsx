@@ -1,5 +1,6 @@
 import type {NextConfig} from 'next';
-import createMessagesDeclaration from './createMessagesDeclaration.js';
+import createMessagesDeclaration from './declaration/index.js';
+import initExtractionCompiler from './extractor/initExtractionCompiler.js';
 import getNextConfig from './getNextConfig.js';
 import type {PluginConfig} from './types.js';
 import {warn} from './utils.js';
@@ -10,7 +11,7 @@ function initPlugin(
 ): NextConfig {
   if (nextConfig?.i18n != null) {
     warn(
-      "\n[next-intl] An `i18n` property was found in your Next.js config. This likely causes conflicts and should therefore be removed if you use the App Router.\n\nIf you're in progress of migrating from the Pages Router, you can refer to this example: https://next-intl.dev/examples#app-router-migration\n"
+      "An `i18n` property was found in your Next.js config. This likely causes conflicts and should therefore be removed if you use the App Router.\n\nIf you're in progress of migrating from the Pages Router, you can refer to this example: https://next-intl.dev/examples#app-router-migration\n"
     );
   }
 
@@ -23,6 +24,8 @@ function initPlugin(
         : messagesPathOrPaths
     );
   }
+
+  initExtractionCompiler(pluginConfig);
 
   return getNextConfig(pluginConfig, nextConfig);
 }

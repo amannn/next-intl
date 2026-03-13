@@ -45,11 +45,11 @@ export const routing = defineRouting({
 
 Depending on your requirements, you may wish to customize your routing configuration later—but let's finish with the setup first.
 
-### `src/middleware.ts` [#middleware]
+### `src/proxy.ts` [#proxy]
 
-Once we have our routing configuration in place, we can use it to set up the middleware:
+Once we have our routing configuration in place, we can use it to set up a proxy:
 
-```tsx filename="src/middleware.ts"
+```tsx filename="src/proxy.ts"
 import createMiddleware from 'next-intl/middleware';
 import {routing} from './i18n/routing';
 
@@ -63,12 +63,14 @@ export const config = {
 };
 ```
 
-<Details id="middleware-matcher-dots">
+**Note:** `proxy.ts` was called `middleware.ts` up until Next.js 16.
+
+<Details id="proxy-matcher-dots">
   <summary>How can I match pathnames that contain dots like `/users/jane.doe`?</summary>
 
 If you have pathnames where dots are expected, you can match them with explicit entries:
 
-```tsx filename="src/middleware.ts" {10,11}
+```tsx filename="src/proxy.ts" {10,11}
 // ...
 
 export const config = {
@@ -145,10 +147,12 @@ import {NextIntlClientProvider, hasLocale} from 'next-intl';
 import {notFound} from 'next/navigation';
 import {routing} from '@/i18n/routing';
 
-export default async function LocaleLayout({
-  children,
-  params
-}: LayoutProps<'/[locale]'>) {
+type Props = {
+  children: React.ReactNode;
+  params: Promise<{locale: string}>;
+};
+
+export default async function LocaleLayout({children, params}: Props) {
   // Ensure that the incoming `locale` is valid
   const {locale} = await params;
   if (!hasLocale(routing.locales, locale)) {
@@ -173,7 +177,7 @@ When using locale-based routing, `next-intl` will currently opt into dynamic ren
 
 ### Add `generateStaticParams`
 
-Since we are using a dynamic route segment for the `[locale]` param, we need to pass all possible values to Next.js via [`generateStaticParams`](https://nextjs.org/docs/app/api-reference/functions/generate-static-params) so that the routes can be rendered at build time.
+Since we are using a dynamic route segment for the `[locale]` param, we need to use [`generateStaticParams`](https://nextjs.org/docs/app/api-reference/functions/generate-static-params) so that the routes can be rendered at build time.
 
 Depending on your needs, you can add `generateStaticParams` either to a layout or pages:
 
@@ -190,6 +194,13 @@ export function generateStaticParams() {
 }
 ```
 
+<Details id="generatestaticparams-locales">
+<summary>Do I need to return all locales from `generateStaticParams`?</summary>
+
+If you prefer to only render certain locales at build time, or none at all, you can be selective about the ones you return from `generateStaticParams` (see [Static Rendering](https://nextjs.org/docs/app/api-reference/functions/generate-static-params#static-rendering) in the Next.js docs).
+
+</Details>
+
 ### Add `setRequestLocale` to all relevant layouts and pages
 
 `next-intl` provides an API that can be used to distribute the locale that is received via `params` in layouts and pages for usage in all Server Components that are rendered as part of the request.
@@ -200,10 +211,12 @@ import {hasLocale} from 'next-intl';
 import {notFound} from 'next/navigation';
 import {routing} from '@/i18n/routing';
 
-export default async function LocaleLayout({
-  children,
-  params
-}: LayoutProps<'/[locale]'>) {
+type Props = {
+  children: React.ReactNode;
+  params: Promise<{locale: string}>;
+};
+
+export default async function LocaleLayout({children, params}: Props) {
   const {locale} = await params;
   if (!hasLocale(routing.locales, locale)) {
     notFound();

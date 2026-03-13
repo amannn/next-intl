@@ -6,7 +6,7 @@ import {CourseVideoBanner} from '@/components/CourseBanner';
 
 `next-intl` integrates with Next.js' routing system in two places:
 
-1. **Middleware**: Negotiates the locale and handles redirects & rewrites (e.g. `/` → `/en`)
+1. **Proxy / middleware**: Negotiates the locale and handles redirects & rewrites (e.g. `/` → `/en`)
 2. **Navigation APIs**: Lightweight wrappers around Next.js' navigation APIs like `<Link />`
 
 This enables you to express your app in terms of APIs like `<Link href="/about">`, while aspects like the locale and user-facing pathnames are automatically handled behind the scenes (e.g. `/de/über-uns`).
@@ -14,7 +14,7 @@ This enables you to express your app in terms of APIs like `<Link href="/about">
 <Cards className="mt-8 max-w-[300px]">
   <Card title="Set up routing" href="/docs/routing/setup" />
   <Card title="Configuration" href="/docs/routing/configuration" />
-  <Card title="Middleware" href="/docs/routing/middleware" />
+  <Card title="Proxy / middleware" href="/docs/routing/middleware" />
   <Card title="Navigation APIs" href="/docs/routing/navigation" />
 </Cards>
 
