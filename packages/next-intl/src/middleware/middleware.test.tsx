@@ -1134,6 +1134,33 @@ describe('prefix-based routing', () => {
       );
     });
 
+    it('uses the forwarded host when behind a proxy', () => {
+      middleware(
+        createMockRequest('/', 'en', 'http://project.vercel.app', undefined, {
+          'x-forwarded-host': 'myproject.com',
+          'x-forwarded-proto': 'https'
+        })
+      );
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+        'https://myproject.com/en'
+      );
+
+      middleware(
+        createMockRequest('/', 'en', 'http://project.vercel.app', undefined, {
+          'x-forwarded-host': 'myproject.com',
+          'x-forwarded-port': '8443',
+          'x-forwarded-proto': 'https'
+        })
+      );
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect.mock.calls[1][0].toString()).toBe(
+        'https://myproject.com:8443/en'
+      );
+    });
+
     it('redirects when a pathname starts with the locale characters', () => {
       middleware(createMockRequest('/engage'));
       expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
