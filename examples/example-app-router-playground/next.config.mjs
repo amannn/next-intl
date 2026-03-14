@@ -5,7 +5,8 @@ import createBundleAnalyzer from '@next/bundle-analyzer';
 const withNextIntl = createNextIntlPlugin({
   requestConfig: './src/i18n/request.tsx',
   experimental: {
-    createMessagesDeclaration: './messages/en.json'
+    createMessagesDeclaration: './messages/en.json',
+    srcPath: './src'
   }
 });
 const withMdx = createMDX({});

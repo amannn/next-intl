@@ -173,6 +173,7 @@ export default class CatalogManager implements Disposable {
     if (this.isDevelopment) {
       const catalogLocales = this.getCatalogLocales();
       catalogLocales.subscribeLocalesChange(this.onLocalesChange);
+      await catalogLocales.ensureWatcherReady();
     }
   }
 
@@ -502,12 +503,15 @@ export default class CatalogManager implements Disposable {
       await this.scanCompletePromise;
     }
 
+    if (!this.sourceWatcher) {
+      return;
+    }
+
     let changed = false;
-    const expandedEvents =
-      await this.sourceWatcher!.expandDirectoryDeleteEvents(
-        events,
-        Array.from(this.messagesByFile.keys())
-      );
+    const expandedEvents = await this.sourceWatcher.expandDirectoryDeleteEvents(
+      events,
+      Array.from(this.messagesByFile.keys())
+    );
     for (const event of expandedEvents) {
       const hasChanged = await this.processFile(event.path);
       changed ||= hasChanged;
@@ -519,7 +523,9 @@ export default class CatalogManager implements Disposable {
   }
 
   public [Symbol.dispose](): void {
-    this.sourceWatcher?.stop();
+    if (this.sourceWatcher) {
+      void this.sourceWatcher.stop();
+    }
     this.sourceWatcher = undefined;
 
     this.saveScheduler[Symbol.dispose]();

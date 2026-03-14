@@ -70,13 +70,13 @@ it('sets a cookie when necessary', async ({page}) => {
     .getByRole('combobox', {name: 'Change language'})
     .selectOption({value: 'de'});
   await expect(page).toHaveURL('/de');
-  expect(await getCookieValue()).toBe('NEXT_LOCALE=de');
+  await expect.poll(getCookieValue).toBe('NEXT_LOCALE=de');
 
   await page
     .getByRole('combobox', {name: 'Sprache ändern'})
     .selectOption({value: 'en'});
   await expect(page).toHaveURL('/en');
-  expect(await getCookieValue()).toBe('NEXT_LOCALE=en');
+  await expect.poll(getCookieValue).toBe('NEXT_LOCALE=en');
 
   // The Next.js Router cache kicks in here
   // https://nextjs.org/docs/app/building-your-application/caching#router-cache
@@ -84,7 +84,7 @@ it('sets a cookie when necessary', async ({page}) => {
     .getByRole('combobox', {name: 'Change language'})
     .selectOption({value: 'de'});
   await expect(page).toHaveURL('/de');
-  expect(await getCookieValue()).toBe('NEXT_LOCALE=de');
+  await expect.poll(getCookieValue).toBe('NEXT_LOCALE=de');
 });
 
 it("sets a cookie when requesting a locale that doesn't match the `accept-language` header", async ({
