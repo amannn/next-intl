@@ -17,17 +17,21 @@ export type FormatNames = AppConfig extends {
       dateTime: AppFormats extends {dateTime: infer AppDateTimeFormats}
         ? keyof AppDateTimeFormats
         : string;
-      number: AppFormats extends {number: infer AppNumberFormats}
-        ? keyof AppNumberFormats
+      displayNames: AppFormats extends {displayNames: infer AppDisplayNamesFormats}
+        ? keyof AppDisplayNamesFormats
         : string;
       list: AppFormats extends {list: infer AppListFormats}
         ? keyof AppListFormats
         : string;
+      number: AppFormats extends {number: infer AppNumberFormats}
+        ? keyof AppNumberFormats
+        : string;
     }
   : {
       dateTime: string;
-      number: string;
+      displayNames: string;
       list: string;
+      number: string;
     };
 
 export type Messages = AppConfig extends {

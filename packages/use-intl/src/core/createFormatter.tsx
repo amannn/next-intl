@@ -397,5 +397,32 @@ export default function createFormatter(props: Props) {
     );
   }
 
-  return {dateTime, number, relativeTime, list, dateTimeRange};
+  function displayNames(
+    value: string,
+    options: Intl.DisplayNamesOptions
+  ): string;
+  function displayNames(
+    value: string,
+    format: FormatNames['displayNames'],
+    options?: Intl.DisplayNamesOptions
+  ): string;
+  function displayNames(
+    value: string,
+    formatOrOptions: FormatNames['displayNames'] | Intl.DisplayNamesOptions,
+    overrides?: Intl.DisplayNamesOptions
+  ) {
+    return getFormattedValue(
+      formatOrOptions,
+      overrides,
+      formats?.displayNames,
+      (options) =>
+        // `options` is guaranteed non-null because our overloads require
+        // either inline options or a named format that resolves to options.
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        formatters.getDisplayNames(locale, options!).of(value) ?? String(value),
+      () => String(value)
+    );
+  }
+
+  return {dateTime, number, relativeTime, list, dateTimeRange, displayNames};
 }
