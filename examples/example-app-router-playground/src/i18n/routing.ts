@@ -1,7 +1,7 @@
 import {defineRouting} from 'next-intl/routing';
 
 export const routing = defineRouting({
-  locales: ['en', 'de', 'es', 'ja'],
+  locales: ['en', 'de', 'es', 'ja', 'nl'],
   defaultLocale: 'en',
   localePrefix:
     process.env.NEXT_PUBLIC_USE_CASE === 'locale-prefix-never'
@@ -26,7 +26,28 @@ export const routing = defineRouting({
             locales: ['de']
           }
         ]
-      : undefined,
+      : process.env.NEXT_PUBLIC_USE_CASE === 'domains-locale-prefix'
+        ? [
+            {
+              domain: 'never.example.com',
+              defaultLocale: 'nl',
+              locales: ['nl'],
+              localePrefix: 'never'
+            },
+            {
+              domain: 'always.example.com',
+              defaultLocale: 'de',
+              locales: ['en', 'de'],
+              localePrefix: 'always'
+            },
+            {
+              domain: 'as-needed.example.com',
+              defaultLocale: 'ja',
+              locales: ['ja', 'es'],
+              localePrefix: 'as-needed'
+            }
+          ]
+        : undefined,
   pathnames: {
     '/': '/',
     '/client': '/client',
@@ -36,20 +57,22 @@ export const routing = defineRouting({
       en: '/nested',
       de: '/verschachtelt',
       es: '/anidada',
-      ja: '/ネスト'
+      ja: '/ネスト',
+      nl: '/genest'
     },
-    '/redirect': '/redirect',
     '/news/[articleId]': {
       en: '/news/[articleId]',
       de: '/neuigkeiten/[articleId]',
       es: '/noticias/[articleId]',
-      ja: '/ニュース/[articleId]'
+      ja: '/ニュース/[articleId]',
+      nl: '/nieuws/[articleId]'
     },
     '/news/just-in': {
       en: '/news/just-in',
       de: '/neuigkeiten/aktuell',
       es: '/noticias/justo-en',
-      ja: '/ニュース/現在'
+      ja: '/ニュース/現在',
+      nl: '/nieuws/net-binnen'
     }
   },
   localeCookie:

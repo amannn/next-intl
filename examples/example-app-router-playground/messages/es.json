@@ -32,7 +32,7 @@
     "title": "Ejemplo next-intl"
   },
   "LocaleSwitcher": {
-    "switchLocale": "Cambiar a {locale, select, de {Alemán} en {Inglés} other {Desconocido}}"
+    "switchLocale": "Cambiar a {locale, select, de {Alemán} en {Inglés} es {Español} ja {Japonés} nl {Neerlandés} other {Desconocido}}"
   },
   "Navigation": {
     "about": "Acerca de (MDX)",
