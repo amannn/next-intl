@@ -316,8 +316,25 @@ export default class CatalogManager implements Disposable {
           );
         }
 
-        // Merge other properties like description, or unknown
-        // attributes like flags that are opaque to us
+        // Merge descriptions: accumulate all unique descriptions
+        if (prevMessage.description != null && message.description != null) {
+          const prevDescs = Array.isArray(prevMessage.description)
+            ? prevMessage.description
+            : [prevMessage.description];
+          const currDescs = Array.isArray(message.description)
+            ? message.description
+            : [message.description];
+          const merged = [...prevDescs];
+          for (const d of currDescs) {
+            if (!merged.includes(d)) {
+              merged.push(d);
+            }
+          }
+          merged.sort();
+          message.description = merged.length === 1 ? merged[0] : merged;
+        }
+
+        // Merge other unknown attributes like flags that are opaque to us
         for (const key of Object.keys(prevMessage)) {
           if (message[key] == null) {
             message[key] = prevMessage[key];
@@ -416,7 +433,7 @@ export default class CatalogManager implements Disposable {
     return (
       msg1.id === msg2.id &&
       msg1.message === msg2.message &&
-      msg1.description === msg2.description
+      JSON.stringify(msg1.description) === JSON.stringify(msg2.description)
     );
   }
 
