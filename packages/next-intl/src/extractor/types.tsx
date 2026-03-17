@@ -13,7 +13,7 @@ export type ExtractorMessageReference = {
 export type ExtractorMessage = {
   id: string;
   message: string;
-  description?: string;
+  description?: string | Array<string>;
   references?: Array<ExtractorMessageReference>;
   /** Allows for additional properties like .po flags to be read and later written. */
   [key: string]: unknown;
