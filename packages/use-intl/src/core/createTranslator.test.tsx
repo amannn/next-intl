@@ -228,6 +228,50 @@ describe('type safety', () => {
     });
   });
 
+  describe('keys, union messages type', () => {
+    type MessagesEn = {meta: {title: 'title'; description: 'description'}};
+    type MessagesEs = {meta: {title: 'title-es'}};
+    type MessagesUnion = MessagesEn | MessagesEs;
+
+    it('allows keys present in all union members', () => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        const t = createTranslator<MessagesUnion>({
+          locale: 'en',
+          messages: {meta: {title: 'title', description: 'description'}}
+        });
+        t('meta.title');
+
+        const tMeta = createTranslator<MessagesUnion, 'meta'>({
+          locale: 'en',
+          namespace: 'meta',
+          messages: {meta: {title: 'title', description: 'description'}}
+        });
+        tMeta('title');
+      };
+    });
+
+    it('disallows keys missing in some union members', () => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        const t = createTranslator<MessagesUnion>({
+          locale: 'en',
+          messages: {meta: {title: 'title', description: 'description'}}
+        });
+        // @ts-expect-error
+        t('meta.description');
+
+        const tMeta = createTranslator<MessagesUnion, 'meta'>({
+          locale: 'en',
+          namespace: 'meta',
+          messages: {meta: {title: 'title', description: 'description'}}
+        });
+        // @ts-expect-error
+        tMeta('description');
+      };
+    });
+  });
+
   describe('params, strictly-typed', () => {
     function translateMessage<const T extends string>(msg: T) {
       return createTranslator({
