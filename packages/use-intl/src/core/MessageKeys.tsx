@@ -27,10 +27,13 @@ export type NamespaceKeys<ObjectType, AllKeys extends string> = {
 }[AllKeys];
 
 export type MessageKeys<ObjectType, AllKeys extends string> = {
-  [PropertyPath in AllKeys]: NestedValueOf<
-    ObjectType,
-    PropertyPath
-  > extends string
-    ? PropertyPath
-    : never;
+  [PropertyPath in AllKeys]: [string] extends [PropertyPath]
+    ? NestedValueOf<ObjectType, PropertyPath> extends string
+      ? PropertyPath
+      : never
+    : [NestedValueOf<ObjectType, PropertyPath>] extends [never]
+      ? never
+      : NestedValueOf<ObjectType, PropertyPath> extends string
+        ? PropertyPath
+        : never;
 }[AllKeys];
