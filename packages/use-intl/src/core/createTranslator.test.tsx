@@ -251,6 +251,29 @@ describe('type safety', () => {
       };
     });
 
+    it('requires params from all union members when a key has different args', () => {
+      type MessagesWithParamsEn = {title: 'Hello {name}'};
+      type MessagesWithParamsEs = {title: 'Hola {count, number}'};
+      type MessagesWithParamsUnion = MessagesWithParamsEn | MessagesWithParamsEs;
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        const t = createTranslator<MessagesWithParamsUnion>({
+          locale: 'en',
+          messages: {title: 'Hello {name}'}
+        });
+
+        // Providing all params from all union members is valid
+        t('title', {name: 'John', count: 5});
+
+        // Providing only some params is an error
+        // @ts-expect-error
+        t('title', {name: 'John'});
+        // @ts-expect-error
+        t('title', {count: 5});
+      };
+    });
+
     it('disallows keys missing in some union members', () => {
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       () => {
