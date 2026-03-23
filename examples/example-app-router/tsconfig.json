@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "allowArbitraryExtensions": true,
-    "target": "es5",
+    "target": "es2015",
     "lib": [
       "dom",
       "dom.iterable",
@@ -31,6 +31,8 @@
   },
   "include": [
     "next-env.d.ts",
+    "*.d.ts",
+    "**/*.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",

@@ -34,7 +34,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "postcss": "^8.5.3",
     "prettier": "^3.3.3",
-    "typescript": "^5.5.3"
+    "typescript": "^6.0.0"
   },
   "prettier": {
     "singleQuote": true,
