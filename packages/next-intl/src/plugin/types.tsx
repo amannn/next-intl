@@ -27,6 +27,12 @@ export type PluginConfig = {
     /** Enables the usage of `useExtracted`, to be used in combination with `srcPath` and `messages`. */
     extract?: {
       sourceLocale: string;
+      /**
+       * Whether to automatically extract messages during `next dev`.
+       * The SWC transform for `useExtracted` runs regardless.
+       * @default true
+       */
+      devExtraction?: boolean;
     };
   };
 };
