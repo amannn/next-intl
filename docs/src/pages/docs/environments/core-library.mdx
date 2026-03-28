@@ -105,3 +105,21 @@ const format = createFormatter({locale: 'en'});
 // Result: "Oct 17, 2022"
 format.dateTime(new Date(2022, 9, 17), {dateStyle: 'medium'});
 ```
+
+### Example: Translated error messages in API utilities
+
+A common use case is displaying translated error messages in utility functions that run outside of React components, such as API interceptors:
+
+```tsx
+import {createTranslator} from 'use-intl/core';
+import messages from '../messages/en.json';
+
+const t = createTranslator({locale: 'en', messages, namespace: 'api'});
+
+// Use in an Axios interceptor, fetch wrapper, or any non-React code
+function getErrorMessage(status: number): string {
+  return t(`errors.${status}` as any, undefined, `errors.unknown`);
+}
+```
+
+If you need to access the user's current locale dynamically (e.g. in a Next.js app), you can pair this with `getLocale` and `getMessages` from `next-intl/server` in a Server Component or Server Action, and pass the translated string to your utility from there.
