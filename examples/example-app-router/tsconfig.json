@@ -11,6 +11,7 @@
     "allowJs": true,
     "skipLibCheck": true,
     "noEmit": true,
+    "noUncheckedSideEffectImports": false,
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "Bundler",
@@ -31,8 +32,6 @@
   },
   "include": [
     "next-env.d.ts",
-    "*.d.ts",
-    "**/*.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
