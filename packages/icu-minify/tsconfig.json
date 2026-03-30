@@ -3,6 +3,7 @@
   "include": ["src", "test"],
   "compilerOptions": {
     "lib": ["dom", "esnext"],
+    "types": ["node"],
     "target": "ES2020",
     "declaration": true,
     "rootDir": ".",
