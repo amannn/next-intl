@@ -23,7 +23,7 @@
     "eslint": "^9.38.0",
     "eslint-config-next": "^16.0.10",
     "prettier": "^3.3.3",
-    "typescript": "^5.5.3",
+    "typescript": "^6.0.0",
     "vitest": "^3.0.8"
   },
   "prettier": {
