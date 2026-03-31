@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.8.4 (2026-03-31)
+
+### Bug Fixes
+
+* Remove TypeScript peer dependency and update examples to TypeScript v6 ([#2293](https://github.com/amannn/next-intl/issues/2293)) ([5e7bcd7](https://github.com/amannn/next-intl/commit/5e7bcd743994f8a3ccfd904d7969f4543950cd0a)) – by @wojtekmaj
+
 ## 4.8.3 (2026-02-16)
 
 ### Bug Fixes
