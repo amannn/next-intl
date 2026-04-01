@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.9.0 (2026-04-01)
+
+### Features
+
+* Support `transitionTypes` on `Link` ([#2302](https://github.com/amannn/next-intl/issues/2302)) ([02811f5](https://github.com/amannn/next-intl/commit/02811f5dd5f31753d742632082874b6e3e3667f6)) – by @amannn
+
 ## 4.8.4 (2026-03-31)
 
 ### Bug Fixes
