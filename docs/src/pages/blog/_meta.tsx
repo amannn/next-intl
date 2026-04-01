@@ -2,6 +2,10 @@ export default {
   index: {
     title: 'Overview'
   },
+  'nextjs-root-params': {
+    title: 'Using next/root-params in Next.js 16.2',
+    display: 'hidden'
+  },
   'use-extracted': {
     title: 'useExtracted: The Tailwind of i18n?',
     display: 'hidden'
