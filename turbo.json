@@ -18,9 +18,6 @@
     "lint": {
       "dependsOn": ["^build"]
     },
-    "next-intl#lint": {
-      "dependsOn": ["^build", "build"]
-    },
     "example-app-router-playground#lint": {
       "dependsOn": ["example-app-router-playground#build"]
     },
