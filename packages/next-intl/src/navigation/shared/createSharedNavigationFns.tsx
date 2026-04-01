@@ -2,7 +2,11 @@ import {
   permanentRedirect as nextPermanentRedirect,
   redirect as nextRedirect
 } from 'next/navigation.js';
-import {type ComponentProps, forwardRef} from 'react';
+import {
+  type ComponentProps,
+  type DOMAttributes,
+  forwardRef
+} from 'react';
 import type {Locale} from 'use-intl';
 import {
   type RoutingConfigLocalizedNavigation,
@@ -69,7 +73,12 @@ export default function createSharedNavigationFns<
   type LinkProps<Pathname extends keyof AppPathnames = never> = Prettify<
     Omit<
       ComponentProps<typeof BaseLink>,
-      'href' | 'localePrefix' | 'unprefixed' | 'defaultLocale' | 'localeCookie'
+      | 'href'
+      | 'localePrefix'
+      | 'unprefixed'
+      | 'defaultLocale'
+      | 'localeCookie'
+      | keyof DOMAttributes<HTMLAnchorElement>
     > & {
       /** @see https://next-intl.dev/docs/routing/navigation#link */
       href: [AppPathnames] extends [never]
@@ -77,7 +86,7 @@ export default function createSharedNavigationFns<
         : HrefOrUrlObjectWithParams<Pathname>;
       /** @see https://next-intl.dev/docs/routing/navigation#link */
       locale?: Locale;
-    }
+    } & DOMAttributes<HTMLAnchorElement>
   >;
   function Link<Pathname extends keyof AppPathnames = never>(
     {href, locale, ...rest}: LinkProps<Pathname>,
