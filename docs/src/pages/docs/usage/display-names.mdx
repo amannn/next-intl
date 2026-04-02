@@ -1,0 +1,52 @@
+import Callout from '@/components/Callout';
+
+# Display names
+
+When you need to display locale-aware names for regions, languages, currencies, or scripts, you can use the `displayNames` function from the `useFormatter` hook.
+
+The output adapts to the current locale automatically:
+
+- "United States" in `en-US`
+- "États-Unis" in `fr-FR`
+- "Vereinigte Staaten" in `de-DE`
+
+## Formatting display names
+
+```js
+import {useFormatter} from 'next-intl';
+
+function Component() {
+  const format = useFormatter();
+
+  // Renders "United States"
+  format.displayNames('US', {type: 'region'});
+
+  // Renders "English"
+  format.displayNames('en', {type: 'language'});
+
+  // Renders "US Dollar"
+  format.displayNames('USD', {type: 'currency'});
+
+  // Renders "Latin"
+  format.displayNames('Latn', {type: 'script'});
+}
+```
+
+See the MDN docs about [`DisplayNames`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DisplayNames) to learn more about the options you can pass to the `displayNames` function.
+
+Note that `type` is a required option. The accepted values depend on the runtime, but commonly supported types are: `region`, `language`, `currency`, and `script`.
+
+If you have [global formats](/docs/usage/configuration#formats) configured, you can reference them by passing a name as the second argument:
+
+```js
+// Use a global format
+format.displayNames('US', 'region');
+
+// Optionally override some options
+format.displayNames('US', 'region', {style: 'narrow'});
+```
+
+<Callout>
+  Display names can currently only be formatted via `useFormatter`. There is no
+  equivalent inline syntax for messages.
+</Callout>
