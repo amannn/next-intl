@@ -1,6 +1,6 @@
 {
   "name": "use-intl",
-  "version": "4.8.3",
+  "version": "4.9.0",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.work>",
   "funding": [
@@ -88,7 +88,7 @@
     "@size-limit/preset-small-lib": "^11.2.0",
     "@testing-library/react": "^16.2.0",
     "@types/node": "^20.14.5",
-    "@types/react": "^19.2.3",
+    "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "date-fns": "^4.1.0",
     "eslint": "9.11.1",
@@ -102,7 +102,7 @@
     "size-limit": "^11.2.0",
     "tinyspy": "^3.0.0",
     "tools": "workspace:^",
-    "typescript": "^5.5.3",
+    "typescript": "^6.0.0",
     "vitest": "^3.0.8"
   },
   "prettier": "eslint-config-molindo/.prettierrc.json"

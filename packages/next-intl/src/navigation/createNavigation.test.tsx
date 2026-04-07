@@ -405,7 +405,7 @@ describe.each([
         createNavigation();
       });
 
-      it('can not be used with `pathnames`', () => {
+      it('cannot be used with `pathnames`', () => {
         // @ts-expect-error -- Missing locales
         createNavigation({pathnames});
       });
@@ -639,7 +639,7 @@ describe.each([
         ).toBe('/en/news/launch-party-3?foo=bar');
       });
 
-      it('can not be called with an arbitrary pathname', () => {
+      it('cannot be called with an arbitrary pathname', () => {
         // @ts-expect-error -- Unknown pathname
         expect(getPathname({locale: 'en', href: '/unknown'}))
           // Works regardless
@@ -700,7 +700,7 @@ describe.each([
         );
       });
 
-      it('can not be called with an arbitrary pathname', () => {
+      it('cannot be called with an arbitrary pathname', () => {
         // @ts-expect-error -- Unknown pathname
         runInRender(() => redirectFn({href: '/unknown', locale: 'en'}));
         // Works regardless

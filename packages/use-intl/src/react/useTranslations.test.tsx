@@ -819,7 +819,7 @@ describe('error handling', () => {
     const error: IntlError = onError.mock.calls[0][0];
     expect(error.code).toBe(IntlErrorCode.INVALID_KEY);
     expect(error.message.split('\n').slice(0, 3).join('\n')).toBe(
-      'INVALID_KEY: Namespace keys can not contain the character "." as this is used to express nesting. Please remove it or replace it with another character.\n\nInvalid keys: a.b, c.d (at a.b), h.j (at f.g)'
+      'INVALID_KEY: Namespace keys cannot contain the character "." as this is used to express nesting. Please remove it or replace it with another character.\n\nInvalid keys: a.b, c.d (at a.b), h.j (at f.g)'
     );
 
     expect(container.innerHTML).toBe(

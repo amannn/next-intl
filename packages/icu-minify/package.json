@@ -1,6 +1,6 @@
 {
   "name": "icu-minify",
-  "version": "4.8.3",
+  "version": "4.9.0",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.work>",
   "funding": [
@@ -67,7 +67,7 @@
     "rollup": "^4.18.0",
     "size-limit": "^11.2.0",
     "tools": "workspace:^",
-    "typescript": "^5.5.3",
+    "typescript": "^6.0.0",
     "vitest": "^3.0.8"
   },
   "prettier": "eslint-config-molindo/.prettierrc.json"
