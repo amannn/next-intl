@@ -4,8 +4,48 @@ import {
   getInternalTemplate,
   getNormalizedPathname,
   getPathnameMatch,
-  getRouteParams
+  getRouteParams,
+  sanitizePathname
 } from './utils.js';
+
+describe('sanitizePathname', () => {
+  it('leaves normal pathnames unchanged', () => {
+    expect(sanitizePathname('/en/about')).toBe('/en/about');
+    expect(sanitizePathname('/ja/%E7%B4%84')).toBe('/ja/%E7%B4%84');
+    expect(sanitizePathname('/')).toBe('/');
+  });
+
+  it('encodes backslashes to prevent scheme-relative redirect via \\host', () => {
+    expect(sanitizePathname('/en/\\example.org')).toBe('/en/%5Cexample.org');
+    expect(sanitizePathname('/en/%5Cexample.org')).toBe('/en/%5Cexample.org');
+  });
+
+  it('collapses consecutive slashes to prevent scheme-relative redirect via //host', () => {
+    expect(sanitizePathname('/en////example.org')).toBe('/en/example.org');
+    expect(sanitizePathname('//example.org')).toBe('/example.org');
+  });
+
+  it('strips TAB (U+0009) to prevent //host collapse', () => {
+    expect(sanitizePathname('/en/\t/example.org')).toBe('/en/example.org');
+    expect(sanitizePathname('\t//example.org')).toBe('/example.org');
+  });
+
+  it('strips LF (U+000A)', () => {
+    expect(sanitizePathname('/en/\n/example.org')).toBe('/en/example.org');
+  });
+
+  it('strips CR (U+000D)', () => {
+    expect(sanitizePathname('/en/\r/example.org')).toBe('/en/example.org');
+  });
+
+  it('strips multiple whitespace characters in combination', () => {
+    expect(sanitizePathname('/en/\t\r\n/example.org')).toBe('/en/example.org');
+  });
+
+  it('applies replacements in the correct order: backslash before slash collapse', () => {
+    expect(sanitizePathname('/en\\/example.org')).toBe('/en%5C/example.org');
+  });
+});
 
 describe('getNormalizedPathname', () => {
   it('should return the normalized pathname', () => {
