@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.9.1 (2026-04-10)
+
+### Bug Fixes
+
+* Improve middleware pathname validation ([#2304](https://github.com/amannn/next-intl/issues/2304)) ([1c80b66](https://github.com/amannn/next-intl/commit/1c80b668aa6d853f470319eec10a3f61e78a70e6)) – by @amannn
+
 ## 4.9.0 (2026-04-01)
 
 ### Features
