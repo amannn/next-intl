@@ -21,6 +21,7 @@ import {
   formatPathname,
   formatTemplatePathname,
   getBestMatchingDomain,
+  getHost,
   getInternalTemplate,
   getLocaleAsPrefix,
   getNormalizedPathname,
@@ -122,6 +123,22 @@ export default function createMiddleware<
               resolvedRouting.localePrefix
             );
           }
+        }
+      }
+
+      // Guard against open redirects
+      if (!redirectDomain) {
+        let expectedHostname = new URL(request.url).hostname;
+        const rawHost = getHost(request.headers)?.trim();
+        if (rawHost) {
+          try {
+            expectedHostname = new URL(`http://${rawHost}`).hostname;
+          } catch {
+            // Invalid host header
+          }
+        }
+        if (urlObj.hostname !== expectedHostname) {
+          return NextResponse.next();
         }
       }
 
