@@ -219,6 +219,44 @@ describe('prefix-based routing', () => {
       );
     });
 
+    describe('open redirect prevention', () => {
+      it('redirects to a same-origin URL when the path contains a TAB after decodeURI', () => {
+        middleware(createMockRequest('/en/\t/example.org'));
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/example.org'
+        );
+      });
+
+      it('redirects to a same-origin URL when the path contains an encoded backslash', () => {
+        middleware(createMockRequest('/en/%5Cexample.org'));
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/%5Cexample.org'
+        );
+      });
+
+      it('redirects to a same-origin URL when the path contains excess slashes before a segment', () => {
+        middleware(createMockRequest('/en///example.org'));
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/example.org'
+        );
+      });
+
+      it('redirects to a same-origin URL when TAB is double-encoded as %2509', () => {
+        middleware(createMockRequest('/en/%2509/some-page'));
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/%09/some-page'
+        );
+      });
+    });
+
     it('redirects requests for the default locale when prefixed at sub paths', () => {
       middleware(createMockRequest('/en/about'));
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
