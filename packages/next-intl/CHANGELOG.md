@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.9.2 (2026-04-27)
+
+### Bug Fixes
+
+* Prototype safety guards for `precompile: true` ([#2307](https://github.com/amannn/next-intl/issues/2307)) ([c0bf0ee](https://github.com/amannn/next-intl/commit/c0bf0ee42abb38926dee51474a80b9982b3acb2f)) – by @amannn
+
 ## 4.9.1 (2026-04-10)
 
 ### Bug Fixes
