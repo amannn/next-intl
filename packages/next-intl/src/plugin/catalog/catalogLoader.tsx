@@ -90,7 +90,7 @@ function precompileMessages(
   messages: Array<ExtractorMessage>,
   cache: Map<string, CompiledMessageCacheEntry>
 ): Record<string, unknown> {
-  const result: Record<string, unknown> = {};
+  const result = Object.create(null) as Record<string, unknown>;
   const cacheKeysToEvict = new Set(cache.keys());
 
   for (const message of messages) {
