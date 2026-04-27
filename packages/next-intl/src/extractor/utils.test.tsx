@@ -66,9 +66,9 @@ describe('getSortedMessages', () => {
 
 describe('setNestedProperty', () => {
   it('rejects __proto__ segments (prototype pollution)', () => {
-    expect(() =>
-      setNestedProperty({}, '__proto__.polluted', 'x')
-    ).toThrow('Invalid message id segment: __proto__');
+    expect(() => setNestedProperty({}, '__proto__.polluted', 'x')).toThrow(
+      'Invalid message id segment: __proto__'
+    );
     expect(
       (Object.prototype as unknown as {polluted?: string}).polluted
     ).toBeUndefined();
