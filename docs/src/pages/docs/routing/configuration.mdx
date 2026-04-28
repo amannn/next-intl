@@ -361,29 +361,39 @@ Locales are required to be unique across domains, therefore regional variants ar
 
 If no domain matches, the middleware will fall back to default locale matching based on [prefixes](/docs/routing/middleware#location-detection-prefix) (e.g. on `localhost`, for local development).
 
-See also: [Domain-based routing](/docs/routing/middleware#location-detection-domain)
+Optionally, each domain can override the overall `localePrefix` setting:
 
-<Details id="domains-localeprefix-individual">
-<summary>Can I use a different `localePrefix` setting per domain?</summary>
-
-While this is currently not supported out of the box, you can still achieve this by building the app for each domain separately while injecting diverging routing configuration via an environment variable.
-
-**Example:**
-
-```tsx filename="routing.ts"
+```tsx filename="routing.ts" {6,12,18,24}
 import {defineRouting} from 'next-intl/routing';
 
-const isUsDomain =
-  process.env.VERCEL_PROJECT_PRODUCTION_URL === 'us.example.com';
-
 export const routing = defineRouting({
-  locales: isUsDomain ? ['en-US'] : ['en-CA', 'fr-CA'],
-  defaultLocale: isUsDomain ? 'en-US' : 'en-CA',
-  localePrefix: isUsDomain ? 'never' : 'always'
+  locales: ['en-US', 'en-CA', 'fr-CA', 'fr-FR'],
+  defaultLocale: 'en-US',
+  localePrefix: 'as-needed',
+  domains: [
+    {
+      domain: 'us.example.com',
+      defaultLocale: 'en-US',
+      locales: ['en-US'],
+      localePrefix: 'never'
+    },
+    {
+      domain: 'ca.example.com',
+      defaultLocale: 'en-CA',
+      locales: ['en-CA', 'fr-CA'],
+      localePrefix: 'always'
+    },
+    {
+      domain: 'fr.example.com',
+      defaultLocale: 'fr-FR',
+      locales: ['fr-FR']
+      // Uses the global setting
+    }
+  ]
 });
 ```
 
-</Details>
+See also: [Domain-based routing](/docs/routing/middleware#location-detection-domain)
 
 ### `localeDetection` [#locale-detection]
 
