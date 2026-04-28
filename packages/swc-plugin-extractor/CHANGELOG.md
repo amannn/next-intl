@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.11.0 (2026-04-28)
+
+### Features
+
+* Add `displayName` to `useFormatter` ([#2285](https://github.com/amannn/next-intl/issues/2285)) ([3666aa8](https://github.com/amannn/next-intl/commit/3666aa87c21348980e24c1078f23e7e9fe60a41d)) – by @roderickhsiao
+
 ## 4.10.1 (2026-04-28)
 
 ### Bug Fixes
