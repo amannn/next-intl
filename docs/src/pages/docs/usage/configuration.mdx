@@ -536,9 +536,9 @@ export default getRequestConfig(async () => {
           year: 'numeric'
         }
       },
-      number: {
-        precise: {
-          maximumFractionDigits: 5
+      displayName: {
+        region: {
+          type: 'region'
         }
       },
       list: {
@@ -547,9 +547,9 @@ export default getRequestConfig(async () => {
           type: 'conjunction'
         }
       },
-      displayName: {
-        region: {
-          type: 'region'
+      number: {
+        precise: {
+          maximumFractionDigits: 5
         }
       }
     }
@@ -572,9 +572,9 @@ export default getRequestConfig(async () => {
         year: 'numeric'
       }
     },
-    number: {
-      precise: {
-        maximumFractionDigits: 5
+    displayName: {
+      region: {
+        type: 'region'
       }
     },
     list: {
@@ -583,9 +583,9 @@ export default getRequestConfig(async () => {
         type: 'conjunction'
       }
     },
-    displayName: {
-      region: {
-        type: 'region'
+    number: {
+      precise: {
+        maximumFractionDigits: 5
       }
     }
   }}
@@ -606,9 +606,9 @@ function Component() {
   const format = useFormatter();
 
   format.dateTime(new Date('2020-11-20T10:36:01.516Z'), 'short');
-  format.number(47.414329182, 'precise');
-  format.list(['HTML', 'CSS', 'JavaScript'], 'enumeration');
   format.displayName('US', 'region');
+  format.list(['HTML', 'CSS', 'JavaScript'], 'enumeration');
+  format.number(47.414329182, 'precise');
 }
 ```
 

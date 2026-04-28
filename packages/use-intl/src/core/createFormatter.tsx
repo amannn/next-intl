@@ -423,5 +423,5 @@ export default function createFormatter(props: Props) {
     );
   }
 
-  return {dateTime, number, relativeTime, list, dateTimeRange, displayName};
+  return {dateTime, dateTimeRange, displayName, list, number, relativeTime};
 }
