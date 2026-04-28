@@ -124,9 +124,12 @@ export default function createMiddleware<
         );
         if (bestMatchingDomain) {
           redirectDomain = bestMatchingDomain.domain;
+          const redirectDomainMode =
+            bestMatchingDomain.localePrefix ||
+            resolvedRouting.localePrefix.mode;
           if (
             bestMatchingDomain.defaultLocale === locale &&
-            resolvedRouting.localePrefix.mode === 'as-needed'
+            redirectDomainMode === 'as-needed'
           ) {
             urlObj.pathname = getNormalizedPathname(
               urlObj.pathname,
@@ -187,10 +190,13 @@ export default function createMiddleware<
     );
     const hasLocalePrefix = pathnameMatch != null;
 
+    // Use domain-specific localePrefix mode if available, otherwise use global mode
+    const effectiveLocalePrefixMode =
+      domain?.localePrefix || resolvedRouting.localePrefix.mode;
+
     const isUnprefixedRouting =
-      resolvedRouting.localePrefix.mode === 'never' ||
-      (hasMatchedDefaultLocale &&
-        resolvedRouting.localePrefix.mode === 'as-needed');
+      effectiveLocalePrefixMode === 'never' ||
+      (hasMatchedDefaultLocale && effectiveLocalePrefixMode === 'as-needed');
 
     let response;
     let internalTemplateName: string | undefined;
@@ -287,7 +293,7 @@ export default function createMiddleware<
             request.nextUrl.search
           );
 
-          if (resolvedRouting.localePrefix.mode === 'never') {
+          if (effectiveLocalePrefixMode === 'never') {
             response = redirect(
               formatPathname(
                 unprefixedExternalPathname,
@@ -344,7 +350,7 @@ export default function createMiddleware<
 
     if (
       !hasRedirected &&
-      resolvedRouting.localePrefix.mode !== 'never' &&
+      effectiveLocalePrefixMode !== 'never' &&
       resolvedRouting.alternateLinks &&
       resolvedRouting.locales.length > 1
     ) {

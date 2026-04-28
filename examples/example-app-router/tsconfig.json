@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "allowArbitraryExtensions": true,
-    "target": "es5",
+    "target": "es2015",
     "lib": [
       "dom",
       "dom.iterable",
@@ -11,6 +11,7 @@
     "allowJs": true,
     "skipLibCheck": true,
     "noEmit": true,
+    "noUncheckedSideEffectImports": false,
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "Bundler",
