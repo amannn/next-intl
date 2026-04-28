@@ -90,7 +90,7 @@ it.describe('never.example.com (localePrefix: never)', () => {
     await page.close();
   });
 
-  it('redirects away locale prefix', async () => {
+  it('removes a superfluous locale prefix', async () => {
     const page = await createPage(browser, 'nl');
 
     await page.goto('http://never.example.com/nl');
@@ -102,7 +102,7 @@ it.describe('never.example.com (localePrefix: never)', () => {
     await page.close();
   });
 
-  it('redirects away locale prefix and preserves query strings', async () => {
+  it('removes a superfluous locale prefix and preserves query strings', async () => {
     const page = await createPage(browser, 'nl');
 
     await page.goto('http://never.example.com/nl?foo=bar');

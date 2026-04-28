@@ -4,10 +4,9 @@ import {Link} from '@/i18n/navigation';
 export default function LocaleSwitcher() {
   const t = useTranslations('LocaleSwitcher');
 
-  const locales: Locale[] = ['en', 'de', 'es', 'ja', 'nl'];
-
   const locale = useLocale();
-  const otherLocales = locales.filter((l) => l !== locale);
+  const locales: Array<Locale> = ['en', 'de', 'es', 'ja', 'nl'];
+  const otherLocales = locales.filter((cur) => cur !== locale);
 
   return (
     <ul>

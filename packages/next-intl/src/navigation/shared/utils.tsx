@@ -294,7 +294,8 @@ export function applyPathnamePrefix<
     // Since locales are unique per domain, there should be
     // only one domain that contains the locale
     const domain = routing.domains?.find((cur) => cur.locales.includes(locale));
-    // the domain can override the mode
+
+    // Domains can override the mode
     const mode = domain?.localePrefix || routingMode;
 
     if (mode === 'always') {
