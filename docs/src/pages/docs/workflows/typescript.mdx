@@ -247,7 +247,7 @@ Please consider upvoting [`TypeScript#32063`](https://github.com/microsoft/TypeS
 
 ## `Formats`
 
-If you're using [global formats](/docs/usage/configuration#formats), you can strictly type the format names that are referenced in calls to `format.dateTime`, `format.number`, `format.list` and `format.displayNames`.
+If you're using [global formats](/docs/usage/configuration#formats), you can strictly type the format names that are referenced in calls to `format.dateTime`, `format.number`, `format.list` and `format.displayName`.
 
 ```tsx
 function Component() {
@@ -266,7 +266,7 @@ function Component() {
   format.list(['HTML', 'CSS', 'JavaScript'], 'enumeration');
 
   // ✅ Valid format
-  format.displayNames('US', 'region');
+  format.displayName('US', 'region');
 }
 ```
 
@@ -294,7 +294,7 @@ export const formats = {
       type: 'conjunction'
     }
   },
-  displayNames: {
+  displayName: {
     region: {
       type: 'region'
     }

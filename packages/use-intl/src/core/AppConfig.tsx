@@ -17,8 +17,8 @@ export type FormatNames = AppConfig extends {
       dateTime: AppFormats extends {dateTime: infer AppDateTimeFormats}
         ? keyof AppDateTimeFormats
         : string;
-      displayNames: AppFormats extends {displayNames: infer AppDisplayNamesFormats}
-        ? keyof AppDisplayNamesFormats
+      displayName: AppFormats extends {displayName: infer AppDisplayNameFormats}
+        ? keyof AppDisplayNameFormats
         : string;
       list: AppFormats extends {list: infer AppListFormats}
         ? keyof AppListFormats
@@ -29,7 +29,7 @@ export type FormatNames = AppConfig extends {
     }
   : {
       dateTime: string;
-      displayNames: string;
+      displayName: string;
       list: string;
       number: string;
     };

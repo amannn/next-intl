@@ -771,14 +771,14 @@ describe('list', () => {
   });
 });
 
-describe('displayNames', () => {
-  function renderDisplayNames(
+describe('displayName', () => {
+  function renderDisplayName(
     value: string,
     options: Intl.DisplayNamesOptions
   ) {
     function Component() {
       const format = useFormatter();
-      return <>{format.displayNames(value, options)}</>;
+      return <>{format.displayName(value, options)}</>;
     }
 
     render(
@@ -789,28 +789,28 @@ describe('displayNames', () => {
   }
 
   it('formats a region', () => {
-    renderDisplayNames('US', {type: 'region'});
+    renderDisplayName('US', {type: 'region'});
     screen.getByText('United States');
   });
 
   it('formats a language', () => {
-    renderDisplayNames('en', {type: 'language'});
+    renderDisplayName('en', {type: 'language'});
     screen.getByText('English');
   });
 
   it('formats a currency', () => {
-    renderDisplayNames('USD', {type: 'currency'});
+    renderDisplayName('USD', {type: 'currency'});
     screen.getByText('US Dollar');
   });
 
   it('can use a global format', () => {
     function Component() {
       const format = useFormatter();
-      return <>{format.displayNames('US', 'region')}</>;
+      return <>{format.displayName('US', 'region')}</>;
     }
 
     render(
-      <MockProvider formats={{displayNames: {region: {type: 'region'}}}}>
+      <MockProvider formats={{displayName: {region: {type: 'region'}}}}>
         <Component />
       </MockProvider>
     );
@@ -828,10 +828,10 @@ describe('displayNames', () => {
       function Component() {
         const format = useFormatter();
         return [
-          format.displayNames('US', {type: 'region'}),
-          format.displayNames('CA', {type: 'region'}),
-          format.displayNames('USD', {type: 'currency'}),
-          format.displayNames('CAD', {type: 'currency'})
+          format.displayName('US', {type: 'region'}),
+          format.displayName('CA', {type: 'region'}),
+          format.displayName('USD', {type: 'currency'}),
+          format.displayName('CAD', {type: 'currency'})
         ].join(';');
       }
 
