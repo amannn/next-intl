@@ -3,7 +3,7 @@ import type NumberFormatOptions from './NumberFormatOptions.js';
 
 type Formats = {
   dateTime?: Record<string, DateTimeFormatOptions>;
-  displayNames?: Record<string, Intl.DisplayNamesOptions>;
+  displayName?: Record<string, Intl.DisplayNamesOptions>;
   list?: Record<string, Intl.ListFormatOptions>;
   number?: Record<string, NumberFormatOptions>;
 };

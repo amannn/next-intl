@@ -547,7 +547,7 @@ export default getRequestConfig(async () => {
           type: 'conjunction'
         }
       },
-      displayNames: {
+      displayName: {
         region: {
           type: 'region'
         }
@@ -583,7 +583,7 @@ export default getRequestConfig(async () => {
         type: 'conjunction'
       }
     },
-    displayNames: {
+    displayName: {
       region: {
         type: 'region'
       }
@@ -608,7 +608,7 @@ function Component() {
   format.dateTime(new Date('2020-11-20T10:36:01.516Z'), 'short');
   format.number(47.414329182, 'precise');
   format.list(['HTML', 'CSS', 'JavaScript'], 'enumeration');
-  format.displayNames('US', 'region');
+  format.displayName('US', 'region');
 }
 ```
 
