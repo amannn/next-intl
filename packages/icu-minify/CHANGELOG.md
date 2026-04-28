@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.10.0 (2026-04-28)
+
+### Features
+
+* Add per-domain `localePrefix` override support ([#2273](https://github.com/amannn/next-intl/issues/2273)) ([3e9febf](https://github.com/amannn/next-intl/commit/3e9febfc14f26d3f13ae0c20059c78028c22d50d)) – by @frankmatheron
+
 ## 4.9.2 (2026-04-27)
 
 ### Bug Fixes
