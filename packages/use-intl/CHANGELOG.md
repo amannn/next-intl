@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.10.1 (2026-04-28)
+
+### Bug Fixes
+
+* Set redirect domain if `x-forwarded-host` header exists ([#2281](https://github.com/amannn/next-intl/issues/2281)) ([70d35db](https://github.com/amannn/next-intl/commit/70d35dbfdb19edc24be39d5f455ff754fceac85c)) – by @FourwingsY
+
 ## 4.10.0 (2026-04-28)
 
 ### Features
