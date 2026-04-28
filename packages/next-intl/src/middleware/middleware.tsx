@@ -101,6 +101,7 @@ export default function createMiddleware<
 
     function redirect(url: string, redirectDomain?: string) {
       const urlObj = new URL(url, request.url);
+      const forwardedHost = request.headers.get('x-forwarded-host');
 
       urlObj.pathname = normalizeTrailingSlash(urlObj.pathname);
 
@@ -128,20 +129,24 @@ export default function createMiddleware<
         }
       }
 
-      if (redirectDomain) {
-        urlObj.host = redirectDomain;
+      // Priority for redirect origins:
+      // 1) Explicit domain from `redirectDomain`
+      // 2) Reverse proxy host from `x-forwarded-host`
+      // 3) Fallback to `request.url`
+      const redirectHost = redirectDomain ?? forwardedHost;
+      if (redirectHost) {
+        urlObj.host = redirectHost;
+      }
 
-        if (request.headers.get('x-forwarded-host')) {
-          urlObj.protocol =
-            request.headers.get('x-forwarded-proto') ??
-            request.nextUrl.protocol;
+      if (forwardedHost) {
+        urlObj.protocol =
+          request.headers.get('x-forwarded-proto') ?? request.nextUrl.protocol;
 
-          const redirectDomainPort = redirectDomain.split(':')[1] as
-            | string
-            | undefined;
-          urlObj.port =
-            redirectDomainPort ?? request.headers.get('x-forwarded-port') ?? '';
-        }
+        const redirectHostPort = redirectHost?.split(':')[1] as
+          | string
+          | undefined;
+        urlObj.port =
+          redirectHostPort ?? request.headers.get('x-forwarded-port') ?? '';
       }
 
       if (request.nextUrl.basePath) {
