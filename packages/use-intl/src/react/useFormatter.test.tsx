@@ -772,10 +772,7 @@ describe('list', () => {
 });
 
 describe('displayName', () => {
-  function renderDisplayName(
-    value: string,
-    options: Intl.DisplayNamesOptions
-  ) {
+  function renderDisplayName(value: string, options: Intl.DisplayNamesOptions) {
     function Component() {
       const format = useFormatter();
       return <>{format.displayName(value, options)}</>;
