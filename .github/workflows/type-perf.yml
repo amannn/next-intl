@@ -1,0 +1,36 @@
+name: type-perf
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      # Run only when files that affect type instantiation counts change
+      - "packages/use-intl/src/core/**"
+      - "packages/use-intl/perf/**"
+
+jobs:
+  check:
+    name: TypeScript instantiation regression
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Full history so `git show origin/<base>:…` works
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: "pnpm"
+
+      - run: pnpm install
+
+      - name: Fetch base branch for comparison
+        run: git fetch origin ${{ github.base_ref }}
+
+      - name: Check for TypeScript instantiation regression
+        run: pnpm --filter use-intl perf:types:ci
+        # GITHUB_BASE_REF is set automatically by GitHub Actions on pull_request events
+        # The script uses it to compare against origin/<base_ref>
