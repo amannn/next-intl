@@ -418,8 +418,8 @@ export default function createFormatter(props: Props) {
       (options) =>
         // `options` is guaranteed non-null because our overloads require
         // either inline options or a named format that resolves to options.
-        formatters.getDisplayNames(locale, options!).of(value) ?? String(value),
-      () => String(value)
+        formatters.getDisplayNames(locale, options!).of(value),
+      () => value
     );
   }
 
