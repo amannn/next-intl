@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "lint": "eslint src tests playwright.config.ts && prettier . --check",
+    "lint": "eslint src tests && prettier . --check",
     "build": "next build",
     "start": "next start",
     "test": "playwright test"
