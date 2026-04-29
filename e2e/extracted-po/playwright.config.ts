@@ -1,9 +1,9 @@
 import {defineConfig, devices} from '@playwright/test';
 import {reserveSharedPlaywrightDevPort} from 'e2e-utils/playwright-dev-port';
 
-const ENV_KEY = 'PW_E2E_EXTRACTED_PO_DEV_PORT';
-
-const port = await reserveSharedPlaywrightDevPort(ENV_KEY);
+const port = await reserveSharedPlaywrightDevPort(
+  'PW_E2E_EXTRACTED_PO_DEV_PORT'
+);
 
 export default defineConfig({
   workers: 1,
