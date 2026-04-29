@@ -112,7 +112,7 @@ export default class CatalogManager implements Disposable {
       return this.persister;
     } else {
       this.persister = new CatalogPersister({
-        messagesPath: this.config.messages.path,
+        messagesPath: this.config.catalogPath,
         codec: await this.getCodec(),
         extension: getFormatExtension(this.config.messages.format)
       });
@@ -124,15 +124,12 @@ export default class CatalogManager implements Disposable {
     if (this.catalogLocales) {
       return this.catalogLocales;
     } else {
-      const messagesDir = path.join(
-        this.projectRoot,
-        this.config.messages.path
-      );
+      const messagesDir = path.join(this.projectRoot, this.config.catalogPath);
       this.catalogLocales = new CatalogLocales({
         messagesDir,
         sourceLocale: this.config.sourceLocale,
         extension: getFormatExtension(this.config.messages.format),
-        locales: this.config.messages.locales
+        locales: this.config.locales
       });
       return this.catalogLocales;
     }

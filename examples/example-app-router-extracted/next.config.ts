@@ -5,12 +5,12 @@ const withNextIntl = createNextIntlPlugin({
   experimental: {
     srcPath: './src',
     extract: {
-      sourceLocale: 'en'
+      sourceLocale: 'en',
+      locales: 'infer'
     },
     messages: {
       path: './messages',
       format: 'po',
-      locales: 'infer',
       precompile: true
     }
   }

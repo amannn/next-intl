@@ -10,14 +10,14 @@ export type PluginConfig = {
     /** Relative path(s) to your source files, to be used in combination with `extract` and `messages`. */
     srcPath?: string | Array<string>;
 
-    /** Configuration about your catalogs of messages, to be used in combination with `srcPath` and `extract`. */
+    /** Relative path(s) to catalogs the bundler may import (`.json` is native; `.po`/custom need this loader). */
     messages?: {
-      /** Relative path to the directory containing your messages. */
-      path: string;
-      /** Defines the format for how your messages are stored. */
+      path: string | Array<string>;
       format: MessagesFormat;
-      /** Either automatically infer the locales based on catalog files in `path` or explicitly define them. */
-      locales: 'infer' | ReadonlyArray<string>;
+      /**
+       * @deprecated Use [`extract.locales`](/docs/usage/plugin#extract) instead.
+       */
+      locales?: 'infer' | ReadonlyArray<string>;
       /**
        * When enabled, ICU messages are precompiled at build time, resulting in smaller bundles and faster message formatting.
        */
@@ -27,6 +27,12 @@ export type PluginConfig = {
     /** Enables the usage of `useExtracted`, to be used in combination with `srcPath` and `messages`. */
     extract?: {
       sourceLocale: string;
+      /** Writable catalog directory when extracting. Required if `messages.path` is an array. */
+      path?: string;
+      /**
+       * Locales kept in sync with [`extract.sourceLocale`](/docs/usage/plugin#extract).
+       */
+      locales?: 'infer' | ReadonlyArray<string>;
     };
   };
 };

@@ -64,69 +64,75 @@ See [TypeScript augmentation](/docs/workflows/typescript) to learn more about th
 
 ### `extract` [#extract]
 
-This enables the usage of [`useExtracted`](/docs/usage/extraction) to automatically extract messages from source files.
+This enables [`useExtracted`](/docs/usage/extraction). Use it together with [`messages`](#messages) and [`srcPath`](#src-path).
+
+- `sourceLocale` — locale new source strings are written to
+- `path` — writable catalog directory for extraction (reads existing files here, writes updates). If [`messages.path`](#messages) is a single string, this defaults to that value. **Required** when `messages.path` is an array
+- `locales` — target locales kept in sync with `sourceLocale`, or `'infer'` from files in `path` (excluding `sourceLocale`)
+
+`messages.locales` is deprecated but still supported; use `extract.locales`. In `next dev` / `next build`, the plugin warns once if you still use `messages.locales`.
 
 ```tsx
 const withNextIntl = createNextIntlPlugin({
   experimental: {
+    srcPath: './src',
     extract: {
-      // Defines which locale to extract to
-      sourceLocale: 'en'
+      sourceLocale: 'en',
+      path: './messages',
+      locales: 'infer'
+    },
+    messages: {
+      path: ['./messages', '../../packages/ui/messages'],
+      format: 'po'
     }
-    // ...
   }
 });
 ```
 
-**Note:** The `extract` option should be used together with [`messages`](#messages) and [`srcPath`](#src-path).
+When `messages.path` is only your app folder, you can omit `extract.path`:
+
+```tsx
+extract: {
+  sourceLocale: 'en',
+  locales: 'infer'
+},
+messages: {
+  path: './messages',
+  format: 'po'
+}
+```
 
 ### `messages` [#messages]
 
-This defines where messages for locales are stored and how they're loaded.
+Catalog **loading**: relative path(s) whose files may be imported into the app. The bundler registers a loader for [`format`](#format) under these roots (needed for `.po` and custom formats; `.json` is built-in). This is separate from [`extract.path`](#extract), which is only the **writable** directory used when extracting.
 
 ```tsx
 const withNextIntl = createNextIntlPlugin({
   experimental: {
     messages: {
       format: 'json',
-      locales: 'infer',
       path: './messages',
-
-      // Optional
       precompile: true
     }
   }
 });
 ```
 
-Configuring `experimental.messages` sets up a Turbo- or Webpack loader that allows messages to be imported as plain JavaScript objects (see [`format`](#format)).
+Configuring `experimental.messages` sets up the Turbo- or Webpack loader (see [`format`](#format)).
 
 #### `path`
 
-Relative path to the directory containing messages:
+One directory, or several (e.g. app plus a package that ships `.po` files):
 
 ```tsx
-// ...
 path: './messages';
 ```
 
-#### `locales`
-
-When using [`useExtracted`](/docs/usage/extraction), this defines which messages are kept in sync with [`extract.sourceLocale`](/docs/usage/plugin#extract).
-
-You can either automatically detect all locales within `messages.path`:
-
 ```tsx
-// ...
-locales: 'infer';
+path: ['./messages', '../../packages/ui/messages'];
 ```
 
-… or specify them explicitly (e.g. to use a subset):
-
-```tsx
-// ...
-locales: ['en', 'de', 'fr'];
-```
+If you use [`extract`](#extract) and pass an array here, you must set `extract.path` to the catalog directory you want extraction to write to.
 
 #### `format`
 
@@ -230,12 +236,11 @@ Node.js supports native TypeScript execution like it's needed for the example ab
 
 As a performance optimization, you can achieve smaller bundles and faster message formatting at runtime by precompiling messages ahead of time during the build:
 
-```tsx {7}
+```tsx {6}
 const withNextIntl = createNextIntlPlugin({
   experimental: {
     messages: {
       path: './messages',
-      locales: 'infer',
       format: 'json',
       precompile: true
     }

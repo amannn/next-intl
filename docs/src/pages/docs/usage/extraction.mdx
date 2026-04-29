@@ -64,20 +64,13 @@ const withNextIntl = createNextIntlPlugin({
     srcPath: './src',
 
     extract: {
-      // Defines which locale to extract to
-      sourceLocale: 'en'
+      sourceLocale: 'en',
+      locales: 'infer'
     },
 
     messages: {
-      // Relative path to the directory
       path: './messages',
-
-      // Either 'json', 'po', or a custom format (see below)
-      format: 'json',
-
-      // Either 'infer' to automatically detect locales based on
-      // matching files in `path` or an explicit array of locales
-      locales: 'infer'
+      format: 'json'
     }
   }
 });
@@ -89,6 +82,14 @@ export default withNextIntl(config);
 With this, every time you call `next dev` or `next build`, messages will be extracted as they are discovered and your messages will be kept in sync.
 
 See [`createNextIntlPlugin`](/docs/usage/plugin#extract) for details.
+
+## Monorepos
+
+**App-owned catalogs:** Add other package source roots to [`srcPath`](/docs/usage/plugin#src-path) so all strings extract into the app. When [`messages.path`](/docs/usage/plugin#messages) is a single string, [`extract.path`](/docs/usage/plugin#extract) defaults to it.
+
+**Shared package catalogs:** Run [`unstable_extractMessages`](#manual) in the package (or keep translators’ files there). In the app, use [`messages.path`](/docs/usage/plugin#messages) as an array that lists every directory you import catalogs from (e.g. `./messages` and `../../packages/ui/messages`) so `.po` / custom formats get the loader. Set [`extract.path`](/docs/usage/plugin#extract) to the writable app folder. Merge objects in [`getRequestConfig`](/docs/usage/configuration#messages) if you load more than one file.
+
+E2e coverage for shared-package `.po` imports is planned as a follow-up.
 
 <Details id="manual">
 <summary>Can I extract messages manually?</summary>
@@ -103,7 +104,9 @@ await unstable_extractMessages({
   sourceLocale: 'en',
   messages: {
     path: './messages',
-    format: 'json',
+    format: 'json'
+  },
+  extract: {
     locales: 'infer'
   }
 });

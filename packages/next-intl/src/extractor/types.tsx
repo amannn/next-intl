@@ -19,19 +19,21 @@ export type ExtractorMessage = {
   [key: string]: unknown;
 };
 
-export type MessagesConfig = {
-  path: string;
+/** Writable catalog root + format; used by extraction and catalog loaders. */
+export type CatalogFormatConfig = {
   format: MessagesFormat;
-  locales: 'infer' | ReadonlyArray<Locale>;
   precompile?: boolean;
 };
 
 export type ExtractorConfig = {
   srcPath: string | Array<string>;
   sourceLocale: string;
-  messages: MessagesConfig;
+  /** Writable root where extracted catalogs are read and written. */
+  catalogPath: string;
+  locales: 'infer' | ReadonlyArray<Locale>;
+  messages: CatalogFormatConfig;
 };
 
 export type CatalogLoaderConfig = {
-  messages: MessagesConfig;
+  messages: CatalogFormatConfig;
 };
