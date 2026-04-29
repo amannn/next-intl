@@ -42,9 +42,8 @@ export default function Greeting() {
   );
 
   await page.goto('/');
-  const content = await expectCatalog(
-    'en.po',
-    (content) => content.includes('Newly extracted')
+  const content = await expectCatalog('en.po', (content) =>
+    content.includes('Newly extracted')
   );
   expect(content).toContain('Newly extracted');
 });
@@ -495,7 +494,7 @@ it('initializes all messages to empty string when adding new catalog', async ({
       getPoEntry(content, 'NhX4DJ') != null
   );
 
-  await using _ = await withTempFileApp('messages/fr.po', '');
+  await using _ = await withTempFileApp('messages/fr.po', '\n');
 
   await page.goto('/');
   await expectCatalog(
