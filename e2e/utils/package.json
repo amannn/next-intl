@@ -3,13 +3,7 @@
   "private": true,
   "type": "module",
   "exports": {
-    "./temp-files": "./src/temp-files.ts",
-    "./json-catalog": "./src/json-catalog.ts",
-    "./po-catalog": "./src/po-catalog.ts",
-    "./playwright-dev-port": "./src/playwright-dev-port.ts"
-  },
-  "dependencies": {
-    "get-port": "^7.2.0"
+    "./temp-files": "./src/temp-files.ts"
   },
   "peerDependencies": {
     "@playwright/test": "^1.0.0"

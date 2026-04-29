@@ -1,12 +1,8 @@
 import path from 'path';
 import {fileURLToPath} from 'url';
 import {expect, test as it} from '@playwright/test';
-import {createPoCatalogUtils, getPoEntry} from 'e2e-utils/po-catalog';
-import {
-  withTempEdit,
-  withTempFile,
-  withTempRemove
-} from 'e2e-utils/temp-files';
+import {createPoCatalogUtils, getPoEntry} from './catalog-utils.js';
+import {withTempEdit, withTempFile, withTempRemove} from 'e2e-utils/temp-files';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = path.join(__dirname, '..');

@@ -2,7 +2,6 @@ import fs from 'fs/promises';
 import path from 'path';
 import {expect} from '@playwright/test';
 
-/** Full PO entry block for msgid (refs + comment + msgctxt + msgid + msgstr) */
 export function getPoEntry(poContent: string, msgid: string): string | null {
   const blocks = poContent.split(/\n\n+/);
   const escaped = msgid.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

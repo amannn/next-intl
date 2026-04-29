@@ -2,12 +2,8 @@ import fs from 'fs/promises';
 import path from 'path';
 import {fileURLToPath} from 'url';
 import {expect, test as it} from '@playwright/test';
-import {createJsonCatalogUtils} from 'e2e-utils/json-catalog';
-import {
-  withTempEdit,
-  withTempFile,
-  withTempRemove
-} from 'e2e-utils/temp-files';
+import {createJsonCatalogUtils} from './catalog-utils.js';
+import {withTempEdit, withTempFile, withTempRemove} from 'e2e-utils/temp-files';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = path.join(__dirname, '..');
