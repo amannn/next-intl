@@ -44,6 +44,8 @@ jobs:
           key: ${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}
       - run: pnpm --filter example-app-router exec playwright install --with-deps
         if: steps.playwright-cache.outputs.cache-hit != 'true'
+      - run: pnpm --filter "./e2e/extracted-json" --filter "./e2e/extracted-po" exec playwright install --with-deps
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
 
       # Main tasks
       - run: pnpm turbo run lint build test size --affected

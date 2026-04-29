@@ -20,7 +20,9 @@ export function createJsonCatalogUtils(messagesDir: string) {
               return null;
             }
           },
-          opts?.timeout ? {timeout: opts.timeout} : undefined
+          opts?.timeout
+            ? {timeout: opts.timeout}
+            : {intervals: [100, 200, 500], timeout: 15_000}
         )
         .toMatchObject(expected);
       const content = await fs.readFile(filePath, 'utf-8');
@@ -29,19 +31,25 @@ export function createJsonCatalogUtils(messagesDir: string) {
 
     async expectCatalogPredicate(
       file: string,
-      predicate: (json: Record<string, unknown>) => boolean
+      predicate: (json: Record<string, unknown>) => boolean,
+      opts?: {timeout?: number}
     ): Promise<Record<string, unknown>> {
       const filePath = path.join(messagesDir, file);
       await expect
-        .poll(async () => {
-          try {
-            const content = await fs.readFile(filePath, 'utf-8');
-            const json = JSON.parse(content) as Record<string, unknown>;
-            return predicate(json);
-          } catch {
-            return false;
-          }
-        })
+        .poll(
+          async () => {
+            try {
+              const content = await fs.readFile(filePath, 'utf-8');
+              const json = JSON.parse(content) as Record<string, unknown>;
+              return predicate(json);
+            } catch {
+              return false;
+            }
+          },
+          opts?.timeout
+            ? {timeout: opts.timeout}
+            : {intervals: [100, 200, 500], timeout: 15_000}
+        )
         .toBe(true);
       const content = await fs.readFile(filePath, 'utf-8');
       return JSON.parse(content) as Record<string, unknown>;

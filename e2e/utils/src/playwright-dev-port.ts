@@ -3,23 +3,21 @@ import getPort from 'get-port';
 /**
  * Resolve one TCP port for Playwright `webServer.port` and `use.baseURL`.
  *
- * Playwright evaluates `playwright.config.ts` in separate Node processes (runner vs workers).
- * Plain `await getPort()` runs again in each process and yields different ports — the browser
- * then hits one port while Next listens on another. Workers cannot share in-memory variables,
- * but they inherit `process.env`, so the first evaluation reserves a port and persists it here;
- * later loads read the same value instead of allocating again.
+ * Playwright evaluates `playwright.config.ts` in separate processes (`fork`). A fresh `getPort()` in
+ * each process yields different ports → `baseURL` and the dev server disagree (`ERR_CONNECTION_REFUSED`).
  *
- * Still use `workers: 1`: parallel workers would each spawn their own webServer anyway.
+ * `process.env` is shared across `fork`'d children of the Playwright CLI, so persist the reservation
+ * in a runner-only-visible key for the remainder of that invocation (no leftover file across runs).
  */
 export async function reserveSharedPlaywrightDevPort(envVarKey: string): Promise<number> {
   const persisted = process.env[envVarKey];
 
   if (persisted !== undefined && persisted !== '') {
-    const port = Number(persisted);
-    if (!Number.isInteger(port)) {
+    const already = Number(persisted);
+    if (!Number.isInteger(already)) {
       throw new Error(`Invalid ${envVarKey}: "${persisted}"`);
     }
-    return port;
+    return already;
   }
 
   const port = await getPort({reserve: true});

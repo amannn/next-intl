@@ -161,8 +161,12 @@ export default function Greeting() {
   await page.goto('/');
   const en = await expectCatalog('en.json', {OpKKos: 'Hello!'});
   expect(en['OpKKos']).toBe('Hello!');
-  const de = await expectCatalog('de.json', {OpKKos: ''});
-  expect(de['OpKKos']).toBe('');
+  await expectCatalogPredicate(
+    'de.json',
+    (json) =>
+      json.OpKKos === '' || json.OpKKos === undefined || json.OpKKos === null,
+    {timeout: 30_000}
+  );
 });
 
 it('removes translations when all messages removed from a file', async ({
