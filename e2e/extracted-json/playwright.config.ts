@@ -1,19 +1,9 @@
 import {defineConfig, devices} from '@playwright/test';
-import getPort from 'get-port';
+import {reserveSharedPlaywrightDevPort} from 'e2e-utils/playwright-dev-port';
 
-/**
- * Playwright may load config in runner and worker processes — share one reservation via env.
- */
 const ENV_KEY = 'PW_E2E_EXTRACTED_JSON_DEV_PORT';
 
-const portString =
-  process.env[ENV_KEY] !== undefined && process.env[ENV_KEY] !== ''
-    ? process.env[ENV_KEY]
-    : String(await getPort({reserve: true}));
-
-process.env[ENV_KEY] = portString;
-
-const port = Number(portString);
+const port = await reserveSharedPlaywrightDevPort(ENV_KEY);
 
 export default defineConfig({
   workers: 1,

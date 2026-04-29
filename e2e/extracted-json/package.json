@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "lint": "eslint src tests playwright.config.ts && prettier src tests playwright.config.ts --check",
+    "lint": "eslint src tests && prettier . --check",
     "build": "next build",
     "start": "next start",
     "test": "playwright test"
@@ -24,7 +24,6 @@
     "@types/react-dom": "^19.2.3",
     "eslint": "^9.38.0",
     "eslint-config-next": "^16.0.10",
-    "get-port": "^7.2.0",
     "prettier": "^3.3.3",
     "typescript": "^5.5.3"
   },
