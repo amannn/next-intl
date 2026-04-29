@@ -1,20 +1,7 @@
 import {defineConfig, devices} from '@playwright/test';
+import {getOrReservePlaywrightDevPort} from 'e2e-utils/playwright-dev-port';
 
-function readDevPort(): number {
-  const env = process.env.E2E_PLAYWRIGHT_DEV_PORT;
-  if (!env) {
-    throw new Error(
-      'Missing E2E_PLAYWRIGHT_DEV_PORT. Run tests via package.json `"test"` (see e2e/utils/scripts/run-playwright-tests.mjs).'
-    );
-  }
-  const parsed = Number(env);
-  if (!Number.isInteger(parsed)) {
-    throw new Error(`Invalid E2E_PLAYWRIGHT_DEV_PORT: ${env}`);
-  }
-  return parsed;
-}
-
-const port = readDevPort();
+const port = await getOrReservePlaywrightDevPort();
 
 export default defineConfig({
   fullyParallel: false,
