@@ -1,0 +1,18 @@
+{
+  "name": "e2e-utils",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./temp-files": "./src/temp-files.ts",
+    "./playwright-dev-port": "./src/playwright-dev-port.ts"
+  },
+  "dependencies": {
+    "get-port": "^7.2.0"
+  },
+  "peerDependencies": {
+    "@playwright/test": "^1.0.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.51.1"
+  }
+}
