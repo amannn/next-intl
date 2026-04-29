@@ -1,19 +1,18 @@
 import path from 'path';
 import {fileURLToPath} from 'url';
 import {expect, test as it} from '@playwright/test';
+import {createPoCatalogUtils, getPoEntry} from 'e2e-utils/po-catalog';
 import {
-  createExtractionHelpers,
   withTempEdit,
   withTempFile,
   withTempRemove
-} from './helpers.js';
-import {getPoEntry} from './helpers.js';
+} from 'e2e-utils/temp-files';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = path.join(__dirname, '..');
 const MESSAGES_DIR = path.join(APP_ROOT, 'messages');
 
-const {expectCatalog} = createExtractionHelpers(MESSAGES_DIR);
+const {expectCatalog} = createPoCatalogUtils(MESSAGES_DIR);
 const withTempEditApp = (filePath: string, content: string) =>
   withTempEdit(APP_ROOT, filePath, content);
 const withTempFileApp = (filePath: string, content: string) =>

@@ -2,13 +2,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import {expect} from '@playwright/test';
 
-export {
-  withTempEdit,
-  withTempFile,
-  withTempRemove
-} from '../../extracted-json/tests/helpers.js';
-
-/** Extract full PO entry block for msgid (refs + comment + msgctxt + msgid + msgstr) */
+/** Full PO entry block for msgid (refs + comment + msgctxt + msgid + msgstr) */
 export function getPoEntry(poContent: string, msgid: string): string | null {
   const blocks = poContent.split(/\n\n+/);
   const escaped = msgid.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -16,7 +10,7 @@ export function getPoEntry(poContent: string, msgid: string): string | null {
   return block ? block.trim() : null;
 }
 
-export function createExtractionHelpers(messagesDir: string) {
+export function createPoCatalogUtils(messagesDir: string) {
   return {
     async expectCatalog(
       file: string,

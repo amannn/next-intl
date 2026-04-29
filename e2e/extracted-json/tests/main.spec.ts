@@ -2,19 +2,19 @@ import fs from 'fs/promises';
 import path from 'path';
 import {fileURLToPath} from 'url';
 import {expect, test as it} from '@playwright/test';
+import {createJsonCatalogUtils} from 'e2e-utils/json-catalog';
 import {
-  createExtractionHelpers,
   withTempEdit,
   withTempFile,
   withTempRemove
-} from './helpers.js';
+} from 'e2e-utils/temp-files';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = path.join(__dirname, '..');
 const MESSAGES_DIR = path.join(APP_ROOT, 'messages');
 
 const {expectCatalog, expectCatalogPredicate} =
-  createExtractionHelpers(MESSAGES_DIR);
+  createJsonCatalogUtils(MESSAGES_DIR);
 
 const withTempEditApp = (filePath: string, content: string) =>
   withTempEdit(APP_ROOT, filePath, content);

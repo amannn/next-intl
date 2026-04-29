@@ -7,15 +7,14 @@
     "lint": "eslint src && prettier src --check",
     "build": "next build",
     "start": "next start",
-    "test": "playwright test"
+    "test": "node ../utils/scripts/run-playwright-tests.mjs test"
   },
   "dependencies": {
-    "icu-minify": "workspace:^",
+    "e2e-utils": "workspace:*",
     "next": "^16.0.10",
     "next-intl": "workspace:*",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
-    "shared-ui": "workspace:*",
     "use-intl": "workspace:*"
   },
   "devDependencies": {

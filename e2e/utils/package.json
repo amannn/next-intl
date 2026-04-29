@@ -1,0 +1,19 @@
+{
+  "name": "e2e-utils",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./temp-files": "./src/temp-files.ts",
+    "./json-catalog": "./src/json-catalog.ts",
+    "./po-catalog": "./src/po-catalog.ts"
+  },
+  "dependencies": {
+    "get-port": "^7.2.0"
+  },
+  "peerDependencies": {
+    "@playwright/test": "^1.0.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.51.1"
+  }
+}
