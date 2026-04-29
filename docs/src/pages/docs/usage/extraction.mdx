@@ -64,12 +64,19 @@ const withNextIntl = createNextIntlPlugin({
     srcPath: './src',
 
     extract: {
+      // Defines which locale to extract to
       sourceLocale: 'en',
+
+      // Either 'infer' to automatically detect locales based on
+      // matching files in `path` or an explicit array of locales
       locales: 'infer'
     },
 
     messages: {
+      // Relative path to the directory
       path: './messages',
+
+      // Either 'json', 'po', or a custom format (see below)
       format: 'json'
     }
   }
@@ -83,14 +90,6 @@ With this, every time you call `next dev` or `next build`, messages will be extr
 
 See [`createNextIntlPlugin`](/docs/usage/plugin#extract) for details.
 
-## Monorepos
-
-**App-owned catalogs:** Add other package source roots to [`srcPath`](/docs/usage/plugin#src-path) so all strings extract into the app. When [`messages.path`](/docs/usage/plugin#messages) is a single string, [`extract.path`](/docs/usage/plugin#extract) defaults to it.
-
-**Shared package catalogs:** Run [`unstable_extractMessages`](#manual) in the package (or keep translators’ files there). In the app, use [`messages.path`](/docs/usage/plugin#messages) as an array that lists every directory you import catalogs from (e.g. `./messages` and `../../packages/ui/messages`) so `.po` / custom formats get the loader. Set [`extract.path`](/docs/usage/plugin#extract) to the writable app folder. Merge objects in [`getRequestConfig`](/docs/usage/configuration#messages) if you load more than one file.
-
-E2e coverage for shared-package `.po` imports is planned as a follow-up.
-
 <Details id="manual">
 <summary>Can I extract messages manually?</summary>
 
@@ -101,13 +100,13 @@ import {unstable_extractMessages} from 'next-intl/extractor';
 
 await unstable_extractMessages({
   srcPath: './src',
-  sourceLocale: 'en',
+  extract: {
+    sourceLocale: 'en',
+    locales: 'infer'
+  },
   messages: {
     path: './messages',
-    format: 'json'
-  },
-  extract: {
-    locales: 'infer'
+    format: 'po'
   }
 });
 
@@ -115,6 +114,8 @@ console.log('✔ Messages extracted');
 ```
 
 This can be useful when you're developing a package like a component library, where you don't have a Next.js dev server running and you want to provide messages along with the package.
+
+See also: [Monorepos and external packages](#external-packages-apps)
 
 </Details>
 
@@ -281,3 +282,89 @@ Messages can be extracted as [`.json`](/docs/usage/plugin#formats-json), [`.po`]
 AI-based translation can be automated with a translation management system like [Crowdin](/docs/workflows/localization-management).
 
 </Callout>
+
+## Monorepos and external packages [#external-packages-apps]
+
+Whenever your app pulls in external modules that call `useExtracted`, whether it's a sibling package in your monorepo or a reusable library installed in `node_modules`, there are two typical setups you can choose from.
+
+### 1. Don’t ship messages with the external package
+
+Some teams use monorepos and external packages purely for organizational benefits, but there's only one "entry point" in the sense that there's a single Next.js app that will eventually be deployed and makes use of all packages.
+
+Here, you can configure a [`srcPath`](/docs/usage/plugin#src-path) that includes the external package's source directory:
+
+```tsx
+const withNextIntl = createNextIntlPlugin({
+  experimental: {
+    srcPath: ['./src', '../ui/src', './node_modules/@acme/components']
+    // ...
+  }
+});
+```
+
+This will extract both first party and external package messages to your main app directory.
+
+### 2. Ship messages with the external package
+
+If your shared package is used by multiple apps, you might want to reuse all messages among all consumers.
+
+For this, you can use one-time extraction via [`unstable_extractMessages`](/docs/usage/extraction#manual) as part of your build process to extract the shared messages:
+
+```tsx
+import {unstable_extractMessages} from 'next-intl/extractor';
+
+await unstable_extractMessages({
+  srcPath: './src',
+  extract: {
+    sourceLocale: 'en',
+    locales: 'infer'
+  },
+  messages: {
+    path: './messages',
+    format: 'po'
+  }
+});
+```
+
+In the consuming app, you can configure [`messages.path`](/docs/usage/plugin#messages) to include the external package's messages:
+
+```tsx filename="next.config.ts" {8-9,13-19}
+const withNextIntl = createNextIntlPlugin({
+  experimental: {
+    srcPath: './src',
+    extract: {
+      sourceLocale: 'en',
+      locales: 'infer',
+
+      // Extract first-party messages here
+      path: './messages'
+    },
+
+    messages: {
+      // Consider both first-party messages and external ones
+      // (e.g. for transformation of .po files)
+      path: [
+        './messages',
+        '../ui/messages',
+        './node_modules/@acme/components/messages'
+      ],
+
+      // Depends on your preference
+      format: 'po'
+    }
+  }
+});
+```
+
+Additionally, you should use [`transpilePackages`](https://nextjs.org/docs/app/api-reference/config/next-config-js/transpilePackages) so that `useExtracted` is compiled to `useTranslations` in the external packages:
+
+```tsx filename="next.config.ts"
+const nextConfig = {
+  // ...
+  transpilePackages: ['@acme/ui', '@acme/components']
+};
+
+// ...
+```
+
+Afterwards, you can merge first-party messages with external ones in [`getRequestConfig`](/docs/usage/configuration#messages).

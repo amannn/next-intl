@@ -64,77 +64,92 @@ See [TypeScript augmentation](/docs/workflows/typescript) to learn more about th
 
 ### `extract` [#extract]
 
-This enables [`useExtracted`](/docs/usage/extraction). Use it together with [`messages`](#messages) and [`srcPath`](#src-path).
-
-- `sourceLocale` — locale new source strings are written to
-- `path` — writable catalog directory for extraction (reads existing files here, writes updates). If [`messages.path`](#messages) is a single string, this defaults to that value. **Required** when `messages.path` is an array
-- `locales` — target locales kept in sync with `sourceLocale`, or `'infer'` from files in `path` (excluding `sourceLocale`)
-
-`messages.locales` is deprecated but still supported; use `extract.locales`. In `next dev` / `next build`, the plugin warns once if you still use `messages.locales`.
+This enables the usage of [`useExtracted`](/docs/usage/extraction) to automatically extract messages from source files.
 
 ```tsx
 const withNextIntl = createNextIntlPlugin({
   experimental: {
-    srcPath: './src',
     extract: {
       sourceLocale: 'en',
-      path: './messages',
       locales: 'infer'
-    },
-    messages: {
-      path: ['./messages', '../../packages/ui/messages'],
-      format: 'po'
     }
+    // ...
   }
 });
 ```
 
-When `messages.path` is only your app folder, you can omit `extract.path`:
+**Note:** The `extract` option should be used together with [`messages`](#messages) and [`srcPath`](#src-path).
+
+#### `extract.sourceLocale` [#extract-source-locale]
+
+Locale to which extracted source strings are written.
+
+#### `extract.locales` [#extract-locales]
+
+This defines which messages are kept in sync during extraction (e.g. `en.json`, `de.json`, …).
+
+You can either automatically detect all locales within `path`:
 
 ```tsx
-extract: {
-  sourceLocale: 'en',
-  locales: 'infer'
-},
-messages: {
-  path: './messages',
-  format: 'po'
-}
+// ...
+locales: 'infer';
+```
+
+… or specify them explicitly (e.g. to use a subset):
+
+```tsx
+// ...
+locales: ['en', 'de', 'fr'];
+```
+
+#### `extract.path` [#extract-path]
+
+Defines which directory to extract messages to (defaults to `messages.path`).
+
+```tsx
+// ...
+path: './messages';
 ```
 
 ### `messages` [#messages]
 
-Catalog **loading**: relative path(s) whose files may be imported into the app. The bundler registers a loader for [`format`](#format) under these roots (needed for `.po` and custom formats; `.json` is built-in). This is separate from [`extract.path`](#extract), which is only the **writable** directory used when extracting.
+This defines where messages for locales are stored and how they're loaded.
 
 ```tsx
 const withNextIntl = createNextIntlPlugin({
   experimental: {
     messages: {
-      format: 'json',
       path: './messages',
+      format: 'json',
+
+      // Optional
       precompile: true
     }
   }
 });
 ```
 
-Configuring `experimental.messages` sets up the Turbo- or Webpack loader (see [`format`](#format)).
+Configuring `experimental.messages` sets up a Turbo- or Webpack loader that allows messages to be imported as plain JavaScript objects (see [`format`](#format)).
 
-#### `path`
+#### `messages.path`
 
-One directory, or several (e.g. app plus a package that ships `.po` files):
+Relative path to the directory containing messages:
 
 ```tsx
+// ...
 path: './messages';
 ```
 
+If you're loading messages from external packages, you can include multiple paths:
+
 ```tsx
-path: ['./messages', '../../packages/ui/messages'];
+// ...
+path: ['./messages', '../packages/ui/messages'];
 ```
 
-If you use [`extract`](#extract) and pass an array here, you must set `extract.path` to the catalog directory you want extraction to write to.
+See also: [Monorepos and external packages](/docs/usage/extraction#external-packages-apps)
 
-#### `format`
+#### `messages.format`
 
 Defines how your catalogs are stored (e.g. `'json'`, `'po'`, or a custom format).
 
@@ -232,7 +247,7 @@ Node.js supports native TypeScript execution like it's needed for the example ab
 
 </Callout>
 
-#### `precompile`
+#### `messages.precompile`
 
 As a performance optimization, you can achieve smaller bundles and faster message formatting at runtime by precompiling messages ahead of time during the build:
 
