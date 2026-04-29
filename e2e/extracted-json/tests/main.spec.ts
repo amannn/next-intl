@@ -136,39 +136,6 @@ export default function Greeting() {
     .toBe(true);
 });
 
-it('resets translations when a message changes', async ({page}) => {
-  await page.goto('/');
-  await expectCatalog('en.json', {'+YJVTi': 'Hey!'});
-
-  await using _ = await withTempFileApp(
-    'messages/de.json',
-    '{"+YJVTi": "Hallo"}'
-  );
-
-  await using __ = await withTempEditApp(
-    'src/components/Greeting.tsx',
-    `'use client';
-
-import {useExtracted} from 'next-intl';
-
-export default function Greeting() {
-  const t = useExtracted();
-  return <div>{t('Hello!')}</div>;
-}
-`
-  );
-
-  await page.goto('/');
-  const en = await expectCatalog('en.json', {OpKKos: 'Hello!'});
-  expect(en['OpKKos']).toBe('Hello!');
-  await expectCatalogPredicate(
-    'de.json',
-    (json) =>
-      json.OpKKos === '' || json.OpKKos === undefined || json.OpKKos === null,
-    {timeout: 30_000}
-  );
-});
-
 it('removes translations when all messages removed from a file', async ({
   page
 }) => {

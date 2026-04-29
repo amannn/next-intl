@@ -276,6 +276,49 @@ describe('json format', () => {
     expect(messageValues).toContain('Message3');
   });
 
+  it('resets target-locale translation when source message id changes (was e2e; covered here to avoid dev-server flake)', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hey!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.json': '{"+YJVTi": "Hey!"}'
+    };
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+    await waitForWriteFileCalls(1);
+
+    filesystem.project.messages!['de.json'] = '{"+YJVTi": "Hallo"}';
+    simulateFileEvent('/project/messages', 'rename', 'de.json');
+    await sleep(50);
+
+    await simulateSourceFileUpdate(
+      '/project/src/Greeting.tsx',
+      `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    `
+    );
+
+    await vi.waitFor(() => {
+      const en = JSON.parse(filesystem.project.messages!['en.json']);
+      expect(en).toMatchObject({OpKKos: 'Hello!'});
+      const de = JSON.parse(filesystem.project.messages!['de.json']);
+      const reset =
+        de.OpKKos === '' ||
+        de.OpKKos === undefined ||
+        Object.prototype.hasOwnProperty.call(de, 'OpKKos') === false;
+      expect(reset).toBe(true);
+    });
+  });
+
   it('omits file with parse error during initial scan but continues processing others (dev)', async () => {
     filesystem.project.src['Valid.tsx'] = `
     import {useExtracted} from 'next-intl';
