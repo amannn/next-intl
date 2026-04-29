@@ -4,12 +4,12 @@ import {unstable_extractMessages} from 'next-intl/extractor';
 // and `next build`, you can also run it manually.
 await unstable_extractMessages({
   srcPath: './src',
-  sourceLocale: 'en',
   messages: {
     path: './messages',
     format: 'po'
   },
   extract: {
+    sourceLocale: 'en',
     locales: 'infer'
   }
 });

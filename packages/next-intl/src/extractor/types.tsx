@@ -19,9 +19,11 @@ export type ExtractorMessage = {
   [key: string]: unknown;
 };
 
-/** Writable catalog root + format; used by extraction and catalog loaders. */
-export type CatalogFormatConfig = {
+export type ExtractorMessagesConfig = {
   format: MessagesFormat;
+};
+
+export type CatalogFormatConfig = ExtractorMessagesConfig & {
   precompile?: boolean;
 };
 
@@ -31,7 +33,7 @@ export type ExtractorConfig = {
   /** Writable root where extracted catalogs are read and written. */
   catalogPath: string;
   locales: 'infer' | ReadonlyArray<Locale>;
-  messages: CatalogFormatConfig;
+  messages: ExtractorMessagesConfig;
 };
 
 export type CatalogLoaderConfig = {

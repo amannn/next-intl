@@ -2,7 +2,7 @@ import ExtractionCompiler from '../../extractor/ExtractionCompiler.js';
 import normalizeExtractorConfig from '../../extractor/normalizeExtractorConfig.js';
 import {isDevelopment, isNextBuild} from '../config.js';
 import type {PluginConfig} from '../types.js';
-import {once, warn} from '../utils.js';
+import {once} from '../utils.js';
 
 // Single compiler instance, initialized once per process
 let compiler: ExtractionCompiler | undefined;
@@ -32,26 +32,15 @@ export default function initExtractionCompiler(pluginConfig: PluginConfig) {
 
   runOnce(() => {
     const exp = pluginConfig.experimental!;
-    const extractorConfig = normalizeExtractorConfig(
-      {
-        srcPath: exp.srcPath!,
+    const extractorConfig = normalizeExtractorConfig({
+      srcPath: exp.srcPath!,
+      messages: exp.messages!,
+      extract: {
         sourceLocale: exp.extract!.sourceLocale,
-        messages: exp.messages!,
-        extract: {
-          path: exp.extract!.path,
-          locales: exp.extract!.locales
-        }
-      },
-      isDevelopment || isNextBuild
-        ? {
-            warnLocalesDeprecation() {
-              warn(
-                '`experimental.messages.locales` is deprecated. Use `experimental.extract.locales` instead.'
-              );
-            }
-          }
-        : undefined
-    );
+        path: exp.extract!.path,
+        locales: exp.extract!.locales
+      }
+    });
 
     compiler = new ExtractionCompiler(extractorConfig, {
       isDevelopment,

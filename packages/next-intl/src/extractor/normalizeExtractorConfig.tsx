@@ -1,4 +1,4 @@
-import {throwError} from '../plugin/utils.js';
+import {throwError, warn} from '../plugin/utils.js';
 import type {MessagesFormat} from './format/types.js';
 import type {ExtractorConfig, Locale} from './types.js';
 
@@ -8,28 +8,24 @@ function stripTrailingSlash(dirPath: string): string {
 
 export type ExtractorInput = {
   srcPath: string | Array<string>;
-  sourceLocale: string;
+  /**
+   * @deprecated Use `extract.sourceLocale`
+   */
+  sourceLocale?: string;
   messages: {
     path: string | Array<string>;
     format: MessagesFormat;
     /** @deprecated Use `extract.locales` instead. */
     locales?: 'infer' | ReadonlyArray<Locale>;
-    precompile?: boolean;
   };
   extract?: {
+    sourceLocale?: string;
     path?: string;
     locales?: 'infer' | ReadonlyArray<Locale>;
   };
 };
 
-export type NormalizeExtractorOptions = {
-  warnLocalesDeprecation?(): void;
-};
-
-export default function normalizeExtractorConfig(
-  input: ExtractorInput,
-  options?: NormalizeExtractorOptions
-): ExtractorConfig {
+export default function normalizeExtractorConfig(input: ExtractorInput): ExtractorConfig {
   if (input.extract?.locales != null && input.messages.locales != null) {
     throwError(
       'Use either `extract.locales` or `messages.locales`, not both. Prefer `extract.locales`.'
@@ -44,7 +40,30 @@ export default function normalizeExtractorConfig(
   }
 
   if (input.messages.locales != null) {
-    options?.warnLocalesDeprecation?.();
+    warn(
+      '`messages.locales` is deprecated. Prefer `extract.locales` (`experimental.extract.locales` alongside `experimental.extract.sourceLocale` when using createNextIntlPlugin).'
+    );
+  }
+
+  const sourceLocale: string | undefined =
+    input.extract?.sourceLocale ?? input.sourceLocale;
+
+  const hasRootLocale = input.sourceLocale != null;
+  const hasNestedLocale = input.extract?.sourceLocale != null;
+  if (hasRootLocale && hasNestedLocale) {
+    if (input.extract!.sourceLocale !== input.sourceLocale) {
+      throwError(
+        'Conflicting `sourceLocale` and `extract.sourceLocale` — specify only `extract.sourceLocale`.'
+      );
+    }
+  }
+
+  const resolvedSourceLocale = sourceLocale?.trim();
+
+  if (resolvedSourceLocale == null || resolvedSourceLocale === '') {
+    throwError(
+      '`extract.sourceLocale` is required (same nesting as experimental.extract.sourceLocale next to experimental.messages and experimental.srcPath when using createNextIntlPlugin). Legacy root-level sourceLocale remains supported temporarily.'
+    );
   }
 
   const messagePath = input.messages.path;
@@ -74,14 +93,11 @@ export default function normalizeExtractorConfig(
 
   return {
     srcPath: input.srcPath,
-    sourceLocale: input.sourceLocale,
+    sourceLocale: resolvedSourceLocale,
     catalogPath,
     locales,
     messages: {
-      format: input.messages.format,
-      ...(input.messages.precompile !== undefined && {
-        precompile: input.messages.precompile
-      })
+      format: input.messages.format
     }
   };
 }

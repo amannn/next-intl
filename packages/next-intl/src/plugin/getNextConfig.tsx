@@ -15,7 +15,7 @@ import type {CatalogLoaderConfig, ExtractorConfig} from '../extractor/types.js';
 import {isDevelopmentOrNextBuild} from './config.js';
 import {hasStableTurboConfig, isNextJs16OrHigher} from './nextFlags.js';
 import type {PluginConfig} from './types.js';
-import {throwError, warn} from './utils.js';
+import {throwError} from './utils.js';
 
 const require = createRequire(import.meta.url);
 function withExtensions(localPath: string) {
@@ -122,26 +122,15 @@ export default function getNextConfig(
     ) {
       throwError('`srcPath` and `messages` are required when using `extract`.');
     }
-    extractorRuntimeConfig = normalizeExtractorConfig(
-      {
-        srcPath: pluginConfig.experimental.srcPath,
+    extractorRuntimeConfig = normalizeExtractorConfig({
+      srcPath: pluginConfig.experimental.srcPath,
+      messages: pluginConfig.experimental.messages,
+      extract: {
         sourceLocale: pluginConfig.experimental.extract.sourceLocale,
-        messages: pluginConfig.experimental.messages,
-        extract: {
-          path: pluginConfig.experimental.extract.path,
-          locales: pluginConfig.experimental.extract.locales
-        }
-      },
-      isDevelopmentOrNextBuild
-        ? {
-            warnLocalesDeprecation() {
-              warn(
-                '`experimental.messages.locales` is deprecated. Use `experimental.extract.locales` instead.'
-              );
-            }
-          }
-        : undefined
-    );
+        path: pluginConfig.experimental.extract.path,
+        locales: pluginConfig.experimental.extract.locales
+      }
+    });
   }
 
   function getExtractMessagesLoaderConfig() {

@@ -39,10 +39,12 @@ describe('json format', () => {
     return new ExtractionCompiler(
       normalizeExtractorConfig({
         srcPath: './src',
-        sourceLocale: 'en',
         messages: {
           path: './messages',
-          format: 'json',
+          format: 'json'
+        },
+        extract: {
+          sourceLocale: 'en',
           locales: 'infer'
         }
       }),
@@ -641,10 +643,12 @@ describe('json format', () => {
     using compiler = new ExtractionCompiler(
       normalizeExtractorConfig({
         srcPath: './src',
-        sourceLocale: 'en',
         messages: {
           path: './messages',
-          format: 'json',
+          format: 'json'
+        },
+        extract: {
+          sourceLocale: 'en',
           locales: ['de', 'fr']
         }
       }),
@@ -1029,10 +1033,12 @@ describe('po format', () => {
     return new ExtractionCompiler(
       normalizeExtractorConfig({
         srcPath: './src',
-        sourceLocale: 'en',
         messages: {
           path: './messages',
-          format: 'po',
+          format: 'po'
+        },
+        extract: {
+          sourceLocale: 'en',
           locales: 'infer'
         }
       }),
@@ -1375,7 +1381,7 @@ describe('po format', () => {
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #. Description from FileZ
+      #. Description from FileY
       #: src/FileY.tsx:5
       #: src/FileZ.tsx:7
       #: src/FileZ.tsx:8
@@ -1615,10 +1621,12 @@ describe('po format', () => {
     using compiler = new ExtractionCompiler(
       normalizeExtractorConfig({
         srcPath: './src',
-        sourceLocale: 'en',
         messages: {
           path: './messages',
-          format: 'po',
+          format: 'po'
+        },
+        extract: {
+          sourceLocale: 'en',
           locales: 'infer'
         }
       }),
@@ -1745,10 +1753,12 @@ describe('po format', () => {
     using compiler = new ExtractionCompiler(
       normalizeExtractorConfig({
         srcPath: './src',
-        sourceLocale: 'en',
         messages: {
           path: './messages',
-          format: 'po',
+          format: 'po'
+        },
+        extract: {
+          sourceLocale: 'en',
           locales: 'infer'
         }
       }),
@@ -3078,10 +3088,12 @@ describe('`srcPath` filtering', () => {
     return new ExtractionCompiler(
       normalizeExtractorConfig({
         srcPath,
-        sourceLocale: 'en',
         messages: {
           path: './messages',
-          format: 'json',
+          format: 'json'
+        },
+        extract: {
+          sourceLocale: 'en',
           locales: 'infer'
         }
       }),
@@ -3155,7 +3167,6 @@ describe('custom format', () => {
     using compiler = new ExtractionCompiler(
       normalizeExtractorConfig({
         srcPath: './src',
-        sourceLocale: 'en',
         messages: {
           path: './messages',
           format: {
@@ -3164,7 +3175,10 @@ describe('custom format', () => {
               'format/codecs/fixtures/JSONCodecStructured.tsx'
             ),
             extension: '.json'
-          },
+          }
+        },
+        extract: {
+          sourceLocale: 'en',
           locales: 'infer'
         }
       }),
@@ -3222,7 +3236,6 @@ describe('custom format', () => {
     using compiler = new ExtractionCompiler(
       normalizeExtractorConfig({
         srcPath: './src',
-        sourceLocale: 'en',
         messages: {
           path: './messages',
           format: {
@@ -3231,7 +3244,10 @@ describe('custom format', () => {
               'format/codecs/fixtures/POCodecSourceMessageKey.tsx'
             ),
             extension: '.po'
-          },
+          }
+        },
+        extract: {
+          sourceLocale: 'en',
           locales: 'infer'
         }
       }),
