@@ -25,7 +25,9 @@ export type ExtractorInput = {
   };
 };
 
-export default function normalizeExtractorConfig(input: ExtractorInput): ExtractorConfig {
+export default function normalizeExtractorConfig(
+  input: ExtractorInput
+): ExtractorConfig {
   if (input.extract?.locales != null && input.messages.locales != null) {
     throwError(
       'Use either `extract.locales` or `messages.locales`, not both. Prefer `extract.locales`.'
