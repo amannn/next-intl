@@ -1,7 +1,8 @@
 import {cache} from 'react';
+import {createTranslator} from 'use-intl/core';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 import {renderToStream} from './testUtils.js';
-import {createTranslator, useTranslations} from './index.js';
+import {useTranslations} from './index.js';
 
 vi.mock('../../src/server/react-server/createRequestConfig', () => ({
   default: async () => ({
@@ -213,7 +214,7 @@ describe('performance', () => {
       return vi
         .mocked(createTranslator)
         .mock.calls.filter(
-          ([{namespace: _namespace}]) => _namespace === namespace
+          ([callConfig]) => callConfig.namespace === namespace
         );
     }
 

@@ -25,7 +25,6 @@ function getServerExtractorImpl(
       undefined,
       values,
       formats,
-      // @ts-expect-error -- Secret fallback parameter
       process.env.NODE_ENV !== 'production' ? message : undefined
     );
   }
@@ -37,7 +36,6 @@ function getServerExtractorImpl(
       undefined,
       values,
       formats,
-      // @ts-expect-error -- Secret fallback parameter
       process.env.NODE_ENV !== 'production' ? message : undefined
     );
   };
@@ -49,7 +47,6 @@ function getServerExtractorImpl(
       undefined,
       values,
       formats,
-      // @ts-expect-error -- Secret fallback parameter
       process.env.NODE_ENV !== 'production' ? message : undefined
     );
   };
