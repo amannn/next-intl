@@ -63,8 +63,7 @@ describe('getTranslations', () => {
     expect(
       t.rich('rich', {
         name: 'Example',
-        link: (chunks: Array<unknown>) =>
-          `<a href="https://example.com">${chunks}</a>`
+        link: (chunks) => `<a href="https://example.com">${chunks}</a>`
       })
     ).toBe('<a href="https://example.com">Example</a>');
   });
@@ -81,6 +80,7 @@ describe('getTranslations', () => {
     // Valid
     t('About.basic');
 
+    // @ts-expect-error Invalid argument
     t(2);
   }
 });
@@ -108,6 +108,7 @@ describe('getFormatter', () => {
     // Valid
     format.dateTime(date, {dateStyle: 'full'});
 
+    // @ts-expect-error Invalid argument
     format.dateTime(date, {dateStyle: 'unknown'});
   }
 });
@@ -130,6 +131,7 @@ describe('getNow', () => {
     // Valid
     now.toISOString();
 
+    // @ts-expect-error Invalid argument
     now.unknown();
   }
 });
@@ -147,6 +149,7 @@ describe('getMessages', () => {
   async function TypeTests() {
     const messages = await getMessages();
 
+    // @ts-expect-error
     messages();
 
     // Valid
@@ -170,6 +173,7 @@ describe('getTimeZone', () => {
     // Valid
     timeZone.toUpperCase();
 
+    // @ts-expect-error Invalid argument
     timeZone.unknown();
   }
 });
