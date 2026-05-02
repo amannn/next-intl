@@ -2,6 +2,7 @@
 .DS_Store
 node_modules/
 .vscode
+.idea
 .vercel
 .turbo/
 dist/
