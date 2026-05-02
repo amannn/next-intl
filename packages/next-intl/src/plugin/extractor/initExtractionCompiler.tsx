@@ -25,9 +25,10 @@ export default function initExtractionCompiler(pluginConfig: PluginConfig) {
   // - lint
   //
   // What remains are:
-  // - dev (NODE_ENV=development)
+  // - dev (NODE_ENV=development), skipped when devExtraction is false
   // - build (NODE_ENV=production)
-  const shouldRun = isDevelopment || isNextBuild;
+  const devExtraction = experimental.extract?.devExtraction !== false;
+  const shouldRun = (isDevelopment && devExtraction) || isNextBuild;
   if (!shouldRun) return;
 
   runOnce(() => {
