@@ -48,7 +48,7 @@ function getArgs<
     message = messageOrParams.message;
     values = messageOrParams.values;
     formats = messageOrParams.formats;
-    // `description` is is not used at runtime
+    // `description` is not used at runtime
   }
   // @ts-expect-error -- Secret fallback parameter
   return [

@@ -32,7 +32,7 @@ export type PluginConfig = {
       /**
        * Locales kept in sync with [`extract.sourceLocale`](/docs/usage/plugin#extract).
        */
-      locales?: 'infer' | ReadonlyArray<string>;
+      locales: 'infer' | ReadonlyArray<string>;
     };
   };
 };

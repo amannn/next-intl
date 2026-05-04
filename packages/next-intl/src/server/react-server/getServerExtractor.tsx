@@ -18,6 +18,12 @@ function getServerExtractorImpl(
 ) {
   const t = getServerTranslator(config, namespace);
 
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error(
+      '[next-intl] `useExtracted` was called in production without compilation. Include modules that call `useExtracted` in `srcPath` and use `transpilePackages` for 3rd-party packages.'
+    );
+  }
+
   function translateFn(
     ...[message, values, formats]: Parameters<Return>
   ): string {
@@ -26,7 +32,7 @@ function getServerExtractorImpl(
       values,
       formats,
       // @ts-expect-error -- Secret fallback parameter
-      process.env.NODE_ENV !== 'production' ? message : undefined
+      message
     );
   }
 
@@ -38,7 +44,7 @@ function getServerExtractorImpl(
       values,
       formats,
       // @ts-expect-error -- Secret fallback parameter
-      process.env.NODE_ENV !== 'production' ? message : undefined
+      message
     );
   };
 
@@ -50,7 +56,7 @@ function getServerExtractorImpl(
       values,
       formats,
       // @ts-expect-error -- Secret fallback parameter
-      process.env.NODE_ENV !== 'production' ? message : undefined
+      message
     );
   };
 
