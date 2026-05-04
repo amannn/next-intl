@@ -41,7 +41,7 @@ describe('getSortedMessages', () => {
     ).toEqual(['a', 'b', 'c']);
   });
 
-  it('preserves original order when reference paths and lines match', () => {
+  it('uses id as tiebreaker when reference paths and lines match', () => {
     expect(
       getSortedMessages([
         {
@@ -60,7 +60,17 @@ describe('getSortedMessages', () => {
           references: [{path: 'components/A.tsx', line: 10}]
         }
       ]).map((message) => message.id)
-    ).toEqual(['c', 'a', 'b']);
+    ).toEqual(['a', 'b', 'c']);
+  });
+
+  it('uses id as tiebreaker when references are missing', () => {
+    expect(
+      getSortedMessages([
+        {id: 'c', message: 'c'},
+        {id: 'a', message: 'a'},
+        {id: 'b', message: 'b'}
+      ]).map((message) => message.id)
+    ).toEqual(['a', 'b', 'c']);
   });
 });
 

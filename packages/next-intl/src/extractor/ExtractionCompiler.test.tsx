@@ -1165,6 +1165,10 @@ msgstr ""
       msgstr "Hallo!"
 
       #: src/Greeting.tsx:5
+      msgid "I5NMJ8"
+      msgstr ""
+
+      #: src/Greeting.tsx:5
       msgid "jqdzk6"
       msgstr ""
 
@@ -1174,10 +1178,6 @@ msgstr ""
 
       #: src/Greeting.tsx:5
       msgid "pE58D7"
-      msgstr ""
-
-      #: src/Greeting.tsx:5
-      msgid "I5NMJ8"
       msgstr ""
       ",
       ]
