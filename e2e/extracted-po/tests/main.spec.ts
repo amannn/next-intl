@@ -78,6 +78,37 @@ export default function Greeting() {
   expect(greetingRefs.length).toBeGreaterThanOrEqual(2);
 });
 
+it('orders tied messages by id', async ({page}) => {
+  // Two distinct messages on the same line tie on `references[0]`.
+  // 'apple' hashes to "hE2HeR" and 'banana' to "+OMYPT", so localeCompare
+  // sorts banana before apple — opposite to source order. Without the id
+  // tiebreaker the catalog preserves source order (apple first); with it,
+  // banana wins.
+  await using _ = await withTempEditApp(
+    'src/components/Greeting.tsx',
+    `'use client';
+
+import {useExtracted} from 'next-intl';
+
+export default function Greeting() {
+  const t = useExtracted();
+  return <div>{t('apple')}{t('banana')}</div>;
+}
+`
+  );
+
+  await page.goto('/');
+  const content = await expectCatalog(
+    'en.po',
+    (c) => c.includes('msgid "+OMYPT"') && c.includes('msgid "hE2HeR"'),
+    {timeout: 15_000}
+  );
+
+  const bananaPos = content.indexOf('msgid "+OMYPT"');
+  const applePos = content.indexOf('msgid "hE2HeR"');
+  expect(bananaPos).toBeLessThan(applePos);
+});
+
 it("saves catalog when it's missing", async ({page}) => {
   await page.goto('/');
   await expectCatalog(

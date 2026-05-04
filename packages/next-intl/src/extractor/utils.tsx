@@ -55,11 +55,16 @@ export function getSortedMessages(
     const refA = messageA.references?.[0];
     const refB = messageB.references?.[0];
 
-    // No references: preserve original (extraction) order
-    if (!refA || !refB) return 0;
+    if (refA && refB) {
+      const refCompare = compareReferences(refA, refB);
+      if (refCompare !== 0) return refCompare;
+    }
 
-    // Sort by path, then line. Same path+line: preserve original order
-    return compareReferences(refA, refB);
+    // Tiebreaker for messages tied on (or missing) `references[0]`. Without
+    // this, the sort falls back to insertion order in `messagesById`, which
+    // is non-deterministic because source files are scanned via `fs.readdir`
+    // and processed concurrently.
+    return localeCompare(messageA.id, messageB.id);
   });
 }
 
