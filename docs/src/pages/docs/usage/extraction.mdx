@@ -273,7 +273,7 @@ it('renders', () => {
 
 ## Formats [#formats]
 
-Messages can be extracted as [`.json`](/docs/usage/plugin#formats-json), [`.po`](/docs/usage/plugin#formats-po), or with [custom file formats](/docs/usage/plugin#formats-custom)—see [`messages.format`](/docs/usage/plugin#format) for configuration details.
+Messages can be extracted as [`.json`](/docs/usage/plugin#formats-json), [`.po`](/docs/usage/plugin#formats-po), or with [custom file formats](/docs/usage/plugin#formats-custom)—see [`messages.format`](/docs/usage/plugin#messages-format) for configuration details.
 
 **Recommendation:** As keys are auto-generated with `useExtracted`, it's recommended to use **PO files** as they support providing more context about a message like file references and descriptions. This can be helpful for (AI) translators.
 
@@ -335,7 +335,7 @@ await unstable_extractMessages({
 });
 ```
 
-In the consuming app, you can configure [`messages.path`](/docs/usage/plugin#messages) to include the external package's messages:
+In the consuming app, you configure set [`extract.path`](/docs/usage/plugin#extract-path) to only consider your first-party messages, while using [`messages.path`](/docs/usage/plugin#messages-path) to include the external package's messages:
 
 ```tsx filename="next.config.ts"
 const withNextIntl = createNextIntlPlugin({

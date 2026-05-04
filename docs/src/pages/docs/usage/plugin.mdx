@@ -129,9 +129,9 @@ const withNextIntl = createNextIntlPlugin({
 });
 ```
 
-Configuring `experimental.messages` sets up a Turbo- or Webpack loader that allows messages to be imported as plain JavaScript objects (see [`format`](#format)).
+Configuring `experimental.messages` sets up a Turbo- or Webpack loader that allows messages to be imported as plain JavaScript objects (see [`format`](#messages-format)).
 
-#### `messages.path`
+#### `messages.path` [#messages-path]
 
 Relative path to the directory containing messages:
 
@@ -149,7 +149,7 @@ path: ['./messages', '../packages/ui/messages'];
 
 See also: [Monorepos and external packages](/docs/usage/extraction#monorepos-external-packages)
 
-#### `messages.format`
+#### `messages.format` [#messages-format]
 
 Defines how your catalogs are stored (e.g. `'json'`, `'po'`, or a custom format).
 
@@ -247,7 +247,7 @@ Node.js supports native TypeScript execution like it's needed for the example ab
 
 </Callout>
 
-#### `messages.precompile`
+#### `messages.precompile` [#messages-precompile]
 
 As a performance optimization, you can achieve smaller bundles and faster message formatting at runtime by precompiling messages ahead of time during the build:
 
