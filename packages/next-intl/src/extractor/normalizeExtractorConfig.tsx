@@ -1,32 +1,12 @@
 import {throwError, warn} from '../plugin/utils.js';
-import type {MessagesFormat} from './format/types.js';
-import type {ExtractorConfig, Locale} from './types.js';
+import type {ExtractorConfig, ExtractorConfigInput} from './types.js';
 
 function stripTrailingSlash(dirPath: string): string {
   return dirPath.replace(/\/+$/, '');
 }
 
-export type ExtractorInput = {
-  srcPath: string | Array<string>;
-  /**
-   * @deprecated Use `extract.sourceLocale`
-   */
-  sourceLocale?: string;
-  messages: {
-    path: string | Array<string>;
-    format: MessagesFormat;
-    /** @deprecated Use `extract.locales` instead. */
-    locales?: 'infer' | ReadonlyArray<Locale>;
-  };
-  extract?: {
-    sourceLocale?: string;
-    path?: string;
-    locales?: 'infer' | ReadonlyArray<Locale>;
-  };
-};
-
 export default function normalizeExtractorConfig(
-  input: ExtractorInput
+  input: ExtractorConfigInput
 ): ExtractorConfig {
   if (input.extract?.locales != null && input.messages.locales != null) {
     throwError(
@@ -60,6 +40,12 @@ export default function normalizeExtractorConfig(
     }
   }
 
+  if (input.sourceLocale != null && input.extract?.sourceLocale == null) {
+    warn(
+      'Root-level `sourceLocale` is deprecated in favor of `extract.sourceLocale`.'
+    );
+  }
+
   const resolvedSourceLocale = sourceLocale?.trim();
 
   if (resolvedSourceLocale == null || resolvedSourceLocale === '') {
@@ -78,10 +64,10 @@ export default function normalizeExtractorConfig(
     throwError('`messages.path` must not be empty.');
   }
 
-  let catalogPath: string;
+  let extractPath: string;
   if (input.extract?.path != null) {
-    catalogPath = stripTrailingSlash(String(input.extract.path).trim());
-    if (!catalogPath) {
+    extractPath = stripTrailingSlash(String(input.extract.path).trim());
+    if (!extractPath) {
       throwError('`extract.path` must be a non-empty string.');
     }
   } else {
@@ -90,16 +76,21 @@ export default function normalizeExtractorConfig(
         'When `messages.path` is an array, `extract.path` is required to select the writable catalog directory.'
       );
     }
-    catalogPath = loadPaths[0]!;
+    extractPath = loadPaths[0]!;
   }
 
+  const messagesPathEcho = pathIsArray ? loadPaths : loadPaths[0]!;
+
   return {
-    srcPath: input.srcPath,
-    sourceLocale: resolvedSourceLocale,
-    catalogPath,
-    locales,
+    extract: {
+      locales,
+      path: extractPath,
+      sourceLocale: resolvedSourceLocale
+    },
     messages: {
-      format: input.messages.format
-    }
+      format: input.messages.format,
+      path: messagesPathEcho
+    },
+    srcPath: input.srcPath
   };
 }

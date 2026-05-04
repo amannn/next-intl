@@ -112,7 +112,7 @@ export default class CatalogManager implements Disposable {
       return this.persister;
     } else {
       this.persister = new CatalogPersister({
-        messagesPath: this.config.catalogPath,
+        messagesPath: this.config.extract.path,
         codec: await this.getCodec(),
         extension: getFormatExtension(this.config.messages.format)
       });
@@ -124,12 +124,12 @@ export default class CatalogManager implements Disposable {
     if (this.catalogLocales) {
       return this.catalogLocales;
     } else {
-      const messagesDir = path.join(this.projectRoot, this.config.catalogPath);
+      const messagesDir = path.join(this.projectRoot, this.config.extract.path);
       this.catalogLocales = new CatalogLocales({
         messagesDir,
-        sourceLocale: this.config.sourceLocale,
         extension: getFormatExtension(this.config.messages.format),
-        locales: this.config.locales
+        locales: this.config.extract.locales,
+        sourceLocale: this.config.extract.sourceLocale
       });
       return this.catalogLocales;
     }
@@ -178,7 +178,7 @@ export default class CatalogManager implements Disposable {
     // Load source catalog to hydrate metadata (e.g. flags) later without
     // treating catalog entries as source of truth.
     const diskMessages = await this.loadLocaleMessages(
-      this.config.sourceLocale
+      this.config.extract.sourceLocale
     );
     const byId = new Map<string, ExtractorMessage>();
     for (const diskMessage of diskMessages) {
@@ -207,7 +207,7 @@ export default class CatalogManager implements Disposable {
   private async reloadLocaleCatalog(locale: Locale): Promise<void> {
     const diskMessages = await this.loadLocaleMessages(locale);
 
-    if (locale === this.config.sourceLocale) {
+    if (locale === this.config.extract.sourceLocale) {
       // For source: Merge additional properties like flags
       for (const diskMessage of diskMessages) {
         const prev = this.messagesById.get(diskMessage.id);
@@ -423,7 +423,7 @@ export default class CatalogManager implements Disposable {
   }
 
   private async saveImpl(): Promise<void> {
-    await this.saveLocale(this.config.sourceLocale);
+    await this.saveLocale(this.config.extract.sourceLocale);
     const targetLocales = await this.getTargetLocales();
     await Promise.all(targetLocales.map((locale) => this.saveLocale(locale)));
   }
@@ -433,7 +433,7 @@ export default class CatalogManager implements Disposable {
 
     const messages = Array.from(this.messagesById.values());
     const persister = await this.getPersister();
-    const isSourceLocale = locale === this.config.sourceLocale;
+    const isSourceLocale = locale === this.config.extract.sourceLocale;
 
     // Check if file was modified externally (poll-at-save is cheaper than
     // watchers here since stat() is fast and avoids continuous overhead)

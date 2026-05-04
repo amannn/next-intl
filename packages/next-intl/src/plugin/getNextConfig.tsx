@@ -9,7 +9,6 @@ import type {
 } from 'next/dist/server/config-shared.js';
 import type {Configuration} from 'webpack';
 import {getFormatExtension} from '../extractor/format/index.js';
-import normalizeExtractorConfig from '../extractor/normalizeExtractorConfig.js';
 import SourceFileFilter from '../extractor/source/SourceFileFilter.js';
 import type {CatalogLoaderConfig, ExtractorConfig} from '../extractor/types.js';
 import {isDevelopmentOrNextBuild} from './config.js';
@@ -89,7 +88,8 @@ function getMessagesLoadPaths(loadPath: string | Array<string>): Array<string> {
 
 export default function getNextConfig(
   pluginConfig: PluginConfig,
-  nextConfig?: NextConfig
+  nextConfig?: NextConfig,
+  extractorConfig?: ExtractorConfig
 ) {
   const useTurbo = process.env.TURBOPACK != null;
 
@@ -122,15 +122,10 @@ export default function getNextConfig(
     ) {
       throwError('`srcPath` and `messages` are required when using `extract`.');
     }
-    extractorRuntimeConfig = normalizeExtractorConfig({
-      srcPath: pluginConfig.experimental.srcPath,
-      messages: pluginConfig.experimental.messages,
-      extract: {
-        sourceLocale: pluginConfig.experimental.extract.sourceLocale,
-        path: pluginConfig.experimental.extract.path,
-        locales: pluginConfig.experimental.extract.locales
-      }
-    });
+    if (!extractorConfig) {
+      throwError('Internal error: Missing extractor configuration.');
+    }
+    extractorRuntimeConfig = extractorConfig;
   }
 
   function getExtractMessagesLoaderConfig() {

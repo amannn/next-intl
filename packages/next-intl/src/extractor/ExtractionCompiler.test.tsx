@@ -37,8 +37,15 @@ describe('json format', () => {
   function createCompiler() {
     return new ExtractionCompiler(
       {
-        extract: {locales: 'infer', sourceLocale: 'en'},
-        messages: {format: 'json', path: './messages'},
+        extract: {
+          locales: 'infer',
+          path: './messages',
+          sourceLocale: 'en'
+        },
+        messages: {
+          format: 'json',
+          path: './messages'
+        },
         srcPath: './src'
       },
       {
@@ -85,8 +92,15 @@ describe('json format', () => {
 
     using compiler = new ExtractionCompiler(
       {
-        extract: {locales: ['de', 'fr'], sourceLocale: 'en'},
-        messages: {format: 'json', path: './messages'},
+        extract: {
+          locales: ['de', 'fr'],
+          path: './messages',
+          sourceLocale: 'en'
+        },
+        messages: {
+          format: 'json',
+          path: './messages'
+        },
         srcPath: './src'
       },
       {
@@ -375,8 +389,15 @@ describe('po format', () => {
   function createCompiler() {
     return new ExtractionCompiler(
       {
-        extract: {locales: 'infer', sourceLocale: 'en'},
-        messages: {format: 'po', path: './messages'},
+        extract: {
+          locales: 'infer',
+          path: './messages',
+          sourceLocale: 'en'
+        },
+        messages: {
+          format: 'po',
+          path: './messages'
+        },
         srcPath: './src'
       },
       {
@@ -957,8 +978,15 @@ describe('po format', () => {
 
     using compiler = new ExtractionCompiler(
       {
-        extract: {locales: 'infer', sourceLocale: 'en'},
-        messages: {format: 'po', path: './messages'},
+        extract: {
+          locales: 'infer',
+          path: './messages',
+          sourceLocale: 'en'
+        },
+        messages: {
+          format: 'po',
+          path: './messages'
+        },
         srcPath: './src'
       },
       {
@@ -1045,8 +1073,15 @@ describe('po format', () => {
 
     using compiler = new ExtractionCompiler(
       {
-        extract: {locales: 'infer', sourceLocale: 'en'},
-        messages: {format: 'po', path: './messages'},
+        extract: {
+          locales: 'infer',
+          path: './messages',
+          sourceLocale: 'en'
+        },
+        messages: {
+          format: 'po',
+          path: './messages'
+        },
         srcPath: './src'
       },
       {
@@ -2137,8 +2172,15 @@ describe('`srcPath` filtering', () => {
   function createCompiler(srcPath: string | Array<string>) {
     return new ExtractionCompiler(
       {
-        extract: {locales: 'infer', sourceLocale: 'en'},
-        messages: {format: 'json', path: './messages'},
+        extract: {
+          locales: 'infer',
+          path: './messages',
+          sourceLocale: 'en'
+        },
+        messages: {
+          format: 'json',
+          path: './messages'
+        },
         srcPath
       },
       {
@@ -2210,7 +2252,11 @@ describe('custom format', () => {
 
     using compiler = new ExtractionCompiler(
       {
-        extract: {locales: 'infer', sourceLocale: 'en'},
+        extract: {
+          locales: 'infer',
+          path: './messages',
+          sourceLocale: 'en'
+        },
         messages: {
           format: {
             codec: path.resolve(
@@ -2276,7 +2322,11 @@ describe('custom format', () => {
 
     using compiler = new ExtractionCompiler(
       {
-        extract: {locales: 'infer', sourceLocale: 'en'},
+        extract: {
+          locales: 'infer',
+          path: './messages',
+          sourceLocale: 'en'
+        },
         messages: {
           format: {
             codec: path.resolve(

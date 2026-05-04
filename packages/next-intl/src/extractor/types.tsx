@@ -27,13 +27,36 @@ export type CatalogFormatConfig = ExtractorMessagesConfig & {
   precompile?: boolean;
 };
 
-export type ExtractorConfig = {
+export type ExtractorConfigInput = {
   srcPath: string | Array<string>;
-  sourceLocale: string;
-  /** Writable root where extracted catalogs are read and written. */
-  catalogPath: string;
-  locales: 'infer' | ReadonlyArray<Locale>;
-  messages: ExtractorMessagesConfig;
+  /**
+   * @deprecated Use `extract.sourceLocale`
+   */
+  sourceLocale?: string;
+  messages: {
+    path: string | Array<string>;
+    format: MessagesFormat;
+    /** @deprecated Use `extract.locales` instead. */
+    locales?: 'infer' | ReadonlyArray<Locale>;
+  };
+  extract?: {
+    sourceLocale?: string;
+    path?: string;
+    locales?: 'infer' | ReadonlyArray<Locale>;
+  };
+};
+
+export type ExtractorConfig = {
+  extract: {
+    locales: 'infer' | ReadonlyArray<Locale>;
+    path: string;
+    sourceLocale: string;
+  };
+  messages: {
+    format: MessagesFormat;
+    path: string | Array<string>;
+  };
+  srcPath: ExtractorConfigInput['srcPath'];
 };
 
 export type CatalogLoaderConfig = {

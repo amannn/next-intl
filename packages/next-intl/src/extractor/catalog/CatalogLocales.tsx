@@ -12,14 +12,14 @@ type CatalogLocalesParams = {
   messagesDir: string;
   sourceLocale: Locale;
   extension: string;
-  locales: ExtractorConfig['locales'];
+  locales: ExtractorConfig['extract']['locales'];
 };
 
 export default class CatalogLocales {
   private messagesDir: string;
   private extension: string;
   private sourceLocale: Locale;
-  private locales: ExtractorConfig['locales'];
+  private locales: ExtractorConfig['extract']['locales'];
   private watcher?: fs.FSWatcher;
   private targetLocales?: Array<Locale>;
   private onChangeCallbacks: Set<LocaleChangeCallback> = new Set();
