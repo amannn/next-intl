@@ -55,7 +55,7 @@ function getArgs<
     undefined, // Always use fallback if not compiled
     values,
     formats,
-    process.env.NODE_ENV !== 'production' ? message : undefined
+    message
   ];
 }
 
@@ -68,6 +68,12 @@ function getArgs<
 // - Fallbacks in case an extracted message is not yet available
 export default function useExtracted(namespace?: string) {
   const t = useTranslations(namespace);
+
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error(
+      '[next-intl] `useExtracted` was called in production without compilation. Include modules that call `useExtracted` in `srcPath` and use `transpilePackages` for 3rd-party packages.'
+    );
+  }
 
   function translateFn<Message extends string>(
     /** Inline ICU message in the source locale. */

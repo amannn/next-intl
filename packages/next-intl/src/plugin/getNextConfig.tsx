@@ -232,19 +232,11 @@ export default function getNextConfig(
         throwError('Message extraction requires Next.js 16 or higher.');
       }
       rules ??= getTurboRules();
-      const srcPaths = (
-        Array.isArray(pluginConfig.experimental.srcPath!)
-          ? pluginConfig.experimental.srcPath!
-          : [pluginConfig.experimental.srcPath!]
-      ).map((srcPath) =>
-        srcPath.endsWith('/') ? srcPath.slice(0, -1) : srcPath
-      );
       addTurboRule(rules!, `*.{${SourceFileFilter.EXTENSIONS.join(',')}}`, {
         loaders: [getExtractMessagesLoaderConfig()],
         condition: {
-          // Note: We don't need `not: 'foreign'`, because this is
-          // implied by the filter based on `srcPath`.
-          path: `{${srcPaths.join(',')}}` + '/**/*',
+          // We don't filter for `path` here to allow transformation
+          // of `useExtracted` calls in external packages (e.g. monorepos)
           content: /(useExtracted|getExtracted)/
         }
       });

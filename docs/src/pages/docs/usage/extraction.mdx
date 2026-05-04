@@ -296,7 +296,16 @@ Here, you can configure a [`srcPath`](/docs/usage/plugin#src-path) that includes
 ```tsx
 const withNextIntl = createNextIntlPlugin({
   experimental: {
-    srcPath: ['./src', '../ui/src', './node_modules/@acme/components']
+    srcPath: [
+      // First-party messages
+      './src',
+
+      // Sibling packages in a monorepo
+      '../ui/src',
+
+      // Installed packages in `node_modules`
+      './node_modules/@acme/components'
+    ]
     // ...
   }
 });
@@ -328,24 +337,28 @@ await unstable_extractMessages({
 
 In the consuming app, you can configure [`messages.path`](/docs/usage/plugin#messages) to include the external package's messages:
 
-```tsx filename="next.config.ts" {8-9,13-19}
+```tsx filename="next.config.ts"
 const withNextIntl = createNextIntlPlugin({
   experimental: {
+    // Only extract first-party messages
     srcPath: './src',
     extract: {
       sourceLocale: 'en',
       locales: 'infer',
-
-      // Extract first-party messages here
       path: './messages'
     },
 
+    // Transform both first-party messages and external
+    // ones when loaded (e.g. for .po files)
     messages: {
-      // Consider both first-party messages and external ones
-      // (e.g. for transformation of .po files)
       path: [
+        // First-party messages
         './messages',
+
+        // Sibling packages in a monorepo
         '../ui/messages',
+
+        // Installed packages in `node_modules`
         './node_modules/@acme/components/messages'
       ],
 
