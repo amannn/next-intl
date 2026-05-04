@@ -10,7 +10,7 @@ export type PluginConfig = {
     /** Relative path(s) to your source files, to be used in combination with `extract` and `messages`. */
     srcPath?: string | Array<string>;
 
-    /** Relative path(s) to catalogs the bundler may import (`.json` is native; `.po`/custom need this loader). */
+    /** Configuration about your catalogs of messages */
     messages?: {
       path: string | Array<string>;
       format: MessagesFormat;
