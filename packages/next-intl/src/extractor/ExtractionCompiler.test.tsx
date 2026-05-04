@@ -2,7 +2,6 @@ import fs from 'fs/promises';
 import path from 'path';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 import ExtractionCompiler from './ExtractionCompiler.js';
-import normalizeExtractorConfig from './normalizeExtractorConfig.js';
 
 const filesystem: {
   project: {
@@ -37,17 +36,11 @@ beforeEach(() => {
 describe('json format', () => {
   function createCompiler() {
     return new ExtractionCompiler(
-      normalizeExtractorConfig({
-        srcPath: './src',
-        messages: {
-          path: './messages',
-          format: 'json'
-        },
-        extract: {
-          sourceLocale: 'en',
-          locales: 'infer'
-        }
-      }),
+      {
+        extract: {locales: 'infer', sourceLocale: 'en'},
+        messages: {format: 'json', path: './messages'},
+        srcPath: './src'
+      },
       {
         isDevelopment: true,
         projectRoot: '/project'
@@ -91,17 +84,11 @@ describe('json format', () => {
     filesystem.project.messages = undefined;
 
     using compiler = new ExtractionCompiler(
-      normalizeExtractorConfig({
-        srcPath: './src',
-        messages: {
-          path: './messages',
-          format: 'json'
-        },
-        extract: {
-          sourceLocale: 'en',
-          locales: ['de', 'fr']
-        }
-      }),
+      {
+        extract: {locales: ['de', 'fr'], sourceLocale: 'en'},
+        messages: {format: 'json', path: './messages'},
+        srcPath: './src'
+      },
       {
         isDevelopment: true,
         projectRoot: '/project'
@@ -387,17 +374,11 @@ describe('json format', () => {
 describe('po format', () => {
   function createCompiler() {
     return new ExtractionCompiler(
-      normalizeExtractorConfig({
-        srcPath: './src',
-        messages: {
-          path: './messages',
-          format: 'po'
-        },
-        extract: {
-          sourceLocale: 'en',
-          locales: 'infer'
-        }
-      }),
+      {
+        extract: {locales: 'infer', sourceLocale: 'en'},
+        messages: {format: 'po', path: './messages'},
+        srcPath: './src'
+      },
       {
         isDevelopment: true,
         projectRoot: '/project'
@@ -975,17 +956,11 @@ describe('po format', () => {
     `;
 
     using compiler = new ExtractionCompiler(
-      normalizeExtractorConfig({
-        srcPath: './src',
-        messages: {
-          path: './messages',
-          format: 'po'
-        },
-        extract: {
-          sourceLocale: 'en',
-          locales: 'infer'
-        }
-      }),
+      {
+        extract: {locales: 'infer', sourceLocale: 'en'},
+        messages: {format: 'po', path: './messages'},
+        srcPath: './src'
+      },
       {
         isDevelopment: false,
         projectRoot: '/project'
@@ -1069,17 +1044,11 @@ describe('po format', () => {
     `;
 
     using compiler = new ExtractionCompiler(
-      normalizeExtractorConfig({
-        srcPath: './src',
-        messages: {
-          path: './messages',
-          format: 'po'
-        },
-        extract: {
-          sourceLocale: 'en',
-          locales: 'infer'
-        }
-      }),
+      {
+        extract: {locales: 'infer', sourceLocale: 'en'},
+        messages: {format: 'po', path: './messages'},
+        srcPath: './src'
+      },
       {
         isDevelopment: false,
         projectRoot: '/project'
@@ -2167,17 +2136,11 @@ describe('`srcPath` filtering', () => {
 
   function createCompiler(srcPath: string | Array<string>) {
     return new ExtractionCompiler(
-      normalizeExtractorConfig({
-        srcPath,
-        messages: {
-          path: './messages',
-          format: 'json'
-        },
-        extract: {
-          sourceLocale: 'en',
-          locales: 'infer'
-        }
-      }),
+      {
+        extract: {locales: 'infer', sourceLocale: 'en'},
+        messages: {format: 'json', path: './messages'},
+        srcPath
+      },
       {
         isDevelopment: true,
         projectRoot: '/project'
@@ -2246,23 +2209,20 @@ describe('custom format', () => {
     `;
 
     using compiler = new ExtractionCompiler(
-      normalizeExtractorConfig({
-        srcPath: './src',
+      {
+        extract: {locales: 'infer', sourceLocale: 'en'},
         messages: {
-          path: './messages',
           format: {
             codec: path.resolve(
               __dirname,
               'format/codecs/fixtures/JSONCodecStructured.tsx'
             ),
             extension: '.json'
-          }
+          },
+          path: './messages'
         },
-        extract: {
-          sourceLocale: 'en',
-          locales: 'infer'
-        }
-      }),
+        srcPath: './src'
+      },
       {
         isDevelopment: true,
         projectRoot: '/project'
@@ -2315,23 +2275,20 @@ describe('custom format', () => {
     };
 
     using compiler = new ExtractionCompiler(
-      normalizeExtractorConfig({
-        srcPath: './src',
+      {
+        extract: {locales: 'infer', sourceLocale: 'en'},
         messages: {
-          path: './messages',
           format: {
             codec: path.resolve(
               __dirname,
               'format/codecs/fixtures/POCodecSourceMessageKey.tsx'
             ),
             extension: '.po'
-          }
+          },
+          path: './messages'
         },
-        extract: {
-          sourceLocale: 'en',
-          locales: 'infer'
-        }
-      }),
+        srcPath: './src'
+      },
       {
         isDevelopment: true,
         projectRoot: '/project'
