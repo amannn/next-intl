@@ -78,6 +78,55 @@ export default function Greeting() {
   expect(greetingRefs.length).toBeGreaterThanOrEqual(2);
 });
 
+it('orders messages deterministically when they share a first reference', async ({
+  page
+}) => {
+  // Two distinct messages on the same line share `references[0]` (same file
+  // and line). Without an id tiebreaker, their order in the catalog falls
+  // back to insertion order, which is non-deterministic across runs.
+  await using _ = await withTempEditApp(
+    'src/components/Greeting.tsx',
+    `'use client';
+
+import {useExtracted} from 'next-intl';
+
+export default function Greeting() {
+  const t = useExtracted();
+  return <div>{t('tied-zebra')}{t('tied-apple')}</div>;
+}
+`
+  );
+
+  await page.goto('/');
+  const content = await expectCatalog(
+    'en.po',
+    (c) => c.includes('tied-zebra') && c.includes('tied-apple'),
+    {timeout: 15_000}
+  );
+
+  const msgidByMsgstr = (msgstr: string) => {
+    const block = content
+      .split(/\n\n+/)
+      .find((b) => new RegExp(`msgstr "${msgstr}"`).test(b));
+    return block?.match(/msgid "([^"]+)"/)?.[1];
+  };
+
+  const zebraId = msgidByMsgstr('tied-zebra');
+  const appleId = msgidByMsgstr('tied-apple');
+  expect(zebraId).toBeTruthy();
+  expect(appleId).toBeTruthy();
+
+  const expectedFirst = [zebraId!, appleId!].toSorted((a, b) =>
+    a.localeCompare(b, 'en')
+  )[0];
+
+  const zebraPos = content.indexOf(`msgid "${zebraId}"`);
+  const applePos = content.indexOf(`msgid "${appleId}"`);
+  const actualFirst = zebraPos < applePos ? zebraId : appleId;
+
+  expect(actualFirst).toBe(expectedFirst);
+});
+
 it("saves catalog when it's missing", async ({page}) => {
   await page.goto('/');
   await expectCatalog(
