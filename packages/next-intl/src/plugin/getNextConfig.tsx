@@ -9,6 +9,7 @@ import type {
 } from 'next/dist/server/config-shared.js';
 import type {Configuration} from 'webpack';
 import {getFormatExtension} from '../extractor/format/index.js';
+import {normalizeMessagesCatalogPaths} from '../extractor/normalizeExtractorConfig.js';
 import SourceFileFilter from '../extractor/source/SourceFileFilter.js';
 import type {CatalogLoaderConfig, ExtractorConfig} from '../extractor/types.js';
 import {isDevelopmentOrNextBuild} from './config.js';
@@ -102,13 +103,7 @@ export default function getNextConfig(
     if (!messages.format) {
       throwError('`format` is required when using `messages`.');
     }
-    messageLoadPaths = (
-      Array.isArray(messages.path) ? messages.path : [messages.path]
-    )
-      .map((dirPath) =>
-        dirPath.endsWith('/') ? dirPath.slice(0, -1) : dirPath
-      )
-      .filter((pathname) => pathname.length > 0);
+    messageLoadPaths = normalizeMessagesCatalogPaths(messages.path);
     if (messageLoadPaths.length === 0) {
       throwError('`path` is required when using `messages`.');
     }

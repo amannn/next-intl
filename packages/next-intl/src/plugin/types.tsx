@@ -1,5 +1,5 @@
 import type {LoaderContext} from 'webpack';
-import type {MessagesFormat} from '../extractor/format/types.js';
+import type {ExtractorConfigInput} from '../extractor/types.js';
 
 export type PluginConfig = {
   requestConfig?: string;
@@ -7,17 +7,13 @@ export type PluginConfig = {
     /** A path to the messages file that you'd like to create a declaration for. In case you want to consider multiple files, you can pass an array of paths. */
     createMessagesDeclaration?: string | Array<string>;
 
-    /** Relative path(s) to your source files, to be used in combination with `extract` and `messages`. */
+    /**
+     * Relative path(s) to your source files, to be used in combination with `extract` and `messages`.
+     */
     srcPath?: string | Array<string>;
 
     /** Configuration about your catalogs of messages */
-    messages?: {
-      path: string | Array<string>;
-      format: MessagesFormat;
-      /**
-       * @deprecated Use [`extract.locales`](/docs/usage/plugin#extract) instead.
-       */
-      locales?: 'infer' | ReadonlyArray<string>;
+    messages?: ExtractorConfigInput['messages'] & {
       /**
        * When enabled, ICU messages are precompiled at build time, resulting in smaller bundles and faster message formatting.
        */
@@ -25,15 +21,7 @@ export type PluginConfig = {
     };
 
     /** Enables the usage of `useExtracted`, to be used in combination with `srcPath` and `messages`. */
-    extract?: {
-      sourceLocale: string;
-      /** Writable catalog directory when extracting. Required if `messages.path` is an array. */
-      path?: string;
-      /**
-       * Locales kept in sync with [`extract.sourceLocale`](/docs/usage/plugin#extract).
-       */
-      locales: 'infer' | ReadonlyArray<string>;
-    };
+    extract?: NonNullable<ExtractorConfigInput['extract']>;
   };
 };
 

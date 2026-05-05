@@ -19,26 +19,44 @@ export type ExtractorMessage = {
   [key: string]: unknown;
 };
 
+/**
+ * External extractor configuration (Next.js plugin, `extractMessages`).
+ */
 export type ExtractorConfigInput = {
-  srcPath: string | Array<string>;
+  extract?: {
+    /**
+     * Locales kept in sync with [`extract.sourceLocale`](https://next-intl.dev/docs/usage/plugin#extract).
+     */
+    locales: 'infer' | ReadonlyArray<Locale>;
+    /**
+     * Writable catalog directory when extracting. Required if `messages.path` is an array.
+     * Defaults to `messages.path` when it is a single path.
+     */
+    path?: string;
+    /** Locale to which extracted source strings are written. */
+    sourceLocale: string;
+  };
+  messages: {
+    /** The format of your messages files. */
+    format: MessagesFormat;
+    /**
+     * @deprecated Use `extract.locales`.
+     */
+    locales?: 'infer' | ReadonlyArray<Locale>;
+    /** Relative path(s) to your messages files. */
+    path: string | Array<string>;
+  };
   /**
-   * @deprecated Use `extract.sourceLocale`
+   * @deprecated Use `extract.sourceLocale`.
    */
   sourceLocale?: string;
-  messages: {
-    path: string | Array<string>;
-    format: MessagesFormat;
-    /** @deprecated Use `extract.locales` instead. */
-    locales?: 'infer' | ReadonlyArray<Locale>;
-  };
-  extract?: {
-    sourceLocale?: string;
-    /** Defaults to `messages.path` */
-    path?: string;
-    locales?: 'infer' | ReadonlyArray<Locale>;
-  };
+  /**
+   * Relative path(s) to your source files, to be used in combination with `extract` and `messages`.
+   */
+  srcPath: string | Array<string>;
 };
 
+/** Normalized config used internally after `normalizeExtractorConfig`. */
 export type ExtractorConfig = {
   extract: {
     locales: 'infer' | ReadonlyArray<Locale>;
@@ -47,9 +65,9 @@ export type ExtractorConfig = {
   };
   messages: {
     format: MessagesFormat;
-    path: string | Array<string>;
+    path: Array<string>;
   };
-  srcPath: ExtractorConfigInput['srcPath'];
+  srcPath: string | Array<string>;
 };
 
 export type CatalogLoaderConfig = {

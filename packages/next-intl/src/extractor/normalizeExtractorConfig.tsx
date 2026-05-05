@@ -5,6 +5,15 @@ function stripTrailingSlash(dirPath: string): string {
   return dirPath.replace(/\/+$/, '');
 }
 
+export function normalizeMessagesCatalogPaths(
+  messagesPath: string | Array<string>
+): Array<string> {
+  const rawPaths = Array.isArray(messagesPath) ? messagesPath : [messagesPath];
+  return rawPaths
+    .map((dirPath) => stripTrailingSlash(String(dirPath).trim()))
+    .filter((dirPath) => dirPath.length > 0);
+}
+
 export default function normalizeExtractorConfig(
   input: ExtractorConfigInput
 ): ExtractorConfig {
@@ -16,9 +25,7 @@ export default function normalizeExtractorConfig(
 
   const locales = input.extract?.locales ?? input.messages.locales;
   if (locales == null) {
-    throwError(
-      '`extract.locales` is required when extracting messages (or pass legacy `messages.locales`).'
-    );
+    throwError('`extract.locales` is required when extracting messages.');
   }
 
   if (input.messages.locales != null) {
@@ -49,18 +56,12 @@ export default function normalizeExtractorConfig(
   const resolvedSourceLocale = sourceLocale?.trim();
 
   if (resolvedSourceLocale == null || resolvedSourceLocale === '') {
-    throwError(
-      '`extract.sourceLocale` is required (same nesting as experimental.extract.sourceLocale next to experimental.messages and experimental.srcPath when using createNextIntlPlugin). Legacy root-level sourceLocale remains supported temporarily.'
-    );
+    throwError('`extract.sourceLocale` is required.');
   }
 
-  const messagePath = input.messages.path;
-  const pathIsArray = Array.isArray(messagePath);
-  const rawPaths: Array<string> = pathIsArray ? messagePath : [messagePath];
-  const loadPaths = rawPaths
-    .map((dirPath) => stripTrailingSlash(String(dirPath).trim()))
-    .filter((dirPath) => dirPath.length > 0);
-  if (loadPaths.length === 0) {
+  const pathIsArray = Array.isArray(input.messages.path);
+  const messagesPath = normalizeMessagesCatalogPaths(input.messages.path);
+  if (messagesPath.length === 0) {
     throwError('`messages.path` must not be empty.');
   }
 
@@ -76,10 +77,8 @@ export default function normalizeExtractorConfig(
         'When `messages.path` is an array, `extract.path` is required to select the writable catalog directory.'
       );
     }
-    extractPath = loadPaths[0]!;
+    extractPath = messagesPath[0]!;
   }
-
-  const messagesPathEcho = pathIsArray ? loadPaths : loadPaths[0]!;
 
   return {
     extract: {
@@ -89,7 +88,7 @@ export default function normalizeExtractorConfig(
     },
     messages: {
       format: input.messages.format,
-      path: messagesPathEcho
+      path: messagesPath
     },
     srcPath: input.srcPath
   };

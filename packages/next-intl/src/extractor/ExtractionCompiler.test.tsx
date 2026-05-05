@@ -44,7 +44,7 @@ describe('json format', () => {
         },
         messages: {
           format: 'json',
-          path: './messages'
+          path: ['./messages']
         },
         srcPath: './src'
       },
@@ -99,7 +99,7 @@ describe('json format', () => {
         },
         messages: {
           format: 'json',
-          path: './messages'
+          path: ['./messages']
         },
         srcPath: './src'
       },
@@ -396,7 +396,7 @@ describe('po format', () => {
         },
         messages: {
           format: 'po',
-          path: './messages'
+          path: ['./messages']
         },
         srcPath: './src'
       },
@@ -490,7 +490,7 @@ describe('po format', () => {
         },
         messages: {
           format: 'po',
-          path: './messages'
+          path: ['./messages']
         },
         srcPath: './src'
       },
@@ -585,7 +585,7 @@ describe('po format', () => {
         },
         messages: {
           format: 'po',
-          path: './messages'
+          path: ['./messages']
         },
         srcPath: './src'
       },
@@ -1684,7 +1684,7 @@ describe('`srcPath` filtering', () => {
         },
         messages: {
           format: 'json',
-          path: './messages'
+          path: ['./messages']
         },
         srcPath
       },
@@ -1770,7 +1770,7 @@ describe('custom format', () => {
             ),
             extension: '.json'
           },
-          path: './messages'
+          path: ['./messages']
         },
         srcPath: './src'
       },
@@ -1840,7 +1840,7 @@ describe('custom format', () => {
             ),
             extension: '.po'
           },
-          path: './messages'
+          path: ['./messages']
         },
         srcPath: './src'
       },
