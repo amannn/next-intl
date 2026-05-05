@@ -66,13 +66,14 @@ The optimization is enabled via a single flag that can be turned on globally:
 import createNextIntlPlugin from 'next-intl/plugin';
 
 const withNextIntl = createNextIntlPlugin({
-  messages: {
-    path: './messages',
-    locales: 'infer',
-    format: 'json',
+  experimental: {
+    messages: {
+      path: './messages',
+      format: 'json',
 
-    // Enable precompilation
-    precompile: true
+      // Enable precompilation
+      precompile: true
+    }
   }
 });
 

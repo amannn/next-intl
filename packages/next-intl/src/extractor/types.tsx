@@ -19,19 +19,64 @@ export type ExtractorMessage = {
   [key: string]: unknown;
 };
 
-export type MessagesConfig = {
-  path: string;
-  format: MessagesFormat;
-  locales: 'infer' | ReadonlyArray<Locale>;
-  precompile?: boolean;
+/**
+ * External extractor configuration (Next.js plugin, `extractMessages`).
+ */
+export type ExtractorConfigInput = {
+  extract?: {
+    /**
+     * Locales kept in sync with [`extract.sourceLocale`](https://next-intl.dev/docs/usage/plugin#extract).
+     */
+    locales: 'infer' | ReadonlyArray<Locale>;
+    /**
+     * Writable catalog directory when extracting. Required if `messages.path` is an array.
+     * Defaults to `messages.path` when it is a single path.
+     */
+    path?: string;
+    /** Locale to which extracted source strings are written. */
+    sourceLocale: string;
+    /**
+     * Relative path(s) to your source code files.
+     */
+    srcPath: string | Array<string>;
+  };
+  messages: {
+    /** The format of your messages files. */
+    format: MessagesFormat;
+    /**
+     * @deprecated Use `extract.locales`. See https://github.com/amannn/next-intl/pull/2313.
+     */
+    locales?: 'infer' | ReadonlyArray<Locale>;
+    /** Relative path(s) to your messages files. */
+    path: string | Array<string>;
+  };
+  /**
+   * @deprecated Use `extract.sourceLocale`. See https://github.com/amannn/next-intl/pull/2313.
+   */
+  sourceLocale?: string;
+  /**
+   * @deprecated Use `extract.srcPath`. See https://github.com/amannn/next-intl/pull/2313.
+   */
+  srcPath?: string | Array<string>;
 };
 
+/** Normalized config used internally after `normalizeExtractorConfig`. */
 export type ExtractorConfig = {
-  srcPath: string | Array<string>;
-  sourceLocale: string;
-  messages: MessagesConfig;
+  extract: {
+    locales: 'infer' | ReadonlyArray<Locale>;
+    path: string;
+    sourceLocale: string;
+    srcPath: string | Array<string>;
+  };
+  messages: {
+    format: MessagesFormat;
+    path: Array<string>;
+  };
 };
 
 export type CatalogLoaderConfig = {
-  messages: MessagesConfig;
+  messages: {
+    format: MessagesFormat;
+    precompile?: boolean;
+  };
 };

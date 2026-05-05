@@ -70,51 +70,31 @@ This enables the usage of [`useExtracted`](/docs/usage/extraction) to automatica
 const withNextIntl = createNextIntlPlugin({
   experimental: {
     extract: {
-      // Defines which locale to extract to
-      sourceLocale: 'en'
+      locales: 'infer',
+      sourceLocale: 'en',
+      srcPath: './src'
     }
     // ...
   }
 });
 ```
 
-**Note:** The `extract` option should be used together with [`messages`](#messages) and [`srcPath`](#src-path).
+**Note:** The `extract` option should be used together with [`messages`](#messages).
 
-### `messages` [#messages]
+#### `extract.sourceLocale` [#extract-source-locale]
 
-This defines where messages for locales are stored and how they're loaded.
-
-```tsx
-const withNextIntl = createNextIntlPlugin({
-  experimental: {
-    messages: {
-      format: 'json',
-      locales: 'infer',
-      path: './messages',
-
-      // Optional
-      precompile: true
-    }
-  }
-});
-```
-
-Configuring `experimental.messages` sets up a Turbo- or Webpack loader that allows messages to be imported as plain JavaScript objects (see [`format`](#format)).
-
-#### `path`
-
-Relative path to the directory containing messages:
+Locale to which extracted source strings are written.
 
 ```tsx
 // ...
-path: './messages';
+sourceLocale: 'en';
 ```
 
-#### `locales`
+#### `extract.locales` [#extract-locales]
 
-When using [`useExtracted`](/docs/usage/extraction), this defines which messages are kept in sync with [`extract.sourceLocale`](/docs/usage/plugin#extract).
+This defines which messages are kept in sync during extraction (e.g. `en.json`, `de.json`, …).
 
-You can either automatically detect all locales within `messages.path`:
+You can either automatically detect all locales within `path`:
 
 ```tsx
 // ...
@@ -128,7 +108,85 @@ locales: 'infer';
 locales: ['en', 'de', 'fr'];
 ```
 
-#### `format`
+#### `extract.path` [#extract-path]
+
+Defines which directory to extract messages to (defaults to `messages.path`).
+
+```tsx
+// ...
+path: './messages';
+```
+
+#### `extract.srcPath` [#extract-srcpath]
+
+This defines the source path where messages should be extracted to.
+
+```tsx
+const withNextIntl = createNextIntlPlugin({
+  experimental: {
+    extract: {
+      srcPath: './src'
+    }
+  }
+});
+```
+
+If your project is split into multiple folders, you can provide an array of paths:
+
+```tsx
+// Not using a `src` folder
+srcPath: './',
+```
+
+```tsx
+// Monorepo with multiple packages
+srcPath: ['./src', '../ui'],
+```
+
+```tsx
+// External dependency on a package
+srcPath: ['./src', './node_modules/@acme/components'],
+```
+
+### `messages` [#messages]
+
+This defines where messages for locales are stored and how they're loaded.
+
+```tsx
+const withNextIntl = createNextIntlPlugin({
+  experimental: {
+    messages: {
+      path: './messages',
+      format: 'json',
+
+      // Optional
+      precompile: true
+    }
+  }
+});
+```
+
+Configuring `experimental.messages` sets up a Turbo- or Webpack loader that allows messages to be imported as plain JavaScript objects (see [`format`](#messages-format)).
+
+#### `messages.path` [#messages-path]
+
+Relative path to the directory containing messages:
+
+```tsx
+// ...
+path: './messages';
+```
+
+If you're loading messages from external packages, you can include multiple paths:
+
+```tsx
+// ...
+path: ['./messages', '../packages/ui/messages'];
+```
+
+See also: [Monorepos and external packages](/docs/usage/extraction#monorepos-external-packages)
+
+#### `messages.format` [#messages-format]
 
 Defines how your catalogs are stored (e.g. `'json'`, `'po'`, or a custom format).
 
@@ -226,16 +284,15 @@ Node.js supports native TypeScript execution like it's needed for the example ab
 
 </Callout>
 
-#### `precompile`
+#### `messages.precompile` [#messages-precompile]
 
 As a performance optimization, you can achieve smaller bundles and faster message formatting at runtime by precompiling messages ahead of time during the build:
 
-```tsx {7}
+```tsx {6}
 const withNextIntl = createNextIntlPlugin({
   experimental: {
     messages: {
       path: './messages',
-      locales: 'infer',
       format: 'json',
       precompile: true
     }
@@ -297,39 +354,3 @@ export default getRequestConfig(async () => {
 If you do this, be sure to use the same version of `icu-minify` as the one that your `next-intl` version depends on to ensure compatibility.
 
 </Details>
-
-### `srcPath` [#src-path]
-
-This defines the source path where messages should be extracted from.
-
-```tsx
-const withNextIntl = createNextIntlPlugin({
-  experimental: {
-    srcPath: './src'
-    // ...
-  }
-});
-```
-
-If your project is split into multiple folders, you can provide an array of paths:
-
-```tsx
-// Not using a `src` folder
-srcPath: './',
-```
-
-```tsx
-// Monorepo with multiple packages
-srcPath: ['./src', '../ui'],
-```
-
-```tsx
-// External dependency on a package
-srcPath: ['./src', './node_modules/@acme/components'],
-```
-
-Note that the directories `node_modules`, `.next` and `.git` are automatically excluded from extraction, except for if they appear explicitly in the `srcPath` array.
-
-If you want to provide messages along with your package, you can also extract them [manually](/docs/usage/extraction#manual).
-
-**Note:** The `srcPath` option should be used together with [`extract`](#extract) and [`messages`](#messages).
