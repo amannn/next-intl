@@ -8,10 +8,28 @@ let compiler: ExtractionCompiler | undefined;
 
 const runOnce = once('_NEXT_INTL_EXTRACT');
 
+/**
+ * Next runs `telemetry/detached-flush.js` in a detached process to flush telemetry
+ * (often when `next dev` exits). That loads dev `next.config` with inherited
+ * `NODE_ENV=development`, which would otherwise start orphan extract watchers.
+ */
+function isNextTelemetryDetachedFlushProcess(): boolean {
+  const scriptPath = process.argv[1];
+  if (!scriptPath) {
+    return false;
+  }
+  const normalized = scriptPath.replace(/\\/g, '/');
+  return normalized.includes('/telemetry/detached-flush');
+}
+
 export default function initExtractionCompiler(
   extractorConfig?: ExtractorConfig
 ) {
   if (!extractorConfig) {
+    return;
+  }
+
+  if (isNextTelemetryDetachedFlushProcess()) {
     return;
   }
 
@@ -20,8 +38,9 @@ export default function initExtractionCompiler(
   // - start
   // - typegen
   //
+  // Telemetry `detached-flush` is skipped above (still loads this config, but in a new process).
+  //
   // Doesn't consult Next.js config anyway:
-  // - telemetry
   // - lint
   //
   // What remains are:
