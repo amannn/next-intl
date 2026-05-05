@@ -68,7 +68,7 @@ const withNextIntl = createNextIntlPlugin({
       // matching files in `path` or an explicit array of locales
       locales: 'infer',
 
-      // Defines which locale to extract to
+      // Defines which locale to extract source messages to
       sourceLocale: 'en'
     },
 
@@ -314,11 +314,11 @@ const withNextIntl = createNextIntlPlugin({
 });
 ```
 
-This will extract both first party and external package messages to your main app directory.
+This will extract both first-party and external package messages to your main app directory.
 
 ### 2. Ship messages with the external package
 
-If your shared package is used by multiple apps, you might want to reuse all messages among all consumers.
+If your shared package is used by multiple apps, you might want to reuse messages among all consumers.
 
 For this, you can use one-time extraction via [`unstable_extractMessages`](/docs/usage/extraction#manual) as part of your build process to extract the shared messages:
 
@@ -338,7 +338,7 @@ await unstable_extractMessages({
 });
 ```
 
-In the consuming app, you configure set [`extract.path`](/docs/usage/plugin#extract-path) to only consider your first-party messages, while using [`messages.path`](/docs/usage/plugin#messages-path) to include the external package's messages:
+In the consuming app, you configure [`extract.path`](/docs/usage/plugin#extract-path) to only extract your first-party messages, while using [`messages.path`](/docs/usage/plugin#messages-path) to include the external package's messages:
 
 ```tsx filename="next.config.ts"
 const withNextIntl = createNextIntlPlugin({
