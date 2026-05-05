@@ -1,7 +1,7 @@
 import ExtractionCompiler from '../../extractor/ExtractionCompiler.js';
 import type {ExtractorConfig} from '../../extractor/types.js';
+import {hasLocalesToExtract} from '../../extractor/utils.js';
 import {isDevelopment, isNextBuild} from '../config.js';
-import type {PluginConfig} from '../types.js';
 import {once} from '../utils.js';
 
 // Single compiler instance, initialized once per process
@@ -9,9 +9,28 @@ let compiler: ExtractionCompiler | undefined;
 
 const runOnce = once('_NEXT_INTL_EXTRACT');
 
-export default function initExtractionCompiler(pluginConfig: PluginConfig) {
-  const experimental = pluginConfig.experimental;
-  if (!experimental?.extract) {
+/**
+ * Next runs `telemetry/detached-flush.js` in a detached process to flush telemetry
+ * (often when `next dev` exits). That loads dev `next.config` with inherited
+ * `NODE_ENV=development`, which would otherwise start orphan extract watchers.
+ */
+function isNextTelemetryDetachedFlushProcess(): boolean {
+  const scriptPath = process.argv[1];
+  if (!scriptPath) {
+    return false;
+  }
+  const normalized = scriptPath.replace(/\\/g, '/');
+  return normalized.includes('/telemetry/detached-flush');
+}
+
+export default function initExtractionCompiler(
+  extractorConfig?: ExtractorConfig
+) {
+  if (!extractorConfig || !hasLocalesToExtract(extractorConfig)) {
+    return;
+  }
+
+  if (isNextTelemetryDetachedFlushProcess()) {
     return;
   }
 
@@ -20,8 +39,9 @@ export default function initExtractionCompiler(pluginConfig: PluginConfig) {
   // - start
   // - typegen
   //
+  // Telemetry `detached-flush` is skipped above (still loads this config, but in a new process).
+  //
   // Doesn't consult Next.js config anyway:
-  // - telemetry
   // - lint
   //
   // What remains are:
@@ -31,12 +51,6 @@ export default function initExtractionCompiler(pluginConfig: PluginConfig) {
   if (!shouldRun) return;
 
   runOnce(() => {
-    const extractorConfig: ExtractorConfig = {
-      srcPath: experimental.srcPath!,
-      sourceLocale: experimental.extract!.sourceLocale,
-      messages: experimental.messages!
-    };
-
     compiler = new ExtractionCompiler(extractorConfig, {
       isDevelopment,
       projectRoot: process.cwd()

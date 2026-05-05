@@ -1,0 +1,34 @@
+{
+  "name": "e2e-shared-ui",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./ProfileCard": "./src/ProfileCard.tsx",
+    "./messages/*": "./messages/*"
+  },
+  "scripts": {
+    "build": "node extractMessages.mjs",
+    "lint": "eslint src && prettier . --check"
+  },
+  "peerDependencies": {
+    "next-intl": "workspace:*",
+    "react": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.3",
+    "@types/react-dom": "^19.2.3",
+    "eslint": "^9.38.0",
+    "eslint-config-next": "^16.0.10",
+    "next-intl": "workspace:*",
+    "prettier": "^3.3.3",
+    "typescript": "^5.5.3"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "bracketSpacing": false,
+    "trailingComma": "none"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

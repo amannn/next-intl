@@ -10,12 +10,12 @@ const config: SizeLimitConfig = [
     name: "import {NextIntlClientProvider} from 'next-intl' (react-client)",
     import: '{NextIntlClientProvider}',
     path: 'dist/esm/production/index.react-client.js',
-    limit: '1 KB'
+    limit: '1.01 KB'
   },
   {
     name: "import * from 'next-intl' (react-server)",
     path: 'dist/esm/production/index.react-server.js',
-    limit: '12.69 KB'
+    limit: '12.7 KB'
   },
   {
     name: "import {createNavigation} from 'next-intl/navigation' (react-client)",
@@ -37,7 +37,7 @@ const config: SizeLimitConfig = [
   {
     name: "import * from 'next-intl/server' (react-server)",
     path: 'dist/esm/production/server.react-server.js',
-    limit: '11.95 KB'
+    limit: '11.98 KB'
   },
   {
     name: "import * from 'next-intl/middleware'",

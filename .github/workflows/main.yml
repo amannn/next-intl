@@ -42,7 +42,7 @@ jobs:
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}
-      - run: pnpm --filter example-app-router --filter "./e2e/extracted-json" --filter "./e2e/extracted-po" exec playwright install --with-deps
+      - run: pnpm --filter example-app-router exec playwright install --with-deps
         if: steps.playwright-cache.outputs.cache-hit != 'true'
 
       # Main tasks
