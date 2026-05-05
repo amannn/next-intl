@@ -19,14 +19,6 @@ export type ExtractorMessage = {
   [key: string]: unknown;
 };
 
-export type ExtractorMessagesConfig = {
-  format: MessagesFormat;
-};
-
-export type CatalogFormatConfig = ExtractorMessagesConfig & {
-  precompile?: boolean;
-};
-
 export type ExtractorConfigInput = {
   srcPath: string | Array<string>;
   /**
@@ -41,6 +33,7 @@ export type ExtractorConfigInput = {
   };
   extract?: {
     sourceLocale?: string;
+    /** Defaults to `messages.path` */
     path?: string;
     locales?: 'infer' | ReadonlyArray<Locale>;
   };
@@ -60,5 +53,8 @@ export type ExtractorConfig = {
 };
 
 export type CatalogLoaderConfig = {
-  messages: CatalogFormatConfig;
+  messages: {
+    format: MessagesFormat;
+    precompile?: boolean;
+  };
 };

@@ -444,7 +444,6 @@ describe('po format', () => {
     expect(relativeSpy).toHaveBeenCalled();
   });
 
-
   it('removes obsolete messages during build', async () => {
     filesystem.project.messages = {
       'en.po': `

@@ -79,13 +79,6 @@ function resolveI18nPath(providedPath?: string, cwd?: string) {
   }
 }
 
-function getMessagesLoadPaths(loadPath: string | Array<string>): Array<string> {
-  const paths = Array.isArray(loadPath) ? loadPath : [loadPath];
-  return paths
-    .map((dirPath) => String(dirPath).replace(/\/+$/, ''))
-    .filter((dirPath) => dirPath.length > 0);
-}
-
 export default function getNextConfig(
   pluginConfig: PluginConfig,
   nextConfig?: NextConfig,
@@ -109,7 +102,13 @@ export default function getNextConfig(
     if (!messages.format) {
       throwError('`format` is required when using `messages`.');
     }
-    messageLoadPaths = getMessagesLoadPaths(messages.path);
+    messageLoadPaths = (
+      Array.isArray(messages.path) ? messages.path : [messages.path]
+    )
+      .map((dirPath) =>
+        dirPath.endsWith('/') ? dirPath.slice(0, -1) : dirPath
+      )
+      .filter((pathname) => pathname.length > 0);
     if (messageLoadPaths.length === 0) {
       throwError('`path` is required when using `messages`.');
     }
