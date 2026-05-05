@@ -157,12 +157,11 @@ export default class CatalogManager implements Disposable {
       const sourceFiles = await SourceFileScanner.getSourceFiles(
         this.getSrcPaths()
       );
-      const sortedPaths = Array.from(sourceFiles).sort((pathA, pathB) =>
-        pathA.localeCompare(pathB)
+      await Promise.all(
+        Array.from(sourceFiles).map(async (filePath) =>
+          this.processFile(filePath)
+        )
       );
-      for (const filePath of sortedPaths) {
-        await this.processFile(filePath);
-      }
       this.mergeSourceDiskMetadata(sourceDiskMessages);
     })();
 
