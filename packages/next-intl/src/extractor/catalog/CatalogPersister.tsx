@@ -45,11 +45,6 @@ export default class CatalogPersister {
         {cause: error}
       );
     }
-    // Avoid decode errors when another process truncates the file mid-write
-    // (common race when adding a new locale catalog during dev extraction).
-    if (content.trim() === '') {
-      return [];
-    }
     try {
       return this.codec.decode(content, {locale});
     } catch (error) {
