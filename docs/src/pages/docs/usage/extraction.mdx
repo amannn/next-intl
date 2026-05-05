@@ -338,16 +338,16 @@ await unstable_extractMessages({
 });
 ```
 
-In the consuming app, you configure [`extract.path`](/docs/usage/plugin#extract-path) to only extract your first-party messages, while using [`messages.path`](/docs/usage/plugin#messages-path) to include the external package's messages:
+In the consuming app, you can configure [`extract.path`](/docs/usage/plugin#extract-path) to only extract your first-party messages, while using [`messages.path`](/docs/usage/plugin#messages-path) to include the external package's messages:
 
 ```tsx filename="next.config.ts"
 const withNextIntl = createNextIntlPlugin({
   experimental: {
+    // Only extract first-party messages
     extract: {
       locales: 'infer',
       path: './messages',
       sourceLocale: 'en',
-      // Only extract first-party messages
       srcPath: './src'
     },
 
