@@ -1,5 +1,6 @@
 import ExtractionCompiler from '../../extractor/ExtractionCompiler.js';
 import type {ExtractorConfig} from '../../extractor/types.js';
+import {hasLocalesToExtract} from '../../extractor/utils.js';
 import {isDevelopment, isNextBuild} from '../config.js';
 import {once} from '../utils.js';
 
@@ -25,7 +26,7 @@ function isNextTelemetryDetachedFlushProcess(): boolean {
 export default function initExtractionCompiler(
   extractorConfig?: ExtractorConfig
 ) {
-  if (!extractorConfig) {
+  if (!extractorConfig || !hasLocalesToExtract(extractorConfig)) {
     return;
   }
 
