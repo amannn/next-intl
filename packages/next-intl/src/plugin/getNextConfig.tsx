@@ -95,41 +95,17 @@ export default function getNextConfig(
   const nextIntlConfig: Partial<NextConfig> = {};
 
   let messageLoadPaths: Array<string> = [];
-  let extractorRuntimeConfig: ExtractorConfig | undefined;
 
   if (pluginConfig.experimental?.messages) {
-    const messages = pluginConfig.experimental.messages;
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- For non-TS consumers
-    if (!messages.format) {
-      throwError('`format` is required when using `messages`.');
-    }
-    messageLoadPaths = normalizeMessagesCatalogPaths(messages.path);
-    if (messageLoadPaths.length === 0) {
-      throwError('`path` is required when using `messages`.');
-    }
+    messageLoadPaths = normalizeMessagesCatalogPaths(
+      pluginConfig.experimental.messages.path
+    );
   }
 
-  if (pluginConfig.experimental?.extract) {
-    if (
-      !pluginConfig.experimental.srcPath ||
-      !pluginConfig.experimental.messages
-    ) {
-      throwError('`srcPath` and `messages` are required when using `extract`.');
-    }
-    if (!extractorConfig) {
-      throwError('Internal error: Missing extractor configuration.');
-    }
-    extractorRuntimeConfig = extractorConfig;
-  }
-
-  function getExtractMessagesLoaderConfig() {
-    if (!extractorRuntimeConfig) {
-      throwError('Internal error: message extraction is not configured.');
-    }
+  function getExtractMessagesLoaderConfig(config: ExtractorConfig) {
     return {
       loader: 'next-intl/extractor/extractionLoader',
-      options:
-        extractorRuntimeConfig satisfies ExtractorConfig as TurbopackLoaderOptions
+      options: config satisfies ExtractorConfig as TurbopackLoaderOptions
     };
   }
 
@@ -222,7 +198,9 @@ export default function getNextConfig(
       }
       rules ??= getTurboRules();
       addTurboRule(rules!, `*.{${SourceFileFilter.EXTENSIONS.join(',')}}`, {
-        loaders: [getExtractMessagesLoaderConfig()],
+        loaders: [
+          getExtractMessagesLoaderConfig(extractorConfig as ExtractorConfig)
+        ],
         condition: {
           // We don't filter for `path` here to allow transformation
           // of `useExtracted` calls in external packages (e.g. monorepos)
@@ -307,13 +285,11 @@ export default function getNextConfig(
       if (pluginConfig.experimental?.extract) {
         if (!config.module) config.module = {};
         if (!config.module.rules) config.module.rules = [];
-        const srcPath = pluginConfig.experimental.srcPath;
         config.module.rules.push({
           test: new RegExp(`\\.(${SourceFileFilter.EXTENSIONS.join('|')})$`),
-          include: Array.isArray(srcPath)
-            ? srcPath.map((cur) => path.resolve(config.context!, cur))
-            : path.resolve(config.context!, srcPath || ''),
-          use: [getExtractMessagesLoaderConfig()]
+          use: [
+            getExtractMessagesLoaderConfig(extractorConfig as ExtractorConfig)
+          ]
         });
       }
 

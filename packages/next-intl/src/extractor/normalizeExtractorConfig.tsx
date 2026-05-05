@@ -2,7 +2,11 @@ import {throwError, warn} from '../plugin/utils.js';
 import type {ExtractorConfig, ExtractorConfigInput} from './types.js';
 
 function stripTrailingSlash(dirPath: string): string {
-  return dirPath.replace(/\/+$/, '');
+  if (dirPath.endsWith('/')) {
+    return dirPath.slice(0, -1);
+  } else {
+    return dirPath;
+  }
 }
 
 export function normalizeMessagesCatalogPaths(
@@ -30,7 +34,7 @@ export default function normalizeExtractorConfig(
 
   if (input.messages.locales != null) {
     warn(
-      '`messages.locales` is deprecated. Prefer `extract.locales` (`experimental.extract.locales` alongside `experimental.extract.sourceLocale` when using createNextIntlPlugin).'
+      '`messages.locales` is deprecated, please switch to `extract.locales`.'
     );
   }
 
