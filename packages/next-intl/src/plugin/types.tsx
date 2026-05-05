@@ -7,7 +7,7 @@ export type PluginConfig = {
     /** A path to the messages file that you'd like to create a declaration for. In case you want to consider multiple files, you can pass an array of paths. */
     createMessagesDeclaration?: string | Array<string>;
 
-    /** @deprecated Use `extract.srcPath`. */
+    /** @deprecated Use `extract.srcPath`, see https://github.com/amannn/next-intl/pull/2313 */
     srcPath?: string | Array<string>;
 
     /** Configuration about your catalogs of messages */

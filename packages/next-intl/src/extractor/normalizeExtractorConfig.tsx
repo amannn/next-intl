@@ -34,7 +34,7 @@ export default function normalizeExtractorConfig(
 
   if (input.messages.locales != null) {
     warn(
-      '`messages.locales` is deprecated, please switch to `extract.locales`.'
+      '`messages.locales` is deprecated in favor of `extract.locales`. See https://github.com/amannn/next-intl/pull/2313'
     );
   }
 
@@ -53,7 +53,7 @@ export default function normalizeExtractorConfig(
 
   if (input.sourceLocale != null && input.extract?.sourceLocale == null) {
     warn(
-      'Root-level `sourceLocale` is deprecated in favor of `extract.sourceLocale`.'
+      '`sourceLocale` is deprecated in favor of `extract.sourceLocale`. See https://github.com/amannn/next-intl/pull/2313'
     );
   }
 
@@ -74,7 +74,9 @@ export default function normalizeExtractorConfig(
   }
 
   if (input.srcPath != null && input.extract?.srcPath == null) {
-    warn('Root-level `srcPath` is deprecated in favor of `extract.srcPath`.');
+    warn(
+      '`srcPath` is deprecated in favor of `extract.srcPath`. See https://github.com/amannn/next-intl/pull/2313'
+    );
   }
 
   if (srcPath == null) {

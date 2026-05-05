@@ -44,18 +44,18 @@ export type ExtractorConfigInput = {
     /** The format of your messages files. */
     format: MessagesFormat;
     /**
-     * @deprecated Use `extract.locales`.
+     * @deprecated Use `extract.locales`. See https://github.com/amannn/next-intl/pull/2313.
      */
     locales?: 'infer' | ReadonlyArray<Locale>;
     /** Relative path(s) to your messages files. */
     path: string | Array<string>;
   };
   /**
-   * @deprecated Use `extract.sourceLocale`.
+   * @deprecated Use `extract.sourceLocale`. See https://github.com/amannn/next-intl/pull/2313.
    */
   sourceLocale?: string;
   /**
-   * @deprecated Use `extract.srcPath`.
+   * @deprecated Use `extract.srcPath`. See https://github.com/amannn/next-intl/pull/2313.
    */
   srcPath?: string | Array<string>;
 };
