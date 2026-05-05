@@ -86,7 +86,7 @@ const withNextIntl = createNextIntlPlugin({
 Locale to which extracted source strings are written.
 
 ```tsx
-// ...
+// Source messages will be extracted here
 sourceLocale: 'en';
 ```
 
@@ -97,14 +97,14 @@ This defines which messages are kept in sync during extraction (e.g. `en.json`, 
 You can either automatically detect all locales within `path`:
 
 ```tsx
-// ...
+// Detect available locales in `path`
 locales: 'infer';
 ```
 
 … or specify them explicitly (e.g. to use a subset):
 
 ```tsx
-// ...
+// Extract to these locales
 locales: ['en', 'de', 'fr'];
 ```
 
@@ -113,7 +113,7 @@ locales: ['en', 'de', 'fr'];
 Defines which directory to extract messages to (defaults to `messages.path`).
 
 ```tsx
-// ...
+// Extract messages to this directory
 path: './messages';
 ```
 
@@ -173,14 +173,14 @@ Configuring `experimental.messages` sets up a Turbo- or Webpack loader that allo
 Relative path to the directory containing messages:
 
 ```tsx
-// ...
+// Load and transform messages from here
 path: './messages';
 ```
 
 If you're loading messages from external packages, you can include multiple paths:
 
 ```tsx
-// ...
+// Multiple directories with messages
 path: ['./messages', '../packages/ui/messages'];
 ```
 
