@@ -35,6 +35,10 @@ export type ExtractorConfigInput = {
     path?: string;
     /** Locale to which extracted source strings are written. */
     sourceLocale: string;
+    /**
+     * Relative path(s) to your source code files.
+     */
+    srcPath: string | Array<string>;
   };
   messages: {
     /** The format of your messages files. */
@@ -51,9 +55,9 @@ export type ExtractorConfigInput = {
    */
   sourceLocale?: string;
   /**
-   * Relative path(s) to your source files, to be used in combination with `extract` and `messages`.
+   * @deprecated Use `extract.srcPath`.
    */
-  srcPath: string | Array<string>;
+  srcPath?: string | Array<string>;
 };
 
 /** Normalized config used internally after `normalizeExtractorConfig`. */
@@ -62,12 +66,12 @@ export type ExtractorConfig = {
     locales: 'infer' | ReadonlyArray<Locale>;
     path: string;
     sourceLocale: string;
+    srcPath: string | Array<string>;
   };
   messages: {
     format: MessagesFormat;
     path: Array<string>;
   };
-  srcPath: string | Array<string>;
 };
 
 export type CatalogLoaderConfig = {

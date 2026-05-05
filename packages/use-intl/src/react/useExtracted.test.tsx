@@ -149,7 +149,7 @@ it('throws in production when extraction did not compile useExtracted', () => {
         </MockProvider>
       )
     ).toThrow(
-      '[next-intl] `useExtracted` was called in production without compilation. Include modules that call `useExtracted` in `srcPath` and use `transpilePackages` for 3rd-party packages.'
+      '[next-intl] `useExtracted` was called in production without compilation. Include modules that call `useExtracted` in `extract.srcPath` and use `transpilePackages` for 3rd-party packages.'
     );
   } finally {
     vi.unstubAllEnvs();

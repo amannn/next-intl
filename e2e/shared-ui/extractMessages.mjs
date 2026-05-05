@@ -1,13 +1,13 @@
 import {unstable_extractMessages} from 'next-intl/extractor';
 
 await unstable_extractMessages({
-  srcPath: './src',
   extract: {
     sourceLocale: 'en',
-    locales: 'infer'
+    locales: 'infer',
+    srcPath: './src'
   },
   messages: {
-    path: './messages',
-    format: 'po'
+    format: 'po',
+    path: './messages'
   }
 });

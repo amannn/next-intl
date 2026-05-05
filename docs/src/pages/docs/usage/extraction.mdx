@@ -60,24 +60,24 @@ import createNextIntlPlugin from 'next-intl/plugin';
 
 const withNextIntl = createNextIntlPlugin({
   experimental: {
-    // Relative path(s) to source files
-    srcPath: './src',
-
     extract: {
-      // Defines which locale to extract to
-      sourceLocale: 'en',
+      // Relative path(s) to source code files
+      srcPath: './src',
 
       // Either 'infer' to automatically detect locales based on
       // matching files in `path` or an explicit array of locales
-      locales: 'infer'
+      locales: 'infer',
+
+      // Defines which locale to extract to
+      sourceLocale: 'en'
     },
 
     messages: {
-      // Relative path to the directory
-      path: './messages',
-
       // Either 'json', 'po', or a custom format (see below)
-      format: 'json'
+      format: 'json',
+
+      // Relative path to the directory
+      path: './messages'
     }
   }
 });
@@ -99,14 +99,14 @@ While message extraction is designed to seamlessly integrate with your developme
 import {unstable_extractMessages} from 'next-intl/extractor';
 
 await unstable_extractMessages({
-  srcPath: './src',
   extract: {
+    locales: 'infer',
     sourceLocale: 'en',
-    locales: 'infer'
+    srcPath: './src'
   },
   messages: {
-    path: './messages',
-    format: 'po'
+    format: 'po',
+    path: './messages'
   }
 });
 
@@ -291,21 +291,24 @@ Whenever your app pulls in external modules that call `useExtracted`, whether it
 
 Some teams use monorepos and external packages purely for organizational benefits, but there's only one "entry point" in the sense that there's a single Next.js app that will eventually be deployed and makes use of all packages.
 
-Here, you can configure a [`srcPath`](/docs/usage/plugin#src-path) that includes the external package's source directory:
+Here, you can configure [`extract.srcPath`](/docs/usage/plugin#extract-srcpath) to include the external package's source directory:
 
 ```tsx
 const withNextIntl = createNextIntlPlugin({
   experimental: {
-    srcPath: [
-      // First-party messages
-      './src',
+    extract: {
+      srcPath: [
+        // First-party messages
+        './src',
 
-      // Sibling packages in a monorepo
-      '../ui/src',
+        // Sibling packages in a monorepo
+        '../ui/src',
 
-      // Installed packages in `node_modules`
-      './node_modules/@acme/components'
-    ]
+        // Installed packages in `node_modules`
+        './node_modules/@acme/components'
+      ]
+      // ...
+    }
     // ...
   }
 });
@@ -323,14 +326,14 @@ For this, you can use one-time extraction via [`unstable_extractMessages`](/docs
 import {unstable_extractMessages} from 'next-intl/extractor';
 
 await unstable_extractMessages({
-  srcPath: './src',
   extract: {
     sourceLocale: 'en',
-    locales: 'infer'
+    locales: 'infer',
+    srcPath: './src'
   },
   messages: {
-    path: './messages',
-    format: 'po'
+    format: 'po',
+    path: './messages'
   }
 });
 ```
@@ -340,12 +343,12 @@ In the consuming app, you configure set [`extract.path`](/docs/usage/plugin#extr
 ```tsx filename="next.config.ts"
 const withNextIntl = createNextIntlPlugin({
   experimental: {
-    // Only extract first-party messages
-    srcPath: './src',
     extract: {
-      sourceLocale: 'en',
       locales: 'infer',
-      path: './messages'
+      path: './messages',
+      sourceLocale: 'en',
+      // Only extract first-party messages
+      srcPath: './src'
     },
 
     // Transform both first-party messages and external

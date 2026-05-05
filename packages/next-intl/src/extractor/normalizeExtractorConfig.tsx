@@ -63,6 +63,24 @@ export default function normalizeExtractorConfig(
     throwError('`extract.sourceLocale` is required.');
   }
 
+  const srcPath = input.extract?.srcPath ?? input.srcPath;
+
+  const hasRootSrcPath = input.srcPath != null;
+  const hasNestedSrcPath = input.extract?.srcPath != null;
+  if (hasRootSrcPath && hasNestedSrcPath) {
+    throwError(
+      'Use either `srcPath` or `extract.srcPath`, not both. Prefer `extract.srcPath`.'
+    );
+  }
+
+  if (input.srcPath != null && input.extract?.srcPath == null) {
+    warn('Root-level `srcPath` is deprecated in favor of `extract.srcPath`.');
+  }
+
+  if (srcPath == null) {
+    throwError('`extract.srcPath` is required.');
+  }
+
   const pathIsArray = Array.isArray(input.messages.path);
   const messagesPath = normalizeMessagesCatalogPaths(input.messages.path);
   if (messagesPath.length === 0) {
@@ -88,12 +106,12 @@ export default function normalizeExtractorConfig(
     extract: {
       locales,
       path: extractPath,
-      sourceLocale: resolvedSourceLocale
+      sourceLocale: resolvedSourceLocale,
+      srcPath
     },
     messages: {
       format: input.messages.format,
       path: messagesPath
-    },
-    srcPath: input.srcPath
+    }
   };
 }

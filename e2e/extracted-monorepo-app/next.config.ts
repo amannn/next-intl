@@ -4,11 +4,11 @@ import createNextIntlPlugin from 'next-intl/plugin';
 const withNextIntl = createNextIntlPlugin({
   experimental: {
     // Necessary to extract first-party messages
-    srcPath: './src',
     extract: {
       locales: 'infer',
       path: './messages',
-      sourceLocale: 'en'
+      sourceLocale: 'en',
+      srcPath: './src'
     },
 
     messages: {

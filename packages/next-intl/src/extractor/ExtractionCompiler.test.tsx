@@ -40,13 +40,13 @@ describe('json format', () => {
         extract: {
           locales: 'infer',
           path: './messages',
-          sourceLocale: 'en'
+          sourceLocale: 'en',
+          srcPath: './src'
         },
         messages: {
           format: 'json',
           path: ['./messages']
-        },
-        srcPath: './src'
+        }
       },
       {
         isDevelopment: true,
@@ -95,13 +95,13 @@ describe('json format', () => {
         extract: {
           locales: ['de', 'fr'],
           path: './messages',
-          sourceLocale: 'en'
+          sourceLocale: 'en',
+          srcPath: './src'
         },
         messages: {
           format: 'json',
           path: ['./messages']
-        },
-        srcPath: './src'
+        }
       },
       {
         isDevelopment: true,
@@ -392,13 +392,13 @@ describe('po format', () => {
         extract: {
           locales: 'infer',
           path: './messages',
-          sourceLocale: 'en'
+          sourceLocale: 'en',
+          srcPath: './src'
         },
         messages: {
           format: 'po',
           path: ['./messages']
-        },
-        srcPath: './src'
+        }
       },
       {
         isDevelopment: true,
@@ -486,13 +486,13 @@ describe('po format', () => {
         extract: {
           locales: 'infer',
           path: './messages',
-          sourceLocale: 'en'
+          sourceLocale: 'en',
+          srcPath: './src'
         },
         messages: {
           format: 'po',
           path: ['./messages']
-        },
-        srcPath: './src'
+        }
       },
       {
         isDevelopment: false,
@@ -581,13 +581,13 @@ describe('po format', () => {
         extract: {
           locales: 'infer',
           path: './messages',
-          sourceLocale: 'en'
+          sourceLocale: 'en',
+          srcPath: './src'
         },
         messages: {
           format: 'po',
           path: ['./messages']
-        },
-        srcPath: './src'
+        }
       },
       {
         isDevelopment: false,
@@ -1680,13 +1680,13 @@ describe('`srcPath` filtering', () => {
         extract: {
           locales: 'infer',
           path: './messages',
-          sourceLocale: 'en'
+          sourceLocale: 'en',
+          srcPath
         },
         messages: {
           format: 'json',
           path: ['./messages']
-        },
-        srcPath
+        }
       },
       {
         isDevelopment: true,
@@ -1760,7 +1760,8 @@ describe('custom format', () => {
         extract: {
           locales: 'infer',
           path: './messages',
-          sourceLocale: 'en'
+          sourceLocale: 'en',
+          srcPath: './src'
         },
         messages: {
           format: {
@@ -1771,8 +1772,7 @@ describe('custom format', () => {
             extension: '.json'
           },
           path: ['./messages']
-        },
-        srcPath: './src'
+        }
       },
       {
         isDevelopment: true,
@@ -1830,7 +1830,8 @@ describe('custom format', () => {
         extract: {
           locales: 'infer',
           path: './messages',
-          sourceLocale: 'en'
+          sourceLocale: 'en',
+          srcPath: './src'
         },
         messages: {
           format: {
@@ -1841,8 +1842,7 @@ describe('custom format', () => {
             extension: '.po'
           },
           path: ['./messages']
-        },
-        srcPath: './src'
+        }
       },
       {
         isDevelopment: true,

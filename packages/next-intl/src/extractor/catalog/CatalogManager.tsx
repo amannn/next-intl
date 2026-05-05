@@ -141,9 +141,9 @@ export default class CatalogManager implements Disposable {
 
   private getSrcPaths(): Array<string> {
     return (
-      Array.isArray(this.config.srcPath)
-        ? this.config.srcPath
-        : [this.config.srcPath]
+      Array.isArray(this.config.extract.srcPath)
+        ? this.config.extract.srcPath
+        : [this.config.extract.srcPath]
     ).map((srcPath) => path.join(this.projectRoot, srcPath));
   }
 

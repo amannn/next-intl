@@ -7,9 +7,7 @@ export type PluginConfig = {
     /** A path to the messages file that you'd like to create a declaration for. In case you want to consider multiple files, you can pass an array of paths. */
     createMessagesDeclaration?: string | Array<string>;
 
-    /**
-     * Relative path(s) to your source files, to be used in combination with `extract` and `messages`.
-     */
+    /** @deprecated Use `extract.srcPath`. */
     srcPath?: string | Array<string>;
 
     /** Configuration about your catalogs of messages */
@@ -20,7 +18,7 @@ export type PluginConfig = {
       precompile?: boolean;
     };
 
-    /** Enables the usage of `useExtracted`, to be used in combination with `srcPath` and `messages`. */
+    /** Enables the usage of `useExtracted`, to be used in combination with `messages`. */
     extract?: NonNullable<ExtractorConfigInput['extract']>;
   };
 };

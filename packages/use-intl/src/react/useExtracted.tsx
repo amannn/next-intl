@@ -71,7 +71,7 @@ export default function useExtracted(namespace?: string) {
 
   if (process.env.NODE_ENV === 'production') {
     throw new Error(
-      '[next-intl] `useExtracted` was called in production without compilation. Include modules that call `useExtracted` in `srcPath` and use `transpilePackages` for 3rd-party packages.'
+      '[next-intl] `useExtracted` was called in production without compilation. Include modules that call `useExtracted` in `extract.srcPath` and use `transpilePackages` for 3rd-party packages.'
     );
   }
 

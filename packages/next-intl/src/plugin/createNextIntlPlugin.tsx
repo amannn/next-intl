@@ -30,20 +30,18 @@ function initPlugin(
   let extractorConfig: ExtractorConfig | undefined;
 
   if (pluginConfig.experimental?.extract) {
-    if (
-      !pluginConfig.experimental.srcPath ||
-      !pluginConfig.experimental.messages
-    ) {
-      throwError('`srcPath` and `messages` are required when using `extract`.');
+    if (!pluginConfig.experimental.messages) {
+      throwError('`messages` is required when using `extract`.');
     }
 
     extractorConfig = normalizeExtractorConfig({
       srcPath: pluginConfig.experimental.srcPath,
       messages: pluginConfig.experimental.messages,
       extract: {
-        sourceLocale: pluginConfig.experimental.extract.sourceLocale,
+        locales: pluginConfig.experimental.extract.locales,
         path: pluginConfig.experimental.extract.path,
-        locales: pluginConfig.experimental.extract.locales
+        sourceLocale: pluginConfig.experimental.extract.sourceLocale,
+        srcPath: pluginConfig.experimental.extract.srcPath
       }
     });
   }
