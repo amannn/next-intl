@@ -9,6 +9,7 @@ import type {
 } from 'next/dist/server/config-shared.js';
 import type {Configuration} from 'webpack';
 import {getFormatExtension} from '../extractor/format/index.js';
+import {normalizeMessagesCatalogPaths} from '../extractor/normalizeExtractorConfig.js';
 import SourceFileFilter from '../extractor/source/SourceFileFilter.js';
 import type {CatalogLoaderConfig, ExtractorConfig} from '../extractor/types.js';
 import {isDevelopmentOrNextBuild} from './config.js';
@@ -81,7 +82,8 @@ function resolveI18nPath(providedPath?: string, cwd?: string) {
 
 export default function getNextConfig(
   pluginConfig: PluginConfig,
-  nextConfig?: NextConfig
+  nextConfig?: NextConfig,
+  extractorConfig?: ExtractorConfig
 ) {
   const useTurbo = process.env.TURBOPACK != null;
 
@@ -92,28 +94,32 @@ export default function getNextConfig(
 
   const nextIntlConfig: Partial<NextConfig> = {};
 
-  function getExtractMessagesLoaderConfig() {
-    const experimental = pluginConfig.experimental!;
-    if (!experimental.srcPath || !pluginConfig.experimental?.messages) {
-      throwError(
-        '`srcPath` and `messages` are required when using `extractor`.'
-      );
-    }
+  let messageLoadPaths: Array<string> = [];
+
+  if (pluginConfig.experimental?.messages) {
+    messageLoadPaths = normalizeMessagesCatalogPaths(
+      pluginConfig.experimental.messages.path
+    );
+  }
+
+  function getExtractMessagesLoaderConfig(config: ExtractorConfig) {
     return {
       loader: 'next-intl/extractor/extractionLoader',
-      options: {
-        srcPath: experimental.srcPath,
-        sourceLocale: experimental.extract!.sourceLocale,
-        messages: pluginConfig.experimental.messages
-      } satisfies ExtractorConfig as TurbopackLoaderOptions
+      options: config satisfies ExtractorConfig as TurbopackLoaderOptions
     };
   }
 
   function getCatalogLoaderConfig() {
+    const messages = pluginConfig.experimental!.messages!;
     return {
       loader: 'next-intl/extractor/catalogLoader',
       options: {
-        messages: pluginConfig.experimental!.messages!
+        messages: {
+          format: messages.format,
+          ...(messages.precompile !== undefined && {
+            precompile: messages.precompile
+          })
+        }
       } satisfies CatalogLoaderConfig as TurbopackLoaderOptions
     };
   }
@@ -141,18 +147,6 @@ export default function getNextConfig(
       }
     } else {
       rules[glob] = rule;
-    }
-  }
-
-  // Validate messages config
-  if (pluginConfig.experimental?.messages) {
-    const messages = pluginConfig.experimental.messages;
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- For non-TS consumers
-    if (!messages.format) {
-      throwError('`format` is required when using `messages`.');
-    }
-    if (!messages.path) {
-      throwError('`path` is required when using `messages`.');
     }
   }
 
@@ -203,19 +197,13 @@ export default function getNextConfig(
         throwError('Message extraction requires Next.js 16 or higher.');
       }
       rules ??= getTurboRules();
-      const srcPaths = (
-        Array.isArray(pluginConfig.experimental.srcPath!)
-          ? pluginConfig.experimental.srcPath!
-          : [pluginConfig.experimental.srcPath!]
-      ).map((srcPath) =>
-        srcPath.endsWith('/') ? srcPath.slice(0, -1) : srcPath
-      );
       addTurboRule(rules!, `*.{${SourceFileFilter.EXTENSIONS.join(',')}}`, {
-        loaders: [getExtractMessagesLoaderConfig()],
+        loaders: [
+          getExtractMessagesLoaderConfig(extractorConfig as ExtractorConfig)
+        ],
         condition: {
-          // Note: We don't need `not: 'foreign'`, because this is
-          // implied by the filter based on `srcPath`.
-          path: `{${srcPaths.join(',')}}` + '/**/*',
+          // We don't filter for `path` here to allow transformation
+          // of `useExtracted` calls in external packages (e.g. monorepos)
           content: /(useExtracted|getExtracted)/
         }
       });
@@ -233,7 +221,7 @@ export default function getNextConfig(
       addTurboRule(rules!, `*${extension}`, {
         loaders: [getCatalogLoaderConfig()],
         condition: {
-          path: `${pluginConfig.experimental.messages.path}/**/*`
+          path: `{${messageLoadPaths.join(',')}}/**/*`
         },
         as: '*.js'
       });
@@ -297,13 +285,11 @@ export default function getNextConfig(
       if (pluginConfig.experimental?.extract) {
         if (!config.module) config.module = {};
         if (!config.module.rules) config.module.rules = [];
-        const srcPath = pluginConfig.experimental.srcPath;
         config.module.rules.push({
           test: new RegExp(`\\.(${SourceFileFilter.EXTENSIONS.join('|')})$`),
-          include: Array.isArray(srcPath)
-            ? srcPath.map((cur) => path.resolve(config.context!, cur))
-            : path.resolve(config.context!, srcPath || ''),
-          use: [getExtractMessagesLoaderConfig()]
+          use: [
+            getExtractMessagesLoaderConfig(extractorConfig as ExtractorConfig)
+          ]
         });
       }
 
@@ -316,9 +302,8 @@ export default function getNextConfig(
         );
         config.module.rules.push({
           test: new RegExp(`${extension.replace(/\./g, '\\.')}$`),
-          include: path.resolve(
-            config.context!,
-            pluginConfig.experimental.messages.path
+          include: messageLoadPaths.map((dirPath) =>
+            path.resolve(config.context!, dirPath)
           ),
           use: [getCatalogLoaderConfig()],
           type: 'javascript/auto'

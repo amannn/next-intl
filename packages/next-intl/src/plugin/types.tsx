@@ -1,5 +1,5 @@
 import type {LoaderContext} from 'webpack';
-import type {MessagesFormat} from '../extractor/format/types.js';
+import type {ExtractorConfigInput} from '../extractor/types.js';
 
 export type PluginConfig = {
   requestConfig?: string;
@@ -7,27 +7,19 @@ export type PluginConfig = {
     /** A path to the messages file that you'd like to create a declaration for. In case you want to consider multiple files, you can pass an array of paths. */
     createMessagesDeclaration?: string | Array<string>;
 
-    /** Relative path(s) to your source files, to be used in combination with `extract` and `messages`. */
+    /** @deprecated Use `extract.srcPath`, see https://github.com/amannn/next-intl/pull/2313 */
     srcPath?: string | Array<string>;
 
-    /** Configuration about your catalogs of messages, to be used in combination with `srcPath` and `extract`. */
-    messages?: {
-      /** Relative path to the directory containing your messages. */
-      path: string;
-      /** Defines the format for how your messages are stored. */
-      format: MessagesFormat;
-      /** Either automatically infer the locales based on catalog files in `path` or explicitly define them. */
-      locales: 'infer' | ReadonlyArray<string>;
+    /** Configuration about your catalogs of messages */
+    messages?: ExtractorConfigInput['messages'] & {
       /**
        * When enabled, ICU messages are precompiled at build time, resulting in smaller bundles and faster message formatting.
        */
       precompile?: boolean;
     };
 
-    /** Enables the usage of `useExtracted`, to be used in combination with `srcPath` and `messages`. */
-    extract?: {
-      sourceLocale: string;
-    };
+    /** Enables the usage of `useExtracted`, to be used in combination with `messages`. */
+    extract?: NonNullable<ExtractorConfigInput['extract']>;
   };
 };
 

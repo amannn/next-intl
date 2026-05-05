@@ -60,24 +60,24 @@ import createNextIntlPlugin from 'next-intl/plugin';
 
 const withNextIntl = createNextIntlPlugin({
   experimental: {
-    // Relative path(s) to source files
-    srcPath: './src',
-
     extract: {
-      // Defines which locale to extract to
+      // Relative path(s) to source code files
+      srcPath: './src',
+
+      // Either 'infer' to automatically detect locales based on
+      // matching files in `path` or an explicit array of locales
+      locales: 'infer',
+
+      // Defines which locale to extract source messages to
       sourceLocale: 'en'
     },
 
     messages: {
-      // Relative path to the directory
-      path: './messages',
-
       // Either 'json', 'po', or a custom format (see below)
       format: 'json',
 
-      // Either 'infer' to automatically detect locales based on
-      // matching files in `path` or an explicit array of locales
-      locales: 'infer'
+      // Relative path to the directory
+      path: './messages'
     }
   }
 });
@@ -99,12 +99,14 @@ While message extraction is designed to seamlessly integrate with your developme
 import {unstable_extractMessages} from 'next-intl/extractor';
 
 await unstable_extractMessages({
-  srcPath: './src',
-  sourceLocale: 'en',
+  extract: {
+    locales: 'infer',
+    sourceLocale: 'en',
+    srcPath: './src'
+  },
   messages: {
-    path: './messages',
-    format: 'json',
-    locales: 'infer'
+    format: 'po',
+    path: './messages'
   }
 });
 
@@ -112,6 +114,8 @@ console.log('✔ Messages extracted');
 ```
 
 This can be useful when you're developing a package like a component library, where you don't have a Next.js dev server running and you want to provide messages along with the package.
+
+See also: [Monorepos and external packages](#monorepos-external-packages)
 
 </Details>
 
@@ -269,7 +273,7 @@ it('renders', () => {
 
 ## Formats [#formats]
 
-Messages can be extracted as [`.json`](/docs/usage/plugin#formats-json), [`.po`](/docs/usage/plugin#formats-po), or with [custom file formats](/docs/usage/plugin#formats-custom)—see [`messages.format`](/docs/usage/plugin#format) for configuration details.
+Messages can be extracted as [`.json`](/docs/usage/plugin#formats-json), [`.po`](/docs/usage/plugin#formats-po), or with [custom file formats](/docs/usage/plugin#formats-custom)—see [`messages.format`](/docs/usage/plugin#messages-format) for configuration details.
 
 **Recommendation:** As keys are auto-generated with `useExtracted`, it's recommended to use **PO files** as they support providing more context about a message like file references and descriptions. This can be helpful for (AI) translators.
 
@@ -278,3 +282,105 @@ Messages can be extracted as [`.json`](/docs/usage/plugin#formats-json), [`.po`]
 AI-based translation can be automated with a translation management system like [Crowdin](/docs/workflows/localization-management).
 
 </Callout>
+
+## Monorepos and external packages [#monorepos-external-packages]
+
+Whenever your app pulls in external modules that call `useExtracted`, whether it's a sibling package in your monorepo or a reusable library installed in `node_modules`, there are two typical setups you can choose from.
+
+### 1. Don’t ship messages with the external package
+
+Some teams use monorepos and external packages purely for organizational benefits, but there's only one "entry point" in the sense that there's a single Next.js app that will eventually be deployed and makes use of all packages.
+
+Here, you can configure [`extract.srcPath`](/docs/usage/plugin#extract-srcpath) to include the external package's source directory:
+
+```tsx
+const withNextIntl = createNextIntlPlugin({
+  experimental: {
+    extract: {
+      srcPath: [
+        // First-party messages
+        './src',
+
+        // Sibling packages in a monorepo
+        '../ui/src',
+
+        // Installed packages in `node_modules`
+        './node_modules/@acme/components'
+      ]
+      // ...
+    }
+    // ...
+  }
+});
+```
+
+This will extract both first-party and external package messages to your main app directory.
+
+### 2. Ship messages with the external package
+
+If your shared package is used by multiple apps, you might want to reuse messages among all consumers.
+
+For this, you can use one-time extraction via [`unstable_extractMessages`](/docs/usage/extraction#manual) as part of your build process to extract the shared messages:
+
+```tsx
+import {unstable_extractMessages} from 'next-intl/extractor';
+
+await unstable_extractMessages({
+  extract: {
+    sourceLocale: 'en',
+    locales: 'infer',
+    srcPath: './src'
+  },
+  messages: {
+    format: 'po',
+    path: './messages'
+  }
+});
+```
+
+In the consuming app, you can configure [`extract.path`](/docs/usage/plugin#extract-path) to only extract your first-party messages, while using [`messages.path`](/docs/usage/plugin#messages-path) to include the external package's messages:
+
+```tsx filename="next.config.ts"
+const withNextIntl = createNextIntlPlugin({
+  experimental: {
+    // Only extract first-party messages
+    extract: {
+      locales: 'infer',
+      path: './messages',
+      sourceLocale: 'en',
+      srcPath: './src'
+    },
+
+    // Transform both first-party messages and external
+    // ones when loaded (e.g. for .po files)
+    messages: {
+      path: [
+        // First-party messages
+        './messages',
+
+        // Sibling packages in a monorepo
+        '../ui/messages',
+
+        // Installed packages in `node_modules`
+        './node_modules/@acme/components/messages'
+      ],
+
+      // Depends on your preference
+      format: 'po'
+    }
+  }
+});
+```
+
+Additionally, you should use [`transpilePackages`](https://nextjs.org/docs/app/api-reference/config/next-config-js/transpilePackages) so that `useExtracted` is compiled to `useTranslations` in the external packages:
+
+```tsx filename="next.config.ts"
+const nextConfig = {
+  // ...
+  transpilePackages: ['@acme/ui', '@acme/components']
+};
+
+// ...
+```
+
+Afterwards, you can merge first-party messages with external ones in [`getRequestConfig`](/docs/usage/configuration#messages).
