@@ -383,4 +383,20 @@ const nextConfig = {
 // ...
 ```
 
-Afterwards, you can merge first-party messages with external ones in [`getRequestConfig`](/docs/usage/configuration#messages).
+Afterwards, you can merge first-party messages with external ones in [`getRequestConfig`](/docs/usage/configuration#messages):
+
+```tsx filename="i18n/request.ts"
+const messages = {
+  ...(await import(`@acme/ui/messages/${locale}.po`)).default,
+  ...(await import(`@acme/components/messages/${locale}.po`)).default,
+  ...(await import(`../../messages/${locale}.po`)).default
+};
+
+// ...
+```
+
+<Callout>
+
+To avoid key collisions between packages, you can consider using [namespaces](#namespaces).
+
+</Callout>
