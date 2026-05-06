@@ -3,11 +3,9 @@
     "id": "tBFOH1",
     "message": "Hello, {name}!",
     "description": null,
-    "references": [
-      {
-        "path": "input.js",
-        "line": 5
-      }
-    ]
+    "reference": {
+      "path": "input.js",
+      "line": 5
+    }
   }
 ]

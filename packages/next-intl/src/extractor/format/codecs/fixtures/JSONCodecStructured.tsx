@@ -1,6 +1,6 @@
 import {defineCodec} from '../../ExtractorCodec.js';
 
-type StoredMessage = {message: string; description?: string};
+type StoredMessage = {message: string; description?: string | Array<string>};
 
 export default defineCodec(() => ({
   decode(content) {

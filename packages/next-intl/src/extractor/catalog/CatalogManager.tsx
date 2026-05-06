@@ -10,13 +10,13 @@ import SourceFileWatcher, {
 import type {
   ExtractorConfig,
   ExtractorMessage,
-  ExtractorMessageReference,
-  Locale
+  Locale,
+  SourceMessage
 } from '../types.js';
 import {
   compareReferences,
   getDefaultProjectRoot,
-  normalizePathToPosix
+  localeCompare
 } from '../utils.js';
 import CatalogLocales from './CatalogLocales.js';
 import CatalogPersister from './CatalogPersister.js';
@@ -26,8 +26,8 @@ export default class CatalogManager implements Disposable {
   private config: ExtractorConfig;
 
   /**
-   * The source of truth for which messages are used.
-   * NOTE: Should be mutated in place to keep `messagesById` and `messagesByFile` in sync.
+   * Source of truth for extracted messages per file, including file-local
+   * metadata like references and descriptions.
    */
   private messagesByFile: Map<
     /* File path */ string,
@@ -35,9 +35,7 @@ export default class CatalogManager implements Disposable {
   > = new Map();
 
   /**
-   * Fast lookup for messages by ID across all files,
-   * contains the same messages as `messagesByFile`.
-   * NOTE: Should be mutated in place to keep `messagesById` and `messagesByFile` in sync.
+   * Fast lookup for messages by ID, aggregated across all files.
    */
   private messagesById: Map<string, ExtractorMessage> = new Map();
 
@@ -214,8 +212,6 @@ export default class CatalogManager implements Disposable {
       for (const diskMessage of diskMessages) {
         const prev = this.messagesById.get(diskMessage.id);
         if (prev) {
-          // Mutate the existing object instead of creating a copy
-          // to keep messagesById and messagesByFile in sync.
           // Unknown properties (like flags): disk wins
           // Known properties: existing (from extraction) wins
           for (const key of Object.keys(diskMessage)) {
@@ -261,11 +257,11 @@ export default class CatalogManager implements Disposable {
       const existing = this.messagesById.get(id);
       if (!existing) continue;
 
-      // Mutate the existing object instead of creating a copy.
-      // This keeps `messagesById` and `messagesByFile` in sync since
-      // they reference the same object instance.
       for (const key of Object.keys(diskMessage)) {
-        if (existing[key] == null) {
+        if (
+          !['id', 'message', 'description', 'references'].includes(key) &&
+          existing[key] == null
+        ) {
           existing[key] = diskMessage[key];
         }
       }
@@ -273,7 +269,7 @@ export default class CatalogManager implements Disposable {
   }
 
   private async processFile(absoluteFilePath: string): Promise<boolean> {
-    let messages: Array<ExtractorMessage> = [];
+    let messages: Array<SourceMessage> = [];
     try {
       const content = await fs.readFile(absoluteFilePath, 'utf8');
       let extraction: Awaited<ReturnType<typeof this.extractor.extract>>;
@@ -291,74 +287,33 @@ export default class CatalogManager implements Disposable {
     }
 
     const prevFileMessages = this.messagesByFile.get(absoluteFilePath);
-    const relativeFilePath = normalizePathToPosix(
-      path.relative(this.projectRoot, absoluteFilePath)
-    );
-
-    // Init with all previous ones
-    const idsToRemove = Array.from(prevFileMessages?.keys() ?? []);
-
-    // Replace existing messages with new ones
     const fileMessages = new Map<string, ExtractorMessage>();
-
-    for (let message of messages) {
-      const prevMessage = this.messagesById.get(message.id);
-
-      // Merge with previous message if it exists
+    for (const message of messages) {
+      const prevMessage = fileMessages.get(message.id);
+      const extractorMessage = this.createExtractorMessage(message);
       if (prevMessage) {
-        message = {...message};
-
-        if (message.references) {
-          message.references = this.mergeReferences(
-            prevMessage.references ?? [],
-            relativeFilePath,
-            message.references
-          );
-        }
-
-        // Merge other properties like description, or unknown
-        // attributes like flags that are opaque to us
-        for (const key of Object.keys(prevMessage)) {
-          if (message[key] == null) {
-            message[key] = prevMessage[key];
-          }
-        }
+        fileMessages.set(
+          message.id,
+          this.mergeMessagesFromSameFile(prevMessage, extractorMessage)
+        );
+      } else {
+        fileMessages.set(message.id, extractorMessage);
       }
-
-      this.messagesById.set(message.id, message);
-      fileMessages.set(message.id, message);
-
-      // This message continues to exist in this file
-      const index = idsToRemove.indexOf(message.id);
-      if (index !== -1) idsToRemove.splice(index, 1);
     }
 
-    // Clean up removed messages from `messagesById`
-    idsToRemove.forEach((id) => {
-      const message = this.messagesById.get(id);
-      if (!message) return;
+    const affectedIds = new Set([
+      ...Array.from(prevFileMessages?.keys() ?? []),
+      ...Array.from(fileMessages.keys())
+    ]);
 
-      const hasOtherReferences = message.references?.some(
-        (ref) => ref.path !== relativeFilePath
-      );
-
-      if (!hasOtherReferences) {
-        // No other references, delete the message entirely
-        this.messagesById.delete(id);
-      } else {
-        // Message is used elsewhere, remove this file from references
-        // Mutate the existing object to keep `messagesById` and `messagesByFile` in sync
-        message.references = message.references?.filter(
-          (ref) => ref.path !== relativeFilePath
-        );
-      }
-    });
-
-    // Update the stored messages
-    if (messages.length > 0) {
+    if (fileMessages.size > 0) {
       this.messagesByFile.set(absoluteFilePath, fileMessages);
     } else {
       this.messagesByFile.delete(absoluteFilePath);
+    }
+
+    for (const id of affectedIds) {
+      this.rebuildMessageById(id);
     }
 
     const changed = this.haveMessagesChangedForFile(
@@ -368,17 +323,105 @@ export default class CatalogManager implements Disposable {
     return changed;
   }
 
-  private mergeReferences(
-    existing: Array<ExtractorMessageReference>,
-    currentFilePath: string,
-    currentFileRefs: Array<ExtractorMessageReference>
-  ): Array<ExtractorMessageReference> {
-    // Keep refs from other files, replace all refs from the current file
-    const otherFileRefs = existing.filter(
-      (ref) => ref.path !== currentFilePath
+  private createExtractorMessage(message: SourceMessage): ExtractorMessage {
+    return {
+      id: message.id,
+      message: message.message,
+      ...(message.description != null && {
+        description: message.description
+      }),
+      references: [message.reference]
+    };
+  }
+
+  private mergeMessagesFromSameFile(
+    existing: ExtractorMessage,
+    message: ExtractorMessage
+  ): ExtractorMessage {
+    const merged: ExtractorMessage = {
+      ...existing,
+      ...message,
+      references: [
+        ...(existing.references ?? []),
+        ...(message.references ?? [])
+      ].sort(compareReferences)
+    };
+    const description = this.mergeDescriptions(
+      existing.description,
+      message.description
     );
-    const merged = [...otherFileRefs, ...currentFileRefs];
-    return merged.sort(compareReferences);
+    if (description != null) {
+      merged.description = description;
+    } else {
+      delete merged.description;
+    }
+    return merged;
+  }
+
+  private rebuildMessageById(id: string): void {
+    const fileMessages = Array.from(this.messagesByFile.values())
+      .map((messages) => messages.get(id))
+      .filter((message): message is ExtractorMessage => message != null);
+
+    if (fileMessages.length === 0) {
+      this.messagesById.delete(id);
+      return;
+    }
+
+    const previousMessage = this.messagesById.get(id);
+    const aggregate: ExtractorMessage = {
+      ...fileMessages[0],
+      references: fileMessages
+        .flatMap((message) => message.references ?? [])
+        .sort(compareReferences)
+    };
+    const description = this.mergeDescriptions(
+      ...fileMessages.map((message) => message.description)
+    );
+    if (description != null) {
+      aggregate.description = description;
+    } else {
+      delete aggregate.description;
+    }
+
+    if (previousMessage) {
+      for (const key of Object.keys(previousMessage)) {
+        if (
+          !['id', 'message', 'description', 'references'].includes(key) &&
+          aggregate[key] == null
+        ) {
+          aggregate[key] = previousMessage[key];
+        }
+      }
+    }
+
+    this.messagesById.set(id, aggregate);
+  }
+
+  private mergeDescriptions(
+    ...descriptions: Array<ExtractorMessage['description'] | null>
+  ): ExtractorMessage['description'] {
+    const merged: Array<string> = [];
+    for (const description of descriptions) {
+      const values = this.getDescriptions(description);
+      for (const value of values) {
+        if (!merged.includes(value)) {
+          merged.push(value);
+        }
+      }
+    }
+
+    merged.sort(localeCompare);
+    if (merged.length === 0) return undefined;
+    return merged.length === 1 ? merged[0] : merged;
+  }
+
+  private getDescriptions(
+    description: ExtractorMessage['description'] | null
+  ): Array<string> {
+    if (typeof description === 'string') return [description];
+    if (Array.isArray(description)) return description;
+    return [];
   }
 
   private haveMessagesChangedForFile(
@@ -416,7 +459,17 @@ export default class CatalogManager implements Disposable {
     return (
       msg1.id === msg2.id &&
       msg1.message === msg2.message &&
-      msg1.description === msg2.description
+      this.areDescriptionsEqual(msg1.description, msg2.description)
+    );
+  }
+
+  private areDescriptionsEqual(
+    descriptionA: ExtractorMessage['description'] | null,
+    descriptionB: ExtractorMessage['description'] | null
+  ): boolean {
+    return (
+      JSON.stringify(this.mergeDescriptions(descriptionA)) ===
+      JSON.stringify(this.mergeDescriptions(descriptionB))
     );
   }
 

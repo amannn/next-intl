@@ -435,6 +435,102 @@ describe('po format', () => {
     expect(relativeSpy).toHaveBeenCalled();
   });
 
+  it('stacks descriptions when the same message appears in multiple files', async () => {
+    filesystem.project.src['FileA.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function FileA() {
+      const t = useExtracted();
+      return <div>{t({message: 'Message', description: 'Description from FileA'})}</div>;
+    }
+    `;
+    filesystem.project.src['FileB.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function FileB() {
+      const t = useExtracted();
+      return <div>{t({message: 'Message', description: 'Description from FileB'})}</div>;
+    }
+    `;
+    filesystem.project.messages = {};
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+    await waitForWriteFileCalls(1);
+
+    expect(vi.mocked(fs.writeFile).mock.calls[0][1]).toContain(`
+#. Description from FileA
+#. Description from FileB
+`);
+  });
+
+  it('stacks descriptions when the same message appears multiple times in one file', async () => {
+    filesystem.project.src['FileA.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function FileA() {
+      const t = useExtracted();
+      return (
+        <div>
+          {t({message: 'Message', description: 'Description from first use'})}
+          {t({message: 'Message', description: 'Description from second use'})}
+        </div>
+      );
+    }
+    `;
+    filesystem.project.messages = {};
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+    await waitForWriteFileCalls(1);
+
+    expect(vi.mocked(fs.writeFile).mock.calls[0][1]).toContain(`
+#. Description from first use
+#. Description from second use
+`);
+  });
+
+  it('removes stale descriptions when a source occurrence changes', async () => {
+    filesystem.project.src['FileA.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function FileA() {
+      const t = useExtracted();
+      return <div>{t({message: 'Message', description: 'Description from FileA'})}</div>;
+    }
+    `;
+    filesystem.project.src['FileB.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function FileB() {
+      const t = useExtracted();
+      return <div>{t({message: 'Message', description: 'Description from FileB'})}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.po': '',
+      'de.po': ''
+    };
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+    await waitForWriteFileCalls(2);
+
+    await simulateSourceFileUpdate(
+      '/project/src/FileA.tsx',
+      `
+      import {useExtracted} from 'next-intl';
+      function FileA() {
+        const t = useExtracted();
+        return <div>{t('Message')}</div>;
+      }
+      `
+    );
+    await waitForWriteFileCalls(4);
+
+    const lastSourceWrite = vi
+      .mocked(fs.writeFile)
+      .mock.calls.filter((call) => call[0] === 'messages/en.po')
+      .at(-1)?.[1] as string;
+    expect(lastSourceWrite).not.toContain('Description from FileA');
+    expect(lastSourceWrite).toContain('#. Description from FileB');
+  });
+
   it('removes obsolete messages during build', async () => {
     filesystem.project.messages = {
       'en.po': `
@@ -1196,14 +1292,12 @@ msgstr ""
       'en.po': `
       #: src/Greeting.tsx:4
       #, c-format
-      #. This is a description
       msgid "OpKKos"
       msgstr "Hello!"
       `,
       'de.po': `
       #: src/Greeting.tsx:4
       #, fuzzy
-      #. This is a description
       msgid "OpKKos"
       msgstr "Hallo!"
       `
@@ -1255,7 +1349,6 @@ msgstr ""
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #. This is a description
       #: src/Greeting.tsx:5
       #, c-format
       msgid "OpKKos"
@@ -1272,7 +1365,6 @@ msgstr ""
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #. This is a description
       #: src/Greeting.tsx:5
       #, fuzzy
       msgid "OpKKos"
@@ -1289,7 +1381,6 @@ msgstr ""
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #. This is a description
       #: src/Greeting.tsx:5
       #, c-format
       msgid "OpKKos"
@@ -1310,7 +1401,6 @@ msgstr ""
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #. This is a description
       #: src/Greeting.tsx:5
       #, fuzzy
       msgid "OpKKos"
