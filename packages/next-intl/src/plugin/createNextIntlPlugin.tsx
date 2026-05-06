@@ -1,9 +1,11 @@
 import type {NextConfig} from 'next';
+import normalizeExtractorConfig from '../extractor/normalizeExtractorConfig.js';
+import type {ExtractorConfig} from '../extractor/types.js';
 import createMessagesDeclaration from './declaration/index.js';
 import initExtractionCompiler from './extractor/initExtractionCompiler.js';
 import getNextConfig from './getNextConfig.js';
 import type {PluginConfig} from './types.js';
-import {warn} from './utils.js';
+import {throwError, warn} from './utils.js';
 
 function initPlugin(
   pluginConfig: PluginConfig,
@@ -25,9 +27,28 @@ function initPlugin(
     );
   }
 
-  initExtractionCompiler(pluginConfig);
+  let extractorConfig: ExtractorConfig | undefined;
 
-  return getNextConfig(pluginConfig, nextConfig);
+  if (pluginConfig.experimental?.extract) {
+    if (!pluginConfig.experimental.messages) {
+      throwError('`messages` is required when using `extract`.');
+    }
+
+    extractorConfig = normalizeExtractorConfig({
+      srcPath: pluginConfig.experimental.srcPath,
+      messages: pluginConfig.experimental.messages,
+      extract: {
+        locales: pluginConfig.experimental.extract.locales,
+        path: pluginConfig.experimental.extract.path,
+        sourceLocale: pluginConfig.experimental.extract.sourceLocale,
+        srcPath: pluginConfig.experimental.extract.srcPath
+      }
+    });
+  }
+
+  initExtractionCompiler(extractorConfig);
+
+  return getNextConfig(pluginConfig, nextConfig, extractorConfig);
 }
 
 export default function createNextIntlPlugin(

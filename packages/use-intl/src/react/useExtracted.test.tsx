@@ -134,6 +134,28 @@ it('supports .has', () => {
   screen.getByText('true');
 });
 
+it('throws in production when extraction did not compile useExtracted', () => {
+  vi.stubEnv('NODE_ENV', 'production');
+  try {
+    function Component() {
+      const t = useExtracted();
+      return t('Hello');
+    }
+
+    expect(() =>
+      render(
+        <MockProvider>
+          <Component />
+        </MockProvider>
+      )
+    ).toThrow(
+      '[next-intl] `useExtracted` was called in production without compilation. Include modules that call `useExtracted` in `extract.srcPath` and use `transpilePackages` for 3rd-party packages.'
+    );
+  } finally {
+    vi.unstubAllEnvs();
+  }
+});
+
 it("doesn't accept raw messages", () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   function Component() {

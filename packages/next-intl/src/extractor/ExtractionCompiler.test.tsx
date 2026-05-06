@@ -37,12 +37,15 @@ describe('json format', () => {
   function createCompiler() {
     return new ExtractionCompiler(
       {
-        srcPath: './src',
-        sourceLocale: 'en',
-        messages: {
+        extract: {
+          locales: 'infer',
           path: './messages',
+          sourceLocale: 'en',
+          srcPath: './src'
+        },
+        messages: {
           format: 'json',
-          locales: 'infer'
+          path: ['./messages']
         }
       },
       {
@@ -89,12 +92,15 @@ describe('json format', () => {
 
     using compiler = new ExtractionCompiler(
       {
-        srcPath: './src',
-        sourceLocale: 'en',
-        messages: {
+        extract: {
+          locales: ['de', 'fr'],
           path: './messages',
+          sourceLocale: 'en',
+          srcPath: './src'
+        },
+        messages: {
           format: 'json',
-          locales: ['de', 'fr']
+          path: ['./messages']
         }
       },
       {
@@ -383,12 +389,15 @@ describe('po format', () => {
   function createCompiler() {
     return new ExtractionCompiler(
       {
-        srcPath: './src',
-        sourceLocale: 'en',
-        messages: {
+        extract: {
+          locales: 'infer',
           path: './messages',
+          sourceLocale: 'en',
+          srcPath: './src'
+        },
+        messages: {
           format: 'po',
-          locales: 'infer'
+          path: ['./messages']
         }
       },
       {
@@ -570,12 +579,15 @@ describe('po format', () => {
 
     using compiler = new ExtractionCompiler(
       {
-        srcPath: './src',
-        sourceLocale: 'en',
-        messages: {
+        extract: {
+          locales: 'infer',
           path: './messages',
+          sourceLocale: 'en',
+          srcPath: './src'
+        },
+        messages: {
           format: 'po',
-          locales: 'infer'
+          path: ['./messages']
         }
       },
       {
@@ -662,12 +674,15 @@ describe('po format', () => {
 
     using compiler = new ExtractionCompiler(
       {
-        srcPath: './src',
-        sourceLocale: 'en',
-        messages: {
+        extract: {
+          locales: 'infer',
           path: './messages',
+          sourceLocale: 'en',
+          srcPath: './src'
+        },
+        messages: {
           format: 'po',
-          locales: 'infer'
+          path: ['./messages']
         }
       },
       {
@@ -1752,12 +1767,15 @@ describe('`srcPath` filtering', () => {
   function createCompiler(srcPath: string | Array<string>) {
     return new ExtractionCompiler(
       {
-        srcPath,
-        sourceLocale: 'en',
-        messages: {
+        extract: {
+          locales: 'infer',
           path: './messages',
+          sourceLocale: 'en',
+          srcPath
+        },
+        messages: {
           format: 'json',
-          locales: 'infer'
+          path: ['./messages']
         }
       },
       {
@@ -1829,10 +1847,13 @@ describe('custom format', () => {
 
     using compiler = new ExtractionCompiler(
       {
-        srcPath: './src',
-        sourceLocale: 'en',
-        messages: {
+        extract: {
+          locales: 'infer',
           path: './messages',
+          sourceLocale: 'en',
+          srcPath: './src'
+        },
+        messages: {
           format: {
             codec: path.resolve(
               __dirname,
@@ -1840,7 +1861,7 @@ describe('custom format', () => {
             ),
             extension: '.json'
           },
-          locales: 'infer'
+          path: ['./messages']
         }
       },
       {
@@ -1896,10 +1917,13 @@ describe('custom format', () => {
 
     using compiler = new ExtractionCompiler(
       {
-        srcPath: './src',
-        sourceLocale: 'en',
-        messages: {
+        extract: {
+          locales: 'infer',
           path: './messages',
+          sourceLocale: 'en',
+          srcPath: './src'
+        },
+        messages: {
           format: {
             codec: path.resolve(
               __dirname,
@@ -1907,7 +1931,7 @@ describe('custom format', () => {
             ),
             extension: '.po'
           },
-          locales: 'infer'
+          path: ['./messages']
         }
       },
       {
