@@ -26,16 +26,14 @@ export default class CatalogManager implements Disposable {
   private config: ExtractorConfig;
 
   /**
-   * Source of truth for extracted messages per file, including file-local
-   * metadata like references and descriptions.
+   * Source of truth for statically extracted source messages per file.
    */
-  private messagesByFile: Map<
-    /* File path */ string,
-    Map</* ID */ string, ExtractorMessage>
-  > = new Map();
+  private messagesByFile: Map</* File path */ string, Array<SourceMessage>> =
+    new Map();
 
   /**
-   * Fast lookup for messages by ID, aggregated across all files.
+   * Fast lookup for messages by ID, aggregated across all files. This combines
+   * metadata from `messagesByFile`, e.g. references and descriptions.
    */
   private messagesById: Map<string, ExtractorMessage> = new Map();
 
@@ -284,27 +282,13 @@ export default class CatalogManager implements Disposable {
     }
 
     const prevFileMessages = this.messagesByFile.get(absoluteFilePath);
-    const fileMessages = new Map<string, ExtractorMessage>();
-    for (const message of messages) {
-      const prevMessage = fileMessages.get(message.id);
-      const extractorMessage = this.createExtractorMessage(message);
-      if (prevMessage) {
-        fileMessages.set(
-          message.id,
-          this.mergeMessagesFromSameFile(prevMessage, extractorMessage)
-        );
-      } else {
-        fileMessages.set(message.id, extractorMessage);
-      }
-    }
-
     const affectedIds = new Set([
-      ...Array.from(prevFileMessages?.keys() ?? []),
-      ...Array.from(fileMessages.keys())
+      ...(prevFileMessages?.map((message) => message.id) ?? []),
+      ...messages.map((message) => message.id)
     ]);
 
-    if (fileMessages.size > 0) {
-      this.messagesByFile.set(absoluteFilePath, fileMessages);
+    if (messages.length > 0) {
+      this.messagesByFile.set(absoluteFilePath, messages);
     } else {
       this.messagesByFile.delete(absoluteFilePath);
     }
@@ -313,67 +297,30 @@ export default class CatalogManager implements Disposable {
       this.rebuildMessageById(id);
     }
 
-    const changed = this.haveMessagesChangedForFile(
-      prevFileMessages,
-      fileMessages
-    );
+    const changed = this.haveMessagesChangedForFile(prevFileMessages, messages);
     return changed;
   }
 
-  private createExtractorMessage(message: SourceMessage): ExtractorMessage {
-    return {
-      id: message.id,
-      message: message.message,
-      ...(message.description != null && {
-        description: message.description
-      }),
-      references: [message.reference]
-    };
-  }
-
-  private mergeMessagesFromSameFile(
-    existing: ExtractorMessage,
-    message: ExtractorMessage
-  ): ExtractorMessage {
-    const merged: ExtractorMessage = {
-      ...existing,
-      ...message,
-      references: [
-        ...(existing.references ?? []),
-        ...(message.references ?? [])
-      ].sort(compareReferences)
-    };
-    const description = this.mergeDescriptions(
-      existing.description,
-      message.description
-    );
-    if (description != null) {
-      merged.description = description;
-    } else {
-      delete merged.description;
-    }
-    return merged;
-  }
-
   private rebuildMessageById(id: string): void {
-    const fileMessages = Array.from(this.messagesByFile.values())
-      .map((messages) => messages.get(id))
-      .filter((message): message is ExtractorMessage => message != null);
+    const sourceMessages = Array.from(this.messagesByFile.values())
+      .flat()
+      .filter((message) => message.id === id);
 
-    if (fileMessages.length === 0) {
+    if (sourceMessages.length === 0) {
       this.messagesById.delete(id);
       return;
     }
 
     const previousMessage = this.messagesById.get(id);
     const aggregate: ExtractorMessage = {
-      ...fileMessages[0],
-      references: fileMessages
-        .flatMap((message) => message.references ?? [])
+      id,
+      message: sourceMessages[0].message,
+      references: sourceMessages
+        .map((message) => message.reference)
         .sort(compareReferences)
     };
     const description = this.mergeDescriptions(
-      ...fileMessages.map((message) => message.description)
+      ...sourceMessages.map((message) => message.description)
     );
     if (description != null) {
       aggregate.description = description;
@@ -422,23 +369,27 @@ export default class CatalogManager implements Disposable {
   }
 
   private haveMessagesChangedForFile(
-    beforeMessages: Map<string, ExtractorMessage> | undefined,
-    afterMessages: Map<string, ExtractorMessage>
+    beforeMessages: Array<SourceMessage> | undefined,
+    afterMessages: Array<SourceMessage>
   ): boolean {
     // If one exists and the other doesn't, there's a change
     if (!beforeMessages) {
-      return afterMessages.size > 0;
+      return afterMessages.length > 0;
     }
 
     // Different sizes means changes
-    if (beforeMessages.size !== afterMessages.size) {
+    if (beforeMessages.length !== afterMessages.length) {
       return true;
     }
 
     // Check differences in beforeMessages vs afterMessages
-    for (const [id, msg1] of beforeMessages) {
-      const msg2 = afterMessages.get(id);
-      if (!msg2 || !this.areMessagesEqual(msg1, msg2)) {
+    for (let index = 0; index < beforeMessages.length; index++) {
+      if (
+        !this.areSourceMessagesEqual(
+          beforeMessages[index],
+          afterMessages[index]
+        )
+      ) {
         return true; // Early exit on first difference
       }
     }
@@ -446,27 +397,16 @@ export default class CatalogManager implements Disposable {
     return false;
   }
 
-  private areMessagesEqual(
-    msg1: ExtractorMessage,
-    msg2: ExtractorMessage
+  private areSourceMessagesEqual(
+    msg1: SourceMessage,
+    msg2: SourceMessage
   ): boolean {
-    // Note: We intentionally don't compare references here.
-    // References are aggregated metadata from multiple files and comparing
-    // them would cause false positives due to parallel extraction order.
     return (
       msg1.id === msg2.id &&
       msg1.message === msg2.message &&
-      this.areDescriptionsEqual(msg1.description, msg2.description)
-    );
-  }
-
-  private areDescriptionsEqual(
-    descriptionA: ExtractorMessage['description'] | null,
-    descriptionB: ExtractorMessage['description'] | null
-  ): boolean {
-    return (
-      JSON.stringify(this.mergeDescriptions(descriptionA)) ===
-      JSON.stringify(this.mergeDescriptions(descriptionB))
+      msg1.description === msg2.description &&
+      msg1.reference.path === msg2.reference.path &&
+      msg1.reference.line === msg2.reference.line
     );
   }
 
