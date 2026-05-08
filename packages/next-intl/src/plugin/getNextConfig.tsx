@@ -1,17 +1,22 @@
 import fs from 'fs';
+import {createRequire} from 'module';
 import path from 'path';
 import type {NextConfig} from 'next';
 import type {
+  TurbopackLoaderOptions,
   TurbopackRuleConfigCollection,
   TurbopackRuleConfigItem
 } from 'next/dist/server/config-shared.js';
 import type {Configuration} from 'webpack';
+import {getFormatExtension} from '../extractor/format/index.js';
 import SourceFileFilter from '../extractor/source/SourceFileFilter.js';
 import type {CatalogLoaderConfig, ExtractorConfig} from '../extractor/types.js';
+import {isDevelopmentOrNextBuild} from './config.js';
 import {hasStableTurboConfig, isNextJs16OrHigher} from './nextFlags.js';
 import type {PluginConfig} from './types.js';
 import {throwError} from './utils.js';
 
+const require = createRequire(import.meta.url);
 function withExtensions(localPath: string) {
   return [
     `${localPath}.ts`,
@@ -19,6 +24,12 @@ function withExtensions(localPath: string) {
     `${localPath}.js`,
     `${localPath}.jsx`
   ];
+}
+
+function normalizeTurbopackAliasPath(pathname: string) {
+  // Turbopack alias targets should use forward slashes; Windows backslashes can
+  // break resolution in dev (see `next-intl/config` alias path style).
+  return pathname.replace(/\\/g, '/');
 }
 
 function resolveI18nPath(providedPath?: string, cwd?: string) {
@@ -34,7 +45,10 @@ function resolveI18nPath(providedPath?: string, cwd?: string) {
   }
 
   if (providedPath) {
-    if (!pathExists(providedPath)) {
+    // We use the `isNextDevOrBuild` condition to avoid throwing errors
+    // if `next.config.ts` is read by a non-Next.js process.
+    // https://github.com/amannn/next-intl/discussions/2209#discussioncomment-15650927
+    if (isDevelopmentOrNextBuild && !pathExists(providedPath)) {
       throwError(
         `Could not find i18n config at ${providedPath}, please provide a valid path.`
       );
@@ -50,15 +64,18 @@ function resolveI18nPath(providedPath?: string, cwd?: string) {
       }
     }
 
-    throwError(
-      `Could not locate request configuration module.\n\nThis path is supported by default: ./(src/)i18n/request.{js,jsx,ts,tsx}\n\nAlternatively, you can specify a custom location in your Next.js config:\n\nconst withNextIntl = createNextIntlPlugin(
+    if (isDevelopmentOrNextBuild) {
+      throwError(
+        `Could not locate request configuration module.\n\nThis path is supported by default: ./(src/)i18n/request.{js,jsx,ts,tsx}\n\nAlternatively, you can specify a custom location in your Next.js config:\n\nconst withNextIntl = createNextIntlPlugin(\n  './path/to/i18n/request.tsx'\n);`
+      );
+    }
 
-Alternatively, you can specify a custom location in your Next.js config:
-
-const withNextIntl = createNextIntlPlugin(
-  './path/to/i18n/request.tsx'
-);`
-    );
+    // Default as fallback
+    if (pathExists('./src')) {
+      return './src/i18n/request.ts';
+    } else {
+      return './i18n/request.ts';
+    }
   }
 }
 
@@ -67,11 +84,17 @@ export default function getNextConfig(
   nextConfig?: NextConfig
 ) {
   const useTurbo = process.env.TURBOPACK != null;
+
+  // `experimental-analyze` doesn’t set the TURBOPACK env param. Since Next.js
+  // 16 doesn't print a warning when we configure both Turbo- and Webpack, just
+  // always configure Turbopack just in case.
+  const shouldConfigureTurbo = useTurbo || isNextJs16OrHigher();
+
   const nextIntlConfig: Partial<NextConfig> = {};
 
   function getExtractMessagesLoaderConfig() {
     const experimental = pluginConfig.experimental!;
-    if (!experimental.srcPath || !experimental.messages) {
+    if (!experimental.srcPath || !pluginConfig.experimental?.messages) {
       throwError(
         '`srcPath` and `messages` are required when using `extractor`.'
       );
@@ -81,8 +104,8 @@ export default function getNextConfig(
       options: {
         srcPath: experimental.srcPath,
         sourceLocale: experimental.extract!.sourceLocale,
-        messages: experimental.messages
-      } satisfies ExtractorConfig
+        messages: pluginConfig.experimental.messages
+      } satisfies ExtractorConfig as TurbopackLoaderOptions
     };
   }
 
@@ -91,7 +114,7 @@ export default function getNextConfig(
       loader: 'next-intl/extractor/catalogLoader',
       options: {
         messages: pluginConfig.experimental!.messages!
-      } satisfies CatalogLoaderConfig
+      } satisfies CatalogLoaderConfig as TurbopackLoaderOptions
     };
   }
 
@@ -121,7 +144,19 @@ export default function getNextConfig(
     }
   }
 
-  if (useTurbo) {
+  // Validate messages config
+  if (pluginConfig.experimental?.messages) {
+    const messages = pluginConfig.experimental.messages;
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- For non-TS consumers
+    if (!messages.format) {
+      throwError('`format` is required when using `messages`.');
+    }
+    if (!messages.path) {
+      throwError('`path` is required when using `messages`.');
+    }
+  }
+
+  if (shouldConfigureTurbo) {
     if (
       pluginConfig.requestConfig &&
       path.isAbsolute(pluginConfig.requestConfig)
@@ -133,11 +168,31 @@ export default function getNextConfig(
     }
 
     // Assign alias for `next-intl/config`
-    const resolveAlias = {
+    const resolveAlias: Record<string, string> = {
       // Turbo aliases don't work with absolute
       // paths (see error handling above)
       'next-intl/config': resolveI18nPath(pluginConfig.requestConfig)
     };
+
+    // Add alias for precompiled message formatting
+    if (pluginConfig.experimental?.messages?.precompile) {
+      // Workaround for https://github.com/vercel/next.js/issues/88540
+      let formatOnlyPath = path.relative(
+        process.cwd(),
+        require.resolve('use-intl/format-message/format-only')
+      );
+
+      // Turbopack seems to require this, otherwise `use-intl/format-message` is
+      // still bundled (despite the code correctly calling into `format-only`).
+      // Note that in this monorepo this is not necessary, because we'll end
+      // up with a path like `../…` — but for actual consumers this is required.
+      if (!formatOnlyPath.startsWith('.')) {
+        formatOnlyPath = `./${formatOnlyPath}`;
+      }
+
+      resolveAlias['use-intl/format-message'] =
+        normalizeTurbopackAliasPath(formatOnlyPath);
+    }
 
     // Add loaders
     let rules: Record<string, TurbopackRuleConfigCollection> | undefined;
@@ -148,15 +203,19 @@ export default function getNextConfig(
         throwError('Message extraction requires Next.js 16 or higher.');
       }
       rules ??= getTurboRules();
+      const srcPaths = (
+        Array.isArray(pluginConfig.experimental.srcPath!)
+          ? pluginConfig.experimental.srcPath!
+          : [pluginConfig.experimental.srcPath!]
+      ).map((srcPath) =>
+        srcPath.endsWith('/') ? srcPath.slice(0, -1) : srcPath
+      );
       addTurboRule(rules!, `*.{${SourceFileFilter.EXTENSIONS.join(',')}}`, {
         loaders: [getExtractMessagesLoaderConfig()],
         condition: {
           // Note: We don't need `not: 'foreign'`, because this is
           // implied by the filter based on `srcPath`.
-          path:
-            (Array.isArray(pluginConfig.experimental.srcPath)
-              ? `{${pluginConfig.experimental.srcPath.join(',')}}`
-              : pluginConfig.experimental.srcPath) + '/**/*',
+          path: `{${srcPaths.join(',')}}` + '/**/*',
           content: /(useExtracted|getExtracted)/
         }
       });
@@ -168,7 +227,10 @@ export default function getNextConfig(
         throwError('Message catalog loading requires Next.js 16 or higher.');
       }
       rules ??= getTurboRules();
-      addTurboRule(rules!, `*.${pluginConfig.experimental.messages.format}`, {
+      const extension = getFormatExtension(
+        pluginConfig.experimental.messages.format
+      );
+      addTurboRule(rules!, `*${extension}`, {
         loaders: [getCatalogLoaderConfig()],
         condition: {
           path: `${pluginConfig.experimental.messages.path}/**/*`
@@ -206,7 +268,9 @@ export default function getNextConfig(
         }
       };
     }
-  } else {
+  }
+
+  if (!useTurbo) {
     nextIntlConfig.webpack = function webpack(config: Configuration, context) {
       if (!config.resolve) config.resolve = {};
       if (!config.resolve.alias) config.resolve.alias = {};
@@ -218,6 +282,16 @@ export default function getNextConfig(
           config.context!,
           resolveI18nPath(pluginConfig.requestConfig, config.context)
         );
+
+      // Add alias for precompiled message formatting
+      if (pluginConfig.experimental?.messages?.precompile) {
+        // Use require.resolve to get the actual file path, since
+        // bundlers don't properly resolve package subpath exports
+        // when used as alias targets
+        (config.resolve.alias as Record<string, string>)[
+          'use-intl/format-message'
+        ] = require.resolve('use-intl/format-message/format-only');
+      }
 
       // Add loader for extractor
       if (pluginConfig.experimental?.extract) {
@@ -237,8 +311,11 @@ export default function getNextConfig(
       if (pluginConfig.experimental?.messages) {
         if (!config.module) config.module = {};
         if (!config.module.rules) config.module.rules = [];
+        const extension = getFormatExtension(
+          pluginConfig.experimental.messages.format
+        );
         config.module.rules.push({
-          test: new RegExp(`\\.${pluginConfig.experimental.messages.format}$`),
+          test: new RegExp(`${extension.replace(/\./g, '\\.')}$`),
           include: path.resolve(
             config.context!,
             pluginConfig.experimental.messages.path

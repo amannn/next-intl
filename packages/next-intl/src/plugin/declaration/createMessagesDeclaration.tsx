@@ -1,15 +1,9 @@
 import fs from 'fs';
 import path from 'path';
-import {throwError} from '../utils.js';
+import {once, throwError} from '../utils.js';
 import watchFile from '../watchFile.js';
 
-function runOnce(fn: () => void) {
-  if (process.env._NEXT_INTL_COMPILE_MESSAGES === '1') {
-    return;
-  }
-  process.env._NEXT_INTL_COMPILE_MESSAGES = '1';
-  fn();
-}
+const runOnce = once('_NEXT_INTL_COMPILE_MESSAGES');
 
 export default function createMessagesDeclaration(
   messagesPaths: Array<string>
@@ -23,7 +17,7 @@ export default function createMessagesDeclaration(
 
     // Note: These commands don't consult the
     // Next.js config, so we can't detect them here.
-    // - telemetry
+    // - telemetry (however, the `detached-flush` DOES - see `createNextIntlPlugin`)
     // - lint
     //
     // What remains are:
@@ -35,8 +29,6 @@ export default function createMessagesDeclaration(
     return;
   }
 
-  // Next.js can call the Next.js config multiple
-  // times - ensure we only run once.
   runOnce(() => {
     for (const messagesPath of messagesPaths) {
       const fullPath = path.resolve(messagesPath);

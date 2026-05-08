@@ -23,6 +23,22 @@ export default {
   color: {
     hue: {light: 210, dark: 195}
   },
+  // banner: {
+  //   key: 'black-friday-2025',
+  //   content: (
+  //     <div className="text-center">
+  //       <a
+  //         className="underline"
+  //         href="https://learn.next-intl.dev"
+  //         rel="noreferrer"
+  //         target="_blank"
+  //       >
+  //         learn.next-intl.dev
+  //       </a>{' '}
+  //       is -40% off for Black Friday
+  //     </div>
+  //   )
+  // },
   components: {
     pre: Pre
   },
@@ -141,6 +157,13 @@ export default {
         />
         <meta content="#da532c" name="msapplication-TileColor" />
         <meta content="#ffffff" name="theme-color" />
+
+        <link
+          href="/feed.xml"
+          rel="alternate"
+          title="next-intl Blog RSS Feed"
+          type="application/rss+xml"
+        />
 
         <meta content="jamannnnnn" name="twitter:site" />
         <meta content="summary_large_image" name="twitter:card" />

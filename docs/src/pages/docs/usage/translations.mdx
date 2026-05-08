@@ -134,7 +134,7 @@ If you're interested to dive deeper into this topic, there's a blog post that di
 <Details id="messages-other-styles">
 <summary>Can I use a different style for structuring my messages?</summary>
 
-Namespace keys can not contain the character "." as this is used to express nesting—all other characters are fine to use.
+Namespace keys cannot contain the character "." as this is used to express nesting—all other characters are fine to use.
 
 If you're migrating from a flat structure that uses "." in message keys, you can convert your messages to a nested structure as follows:
 
@@ -289,7 +289,7 @@ To match a specific number, `next-intl` additionally supports the special `=valu
 To map identifiers to human readable labels, you can use the `select` argument that works similar to the `switch` statement in JavaScript:
 
 ```tsx filename="en.json"
-"message": "{gender, select, female {She} male {He} other {They}} is online."
+"message": "{gender, select, female {She is} male {He is} other {They are}} online."
 ```
 
 ```js

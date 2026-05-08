@@ -3,7 +3,7 @@
 import {useExtracted} from 'next-intl';
 import {useState} from 'react';
 
-export default function Client() {
+export default function Counter() {
   const [count, setCount] = useState(1000);
   const t = useExtracted();
 

@@ -1,31 +1,41 @@
-import clsx from 'clsx';
+import {Locale, NextIntlClientProvider} from 'next-intl';
+import {getLocale, getTranslations} from 'next-intl/server';
+import LocaleSwitcher from './LocaleSwitcher';
+import {cookies} from 'next/headers';
 import {Inter} from 'next/font/google';
-import {NextIntlClientProvider} from 'next-intl';
-import {getLocale} from 'next-intl/server';
-import {ReactNode} from 'react';
-import './globals.css';
 
 const inter = Inter({subsets: ['latin']});
 
-type Props = {
-  children: ReactNode;
-};
+export async function generateMetadata() {
+  const t = await getTranslations('RootLayout');
+  return {
+    title: t('title')
+  };
+}
 
-export default async function LocaleLayout({children}: Props) {
+export default async function LocaleLayout({children}: LayoutProps<'/'>) {
   const locale = await getLocale();
+
+  async function changeLocaleAction(locale: Locale) {
+    'use server';
+    const store = await cookies();
+    store.set('locale', locale);
+  }
 
   return (
     <html lang={locale}>
-      <head>
-        <title>next-intl example</title>
-      </head>
       <body
-        className={clsx(
-          'flex min-h-[100vh] flex-col bg-slate-100',
-          inter.className
-        )}
+        className={inter.className}
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 10
+        }}
       >
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        <NextIntlClientProvider>
+          {children}
+          <LocaleSwitcher changeLocaleAction={changeLocaleAction} />
+        </NextIntlClientProvider>
       </body>
     </html>
   );

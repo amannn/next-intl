@@ -38,7 +38,7 @@ export default function validateMessages(
       new IntlError(
         IntlErrorCode.INVALID_KEY,
         process.env.NODE_ENV !== 'production'
-          ? `Namespace keys can not contain the character "." as this is used to express nesting. Please remove it or replace it with another character.
+          ? `Namespace keys cannot contain the character "." as this is used to express nesting. Please remove it or replace it with another character.
 
 Invalid ${
               invalidKeyLabels.length === 1 ? 'key' : 'keys'

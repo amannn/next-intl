@@ -1,0 +1,20 @@
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: next-intl\n"
+"X-Crowdin-SourceKey: msgstr\n"
+
+#: src/app/page.tsx:9
+msgid "NhX4DJ"
+msgstr "Hello"
+
+#. Shown on home screen
+#: src/components/Footer.tsx:7
+msgid "+YJVTi"
+msgstr "Hey!"
+
+#: src/components/Greeting.tsx:7
+msgid "4xqPlJ"
+msgstr "Howdy!"

@@ -101,6 +101,7 @@ export default function createMiddleware<
 
     function redirect(url: string, redirectDomain?: string) {
       const urlObj = new URL(url, request.url);
+      const forwardedHost = request.headers.get('x-forwarded-host');
 
       urlObj.pathname = normalizeTrailingSlash(urlObj.pathname);
 
@@ -112,9 +113,12 @@ export default function createMiddleware<
         );
         if (bestMatchingDomain) {
           redirectDomain = bestMatchingDomain.domain;
+          const redirectDomainMode =
+            bestMatchingDomain.localePrefix ||
+            resolvedRouting.localePrefix.mode;
           if (
             bestMatchingDomain.defaultLocale === locale &&
-            resolvedRouting.localePrefix.mode === 'as-needed'
+            redirectDomainMode === 'as-needed'
           ) {
             urlObj.pathname = getNormalizedPathname(
               urlObj.pathname,
@@ -125,20 +129,24 @@ export default function createMiddleware<
         }
       }
 
-      if (redirectDomain) {
-        urlObj.host = redirectDomain;
+      // Priority for redirect origins:
+      // 1) Explicit domain from `redirectDomain`
+      // 2) Reverse proxy host from `x-forwarded-host`
+      // 3) Fallback to `request.url`
+      const redirectHost = redirectDomain ?? forwardedHost;
+      if (redirectHost) {
+        urlObj.host = redirectHost;
+      }
 
-        if (request.headers.get('x-forwarded-host')) {
-          urlObj.protocol =
-            request.headers.get('x-forwarded-proto') ??
-            request.nextUrl.protocol;
+      if (forwardedHost) {
+        urlObj.protocol =
+          request.headers.get('x-forwarded-proto') ?? request.nextUrl.protocol;
 
-          const redirectDomainPort = redirectDomain.split(':')[1] as
-            | string
-            | undefined;
-          urlObj.port =
-            redirectDomainPort ?? request.headers.get('x-forwarded-port') ?? '';
-        }
+        const redirectHostPort = redirectHost?.split(':')[1] as
+          | string
+          | undefined;
+        urlObj.port =
+          redirectHostPort ?? request.headers.get('x-forwarded-port') ?? '';
       }
 
       if (request.nextUrl.basePath) {
@@ -166,10 +174,13 @@ export default function createMiddleware<
     );
     const hasLocalePrefix = pathnameMatch != null;
 
+    // Use domain-specific localePrefix mode if available, otherwise use global mode
+    const effectiveLocalePrefixMode =
+      domain?.localePrefix || resolvedRouting.localePrefix.mode;
+
     const isUnprefixedRouting =
-      resolvedRouting.localePrefix.mode === 'never' ||
-      (hasMatchedDefaultLocale &&
-        resolvedRouting.localePrefix.mode === 'as-needed');
+      effectiveLocalePrefixMode === 'never' ||
+      (hasMatchedDefaultLocale && effectiveLocalePrefixMode === 'as-needed');
 
     let response;
     let internalTemplateName: string | undefined;
@@ -266,7 +277,7 @@ export default function createMiddleware<
             request.nextUrl.search
           );
 
-          if (resolvedRouting.localePrefix.mode === 'never') {
+          if (effectiveLocalePrefixMode === 'never') {
             response = redirect(
               formatPathname(
                 unprefixedExternalPathname,
@@ -323,7 +334,7 @@ export default function createMiddleware<
 
     if (
       !hasRedirected &&
-      resolvedRouting.localePrefix.mode !== 'never' &&
+      effectiveLocalePrefixMode !== 'never' &&
       resolvedRouting.alternateLinks &&
       resolvedRouting.locales.length > 1
     ) {

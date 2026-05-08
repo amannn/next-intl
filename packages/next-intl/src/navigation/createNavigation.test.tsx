@@ -405,7 +405,7 @@ describe.each([
         createNavigation();
       });
 
-      it('can not be used with `pathnames`', () => {
+      it('cannot be used with `pathnames`', () => {
         // @ts-expect-error -- Missing locales
         createNavigation({pathnames});
       });
@@ -639,7 +639,7 @@ describe.each([
         ).toBe('/en/news/launch-party-3?foo=bar');
       });
 
-      it('can not be called with an arbitrary pathname', () => {
+      it('cannot be called with an arbitrary pathname', () => {
         // @ts-expect-error -- Unknown pathname
         expect(getPathname({locale: 'en', href: '/unknown'}))
           // Works regardless
@@ -700,7 +700,7 @@ describe.each([
         );
       });
 
-      it('can not be called with an arbitrary pathname', () => {
+      it('cannot be called with an arbitrary pathname', () => {
         // @ts-expect-error -- Unknown pathname
         runInRender(() => redirectFn({href: '/unknown', locale: 'en'}));
         // Works regardless
@@ -1274,6 +1274,120 @@ describe.each([
       it('adds no prefix for the default locale', () => {
         runInRender(() => redirectFn({href: '/', locale: 'en'}));
         expect(nextRedirectFn).toHaveBeenLastCalledWith('/');
+      });
+    });
+  });
+
+  describe("localePrefix: 'as-needed', with `domains` and per-domain `localePrefix` override", () => {
+    const domainsWithOverride = [
+      {
+        defaultLocale: 'en',
+        domain: 'example.com',
+        locales: ['en'],
+        localePrefix: 'never'
+      },
+      {
+        defaultLocale: 'de',
+        domain: 'example.de',
+        locales: ['de', 'ja'],
+        localePrefix: 'always'
+      }
+    ] satisfies DomainsConfig<typeof locales>;
+
+    const {getPathname} = createNavigation({
+      locales,
+      defaultLocale,
+      domains: domainsWithOverride,
+      localePrefix: 'as-needed'
+    });
+
+    describe('getPathname', () => {
+      it('respects domain-level localePrefix: never for default locale', () => {
+        expect(getPathname({locale: 'en', href: '/about'})).toBe('/about');
+      });
+
+      it('respects domain-level localePrefix: always for default locale', () => {
+        expect(getPathname({locale: 'de', href: '/about'})).toBe('/de/about');
+      });
+
+      it('respects domain-level localePrefix: always for secondary locale', () => {
+        expect(getPathname({locale: 'ja', href: '/about'})).toBe('/ja/about');
+      });
+    });
+  });
+
+  describe("localePrefix: 'always', with `domains` and per-domain `localePrefix` override", () => {
+    const domainsWithOverride = [
+      {
+        defaultLocale: 'en',
+        domain: 'example.com',
+        locales: ['en'],
+        localePrefix: 'never'
+      },
+      {
+        defaultLocale: 'de',
+        domain: 'example.de',
+        locales: ['de', 'ja'],
+        localePrefix: 'as-needed'
+      }
+    ] satisfies DomainsConfig<typeof locales>;
+
+    const {getPathname} = createNavigation({
+      locales,
+      defaultLocale,
+      domains: domainsWithOverride,
+      localePrefix: 'always'
+    });
+
+    describe('getPathname', () => {
+      it('respects domain-level localePrefix: never override', () => {
+        expect(getPathname({locale: 'en', href: '/about'})).toBe('/about');
+      });
+
+      it('respects domain-level localePrefix: as-needed for default locale', () => {
+        expect(getPathname({locale: 'de', href: '/about'})).toBe('/about');
+      });
+
+      it('respects domain-level localePrefix: as-needed for secondary locale', () => {
+        expect(getPathname({locale: 'ja', href: '/about'})).toBe('/ja/about');
+      });
+    });
+  });
+
+  describe("localePrefix: 'never', with `domains` and per-domain `localePrefix` override", () => {
+    const domainsWithOverride = [
+      {
+        defaultLocale: 'en',
+        domain: 'example.com',
+        locales: ['en'],
+        localePrefix: 'always'
+      },
+      {
+        defaultLocale: 'de',
+        domain: 'example.de',
+        locales: ['de', 'ja'],
+        localePrefix: 'as-needed'
+      }
+    ] satisfies DomainsConfig<typeof locales>;
+
+    const {getPathname} = createNavigation({
+      locales,
+      defaultLocale,
+      domains: domainsWithOverride,
+      localePrefix: 'never'
+    });
+
+    describe('getPathname', () => {
+      it('respects domain-level localePrefix: always override', () => {
+        expect(getPathname({locale: 'en', href: '/about'})).toBe('/en/about');
+      });
+
+      it('respects domain-level localePrefix: as-needed for default locale', () => {
+        expect(getPathname({locale: 'de', href: '/about'})).toBe('/about');
+      });
+
+      it('respects domain-level localePrefix: as-needed for secondary locale', () => {
+        expect(getPathname({locale: 'ja', href: '/about'})).toBe('/ja/about');
       });
     });
   });

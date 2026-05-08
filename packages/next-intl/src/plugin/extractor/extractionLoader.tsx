@@ -1,31 +1,35 @@
-import ExtractionCompiler from '../../extractor/ExtractionCompiler.js';
+import MessageExtractor from '../../extractor/extractor/MessageExtractor.js';
 import type {ExtractorConfig} from '../../extractor/types.js';
 import type {TurbopackLoaderContext} from '../types.js';
 
-// This instance:
-// - Remains available through HMR
-// - Is the same across react-client and react-server
-// - Is only lost when the dev server restarts (e.g. due to change to Next.js config)
-let compiler: ExtractionCompiler | undefined;
+// Module-level extractor instance for transformation caching.
+// Note: Next.js/Turbopack may create multiple loader instances, but each
+// only handles file transformation. The ExtractionCompiler (which manages
+// catalogs) is initialized separately in createNextIntlPlugin.
+let extractor: MessageExtractor | undefined;
 
 export default function extractionLoader(
   this: TurbopackLoaderContext<ExtractorConfig>,
   source: string
 ) {
-  const options = this.getOptions();
   const callback = this.async();
+  const projectRoot = this.rootContext;
 
-  if (!compiler) {
-    compiler = new ExtractionCompiler(options, {
-      // Avoid rollup's `replace` plugin to compile this away
-      isDevelopment: process.env['NODE_ENV'.trim()] === 'development'
+  // Avoid rollup's `replace` plugin to compile this away
+  const isDevelopment = process.env['NODE_ENV'.trim()] === 'development';
+
+  if (!extractor) {
+    extractor = new MessageExtractor({
+      isDevelopment,
+      projectRoot,
+      sourceMap: this.sourceMap
     });
   }
 
-  compiler
-    .compile(this.resourcePath, source)
+  extractor
+    .extract(this.resourcePath, source)
     .then((result) => {
-      callback(null, result);
+      callback(null, result.code, result.map);
     })
     .catch(callback);
 }

@@ -21,18 +21,17 @@ export default class CatalogLocales {
   private sourceLocale: Locale;
   private locales: MessagesConfig['locales'];
   private watcher?: fs.FSWatcher;
-  private cleanupHandlers: Array<() => void> = [];
   private targetLocales?: Array<Locale>;
   private onChangeCallbacks: Set<LocaleChangeCallback> = new Set();
 
-  constructor(params: CatalogLocalesParams) {
+  public constructor(params: CatalogLocalesParams) {
     this.messagesDir = params.messagesDir;
     this.sourceLocale = params.sourceLocale;
     this.extension = params.extension;
     this.locales = params.locales;
   }
 
-  async getTargetLocales(): Promise<Array<Locale>> {
+  public async getTargetLocales(): Promise<Array<Locale>> {
     if (this.targetLocales) {
       return this.targetLocales;
     }
@@ -59,7 +58,7 @@ export default class CatalogLocales {
     }
   }
 
-  subscribeLocalesChange(callback: LocaleChangeCallback): void {
+  public subscribeLocalesChange(callback: LocaleChangeCallback): void {
     this.onChangeCallbacks.add(callback);
 
     if (this.locales === 'infer' && !this.watcher) {
@@ -67,7 +66,7 @@ export default class CatalogLocales {
     }
   }
 
-  unsubscribeLocalesChange(callback: LocaleChangeCallback): void {
+  public unsubscribeLocalesChange(callback: LocaleChangeCallback): void {
     this.onChangeCallbacks.delete(callback);
     if (this.onChangeCallbacks.size === 0) {
       this.stopWatcher();
@@ -95,8 +94,6 @@ export default class CatalogLocales {
         }
       }
     );
-
-    this.setupCleanupHandlers();
   }
 
   private stopWatcher(): void {
@@ -104,11 +101,6 @@ export default class CatalogLocales {
       this.watcher.close();
       this.watcher = undefined;
     }
-
-    for (const handler of this.cleanupHandlers) {
-      handler();
-    }
-    this.cleanupHandlers = [];
   }
 
   private async onChange(): Promise<void> {
@@ -128,36 +120,5 @@ export default class CatalogLocales {
         callback({added, removed});
       }
     }
-  }
-
-  private setupCleanupHandlers(): void {
-    const cleanup = () => {
-      if (this.watcher) {
-        this.watcher.close();
-        this.watcher = undefined;
-      }
-    };
-
-    function exitHandler() {
-      cleanup();
-    }
-    function sigintHandler() {
-      cleanup();
-      process.exit(0);
-    }
-    function sigtermHandler() {
-      cleanup();
-      process.exit(0);
-    }
-
-    process.once('exit', exitHandler);
-    process.once('SIGINT', sigintHandler);
-    process.once('SIGTERM', sigtermHandler);
-
-    this.cleanupHandlers.push(() => {
-      process.removeListener('exit', exitHandler);
-      process.removeListener('SIGINT', sigintHandler);
-      process.removeListener('SIGTERM', sigtermHandler);
-    });
   }
 }

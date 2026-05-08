@@ -32,7 +32,8 @@ We aim to create resources that help developers in the following situations:
 
 1. Make sure you have [pnpm](https://pnpm.io/) installed
 2. Clone the repo
-3. `pnpm install` (includes an initial build of the packages)
+3. `pnpm install`
+4. `pnpm build-packages`
 
 Now, you're all set and you can work on individual packages.
 
@@ -49,7 +50,7 @@ In either case, you can focus individual tests during development via `it.only`.
 
 This project uses ESLint for detecting issues in code, as well as Prettier for formatting.
 
-It's recommended to use [an editor integration](https://github.com/molindo/eslint-config-molindo?tab=readme-ov-file#editor-integration) for both, so that autofixable issues are automatically resolved. For editor plugins to work correctly, you should open individual packages you work on as the workspace root (e.g. `next-intl/packages/next-intl` instead of `next-intl`).
+It's recommended to use an editor integration for both, so that autofixable issues are automatically resolved. For editor plugins to work correctly, you should open individual packages you work on as the workspace root (e.g. `next-intl/packages/next-intl` instead of `next-intl`).
 
 Alternatively, you can run ESLint and Prettier via the command line:
 

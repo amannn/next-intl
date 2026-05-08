@@ -3,6 +3,9 @@ import createNextIntlPlugin from 'next-intl/plugin';
 
 const withNextIntl = createNextIntlPlugin();
 
-const config: NextConfig = {};
+const config: NextConfig = {
+  // https://github.com/amannn/next-intl/issues/2121
+  transpilePackages: ['next-intl']
+};
 
 export default withNextIntl(config);

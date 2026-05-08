@@ -6,19 +6,19 @@ msgstr ""
 "X-Generator: next-intl\n"
 "X-Crowdin-SourceKey: msgstr\n"
 
-#: src/app/Counter.tsx
+#: src/app/Counter.tsx:16
 msgid "jm1lmy"
 msgstr "Count: {count, number}"
 
-#: src/app/Counter.tsx
+#: src/app/Counter.tsx:17
 msgid "tQLRmz"
 msgstr "Increment"
 
 #. Default meta title if not overridden by pages
-#: src/app/layout.tsx
+#: src/app/layout.tsx:17
 msgid "lNLCAE"
 msgstr "next-intl example"
 
-#: src/app/page.tsx
+#: src/app/page.tsx:10
 msgid "vlslj0"
 msgstr "Hey {name}!"
