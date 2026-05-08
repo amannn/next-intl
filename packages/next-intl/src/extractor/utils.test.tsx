@@ -41,7 +41,7 @@ describe('getSortedMessages', () => {
     ).toEqual(['a', 'b', 'c']);
   });
 
-  it('preserves original order when reference paths and lines match', () => {
+  it('breaks ties by id when reference paths and lines match', () => {
     expect(
       getSortedMessages([
         {
@@ -60,7 +60,48 @@ describe('getSortedMessages', () => {
           references: [{path: 'components/A.tsx', line: 10}]
         }
       ]).map((message) => message.id)
-    ).toEqual(['c', 'a', 'b']);
+    ).toEqual(['a', 'b', 'c']);
+  });
+
+  it('produces a stable order regardless of input order when some messages have no references', () => {
+    // Reproduces the non-transitive comparator bug: messages without
+    // references could land on either side of their referenced neighbors
+    // depending on the input order, producing spurious catalog diffs.
+    const messages = [
+      {
+        id: 'UVkKe5',
+        message: 'Sending code...',
+        references: [{path: 'auth.ts', line: 50}]
+      },
+      {id: 'nx5jYc', message: 'Send sign-in code'},
+      {
+        id: 'abc123',
+        message: 'Welcome',
+        references: [{path: 'auth.ts', line: 10}]
+      },
+      {id: 'zzz999', message: 'Goodbye'},
+      {
+        id: 'def456',
+        message: 'Login',
+        references: [{path: 'home.ts', line: 5}]
+      }
+    ];
+
+    const shuffled = [
+      messages[3],
+      messages[0],
+      messages[4],
+      messages[1],
+      messages[2]
+    ];
+
+    const sortedA = getSortedMessages(messages).map((m) => m.id);
+    const sortedB = getSortedMessages(shuffled).map((m) => m.id);
+
+    expect(sortedA).toEqual(sortedB);
+    // Referenced messages first (by path, then line), then reference-less
+    // messages (by id).
+    expect(sortedA).toEqual(['abc123', 'UVkKe5', 'def456', 'nx5jYc', 'zzz999']);
   });
 });
 

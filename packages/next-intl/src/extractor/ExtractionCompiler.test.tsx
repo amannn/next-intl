@@ -1027,12 +1027,12 @@ msgstr "World"
       msgstr "Hey!"
 
       #: src/Greeting.tsx:5
-      msgid "jqdzk6"
-      msgstr "World"
-
-      #: src/Greeting.tsx:5
       msgid "ODGmph"
       msgstr "!"
+
+      #: src/Greeting.tsx:5
+      msgid "jqdzk6"
+      msgstr "World"
       ",
       ]
     `);
@@ -1093,11 +1093,11 @@ msgstr ""
       msgstr "Hallo!"
 
       #: src/Greeting.tsx:5
-      msgid "jqdzk6"
+      msgid "ODGmph"
       msgstr ""
 
       #: src/Greeting.tsx:5
-      msgid "ODGmph"
+      msgid "jqdzk6"
       msgstr ""
 
       #: src/Greeting.tsx:5
@@ -1165,7 +1165,7 @@ msgstr ""
       msgstr "Hallo!"
 
       #: src/Greeting.tsx:5
-      msgid "jqdzk6"
+      msgid "I5NMJ8"
       msgstr ""
 
       #: src/Greeting.tsx:5
@@ -1173,11 +1173,11 @@ msgstr ""
       msgstr ""
 
       #: src/Greeting.tsx:5
-      msgid "pE58D7"
+      msgid "jqdzk6"
       msgstr ""
 
       #: src/Greeting.tsx:5
-      msgid "I5NMJ8"
+      msgid "pE58D7"
       msgstr ""
       ",
       ]

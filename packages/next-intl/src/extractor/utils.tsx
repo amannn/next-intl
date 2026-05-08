@@ -55,12 +55,23 @@ export function getSortedMessages(
     const refA = messageA.references?.[0];
     const refB = messageB.references?.[0];
 
-    // No references: preserve original (extraction) order
-    if (!refA || !refB) return 0;
+    // Group reference-less messages after referenced ones; tiebreak by id so
+    // the comparator is a total order (transitive) and the result is
+    // independent of input order. The previous `return 0` for the mixed case
+    // produced non-transitive comparisons, which made catalog output depend
+    // on parallel extraction timing and caused spurious diffs.
+    if (!refA && !refB) return compareIds(messageA.id, messageB.id);
+    if (!refA) return 1;
+    if (!refB) return -1;
 
-    // Sort by path, then line. Same path+line: preserve original order
-    return compareReferences(refA, refB);
+    const cmp = compareReferences(refA, refB);
+    if (cmp !== 0) return cmp;
+    return compareIds(messageA.id, messageB.id);
   });
+}
+
+function compareIds(a: string, b: string): number {
+  return a < b ? -1 : a > b ? 1 : 0;
 }
 
 export function localeCompare(a: string, b: string) {
