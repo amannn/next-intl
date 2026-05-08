@@ -17,7 +17,7 @@ export default function createMessagesDeclaration(
 
     // Note: These commands don't consult the
     // Next.js config, so we can't detect them here.
-    // - telemetry
+    // - telemetry (however, the `detached-flush` DOES - see `createNextIntlPlugin`)
     // - lint
     //
     // What remains are:
