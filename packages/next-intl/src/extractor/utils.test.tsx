@@ -6,11 +6,13 @@ describe('getSortedMessages', () => {
     expect(
       getSortedMessages([
         {
+          description: [],
           id: 'a',
           message: 'a',
           references: [{path: 'components/B.tsx', line: 1}]
         },
         {
+          description: [],
           id: 'b',
           message: 'b',
           references: [{path: 'components/A.tsx', line: 1}]
@@ -23,16 +25,19 @@ describe('getSortedMessages', () => {
     expect(
       getSortedMessages([
         {
+          description: [],
           id: 'b',
           message: 'b',
           references: [{path: 'components/A.tsx', line: 20}]
         },
         {
+          description: [],
           id: 'a',
           message: 'a',
           references: [{path: 'components/A.tsx', line: 10}]
         },
         {
+          description: [],
           id: 'c',
           message: 'c',
           references: [{path: 'components/A.tsx', line: 30}]
@@ -45,16 +50,19 @@ describe('getSortedMessages', () => {
     expect(
       getSortedMessages([
         {
+          description: [],
           id: 'c',
           message: 'c',
           references: [{path: 'components/A.tsx', line: 10}]
         },
         {
+          description: [],
           id: 'a',
           message: 'a',
           references: [{path: 'components/A.tsx', line: 10}]
         },
         {
+          description: [],
           id: 'b',
           message: 'b',
           references: [{path: 'components/A.tsx', line: 10}]

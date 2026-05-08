@@ -39,13 +39,7 @@ export default defineCodec(() => {
           ...rest,
           id: msgctxt,
           message: msgstr,
-          ...(extractedComments &&
-            extractedComments.length > 0 && {
-              description:
-                extractedComments.length === 1
-                  ? extractedComments[0]
-                  : extractedComments
-            })
+          description: extractedComments ?? []
         };
       });
     },
@@ -60,13 +54,9 @@ export default defineCodec(() => {
         }
 
         // Store the hashed ID in msgctxt so we can restore it during decode
-        const {description, id, message, ...rest} = msg;
+        const {description = [], id, message, ...rest} = msg;
         return {
-          ...(description && {
-            extractedComments: Array.isArray(description)
-              ? description
-              : [description]
-          }),
+          ...(description.length > 0 && {extractedComments: description}),
           ...rest,
           msgctxt: id,
           msgid: sourceMessage,

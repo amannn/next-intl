@@ -22,7 +22,10 @@ export type SourceMessage = {
 export type ExtractorMessage = {
   id: string;
   message: string;
-  description?: string | Array<string>;
+  /**
+   * All unique descriptions attached to messages (e.g. multiple `#.` lines in PO).
+   */
+  description: Array<string>;
   references?: Array<ExtractorMessageReference>;
   /** Allows for additional properties like .po flags to be read and later written. */
   [key: string]: unknown;

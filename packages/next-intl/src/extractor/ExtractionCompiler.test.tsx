@@ -1837,7 +1837,7 @@ describe('custom format', () => {
     filesystem.project.messages = {
       'en.json': JSON.stringify(
         {
-          'ui.wESdnU': {message: 'Click me', description: 'Button label'}
+          'ui.wESdnU': {message: 'Click me', description: ['Button label']}
         },
         null,
         2
@@ -1892,7 +1892,9 @@ describe('custom format', () => {
           "{
         "ui.wESdnU": {
           "message": "Click me",
-          "description": "Button label"
+          "description": [
+            "Button label"
+          ]
         },
         "ui.wSZR47": {
           "message": "Submit"

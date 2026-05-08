@@ -364,20 +364,15 @@ export default class CatalogManager implements Disposable {
 
     const previousMessage = this.messagesById.get(id);
     const aggregate: ExtractorMessage = {
+      description: this.mergeDescriptions(
+        ...sourceMessages.map((message) => message.description)
+      ),
       id,
       message: sourceMessages[0].message,
       references: sourceMessages
         .map((message) => message.reference)
         .sort(compareReferences)
     };
-    const description = this.mergeDescriptions(
-      ...sourceMessages.map((message) => message.description)
-    );
-    if (description != null) {
-      aggregate.description = description;
-    } else {
-      delete aggregate.description;
-    }
 
     if (previousMessage) {
       for (const key of Object.keys(previousMessage)) {
@@ -394,30 +389,17 @@ export default class CatalogManager implements Disposable {
   }
 
   private mergeDescriptions(
-    ...descriptions: Array<ExtractorMessage['description'] | null>
+    ...descriptions: Array<SourceMessage['description'] | undefined>
   ): ExtractorMessage['description'] {
     const merged: Array<string> = [];
     for (const description of descriptions) {
-      const values = this.getDescriptions(description);
-      for (const value of values) {
-        if (!merged.includes(value)) {
-          merged.push(value);
-        }
+      if (description != null && !merged.includes(description)) {
+        merged.push(description);
       }
     }
 
-    // use file reference appearance?
     merged.sort(localeCompare);
-    if (merged.length === 0) return undefined;
-    return merged.length === 1 ? merged[0] : merged;
-  }
-
-  private getDescriptions(
-    description: ExtractorMessage['description'] | null
-  ): Array<string> {
-    if (typeof description === 'string') return [description];
-    if (Array.isArray(description)) return description;
-    return [];
+    return merged;
   }
 
   private haveMessagesChangedForFile(

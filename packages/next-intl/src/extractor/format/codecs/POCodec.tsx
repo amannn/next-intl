@@ -36,20 +36,14 @@ export default defineCodec(() => {
           ...rest,
           id: msgctxt ? [msgctxt, msgid].join(NAMESPACE_SEPARATOR) : msgid,
           message: msgstr,
-          ...(extractedComments &&
-            extractedComments.length > 0 && {
-              description:
-                extractedComments.length === 1
-                  ? extractedComments[0]
-                  : extractedComments
-            })
+          description: extractedComments ?? []
         };
       });
     },
 
     encode(messages, context) {
       const encodedMessages = getSortedMessages(messages).map((msg) => {
-        const {description, id, message, ...rest} = msg;
+        const {description = [], id, message, ...rest} = msg;
 
         const lastDotIndex = id.lastIndexOf(NAMESPACE_SEPARATOR);
         const hasNamespace = id.includes(NAMESPACE_SEPARATOR);
@@ -61,11 +55,7 @@ export default defineCodec(() => {
         return {
           msgid,
           msgstr: message,
-          ...(description && {
-            extractedComments: Array.isArray(description)
-              ? description
-              : [description]
-          }),
+          ...(description.length > 0 && {extractedComments: description}),
           ...(hasNamespace && {msgctxt: id.slice(0, lastDotIndex)}),
           ...rest
         };

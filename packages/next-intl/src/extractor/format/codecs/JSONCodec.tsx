@@ -1,3 +1,4 @@
+import type {ExtractorMessage} from '../../types.js';
 import {
   getSortedMessages,
   isForbiddenObjectKey,
@@ -12,10 +13,10 @@ interface StoredFormat {
 export default defineCodec(() => ({
   decode(source) {
     const json: StoredFormat = JSON.parse(source);
-    const messages: Array<{id: string; message: string}> = [];
+    const messages: Array<ExtractorMessage> = [];
 
     traverseMessages(json, (message, id) => {
-      messages.push({id, message});
+      messages.push({description: [], id, message});
     });
 
     return messages;

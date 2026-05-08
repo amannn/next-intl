@@ -1,6 +1,6 @@
 import {defineCodec} from '../../ExtractorCodec.js';
 
-type StoredMessage = {message: string; description?: string | Array<string>};
+type StoredMessage = {message: string; description?: Array<string>};
 
 export default defineCodec(() => ({
   decode(content) {
@@ -8,9 +8,9 @@ export default defineCodec(() => ({
     return Object.entries(data).map(([id, value]) => {
       const obj = value as StoredMessage;
       return {
+        description: obj.description ?? [],
         id,
-        message: obj.message,
-        ...(obj.description && {description: obj.description})
+        message: obj.message
       };
     });
   },
@@ -20,7 +20,7 @@ export default defineCodec(() => ({
     for (const msg of messages) {
       obj[msg.id] = {
         message: msg.message,
-        ...(msg.description && {description: msg.description})
+        ...(msg.description.length > 0 && {description: msg.description})
       };
     }
     return JSON.stringify(obj, null, 2) + '\n';
