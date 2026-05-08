@@ -27,6 +27,7 @@ export default defineCodec(() => {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           msgid,
           msgstr,
+          references,
           ...rest
         } = msg;
 
@@ -39,7 +40,8 @@ export default defineCodec(() => {
           ...rest,
           id: msgctxt,
           message: msgstr,
-          description: extractedComments ?? []
+          description: extractedComments ?? [],
+          references: references ?? []
         };
       });
     },
@@ -54,9 +56,10 @@ export default defineCodec(() => {
         }
 
         // Store the hashed ID in msgctxt so we can restore it during decode
-        const {description = [], id, message, ...rest} = msg;
+        const {description = [], id, message, references, ...rest} = msg;
         return {
           ...(description.length > 0 && {extractedComments: description}),
+          ...(references.length > 0 && {references}),
           ...rest,
           msgctxt: id,
           msgid: sourceMessage,

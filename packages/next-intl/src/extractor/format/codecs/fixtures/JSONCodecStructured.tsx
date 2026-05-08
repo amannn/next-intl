@@ -10,7 +10,8 @@ export default defineCodec(() => ({
       return {
         description: obj.description ?? [],
         id,
-        message: obj.message
+        message: obj.message,
+        references: []
       };
     });
   },

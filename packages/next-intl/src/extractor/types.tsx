@@ -27,7 +27,11 @@ export type ExtractorMessage = {
    * Ordered by source reference (path, then line).
    */
   description: Array<string>;
-  references?: Array<ExtractorMessageReference>;
+  /**
+   * Source locations for this message (e.g. `#:` lines in PO). Ordered by path, then line.
+   * Empty when the catalog format does not store references or none are known.
+   */
+  references: Array<ExtractorMessageReference>;
   /** Allows for additional properties like .po flags to be read and later written. */
   [key: string]: unknown;
 };

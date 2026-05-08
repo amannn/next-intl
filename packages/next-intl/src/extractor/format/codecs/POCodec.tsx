@@ -30,20 +30,22 @@ export default defineCodec(() => {
       }
       const messages = catalog.messages || [];
       return messages.map((msg) => {
-        const {extractedComments, msgctxt, msgid, msgstr, ...rest} = msg;
+        const {extractedComments, msgctxt, msgid, msgstr, references, ...rest} =
+          msg;
 
         return {
           ...rest,
           id: msgctxt ? [msgctxt, msgid].join(NAMESPACE_SEPARATOR) : msgid,
           message: msgstr,
-          description: extractedComments ?? []
+          description: extractedComments ?? [],
+          references: references ?? []
         };
       });
     },
 
     encode(messages, context) {
       const encodedMessages = getSortedMessages(messages).map((msg) => {
-        const {description = [], id, message, ...rest} = msg;
+        const {description = [], id, message, references, ...rest} = msg;
 
         const lastDotIndex = id.lastIndexOf(NAMESPACE_SEPARATOR);
         const hasNamespace = id.includes(NAMESPACE_SEPARATOR);
@@ -57,6 +59,7 @@ export default defineCodec(() => {
           msgstr: message,
           ...(description.length > 0 && {extractedComments: description}),
           ...(hasNamespace && {msgctxt: id.slice(0, lastDotIndex)}),
+          ...(references.length > 0 && {references}),
           ...rest
         };
       });

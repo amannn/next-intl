@@ -52,11 +52,8 @@ export function getSortedMessages(
   messages: Array<ExtractorMessage>
 ): Array<ExtractorMessage> {
   return messages.toSorted((messageA, messageB) => {
-    const refA = messageA.references?.[0];
-    const refB = messageB.references?.[0];
-
-    // No references: preserve original (extraction) order
-    if (!refA || !refB) return 0;
+    const refA = messageA.references[0];
+    const refB = messageB.references[0];
 
     // Sort by path, then line. Same path+line: preserve original order
     return compareReferences(refA, refB);

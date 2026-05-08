@@ -16,7 +16,7 @@ export default defineCodec(() => ({
     const messages: Array<ExtractorMessage> = [];
 
     traverseMessages(json, (message, id) => {
-      messages.push({description: [], id, message});
+      messages.push({id, message, references: [], description: []});
     });
 
     return messages;
