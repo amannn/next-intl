@@ -152,3 +152,60 @@
     cursor: pointer;
   }
 }
+
+/* Code Hike — github-from-css theme variables */
+:root {
+  --ch-0: light;
+  --ch-1: #6e7781;
+  --ch-2: #0550ae;
+  --ch-3: #953800;
+  --ch-4: #24292f;
+  --ch-5: #8250df;
+  --ch-6: #116329;
+  --ch-7: #cf222e;
+  --ch-8: #0a3069;
+  --ch-9: #82071e;
+  --ch-10: #f6f8fa;
+  --ch-11: #ffebe9;
+  --ch-12: #ffd8b5;
+  --ch-13: #eaeef2;
+  --ch-14: #57606a;
+  --ch-15: #ffffff;
+  --ch-16: #eaeef2;
+  --ch-17: #fdf2f8;
+  --ch-18: #1f883d;
+  --ch-19: #cf222e;
+  --ch-20: #8250df;
+  --ch-21: #fff8c5;
+  --ch-22: #fbf0a4;
+  --ch-23: #6e7781;
+  --ch-24: #ffffffe6;
+}
+
+.dark {
+  --ch-0: dark;
+  --ch-1: #8b949e;
+  --ch-2: #79c0ff;
+  --ch-3: #ffa657;
+  --ch-4: #c9d1d9;
+  --ch-5: #d2a8ff;
+  --ch-6: #7ee787;
+  --ch-7: #ff7b72;
+  --ch-8: #a5d6ff;
+  --ch-9: #ffa198;
+  --ch-10: #f0f6fc;
+  --ch-11: #490202;
+  --ch-12: #5a1e02;
+  --ch-13: #161b22;
+  --ch-14: #8b949e;
+  --ch-15: #0d1117;
+  --ch-16: #30363d;
+  --ch-17: #261d2d;
+  --ch-18: #56d364;
+  --ch-19: #f85149;
+  --ch-20: #d2a8ff;
+  --ch-21: #5a1e02;
+  --ch-22: #693e00;
+  --ch-23: #8b949e;
+  --ch-24: #1f6feb1a;
+}
