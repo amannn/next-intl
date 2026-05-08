@@ -21,8 +21,8 @@ export default function initExtractionCompiler(pluginConfig: PluginConfig) {
   // - typegen
   //
   // Doesn't consult Next.js config anyway:
-  // - telemetry
   // - lint
+  // - telemetry (however, the `detached-flush` DOES - see `createNextIntlPlugin`)
   //
   // What remains are:
   // - dev (NODE_ENV=development)
