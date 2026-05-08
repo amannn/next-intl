@@ -66,10 +66,10 @@ export function PlaygroundSidebar() {
                           href={item.slug}
                           onClick={close}
                           className={clsx(
-                            'block px-3 py-1.5 text-sm rounded-md transition-colors',
+                            'block px-3 py-1.5 text-sm transition-colors',
                             active
-                              ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-                              : 'text-sidebar-foreground hover:bg-sidebar-accent/50',
+                              ? 'text-foreground font-medium'
+                              : 'text-muted-foreground hover:text-foreground',
                           )}
                         >
                           <span className="inline-flex items-center gap-1.5">

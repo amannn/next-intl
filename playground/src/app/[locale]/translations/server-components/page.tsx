@@ -1,6 +1,5 @@
 import { setRequestLocale } from 'next-intl/server';
-import { Badge } from '@/components/ui/badge';
-import { DemoCard } from '@/components/playground/demo-card';
+import { PlaygroundBoundary } from '@/components/playground/boundary';
 import { GitHubLink } from '@/components/playground/github-link';
 import Content from './content.mdx';
 import { ServerExample } from './server-example';
@@ -19,22 +18,21 @@ export default async function ServerComponentsPage({
   setRequestLocale(locale);
 
   return (
-    <article className="px-6 lg:px-0 pb-12">
-      <header className="mb-8">
-        <Badge variant="outline" className="mb-4 uppercase tracking-wide">
-          Demo
-        </Badge>
-        <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-foreground">
+    <div className="px-4 sm:px-6 lg:px-0 pb-12 space-y-px">
+      <PlaygroundBoundary label="Demo">
+        <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground mb-6">
           Server Components
         </h1>
-      </header>
-      <Content />
-      <DemoCard>
+        <Content />
+      </PlaygroundBoundary>
+
+      <PlaygroundBoundary label="output">
         <ServerExample />
-      </DemoCard>
-      <footer className="mt-6 flex justify-end">
+      </PlaygroundBoundary>
+
+      <div className="pt-6 flex justify-end">
         <GitHubLink path="playground/src/app/[locale]/translations/server-components" />
-      </footer>
-    </article>
+      </div>
+    </div>
   );
 }

@@ -1,7 +1,7 @@
-import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 
-export function ServerExample() {
-  const t = useTranslations('ServerDemo');
+export async function ServerExample() {
+  const t = await getTranslations('ServerDemo');
   return (
     <p className="text-2xl font-semibold text-foreground">{t('greeting')}</p>
   );
