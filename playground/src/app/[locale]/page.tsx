@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { PlaygroundBoundary } from "./_components/playground-boundary";
-import { sections } from "./assets/navigations";
-import { LinkStatus } from "./_components/link-status";
+import { PlaygroundBoundary } from "@/components/playground/boundary";
+import { sections } from "@/lib/nav";
+import { LinkStatus } from "@/components/playground/link-status";
 
 export default function Home() {
 	return (
