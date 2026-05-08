@@ -53,9 +53,7 @@ export default function createNextIntlPlugin(
  */
 function isNextTelemetryDetachedFlushProcess(): boolean {
   const scriptPath = process.argv[1];
-  if (!scriptPath) {
-    return false;
-  }
+  if (!scriptPath) return false;
   const normalized = scriptPath.replace(/\\/g, '/');
   return normalized.includes('/telemetry/detached-flush');
 }
