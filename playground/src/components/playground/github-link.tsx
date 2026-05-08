@@ -1,24 +1,16 @@
-"use client";
+import { Github, ArrowUpRight } from 'lucide-react';
 
-import { Github } from "lucide-react";
-import Link from "next/link";
-
-export function GitHubLink({
-  path = "playground/src/app",
-}: {
-  path?: string;
-} = {}) {
-  const url = `https://github.com/amannn/next-intl/tree/main/${path}`;
-
+export function GitHubLink({ path }: { path: string }) {
   return (
-    <Link
-      href={url}
+    <a
+      href={`https://github.com/amannn/next-intl/tree/main/${path}`}
+      className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
     >
-      <Github className="w-4 h-4" />
+      <Github className="h-4 w-4" />
       View on GitHub
-    </Link>
+      <ArrowUpRight className="h-3.5 w-3.5" />
+    </a>
   );
 }
