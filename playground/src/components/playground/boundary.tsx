@@ -21,7 +21,7 @@ export const PlaygroundBoundary = ({
       className={clsx(
         'relative border border-border',
         variant === 'dotgrid' && 'dotgrid',
-        size === 'default' ? 'p-6 sm:p-10' : 'p-3',
+        size === 'default' ? 'p-5 sm:p-8 lg:p-10' : 'p-3',
         className,
       )}
     >

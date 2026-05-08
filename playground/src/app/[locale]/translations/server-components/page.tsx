@@ -18,7 +18,7 @@ export default async function ServerComponentsPage({
   setRequestLocale(locale);
 
   return (
-    <div className="px-4 sm:px-6 lg:px-0 pb-12 -space-y-px">
+    <div className="pb-12 -space-y-px">
       <PlaygroundBoundary label="Demo">
         <header className="mb-6">
           <h1 className="text-2xl sm:text-[28px] font-semibold tracking-tight text-foreground leading-tight">

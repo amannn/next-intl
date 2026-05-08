@@ -19,7 +19,7 @@ export default async function HomePage({
 function Home() {
   const t = useTranslations('Layout');
   return (
-    <div className="px-4 sm:px-6 lg:px-0 pb-12">
+    <div className="pb-12">
       <div className="mb-12 sm:mb-16 text-center pt-8 sm:pt-12">
         <h1 className="text-[34px] sm:text-5xl font-semibold tracking-tight text-foreground leading-[1.05]">
           {t('title')}
