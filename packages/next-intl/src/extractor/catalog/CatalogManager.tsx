@@ -272,6 +272,7 @@ export default class CatalogManager implements Disposable {
       const existing = this.messagesById.get(id);
       if (!existing) continue;
 
+      // Fill unknown metadata from disk without replacing extraction-owned fields.
       for (const key of Object.keys(diskMessage)) {
         if (
           !CatalogManager.extractorOwnedAggregatorKeys.has(key) &&
@@ -314,11 +315,13 @@ export default class CatalogManager implements Disposable {
       this.sourceMessagesByFile.delete(absoluteFilePath);
     }
 
+    // Clear this file's contribution from the reverse index, then re-insert
+    // fresh rows and rebuild aggregates (messagesById) per touched id.
     for (const id of affectedIds) {
       const sourceMessagesForId = this.sourceMessagesById.get(id);
       if (sourceMessagesForId) {
         sourceMessagesForId.delete(absoluteFilePath);
-        // No files left for this id: drop the reverse-index entry
+        // No files left for this id: drop the reverse-index entry.
         if (sourceMessagesForId.size === 0) {
           this.sourceMessagesById.delete(id);
         }
@@ -409,6 +412,10 @@ export default class CatalogManager implements Disposable {
         merged.push(description);
       }
     }
+
+    // Reference order gives translator-facing `#.` stacks a deterministic tie to
+    // `#:` locations; old aggregated-row compares intentionally skipped refs because
+    // merged reference lists alone could reorder across parallel file processing.
     return merged;
   }
 
@@ -446,6 +453,7 @@ export default class CatalogManager implements Disposable {
     return false;
   }
 
+  // Per-file extraction output — reference order matches a single extract pass.
   private areSourceMessageArraysEqual(
     messages1: Array<SourceMessage>,
     messages2: Array<SourceMessage>
