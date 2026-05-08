@@ -3,7 +3,6 @@
 import clsx from 'clsx';
 import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
 import { Link, usePathname } from '@/i18n/navigation';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
@@ -16,7 +15,6 @@ import { LocaleSwitcher } from './locale-switcher';
 export function PlaygroundSidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
-  const t = useTranslations('Layout');
   const close = () => setIsOpen(false);
 
   return (
