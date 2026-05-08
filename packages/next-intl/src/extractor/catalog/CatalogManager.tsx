@@ -16,7 +16,6 @@ import type {
 import {
   compareReferences,
   getDefaultProjectRoot,
-  localeCompare
 } from '../utils.js';
 import CatalogLocales from './CatalogLocales.js';
 import CatalogPersister from './CatalogPersister.js';
@@ -364,9 +363,7 @@ export default class CatalogManager implements Disposable {
 
     const previousMessage = this.messagesById.get(id);
     const aggregate: ExtractorMessage = {
-      description: this.mergeDescriptions(
-        ...sourceMessages.map((message) => message.description)
-      ),
+      description: this.mergeDescriptions(sourceMessages),
       id,
       message: sourceMessages[0].message,
       references: sourceMessages
@@ -389,16 +386,19 @@ export default class CatalogManager implements Disposable {
   }
 
   private mergeDescriptions(
-    ...descriptions: Array<SourceMessage['description'] | undefined>
+    messages: Array<SourceMessage>
   ): ExtractorMessage['description'] {
+    const sortedByReference = messages.toSorted((a, b) =>
+      compareReferences(a.reference, b.reference)
+    );
+
     const merged: Array<string> = [];
-    for (const description of descriptions) {
+    for (const message of sortedByReference) {
+      const {description} = message;
       if (description != null && !merged.includes(description)) {
         merged.push(description);
       }
     }
-
-    merged.sort(localeCompare);
     return merged;
   }
 

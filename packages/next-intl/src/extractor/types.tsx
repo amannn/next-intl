@@ -24,6 +24,7 @@ export type ExtractorMessage = {
   message: string;
   /**
    * All unique descriptions attached to messages (e.g. multiple `#.` lines in PO).
+   * Ordered by source reference (path, then line).
    */
   description: Array<string>;
   references?: Array<ExtractorMessageReference>;
