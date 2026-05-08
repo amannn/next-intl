@@ -20,10 +20,16 @@ export function PlaygroundSidebar() {
   return (
     <div className="fixed top-0 z-10 flex w-full flex-col border-b bg-sidebar border-sidebar-border lg:bottom-0 lg:z-auto lg:w-72 lg:border-r lg:border-b-0">
       <div className="flex h-14 items-center gap-2.5 px-5">
-        <Logo className="w-6 h-6 text-blue-700 dark:text-blue-300" />
-        <h3 className="text-[15px] font-semibold tracking-tight text-sidebar-foreground">
-          Playground
-        </h3>
+        <Link
+          href="/"
+          onClick={close}
+          className="flex items-center gap-2.5 transition-opacity hover:opacity-80"
+        >
+          <Logo className="w-6 h-6 text-blue-700 dark:text-blue-300" />
+          <span className="text-[15px] font-semibold tracking-tight text-sidebar-foreground">
+            Playground
+          </span>
+        </Link>
 
         <div className="ml-auto flex items-center gap-1">
           <LocaleSwitcher />
