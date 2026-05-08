@@ -26,14 +26,27 @@ export default class CatalogManager implements Disposable {
   private config: ExtractorConfig;
 
   /**
-   * Source of truth for statically extracted source messages per file.
+   * Source of truth for statically extracted source messages,
+   * grouped by file and message ID.
    */
-  private messagesByFile: Map</* File path */ string, Array<SourceMessage>> =
-    new Map();
+  private sourceMessagesByFile: Map<
+    /* File path */ string,
+    Map</* ID */ string, Array<SourceMessage>>
+  > = new Map();
+
+  /**
+   * Reverse index for rebuilding aggregated messages without scanning all files.
+   * Contains the same `SourceMessage` arrays as `sourceMessagesByFile` and is
+   * kept in sync with it.
+   */
+  private sourceMessagesById: Map<
+    /* ID */ string,
+    Map</* File path */ string, Array<SourceMessage>>
+  > = new Map();
 
   /**
    * Fast lookup for messages by ID, aggregated across all files. This combines
-   * metadata from `messagesByFile`, e.g. references and descriptions.
+   * metadata from `sourceMessagesById`, e.g. references and descriptions.
    */
   private messagesById: Map<string, ExtractorMessage> = new Map();
 
@@ -281,30 +294,67 @@ export default class CatalogManager implements Disposable {
       // ENOENT -> treat as no messages
     }
 
-    const prevFileMessages = this.messagesByFile.get(absoluteFilePath);
+    const prevFileMessages = this.sourceMessagesByFile.get(absoluteFilePath);
+    const nextFileMessages = this.groupSourceMessagesById(messages);
     const affectedIds = new Set([
-      ...(prevFileMessages?.map((message) => message.id) ?? []),
-      ...messages.map((message) => message.id)
+      ...(prevFileMessages?.keys() ?? []),
+      ...nextFileMessages.keys()
     ]);
 
-    if (messages.length > 0) {
-      this.messagesByFile.set(absoluteFilePath, messages);
+    if (nextFileMessages.size > 0) {
+      this.sourceMessagesByFile.set(absoluteFilePath, nextFileMessages);
     } else {
-      this.messagesByFile.delete(absoluteFilePath);
+      this.sourceMessagesByFile.delete(absoluteFilePath);
     }
 
     for (const id of affectedIds) {
+      const sourceMessagesForId = this.sourceMessagesById.get(id);
+      if (sourceMessagesForId) {
+        sourceMessagesForId.delete(absoluteFilePath);
+        if (sourceMessagesForId.size === 0) {
+          this.sourceMessagesById.delete(id);
+        }
+      }
+
+      const nextSourceMessagesForId = nextFileMessages.get(id);
+      if (nextSourceMessagesForId) {
+        let sourceMessagesByFile = this.sourceMessagesById.get(id);
+        if (!sourceMessagesByFile) {
+          sourceMessagesByFile = new Map();
+          this.sourceMessagesById.set(id, sourceMessagesByFile);
+        }
+        sourceMessagesByFile.set(absoluteFilePath, nextSourceMessagesForId);
+      }
+
       this.rebuildMessageById(id);
     }
 
-    const changed = this.haveMessagesChangedForFile(prevFileMessages, messages);
+    const changed = this.haveMessagesChangedForFile(
+      prevFileMessages,
+      nextFileMessages
+    );
     return changed;
   }
 
+  private groupSourceMessagesById(
+    messages: Array<SourceMessage>
+  ): Map<string, Array<SourceMessage>> {
+    const result = new Map<string, Array<SourceMessage>>();
+    for (const message of messages) {
+      const messagesById = result.get(message.id);
+      if (messagesById) {
+        messagesById.push(message);
+      } else {
+        result.set(message.id, [message]);
+      }
+    }
+    return result;
+  }
+
   private rebuildMessageById(id: string): void {
-    const sourceMessages = Array.from(this.messagesByFile.values())
-      .flat()
-      .filter((message) => message.id === id);
+    const sourceMessages = Array.from(
+      this.sourceMessagesById.get(id)?.values() ?? []
+    ).flat();
 
     if (sourceMessages.length === 0) {
       this.messagesById.delete(id);
@@ -355,6 +405,7 @@ export default class CatalogManager implements Disposable {
       }
     }
 
+    // use file reference appearance?
     merged.sort(localeCompare);
     if (merged.length === 0) return undefined;
     return merged.length === 1 ? merged[0] : merged;
@@ -369,25 +420,30 @@ export default class CatalogManager implements Disposable {
   }
 
   private haveMessagesChangedForFile(
-    beforeMessages: Array<SourceMessage> | undefined,
-    afterMessages: Array<SourceMessage>
+    beforeMessages: Map<string, Array<SourceMessage>> | undefined,
+    afterMessages: Map<string, Array<SourceMessage>>
   ): boolean {
     // If one exists and the other doesn't, there's a change
     if (!beforeMessages) {
-      return afterMessages.length > 0;
+      return afterMessages.size > 0;
     }
 
     // Different sizes means changes
-    if (beforeMessages.length !== afterMessages.length) {
+    if (beforeMessages.size !== afterMessages.size) {
       return true;
     }
 
     // Check differences in beforeMessages vs afterMessages
-    for (let index = 0; index < beforeMessages.length; index++) {
+    for (const [id, prevSourceMessages] of beforeMessages) {
+      const nextSourceMessages = afterMessages.get(id);
+      if (!nextSourceMessages) {
+        return true;
+      }
+
       if (
-        !this.areSourceMessagesEqual(
-          beforeMessages[index],
-          afterMessages[index]
+        !this.areSourceMessageArraysEqual(
+          prevSourceMessages,
+          nextSourceMessages
         )
       ) {
         return true; // Early exit on first difference
@@ -395,6 +451,18 @@ export default class CatalogManager implements Disposable {
     }
 
     return false;
+  }
+
+  private areSourceMessageArraysEqual(
+    messages1: Array<SourceMessage>,
+    messages2: Array<SourceMessage>
+  ): boolean {
+    return (
+      messages1.length === messages2.length &&
+      messages1.every((message, index) =>
+        this.areSourceMessagesEqual(message, messages2[index])
+      )
+    );
   }
 
   private areSourceMessagesEqual(
@@ -496,7 +564,7 @@ export default class CatalogManager implements Disposable {
     const expandedEvents =
       await this.sourceWatcher!.expandDirectoryDeleteEvents(
         events,
-        Array.from(this.messagesByFile.keys())
+        Array.from(this.sourceMessagesByFile.keys())
       );
     for (const event of expandedEvents) {
       const hasChanged = await this.processFile(event.path);
