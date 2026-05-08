@@ -19,6 +19,18 @@ import CatalogPersister from './CatalogPersister.js';
 import SaveScheduler from './SaveScheduler.js';
 
 export default class CatalogManager implements Disposable {
+  /**
+   * Extraction-derived fields aggregated into `ExtractorMessage`.
+   * Source code is the source of truth for these fields, only ancillary
+   * codec fields may merge from disk (e.g. flags).
+   */
+  private static readonly extractorOwnedAggregatorKeys = new Set<string>([
+    'description',
+    'id',
+    'message',
+    'references'
+  ]);
+
   private config: ExtractorConfig;
 
   /**
@@ -217,10 +229,8 @@ export default class CatalogManager implements Disposable {
       for (const diskMessage of diskMessages) {
         const prev = this.messagesById.get(diskMessage.id);
         if (prev) {
-          // Unknown properties (like flags): disk wins
-          // Known properties: existing (from extraction) wins
           for (const key of Object.keys(diskMessage)) {
-            if (!['id', 'message', 'description', 'references'].includes(key)) {
+            if (!CatalogManager.extractorOwnedAggregatorKeys.has(key)) {
               // For unknown properties (like flags), disk wins
               prev[key] = diskMessage[key];
             }
@@ -264,7 +274,7 @@ export default class CatalogManager implements Disposable {
 
       for (const key of Object.keys(diskMessage)) {
         if (
-          !['id', 'message', 'description', 'references'].includes(key) &&
+          !CatalogManager.extractorOwnedAggregatorKeys.has(key) &&
           existing[key] == null
         ) {
           existing[key] = diskMessage[key];
@@ -308,6 +318,7 @@ export default class CatalogManager implements Disposable {
       const sourceMessagesForId = this.sourceMessagesById.get(id);
       if (sourceMessagesForId) {
         sourceMessagesForId.delete(absoluteFilePath);
+        // No files left for this id: drop the reverse-index entry
         if (sourceMessagesForId.size === 0) {
           this.sourceMessagesById.delete(id);
         }
@@ -370,8 +381,10 @@ export default class CatalogManager implements Disposable {
 
     if (previousMessage) {
       for (const key of Object.keys(previousMessage)) {
+        // Preserve extra fields (e.g. from disk/codec) across rebuilds; the
+        // four core fields above are always recomputed from source messages.
         if (
-          !['id', 'message', 'description', 'references'].includes(key) &&
+          !CatalogManager.extractorOwnedAggregatorKeys.has(key) &&
           aggregate[key] == null
         ) {
           aggregate[key] = previousMessage[key];
