@@ -1,0 +1,21 @@
+import {TwoColumn} from '@/components/playground/two-column';
+
+# Server Components
+
+<TwoColumn>
+
+- Mark a Server Component as cacheable simply by not using any client APIs.
+- Read translated strings with `useTranslations()` directly inside async server components — messages stay on the server, so no client JavaScript is shipped.
+- Pair with `getTranslations()` when you need it inside helpers that aren't components.
+
+```tsx app/page.tsx
+import {useTranslations} from 'next-intl';
+
+export default function Page() {
+  // !mark
+  const t = useTranslations('ServerDemo');
+  return <h1>{t('greeting')}</h1>;
+}
+```
+
+</TwoColumn>
