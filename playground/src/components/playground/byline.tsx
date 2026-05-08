@@ -6,7 +6,7 @@ export function PlaygroundByline() {
       <div className="flex gap-4 text-sm font-medium">
         <a
           className="transition-colors hover:text-foreground"
-          href="https://github.com/your/repo"
+          href="https://github.com/amannn/next-intl/tree/main/playground"
           target="_blank"
           rel="noreferrer"
         >
