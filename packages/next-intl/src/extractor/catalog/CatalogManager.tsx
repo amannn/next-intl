@@ -413,9 +413,6 @@ export default class CatalogManager implements Disposable {
       }
     }
 
-    // Reference order gives translator-facing `#.` stacks a deterministic tie to
-    // `#:` locations; old aggregated-row compares intentionally skipped refs because
-    // merged reference lists alone could reorder across parallel file processing.
     return merged;
   }
 
@@ -453,7 +450,6 @@ export default class CatalogManager implements Disposable {
     return false;
   }
 
-  // Per-file extraction output — reference order matches a single extract pass.
   private areSourceMessageArraysEqual(
     messages1: Array<SourceMessage>,
     messages2: Array<SourceMessage>
