@@ -9,8 +9,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "./theme-toggle";
 import { LinkStatus } from "./link-status";
-import { Logo } from "../assets/logo";
-import { sections } from "../assets/navigations";
+import { Logo } from "@/assets/logo";
+import { sections } from "@/lib/nav";
 
 export function PlaygroundSidebar() {
   const [isOpen, setIsOpen] = useState(false);

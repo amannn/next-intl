@@ -1,6 +1,6 @@
-import { DemoContent, Example } from "@/app/_components/demo-content";
-import { GitHubLink } from "@/app/_components/github-link";
-import { PlaygroundBoundary } from "@/app/_components/playground-boundary";
+// TODO (Phase D): replace with MDX-based content
+import { GitHubLink } from "@/components/playground/github-link";
+import { PlaygroundBoundary } from "@/components/playground/boundary";
 import { ServerExample } from "./server-example";
 
 export const metadata = {
@@ -12,55 +12,27 @@ export default function ServerComponentsPage() {
   return (
     <PlaygroundBoundary>
       <div className="space-y-8">
-        <DemoContent title="Server Components">
-          <div className="space-y-4">
-            <p>
-              Server Components are components that render exclusively on the
-              server. With next-intl, you can seamlessly use the{" "}
-              <code className="bg-muted px-2 py-1 rounded text-sm">
-                useTranslations()
-              </code>{" "}
-              hook to access translated strings.
-            </p>
+        <div className="space-y-4">
+          <h2 className="text-2xl font-bold text-foreground">Server Components</h2>
+          <p>
+            Server Components are components that render exclusively on the
+            server. With next-intl, you can seamlessly use the{" "}
+            <code className="bg-muted px-2 py-1 rounded text-sm">
+              useTranslations()
+            </code>{" "}
+            hook to access translated strings.
+          </p>
+        </div>
 
-            <div>
-              <h3 className="font-semibold mb-2">Benefits:</h3>
-              <ul className="list-disc list-inside space-y-1 text-sm">
-                <li>Messages are only sent to the server, reducing bundle size</li>
-                <li>No client-side hydration overhead</li>
-                <li>Better performance and faster page loads</li>
-                <li>Ideal for static content and page layouts</li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="font-semibold mb-2">Usage example:</h3>
-              <code className="block bg-muted p-3 rounded text-sm overflow-x-auto">
-                {`import { useTranslations } from 'next-intl';\n\nexport default function Page() {\n  const t = useTranslations();\n  return <h1>{t('welcome.title')}</h1>;\n}`}
-              </code>
-            </div>
-
-            <p>
-              Learn more in the{" "}
-              <a
-                href="https://next-intl-docs.vercel.app/docs/getting-started/app-router"
-                className="text-primary hover:underline"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                next-intl documentation
-              </a>
-              .
-            </p>
+        <div className="space-y-3">
+          <h3 className="text-sm font-semibold text-foreground">Live Example</h3>
+          <div className="bg-card border border-border rounded-lg p-4">
+            <ServerExample />
           </div>
-        </DemoContent>
-
-        <Example title="Live Example">
-          <ServerExample />
-        </Example>
+        </div>
 
         <div className="pt-4 border-t border-border">
-          <GitHubLink path="playground/src/app/translations/server-components" />
+          <GitHubLink path="playground/src/app/[locale]/translations/server-components" />
         </div>
       </div>
     </PlaygroundBoundary>

@@ -1,7 +1,6 @@
-import { PlaygroundBoundary } from "./playground-boundary";
+import { PlaygroundBoundary } from "./boundary";
 
-
-export default function PlaygroundByline() {
+export function PlaygroundByline() {
   return (
     <PlaygroundBoundary>
       <div className="flex gap-4 text-sm font-medium">
