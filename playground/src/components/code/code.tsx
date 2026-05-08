@@ -11,21 +11,17 @@ export async function Code({ codeblock }: { codeblock: RawCode }) {
     <Pre
       code={highlighted}
       handlers={handlers}
-      className="!bg-transparent !text-[13px] !leading-6 m-0 overflow-x-auto"
+      className="!bg-transparent !text-[13px] !leading-6 m-0 overflow-x-auto py-3"
     />
   );
 
   if (codeblock.meta) {
     return (
-      <PlaygroundBoundary
-        label={codeblock.meta}
-        size="compact"
-        className="bg-card/40"
-      >
+      <PlaygroundBoundary label={codeblock.meta} size="compact">
         {pre}
       </PlaygroundBoundary>
     );
   }
 
-  return <div className="rounded-md border border-border bg-card/40 p-3">{pre}</div>;
+  return <div className="border border-border p-3">{pre}</div>;
 }

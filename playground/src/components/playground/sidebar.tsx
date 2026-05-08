@@ -19,13 +19,13 @@ export function PlaygroundSidebar() {
 
   return (
     <div className="fixed top-0 z-10 flex w-full flex-col border-b bg-sidebar border-sidebar-border lg:bottom-0 lg:z-auto lg:w-72 lg:border-r lg:border-b-0">
-      <div className="flex h-14 items-center gap-2 px-4">
+      <div className="flex h-14 items-center gap-2.5 px-5">
         <Logo className="w-6 h-6 text-blue-700 dark:text-blue-300" />
-        <h3 className="text-base font-semibold text-sidebar-foreground">
+        <h3 className="text-[15px] font-semibold tracking-tight text-sidebar-foreground">
           Playground
         </h3>
 
-        <div className="ml-auto flex items-center gap-1.5">
+        <div className="ml-auto flex items-center gap-1">
           <LocaleSwitcher />
           <ThemeToggle />
           <Button
@@ -46,43 +46,53 @@ export function PlaygroundSidebar() {
         })}
       >
         <ScrollArea className="h-full">
-          <nav className="space-y-6 px-2 pt-5 pb-24">
-            {sections.map((section) => (
-              <div key={section.title}>
-                <div className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-                  {section.title}
+          <nav className="space-y-7 px-3 pt-6 pb-24">
+            {sections.map((section) => {
+              const Icon = section.icon;
+              return (
+                <div key={section.title}>
+                  <div className="mb-2 flex items-center gap-2 px-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                    <Icon className="h-3 w-3" strokeWidth={2} />
+                    {section.title}
+                  </div>
+                  <div>
+                    {section.items.length === 0 ? (
+                      <div className="px-2 text-xs text-muted-foreground/50 italic">
+                        coming soon
+                      </div>
+                    ) : (
+                      section.items.map((item) => {
+                        const active = pathname === item.slug;
+                        return (
+                          <Link
+                            key={item.slug}
+                            href={item.slug}
+                            onClick={close}
+                            className={clsx(
+                              'relative block px-2 py-1.5 text-[13px] transition-colors',
+                              active
+                                ? 'text-foreground font-medium'
+                                : 'text-muted-foreground hover:text-foreground',
+                            )}
+                          >
+                            {active && (
+                              <span
+                                aria-hidden
+                                className="absolute -left-3 top-1/2 h-3.5 w-px -translate-y-1/2 bg-foreground"
+                              />
+                            )}
+                            <span className="inline-flex items-center gap-1.5">
+                              {item.title}
+                              <LinkStatus />
+                            </span>
+                          </Link>
+                        );
+                      })
+                    )}
+                  </div>
                 </div>
-                <div className="space-y-px">
-                  {section.items.length === 0 ? (
-                    <div className="px-3 text-xs text-muted-foreground/60 italic">
-                      coming soon
-                    </div>
-                  ) : (
-                    section.items.map((item) => {
-                      const active = pathname === item.slug;
-                      return (
-                        <Link
-                          key={item.slug}
-                          href={item.slug}
-                          onClick={close}
-                          className={clsx(
-                            'block px-3 py-1.5 text-sm transition-colors',
-                            active
-                              ? 'text-foreground font-medium'
-                              : 'text-muted-foreground hover:text-foreground',
-                          )}
-                        >
-                          <span className="inline-flex items-center gap-1.5">
-                            {item.title}
-                            <LinkStatus />
-                          </span>
-                        </Link>
-                      );
-                    })
-                  )}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </nav>
         </ScrollArea>
       </div>

@@ -18,19 +18,26 @@ export default async function ClientComponentsPage({
   setRequestLocale(locale);
 
   return (
-    <div className="px-4 sm:px-6 lg:px-0 pb-12 space-y-px">
+    <div className="px-4 sm:px-6 lg:px-0 pb-12 -space-y-px">
       <PlaygroundBoundary label="Demo">
-        <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground mb-6">
-          Client Components
-        </h1>
+        <header className="mb-6">
+          <h1 className="text-2xl sm:text-[28px] font-semibold tracking-tight text-foreground leading-tight">
+            Client components
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Translations
+          </p>
+        </header>
         <Content />
       </PlaygroundBoundary>
 
-      <PlaygroundBoundary label="output">
-        <ClientExample />
+      <PlaygroundBoundary label="Output" variant="dotgrid">
+        <div className="flex min-h-[180px] items-center justify-center">
+          <ClientExample />
+        </div>
       </PlaygroundBoundary>
 
-      <div className="pt-6 flex justify-end">
+      <div className="!mt-6 flex justify-end pt-4">
         <GitHubLink path="playground/src/app/[locale]/translations/client-components" />
       </div>
     </div>

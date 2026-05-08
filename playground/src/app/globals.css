@@ -143,7 +143,8 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: 'cv11', 'ss01', 'ss03';
   }
 }
 @layer base {
@@ -151,6 +152,17 @@
   [role='button']:not([disabled]) {
     cursor: pointer;
   }
+}
+
+/* Subtle dot-grid backdrop for the "output" boundary box */
+.dotgrid {
+  background-image: radial-gradient(
+    circle at center,
+    color-mix(in oklch, var(--muted-foreground) 28%, transparent) 1px,
+    transparent 1px
+  );
+  background-size: 14px 14px;
+  background-position: 0 0;
 }
 
 /* Code Hike — github-from-css theme variables */
