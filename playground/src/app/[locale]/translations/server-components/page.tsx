@@ -1,40 +1,35 @@
-// TODO (Phase D): replace with MDX-based content
-import { GitHubLink } from "@/components/playground/github-link";
-import { PlaygroundBoundary } from "@/components/playground/boundary";
-import { ServerExample } from "./server-example";
+import { setRequestLocale } from 'next-intl/server';
+import { Badge } from '@/components/ui/badge';
+import { DemoCard } from '@/components/playground/demo-card';
+import { GitHubLink } from '@/components/playground/github-link';
+import Content from './content.mdx';
+import { ServerExample } from './server-example';
 
 export const metadata = {
-  title: "Server Components - Translations",
-  description: "Learn how to use translations in Server Components",
+  title: 'Server Components — next-intl Playground',
+  description: 'Use translations inside async Server Components.',
 };
 
-export default function ServerComponentsPage() {
+export default async function ServerComponentsPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
   return (
-    <PlaygroundBoundary>
-      <div className="space-y-8">
-        <div className="space-y-4">
-          <h2 className="text-2xl font-bold text-foreground">Server Components</h2>
-          <p>
-            Server Components are components that render exclusively on the
-            server. With next-intl, you can seamlessly use the{" "}
-            <code className="bg-muted px-2 py-1 rounded text-sm">
-              useTranslations()
-            </code>{" "}
-            hook to access translated strings.
-          </p>
-        </div>
-
-        <div className="space-y-3">
-          <h3 className="text-sm font-semibold text-foreground">Live Example</h3>
-          <div className="bg-card border border-border rounded-lg p-4">
-            <ServerExample />
-          </div>
-        </div>
-
-        <div className="pt-4 border-t border-border">
-          <GitHubLink path="playground/src/app/[locale]/translations/server-components" />
-        </div>
-      </div>
-    </PlaygroundBoundary>
+    <article className="px-6 lg:px-0">
+      <Badge variant="outline" className="mb-3 uppercase tracking-wide">
+        Demo
+      </Badge>
+      <Content />
+      <DemoCard>
+        <ServerExample />
+      </DemoCard>
+      <footer className="mt-8 flex justify-end">
+        <GitHubLink path="playground/src/app/[locale]/translations/server-components" />
+      </footer>
+    </article>
   );
 }
