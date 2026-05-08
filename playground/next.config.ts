@@ -11,8 +11,10 @@ const chConfig: CodeHikeConfig = {
 const withMDX = createMDX({
   extension: /\.mdx?$/,
   options: {
-    remarkPlugins: [[remarkCodeHike, chConfig]],
-    recmaPlugins: [[recmaCodeHike, chConfig]],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    remarkPlugins: [[remarkCodeHike as any, chConfig]],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    recmaPlugins: [[recmaCodeHike as any, chConfig]],
     jsx: true,
   },
 });
@@ -24,4 +26,5 @@ const nextConfig: NextConfig = {
   pageExtensions: ['ts', 'tsx', 'mdx'],
 };
 
-export default withMDX(nextConfig);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default withMDX(nextConfig as any);
