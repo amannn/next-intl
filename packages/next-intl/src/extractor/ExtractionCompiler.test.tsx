@@ -2051,9 +2051,9 @@ function waitForWriteFileCalls(
   return vi.waitFor(
     () => {
       if (opts.atLeast) {
-        expect(vi.mocked(fs.writeFile).mock.calls.length).toBeGreaterThanOrEqual(
-          length
-        );
+        expect(
+          vi.mocked(fs.writeFile).mock.calls.length
+        ).toBeGreaterThanOrEqual(length);
       } else {
         expect(vi.mocked(fs.writeFile).mock.calls.length).toBe(length);
       }
