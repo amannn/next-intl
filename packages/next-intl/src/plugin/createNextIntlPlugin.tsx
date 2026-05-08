@@ -17,9 +17,11 @@ function initPlugin(
     );
   }
 
+  const skipWatchers = isNextTelemetryDetachedFlushProcess();
+
   const messagesPathOrPaths =
     pluginConfig.experimental?.createMessagesDeclaration;
-  if (messagesPathOrPaths) {
+  if (messagesPathOrPaths && !skipWatchers) {
     createMessagesDeclaration(
       typeof messagesPathOrPaths === 'string'
         ? [messagesPathOrPaths]
@@ -46,7 +48,9 @@ function initPlugin(
     });
   }
 
-  initExtractionCompiler(extractorConfig);
+  if (!skipWatchers) {
+    initExtractionCompiler(extractorConfig);
+  }
 
   return getNextConfig(pluginConfig, nextConfig, extractorConfig);
 }
@@ -61,4 +65,16 @@ export default function createNextIntlPlugin(
   return function withNextIntl(nextConfig?: NextConfig) {
     return initPlugin(config, nextConfig);
   };
+}
+
+/**
+ * Next runs `telemetry/detached-flush.js` in a detached process to flush telemetry
+ * (often when `next dev` exits). That loads dev `next.config` with inherited
+ * `NODE_ENV=development`, which would otherwise start orphan plugin watchers.
+ */
+function isNextTelemetryDetachedFlushProcess(): boolean {
+  const scriptPath = process.argv[1];
+  if (!scriptPath) return false;
+  const normalized = scriptPath.replace(/\\/g, '/');
+  return normalized.includes('/telemetry/detached-flush');
 }
