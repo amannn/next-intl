@@ -81,14 +81,15 @@ export default class CatalogManager implements Disposable {
   public constructor(
     config: ExtractorConfig,
     opts: {
-      projectRoot?: string;
-      isDevelopment?: boolean;
-      sourceMap?: boolean;
       extractor: MessageExtractor;
+      isDevelopment?: boolean;
+      projectRoot?: string;
+      saveDebounceMs?: number;
+      sourceMap?: boolean;
     }
   ) {
     this.config = config;
-    this.saveScheduler = new SaveScheduler<void>(50);
+    this.saveScheduler = new SaveScheduler<void>(opts.saveDebounceMs ?? 50);
     this.projectRoot = opts.projectRoot ?? getDefaultProjectRoot();
     this.isDevelopment = opts.isDevelopment ?? false;
 

@@ -8,10 +8,11 @@ export default class ExtractionCompiler implements Disposable {
   public constructor(
     config: ExtractorConfig,
     opts: {
+      extractor?: MessageExtractor;
       isDevelopment?: boolean;
       projectRoot?: string;
+      saveDebounceMs?: number;
       sourceMap?: boolean;
-      extractor?: MessageExtractor;
     } = {}
   ) {
     const extractor = opts.extractor ?? new MessageExtractor(opts);
