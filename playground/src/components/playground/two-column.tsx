@@ -14,11 +14,9 @@ export function TwoColumn({ children }: { children: ReactNode }) {
   });
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] lg:gap-8">
-      <div className="prose prose-sm dark:prose-invert max-w-none">
-        {prose}
-      </div>
-      <div>{code}</div>
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] lg:gap-10 items-start">
+      <div className="mdx-content">{prose}</div>
+      <div className="lg:sticky lg:top-20">{code}</div>
     </div>
   );
 }

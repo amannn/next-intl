@@ -182,6 +182,73 @@
   --ch-24: #ffffffe6;
 }
 
+/* MDX content typography (scoped — no @tailwindcss/typography needed) */
+.mdx-content {
+  color: var(--foreground);
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+.mdx-content > * + * {
+  margin-top: 1rem;
+}
+
+.mdx-content p {
+  color: var(--muted-foreground);
+}
+
+.mdx-content ul {
+  list-style: disc;
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mdx-content li {
+  color: var(--muted-foreground);
+}
+
+.mdx-content li::marker {
+  color: var(--blue-300);
+}
+
+.mdx-content :not(pre) > code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--muted);
+  color: var(--foreground);
+  padding: 0.1em 0.35em;
+  border-radius: 0.25rem;
+  border: 1px solid var(--border);
+}
+
+.mdx-content a {
+  color: var(--primary);
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 3px;
+}
+
+.mdx-content a:hover {
+  text-decoration-style: solid;
+}
+
+.mdx-content h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--foreground);
+  margin-top: 1.75rem;
+}
+
+.mdx-content h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin-top: 1.25rem;
+}
+
 .dark {
   --ch-0: dark;
   --ch-1: #8b949e;
