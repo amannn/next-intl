@@ -1,7 +1,6 @@
 import type { NextConfig } from 'next';
 import createMDX from '@next/mdx';
 import { remarkCodeHike, recmaCodeHike, type CodeHikeConfig } from 'codehike/mdx';
-// NOTE: import kept for when withNextIntl is re-enabled in a later task.
 import createNextIntlPlugin from 'next-intl/plugin';
 
 const chConfig: CodeHikeConfig = {
@@ -19,12 +18,11 @@ const withMDX = createMDX({
   },
 });
 
-// NOTE: withNextIntl is commented out until src/i18n/request.ts is created in a later task.
-// const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
+const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 const nextConfig: NextConfig = {
   pageExtensions: ['ts', 'tsx', 'mdx'],
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default withMDX(nextConfig as any);
+export default withNextIntl(withMDX(nextConfig as any) as any);

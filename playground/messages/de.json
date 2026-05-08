@@ -1,0 +1,21 @@
+{
+  "Layout": {
+    "title": "next-intl Playground",
+    "tagline": "Übersetzungen, Formatierung, Routing und Patterns mit Next.js."
+  },
+  "Nav": {
+    "translations": "Übersetzungen",
+    "serverComponents": "Server-Komponenten",
+    "clientComponents": "Client-Komponenten"
+  },
+  "ServerDemo": {
+    "title": "Server-Komponenten",
+    "greeting": "Hallo, Welt!"
+  },
+  "ClientDemo": {
+    "title": "Client-Komponenten",
+    "label": "Dein Name",
+    "placeholder": "Frodo",
+    "greeting": "Hallo, {name}!"
+  }
+}
