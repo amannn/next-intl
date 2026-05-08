@@ -8,10 +8,10 @@ export default defineCodec(() => ({
     return Object.entries(data).map(([id, value]) => {
       const obj = value as StoredMessage;
       return {
-        description: obj.description ?? [],
         id,
         message: obj.message,
-        references: []
+        references: [],
+        description: obj.description ?? []
       };
     });
   },
