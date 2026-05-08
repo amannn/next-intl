@@ -451,18 +451,18 @@ describe('po format', {timeout: 20_000}, () => {
   });
 
   it('stacks descriptions when the same message appears in multiple files', async () => {
-    filesystem.project.src['FileA.tsx'] = `
+    filesystem.project.src['A.tsx'] = `
     import {useExtracted} from 'next-intl';
-    function FileA() {
+    function A() {
       const t = useExtracted();
-      return <div>{t({message: 'Message', description: 'Description from FileA'})}</div>;
+      return <div>{t({message: 'Message', description: 'Zebra sorts after Apple alphabetically'})}</div>;
     }
     `;
-    filesystem.project.src['FileB.tsx'] = `
+    filesystem.project.src['Z.tsx'] = `
     import {useExtracted} from 'next-intl';
-    function FileB() {
+    function Z() {
       const t = useExtracted();
-      return <div>{t({message: 'Message', description: 'Description from FileB'})}</div>;
+      return <div>{t({message: 'Message', description: 'Apple sorts first alphabetically'})}</div>;
     }
     `;
     filesystem.project.messages = {};
@@ -472,8 +472,8 @@ describe('po format', {timeout: 20_000}, () => {
     await waitForWriteFileCalls(1);
 
     expect(vi.mocked(fs.writeFile).mock.calls[0][1]).toContain(`
-#. Description from FileA
-#. Description from FileB
+#. Zebra sorts after Apple alphabetically
+#. Apple sorts first alphabetically
 `);
   });
 
@@ -484,8 +484,8 @@ describe('po format', {timeout: 20_000}, () => {
       const t = useExtracted();
       return (
         <div>
-          {t({message: 'Message', description: 'Description from first use'})}
-          {t({message: 'Message', description: 'Description from second use'})}
+          {t({message: 'Message', description: 'Second line second alphabetically'})}
+          {t({message: 'Message', description: 'First line first alphabetically'})}
         </div>
       );
     }
@@ -497,24 +497,24 @@ describe('po format', {timeout: 20_000}, () => {
     await waitForWriteFileCalls(1);
 
     expect(vi.mocked(fs.writeFile).mock.calls[0][1]).toContain(`
-#. Description from first use
-#. Description from second use
+#. Second line second alphabetically
+#. First line first alphabetically
 `);
   });
 
   it('removes stale descriptions when a source occurrence changes', async () => {
-    filesystem.project.src['FileA.tsx'] = `
+    filesystem.project.src['A.tsx'] = `
     import {useExtracted} from 'next-intl';
-    function FileA() {
+    function A() {
       const t = useExtracted();
-      return <div>{t({message: 'Message', description: 'Description from FileA'})}</div>;
+      return <div>{t({message: 'Message', description: 'Zebra from earlier path'})}</div>;
     }
     `;
-    filesystem.project.src['FileB.tsx'] = `
+    filesystem.project.src['Z.tsx'] = `
     import {useExtracted} from 'next-intl';
-    function FileB() {
+    function Z() {
       const t = useExtracted();
-      return <div>{t({message: 'Message', description: 'Description from FileB'})}</div>;
+      return <div>{t({message: 'Message', description: 'Apple from later path'})}</div>;
     }
     `;
     filesystem.project.messages = {
@@ -527,10 +527,10 @@ describe('po format', {timeout: 20_000}, () => {
     await waitForWriteFileCalls(2);
 
     await simulateSourceFileUpdate(
-      '/project/src/FileA.tsx',
+      '/project/src/A.tsx',
       `
       import {useExtracted} from 'next-intl';
-      function FileA() {
+      function A() {
         const t = useExtracted();
         return <div>{t('Message')}</div>;
       }
@@ -542,8 +542,8 @@ describe('po format', {timeout: 20_000}, () => {
       .mocked(fs.writeFile)
       .mock.calls.filter((call) => call[0] === 'messages/en.po')
       .at(-1)?.[1] as string;
-    expect(lastSourceWrite).not.toContain('Description from FileA');
-    expect(lastSourceWrite).toContain('#. Description from FileB');
+    expect(lastSourceWrite).not.toContain('Zebra from earlier path');
+    expect(lastSourceWrite).toContain('#. Apple from later path');
   });
 
   it('removes obsolete messages during build', async () => {

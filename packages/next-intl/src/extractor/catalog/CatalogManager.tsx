@@ -13,10 +13,7 @@ import type {
   Locale,
   SourceMessage
 } from '../types.js';
-import {
-  compareReferences,
-  getDefaultProjectRoot,
-} from '../utils.js';
+import {compareReferences, getDefaultProjectRoot} from '../utils.js';
 import CatalogLocales from './CatalogLocales.js';
 import CatalogPersister from './CatalogPersister.js';
 import SaveScheduler from './SaveScheduler.js';
