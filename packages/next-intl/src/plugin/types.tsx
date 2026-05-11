@@ -7,7 +7,9 @@ export type PluginConfig = {
     /** A path to the messages file that you'd like to create a declaration for. In case you want to consider multiple files, you can pass an array of paths. */
     createMessagesDeclaration?: string | Array<string>;
 
-    /** @deprecated Use `extract.srcPath`, see https://github.com/amannn/next-intl/pull/2313 */
+    /**
+     * Relative path(s) to your source code files.
+     */
     srcPath?: string | Array<string>;
 
     /** Configuration about your catalogs of messages */
@@ -18,8 +20,10 @@ export type PluginConfig = {
       precompile?: boolean;
     };
 
-    /** Enables the usage of `useExtracted`, to be used in combination with `messages`. */
-    extract?: NonNullable<ExtractorConfigInput['extract']>;
+    /**
+     * Enables the usage of [`useExtracted`](/docs/usage/extraction).
+     */
+    extract?: ExtractorConfigInput['extract'];
   };
 };
 

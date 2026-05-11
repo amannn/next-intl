@@ -62,85 +62,14 @@ See [TypeScript augmentation](/docs/workflows/typescript) to learn more about th
 
 **Note:** This is not necessary when using [`useExtracted`](/docs/usage/extraction).
 
-### `extract` [#extract]
+### `srcPath` [#src-path]
 
-This enables the usage of [`useExtracted`](/docs/usage/extraction) to automatically extract messages from source files.
-
-```tsx
-const withNextIntl = createNextIntlPlugin({
-  experimental: {
-    extract: {
-      locales: 'infer',
-      sourceLocale: 'en',
-      srcPath: './src'
-    }
-    // ...
-  }
-});
-```
-
-**Note:** The `extract` option should be used together with [`messages`](#messages).
-
-#### `extract.sourceLocale` [#extract-source-locale]
-
-Locale to which extracted source strings are written.
+Relative path(s) to your app source code that uses `next-intl`
 
 ```tsx
-// Source messages will be extracted here
-sourceLocale: 'en';
+// Using a `src` folder
+srcPath: './src',
 ```
-
-#### `extract.locales` [#extract-locales]
-
-This defines which messages are kept in sync during extraction (e.g. `en.json`, `de.json`, …).
-
-You can either automatically detect all locales within `path`:
-
-```tsx
-// Detect available locales in `path`
-locales: 'infer';
-```
-
-… specify them explicitly (e.g. to use a subset):
-
-```tsx
-// Extract to these locales
-locales: ['en', 'de', 'fr'];
-```
-
-… or pass an empty array to not extract any messages:
-
-```tsx
-// Don't extract any messages
-locales: [];
-```
-
-In the latter case, you can run extraction manually via [`unstable_extractMessages`](/docs/usage/extraction#manual).
-
-#### `extract.path` [#extract-path]
-
-Defines which directory to extract messages to (defaults to `messages.path`).
-
-```tsx
-// Extract messages to this directory
-path: './messages';
-```
-
-#### `extract.srcPath` [#extract-srcpath]
-
-This defines the source path where messages should be extracted to.
-
-```tsx
-const withNextIntl = createNextIntlPlugin({
-  experimental: {
-    extract: {
-      srcPath: './src'
-    }
-  }
-});
-```
-
-If your project is split into multiple folders, you can provide an array of paths:
 
 ```tsx
 // Not using a `src` folder
@@ -156,6 +85,37 @@ srcPath: ['./src', '../ui'],
 // External dependency on a package
 srcPath: ['./src', './node_modules/@acme/components'],
 ```
+
+This is required when [`extract`](#extract) is enabled.
+
+### `extract` [#extract]
+
+This enables the usage of [`useExtracted`](/docs/usage/extraction) to automatically extract messages from source files.
+
+```tsx
+const withNextIntl = createNextIntlPlugin({
+  experimental: {
+    extract: true
+    // ...
+  }
+});
+```
+
+**Note:** The `extract` option should be used together with [`messages`](#messages) and [`srcPath`](#src-path).
+
+#### `extract.path` [#extract-path]
+
+Defines the directory where extracted messages should be written to (defaults to [`messages.path`](#messages-path)):
+
+```tsx
+extract: {
+  path: './messages'
+},
+```
+
+It's only required to configure this property when [`messages.path`](#messages-path) is an array.
+
+See also: [Monorepos and external packages](/docs/usage/extraction#monorepos-external-packages).
 
 ### `messages` [#messages]
 
@@ -175,7 +135,7 @@ const withNextIntl = createNextIntlPlugin({
 });
 ```
 
-Configuring `experimental.messages` sets up a Turbo- or Webpack loader that allows messages to be imported as plain JavaScript objects (see [`format`](#messages-format)).
+Configuring `experimental.messages` sets up a Turbo- or Webpack loader that allows messages to be imported as plain JavaScript objects (see [`messages.format`](#messages-format)).
 
 #### `messages.path` [#messages-path]
 
@@ -183,17 +143,55 @@ Relative path to the directory containing messages:
 
 ```tsx
 // Load and transform messages from here
-path: './messages';
+path: './messages',
 ```
 
 If you're loading messages from external packages, you can include multiple paths:
 
 ```tsx
 // Multiple directories with messages
-path: ['./messages', '../packages/ui/messages'];
+path: ['./messages', '../packages/ui/messages'],
 ```
 
 See also: [Monorepos and external packages](/docs/usage/extraction#monorepos-external-packages)
+
+#### `messages.locales` [#messages-locales]
+
+Defines which locales you translate between in your [`messages.path`](#messages-path).
+
+When using [`useExtracted`](/docs/usage/extraction), this defines which messages are kept in sync when changes to your [`messages.sourceLocale`](#messages-source-locale) are detected (e.g. `en.json`, `de.json`, …).
+
+You can either automatically detect all locales within `path`:
+
+```tsx
+// Detect available locales in `path`
+locales: 'infer',
+```
+
+… specify them explicitly (e.g. to use a subset):
+
+```tsx
+// Extract to these locales
+locales: ['en', 'de', 'fr'],
+```
+
+… or pass an empty array to not extract any messages:
+
+```tsx
+// Don't extract any messages
+locales: [],
+```
+
+In the latter case, you can run extraction manually via [`unstable_extractMessages`](/docs/usage/extraction#manual).
+
+#### `messages.sourceLocale` [#messages-source-locale]
+
+Your primary locale, which might be used to define messages in source code when using [`useExtracted`](/docs/usage/extraction).
+
+```tsx
+// Source messages will be extracted here
+sourceLocale: 'en',
+```
 
 #### `messages.format` [#messages-format]
 

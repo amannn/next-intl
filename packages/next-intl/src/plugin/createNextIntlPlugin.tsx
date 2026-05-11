@@ -5,7 +5,7 @@ import createMessagesDeclaration from './declaration/index.js';
 import initExtractionCompiler from './extractor/initExtractionCompiler.js';
 import getNextConfig from './getNextConfig.js';
 import type {PluginConfig} from './types.js';
-import {throwError, warn} from './utils.js';
+import {warn} from './utils.js';
 
 function initPlugin(
   pluginConfig: PluginConfig,
@@ -31,20 +31,13 @@ function initPlugin(
 
   let extractorConfig: ExtractorConfig | undefined;
 
-  if (pluginConfig.experimental?.extract) {
-    if (!pluginConfig.experimental.messages) {
-      throwError('`messages` is required when using `extract`.');
-    }
-
+  const experimental = pluginConfig.experimental;
+  const extract = experimental?.extract;
+  if (extract) {
     extractorConfig = normalizeExtractorConfig({
-      srcPath: pluginConfig.experimental.srcPath,
-      messages: pluginConfig.experimental.messages,
-      extract: {
-        locales: pluginConfig.experimental.extract.locales,
-        path: pluginConfig.experimental.extract.path,
-        sourceLocale: pluginConfig.experimental.extract.sourceLocale,
-        srcPath: pluginConfig.experimental.extract.srcPath
-      }
+      extract,
+      messages: experimental.messages,
+      srcPath: experimental.srcPath
     });
   }
 
