@@ -19,8 +19,14 @@ export function normalizeMessagesCatalogPaths(
 }
 
 export default function normalizeExtractorConfig(
-  input: ExtractorConfigInput
+  input: Omit<ExtractorConfigInput, 'messages'> & {
+    messages?: ExtractorConfigInput['messages'];
+  }
 ): ExtractorConfig {
+  if (input.messages == null) {
+    throwError('`messages` is required when extracting messages.');
+  }
+
   const extract = input.extract;
 
   let writablePathFromExtract: string | undefined;

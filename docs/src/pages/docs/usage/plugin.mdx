@@ -109,7 +109,7 @@ Defines the directory where extracted messages should be written to (defaults to
 
 ```tsx
 extract: {
-  path: './messages';
+  path: './messages'
 },
 ```
 
@@ -143,14 +143,14 @@ Relative path to the directory containing messages:
 
 ```tsx
 // Load and transform messages from here
-path: './messages';
+path: './messages',
 ```
 
 If you're loading messages from external packages, you can include multiple paths:
 
 ```tsx
 // Multiple directories with messages
-path: ['./messages', '../packages/ui/messages'];
+path: ['./messages', '../packages/ui/messages'],
 ```
 
 See also: [Monorepos and external packages](/docs/usage/extraction#monorepos-external-packages)
@@ -165,21 +165,21 @@ You can either automatically detect all locales within `path`:
 
 ```tsx
 // Detect available locales in `path`
-locales: 'infer';
+locales: 'infer',
 ```
 
 … specify them explicitly (e.g. to use a subset):
 
 ```tsx
 // Extract to these locales
-locales: ['en', 'de', 'fr'];
+locales: ['en', 'de', 'fr'],
 ```
 
 … or pass an empty array to not extract any messages:
 
 ```tsx
 // Don't extract any messages
-locales: [];
+locales: [],
 ```
 
 In the latter case, you can run extraction manually via [`unstable_extractMessages`](/docs/usage/extraction#manual).
