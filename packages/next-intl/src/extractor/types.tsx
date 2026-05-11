@@ -40,41 +40,33 @@ export type ExtractorMessage = {
  * External extractor configuration (Next.js plugin, `extractMessages`).
  */
 export type ExtractorConfigInput = {
-  extract?: {
-    /**
-     * Locales kept in sync with [`extract.sourceLocale`](https://next-intl.dev/docs/usage/plugin#extract).
-     */
-    locales: 'infer' | ReadonlyArray<Locale>;
-    /**
-     * Writable catalog directory when extracting. Required if `messages.path` is an array.
-     * Defaults to `messages.path` when it is a single path.
-     */
-    path?: string;
-    /** Locale to which extracted source strings are written. */
-    sourceLocale: string;
-    /**
-     * Relative path(s) to your source code files.
-     */
-    srcPath: string | Array<string>;
-  };
+  /**
+   * Relative path(s) to your source code files.
+   */
+  srcPath?: string | Array<string>;
   messages: {
     /** The format of your messages files. */
     format: MessagesFormat;
-    /**
-     * @deprecated Use `extract.locales`. See https://github.com/amannn/next-intl/pull/2313.
-     */
-    locales?: 'infer' | ReadonlyArray<Locale>;
     /** Relative path(s) to your messages files. */
     path: string | Array<string>;
+    /**
+     * Locales kept in sync with [`messages.sourceLocale`](https://next-intl.dev/docs/usage/plugin#messages-source-locale).
+     */
+    locales: 'infer' | ReadonlyArray<Locale>;
+    /** Locale to which extracted source strings are written. */
+    sourceLocale?: string;
   };
   /**
-   * @deprecated Use `extract.sourceLocale`. See https://github.com/amannn/next-intl/pull/2313.
+   * Enables the usage of `useExtracted`.
    */
-  sourceLocale?: string;
-  /**
-   * @deprecated Use `extract.srcPath`. See https://github.com/amannn/next-intl/pull/2313.
-   */
-  srcPath?: string | Array<string>;
+  extract?:
+    | true
+    | {
+        /** Defaults to `messages.path` when it is a single path. */
+        path?: string;
+        /** @deprecated Prefer `messages.sourceLocale`. */
+        sourceLocale?: string;
+      };
 };
 
 /** Normalized config used internally after `normalizeExtractorConfig`. */

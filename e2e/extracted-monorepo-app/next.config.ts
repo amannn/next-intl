@@ -3,19 +3,18 @@ import createNextIntlPlugin from 'next-intl/plugin';
 
 const withNextIntl = createNextIntlPlugin({
   experimental: {
-    // Necessary to extract first-party messages
     extract: {
-      locales: 'infer',
-      path: './messages',
-      sourceLocale: 'en',
-      srcPath: './src'
+      // Necessary to extract first-party messages
+      path: './messages'
     },
-
     messages: {
-      format: 'po',
       // This is necessary to transform .po files
-      path: ['./messages', '../shared-ui/messages']
-    }
+      path: ['./messages', '../shared-ui/messages'],
+      format: 'po',
+      locales: 'infer',
+      sourceLocale: 'en'
+    },
+    srcPath: './src'
   }
 });
 

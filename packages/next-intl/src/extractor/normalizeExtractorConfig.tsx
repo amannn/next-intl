@@ -21,66 +21,41 @@ export function normalizeMessagesCatalogPaths(
 export default function normalizeExtractorConfig(
   input: ExtractorConfigInput
 ): ExtractorConfig {
-  if (input.extract?.locales != null && input.messages.locales != null) {
-    throwError(
-      'Use either `extract.locales` or `messages.locales`, not both. Prefer `extract.locales`.'
-    );
-  }
+  const extract = input.extract;
 
-  const locales = input.extract?.locales ?? input.messages.locales;
-  if (locales == null) {
-    throwError('`extract.locales` is required when extracting messages.');
-  }
+  let writablePathFromExtract: string | undefined;
+  let sourceLocale: string | undefined;
 
-  if (input.messages.locales != null) {
-    warn(
-      '`messages.locales` is deprecated in favor of `extract.locales`. See https://github.com/amannn/next-intl/pull/2313'
-    );
-  }
-
-  const sourceLocale: string | undefined =
-    input.extract?.sourceLocale ?? input.sourceLocale;
-
-  const hasRootLocale = input.sourceLocale != null;
-  const hasNestedLocale = input.extract?.sourceLocale != null;
-  if (hasRootLocale && hasNestedLocale) {
-    if (input.extract!.sourceLocale !== input.sourceLocale) {
-      throwError(
-        'Conflicting `sourceLocale` and `extract.sourceLocale` — specify only `extract.sourceLocale`.'
+  if (extract !== undefined && extract !== true) {
+    if (extract.sourceLocale) {
+      warn(
+        '`extract.sourceLocale` is deprecated in favor of `messages.sourceLocale`.'
       );
+      sourceLocale = extract.sourceLocale;
+    }
+
+    if (extract.path) {
+      writablePathFromExtract = stripTrailingSlash(extract.path);
     }
   }
 
-  if (input.sourceLocale != null && input.extract?.sourceLocale == null) {
-    warn(
-      '`sourceLocale` is deprecated in favor of `extract.sourceLocale`. See https://github.com/amannn/next-intl/pull/2313'
-    );
+  const locales = input.messages.locales;
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (!locales) {
+    throwError('`messages.locales` is required when extracting messages.');
   }
 
-  const resolvedSourceLocale = sourceLocale?.trim();
-
-  if (resolvedSourceLocale == null || resolvedSourceLocale === '') {
-    throwError('`extract.sourceLocale` is required.');
+  if (input.messages.sourceLocale) {
+    sourceLocale = input.messages.sourceLocale;
   }
 
-  const srcPath = input.extract?.srcPath ?? input.srcPath;
-
-  const hasRootSrcPath = input.srcPath != null;
-  const hasNestedSrcPath = input.extract?.srcPath != null;
-  if (hasRootSrcPath && hasNestedSrcPath) {
-    throwError(
-      'Use either `srcPath` or `extract.srcPath`, not both. Prefer `extract.srcPath`.'
-    );
+  if (!sourceLocale) {
+    throwError('`messages.sourceLocale` is required when extracting messages.');
   }
 
-  if (input.srcPath != null && input.extract?.srcPath == null) {
-    warn(
-      '`srcPath` is deprecated in favor of `extract.srcPath`. See https://github.com/amannn/next-intl/pull/2313'
-    );
-  }
-
+  const srcPath = input.srcPath;
   if (srcPath == null) {
-    throwError('`extract.srcPath` is required.');
+    throwError('`srcPath` is required when extracting messages.');
   }
 
   const pathIsArray = Array.isArray(input.messages.path);
@@ -90,11 +65,8 @@ export default function normalizeExtractorConfig(
   }
 
   let extractPath: string;
-  if (input.extract?.path != null) {
-    extractPath = stripTrailingSlash(String(input.extract.path).trim());
-    if (!extractPath) {
-      throwError('`extract.path` must be a non-empty string.');
-    }
+  if (writablePathFromExtract != null) {
+    extractPath = writablePathFromExtract;
   } else {
     if (pathIsArray) {
       throwError(
@@ -108,7 +80,7 @@ export default function normalizeExtractorConfig(
     extract: {
       locales,
       path: extractPath,
-      sourceLocale: resolvedSourceLocale,
+      sourceLocale,
       srcPath
     },
     messages: {
