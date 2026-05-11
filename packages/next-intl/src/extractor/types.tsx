@@ -10,11 +10,28 @@ export type ExtractorMessageReference = {
   line?: number;
 };
 
+/** A single statically extracted source-code usage before any aggregation. */
+export type SourceMessage = {
+  id: string;
+  message: string;
+  description: string | null;
+  reference: ExtractorMessageReference;
+};
+
+/** An aggregated message that can be read from or written to a catalog. */
 export type ExtractorMessage = {
   id: string;
   message: string;
-  description?: string;
-  references?: Array<ExtractorMessageReference>;
+  /**
+   * All unique descriptions attached to messages (e.g. multiple `#.` lines in PO).
+   * Ordered by source reference (path, then line).
+   */
+  description: Array<string>;
+  /**
+   * Source locations for this message (e.g. `#:` lines in PO). Ordered by path, then line.
+   * Empty when the catalog format does not store references or none are known.
+   */
+  references: Array<ExtractorMessageReference>;
   /** Allows for additional properties like .po flags to be read and later written. */
   [key: string]: unknown;
 };

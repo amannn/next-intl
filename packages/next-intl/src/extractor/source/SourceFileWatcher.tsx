@@ -38,7 +38,7 @@ export default class SourceFileWatcher implements Disposable {
 
           const filtered = await this.normalizeEvents(events);
           if (filtered.length > 0) {
-            void this.onChange(filtered);
+            await this.onChange(filtered);
           }
         },
         {ignore}
