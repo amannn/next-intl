@@ -67,6 +67,11 @@ export function getSortedMessages(
       warnAboutMissingReference(messageB.id, warnedMissingReferenceIds);
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (refA == null || refB == null) {
+      return 0;
+    }
+
     // Sort by path, then line. Same path+line: preserve original order
     return compareReferences(refA, refB);
   });

@@ -1,4 +1,4 @@
-import {describe, expect, it} from 'vitest';
+import {describe, expect, it, vi} from 'vitest';
 import {getSortedMessages, setNestedProperty} from './utils.js';
 
 describe('getSortedMessages', () => {
@@ -69,6 +69,32 @@ describe('getSortedMessages', () => {
         }
       ]).map((message) => message.id)
     ).toEqual(['c', 'a', 'b']);
+  });
+
+  it('preserves original order and warns when a reference is missing', () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    expect(
+      getSortedMessages([
+        {
+          description: [],
+          id: 'a',
+          message: 'a',
+          references: []
+        },
+        {
+          description: [],
+          id: 'b',
+          message: 'b',
+          references: [{path: 'components/A.tsx', line: 1}]
+        }
+      ]).map((message) => message.id)
+    ).toEqual(['a', 'b']);
+    expect(warnSpy).toHaveBeenCalledWith(
+      expect.stringContaining('Missing file reference for extracted message: a')
+    );
+
+    warnSpy.mockRestore();
   });
 });
 
