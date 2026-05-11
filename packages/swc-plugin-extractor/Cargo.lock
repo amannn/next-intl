@@ -1412,7 +1412,6 @@ name = "swc-plugin-extractor"
 version = "0.1.0"
 dependencies = [
  "base64",
- "indexmap",
  "rustc-hash",
  "serde",
  "serde_json",

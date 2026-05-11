@@ -3,7 +3,6 @@
 
 mod key_generator;
 
-use indexmap::IndexMap;
 use rustc_hash::FxHashMap;
 use serde::{Deserialize, Serialize};
 use swc_atoms::Wtf8Atom;
@@ -59,8 +58,8 @@ pub struct TransformVisitor {
 
     translator_map: FxHashMap<Id, TranslatorInfo>,
 
-    /// Messages keyed by ID to aggregate duplicate usages (IndexMap preserves insertion order)
-    results_by_id: IndexMap<Wtf8Atom, StrictExtractedMessage>,
+    /// Each statically extracted source-code usage in discovery order.
+    results: Vec<SourceMessage>,
 }
 
 impl TransformVisitor {
@@ -75,12 +74,12 @@ impl TransformVisitor {
             source_map,
             hook_local_names: Default::default(),
             translator_map: Default::default(),
-            results_by_id: Default::default(),
+            results: Default::default(),
         }
     }
 
-    pub fn get_results(&self) -> Vec<StrictExtractedMessage> {
-        self.results_by_id.values().cloned().collect()
+    pub fn get_results(&self) -> Vec<SourceMessage> {
+        self.results.clone()
     }
 
     fn define_translator(&mut self, name: Id, namespace: Option<Wtf8Atom>) {
@@ -95,11 +94,11 @@ struct TranslatorInfo {
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub struct StrictExtractedMessage {
+pub struct SourceMessage {
     pub id: Wtf8Atom,
     pub message: Wtf8Atom,
     pub description: Option<Wtf8Atom>,
-    pub references: Vec<Reference>,
+    pub reference: Reference,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -249,21 +248,12 @@ impl VisitMut for TransformVisitor {
                     line,
                 };
 
-                // Aggregate duplicate messages by ID
-                if let Some(existing) = self.results_by_id.get_mut(&full_key) {
-                    existing.references.push(new_reference);
-                    if existing.description.is_none() {
-                        existing.description = description;
-                    }
-                } else {
-                    let message = StrictExtractedMessage {
-                        id: full_key.clone(),
-                        message: message_text.clone(),
-                        description,
-                        references: vec![new_reference],
-                    };
-                    self.results_by_id.insert(full_key, message);
-                }
+                self.results.push(SourceMessage {
+                    id: full_key.clone(),
+                    message: message_text.clone(),
+                    description,
+                    reference: new_reference,
+                });
 
                 // Transform the argument based on type
                 match &mut *call.args[0].expr {

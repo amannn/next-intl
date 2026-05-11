@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.11.1 (2026-05-08)
+
+### Bug Fixes
+
+* Avoid watchers for detached telemetry process ([#2319](https://github.com/amannn/next-intl/issues/2319)) ([ff77a3d](https://github.com/amannn/next-intl/commit/ff77a3df639ca1afddf7d15254986c552ed328b8)) – by @amannn
+
 ## 4.11.0 (2026-04-28)
 
 ### Features

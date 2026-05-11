@@ -30,29 +30,22 @@ export default defineCodec(() => {
       }
       const messages = catalog.messages || [];
       return messages.map((msg) => {
-        const {extractedComments, msgctxt, msgid, msgstr, ...rest} = msg;
-
-        if (extractedComments && extractedComments.length > 1) {
-          throw new Error(
-            `Multiple extracted comments are not supported. Found ${extractedComments.length} comments for msgid "${msgid}".`
-          );
-        }
+        const {extractedComments, msgctxt, msgid, msgstr, references, ...rest} =
+          msg;
 
         return {
           ...rest,
           id: msgctxt ? [msgctxt, msgid].join(NAMESPACE_SEPARATOR) : msgid,
           message: msgstr,
-          ...(extractedComments &&
-            extractedComments.length > 0 && {
-              description: extractedComments[0]
-            })
+          description: extractedComments ?? [],
+          references: references ?? []
         };
       });
     },
 
     encode(messages, context) {
       const encodedMessages = getSortedMessages(messages).map((msg) => {
-        const {description, id, message, ...rest} = msg;
+        const {description = [], id, message, references, ...rest} = msg;
 
         const lastDotIndex = id.lastIndexOf(NAMESPACE_SEPARATOR);
         const hasNamespace = id.includes(NAMESPACE_SEPARATOR);
@@ -64,8 +57,9 @@ export default defineCodec(() => {
         return {
           msgid,
           msgstr: message,
-          ...(description && {extractedComments: [description]}),
+          ...(description.length > 0 && {extractedComments: description}),
           ...(hasNamespace && {msgctxt: id.slice(0, lastDotIndex)}),
+          ...(references.length > 0 && {references}),
           ...rest
         };
       });
