@@ -101,12 +101,21 @@ You can either automatically detect all locales within `path`:
 locales: 'infer';
 ```
 
-… or specify them explicitly (e.g. to use a subset):
+… specify them explicitly (e.g. to use a subset):
 
 ```tsx
 // Extract to these locales
 locales: ['en', 'de', 'fr'];
 ```
+
+… or pass an empty array to not extract any messages:
+
+```tsx
+// Don't extract any messages
+locales: [];
+```
+
+In the latter case, you can run extraction manually via [`unstable_extractMessages`](/docs/usage/extraction#manual).
 
 #### `extract.path` [#extract-path]
 

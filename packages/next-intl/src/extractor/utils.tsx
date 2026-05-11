@@ -1,6 +1,10 @@
 import path from 'path';
 import {warn} from '../plugin/utils.js';
-import type {ExtractorMessage, ExtractorMessageReference} from './types.js';
+import type {
+  ExtractorConfig,
+  ExtractorMessage,
+  ExtractorMessageReference
+} from './types.js';
 
 export function normalizePathToPosix(filePath: string): string {
   // `path.relative` uses OS-specific separators. For stable `.po` references we
@@ -18,6 +22,13 @@ const FORBIDDEN_OBJECT_KEYS = new Set([
 
 export function isForbiddenObjectKey(key: string): boolean {
   return FORBIDDEN_OBJECT_KEYS.has(key);
+}
+
+export function hasLocalesToExtract(
+  config: Pick<ExtractorConfig, 'extract'>
+): boolean {
+  const {locales} = config.extract;
+  return locales === 'infer' || locales.length > 0;
 }
 
 // Essentialls lodash/set, but we avoid this dependency
