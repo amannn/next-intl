@@ -29,7 +29,7 @@ export default function normalizeExtractorConfig(
 
   const extract = input.extract;
 
-  let writablePathFromExtract: string | undefined;
+  let extractPath: string | undefined;
   let sourceLocale: string | undefined;
 
   if (extract !== undefined && extract !== true) {
@@ -41,7 +41,7 @@ export default function normalizeExtractorConfig(
     }
 
     if (extract.path) {
-      writablePathFromExtract = stripTrailingSlash(extract.path);
+      extractPath = stripTrailingSlash(extract.path);
     }
   }
 
@@ -70,10 +70,7 @@ export default function normalizeExtractorConfig(
     throwError('`messages.path` must not be empty.');
   }
 
-  let extractPath: string;
-  if (writablePathFromExtract != null) {
-    extractPath = writablePathFromExtract;
-  } else {
+  if (extractPath == null) {
     if (pathIsArray) {
       throwError(
         'When `messages.path` is an array, `extract.path` is required to select the writable catalog directory.'
