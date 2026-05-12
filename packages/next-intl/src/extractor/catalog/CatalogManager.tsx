@@ -188,7 +188,9 @@ export default class CatalogManager implements Disposable {
         }))
       );
       for (const {filePath, messages} of extractedFiles) {
-        this.applyFileMessages(filePath, messages);
+        if (messages) {
+          this.applyFileMessages(filePath, messages);
+        }
       }
       this.mergeSourceDiskMetadata(sourceDiskMessages);
     })();
@@ -296,7 +298,11 @@ export default class CatalogManager implements Disposable {
 
   private async processFile(absoluteFilePath: string): Promise<boolean> {
     const messages = await this.extractFile(absoluteFilePath);
-    return this.applyFileMessages(absoluteFilePath, messages);
+    if (messages) {
+      return this.applyFileMessages(absoluteFilePath, messages);
+    } else {
+      return false;
+    }
   }
 
   private async extractFile(
@@ -323,10 +329,8 @@ export default class CatalogManager implements Disposable {
 
   private applyFileMessages(
     absoluteFilePath: string,
-    messages: Array<SourceMessage> | undefined
+    messages: Array<SourceMessage>
   ): boolean {
-    if (messages == null) return false;
-
     const prevFileMessages = this.sourceMessagesByFile.get(absoluteFilePath);
     const nextFileMessages = this.groupSourceMessagesById(messages);
     const affectedIds = new Set([
