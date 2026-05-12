@@ -55,15 +55,9 @@ export default defineCodec(() => {
           : id;
 
         // Path-only refs (no `:line`), unique paths
-        const pathOnlyRefs: Array<{path: string}> = [];
-        if (references.length > 0) {
-          const seenPaths = new Set<string>();
-          for (const reference of references) {
-            if (seenPaths.has(reference.path)) continue;
-            seenPaths.add(reference.path);
-            pathOnlyRefs.push({path: reference.path});
-          }
-        }
+        const pathOnlyRefs: Array<{path: string}> = [
+          ...new Set(references.map((ref) => ref.path))
+        ].map((path) => ({path}));
 
         return {
           msgid,
