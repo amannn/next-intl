@@ -13,7 +13,11 @@ import type {
   Locale,
   SourceMessage
 } from '../types.js';
-import {compareReferences, getDefaultProjectRoot} from '../utils.js';
+import {
+  compareReferences,
+  getDefaultProjectRoot,
+  localeCompare
+} from '../utils.js';
 import CatalogLocales from './CatalogLocales.js';
 import CatalogPersister from './CatalogPersister.js';
 import SaveScheduler from './SaveScheduler.js';
@@ -172,14 +176,20 @@ export default class CatalogManager implements Disposable {
     await this.loadCatalogsPromise;
 
     this.scanCompletePromise = (async () => {
-      const sourceFiles = await SourceFileScanner.getSourceFiles(
-        this.getSrcPaths()
+      const sourceFiles = Array.from(
+        await SourceFileScanner.getSourceFiles(this.getSrcPaths())
+      )
+        // Stable file order keeps catalog ties independent of processing timing
+        .toSorted(localeCompare);
+      const extractedFiles = await Promise.all(
+        sourceFiles.map(async (filePath) => ({
+          filePath,
+          messages: await this.extractFile(filePath)
+        }))
       );
-      await Promise.all(
-        Array.from(sourceFiles).map(async (filePath) =>
-          this.processFile(filePath)
-        )
-      );
+      for (const {filePath, messages} of extractedFiles) {
+        this.applyFileMessages(filePath, messages);
+      }
       this.mergeSourceDiskMetadata(sourceDiskMessages);
     })();
 
@@ -285,6 +295,13 @@ export default class CatalogManager implements Disposable {
   }
 
   private async processFile(absoluteFilePath: string): Promise<boolean> {
+    const messages = await this.extractFile(absoluteFilePath);
+    return this.applyFileMessages(absoluteFilePath, messages);
+  }
+
+  private async extractFile(
+    absoluteFilePath: string
+  ): Promise<Array<SourceMessage> | undefined> {
     let messages: Array<SourceMessage> = [];
     try {
       const content = await fs.readFile(absoluteFilePath, 'utf8');
@@ -292,7 +309,7 @@ export default class CatalogManager implements Disposable {
       try {
         extraction = await this.extractor.extract(absoluteFilePath, content);
       } catch {
-        return false;
+        return undefined;
       }
       messages = extraction.messages;
     } catch (err) {
@@ -301,6 +318,14 @@ export default class CatalogManager implements Disposable {
       }
       // ENOENT -> treat as no messages
     }
+    return messages;
+  }
+
+  private applyFileMessages(
+    absoluteFilePath: string,
+    messages: Array<SourceMessage> | undefined
+  ): boolean {
+    if (messages == null) return false;
 
     const prevFileMessages = this.sourceMessagesByFile.get(absoluteFilePath);
     const nextFileMessages = this.groupSourceMessagesById(messages);
@@ -563,7 +588,10 @@ export default class CatalogManager implements Disposable {
         events,
         Array.from(this.sourceMessagesByFile.keys())
       );
-    for (const event of expandedEvents) {
+    // Stable file order keeps catalog ties independent of event timing.
+    for (const event of expandedEvents.toSorted((a, b) =>
+      localeCompare(a.path, b.path)
+    )) {
       const hasChanged = await this.processFile(event.path);
       changed ||= hasChanged;
     }
