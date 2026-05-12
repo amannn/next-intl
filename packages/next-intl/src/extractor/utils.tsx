@@ -1,5 +1,10 @@
 import path from 'path';
-import type {ExtractorMessage, ExtractorMessageReference} from './types.js';
+import {warn} from '../plugin/utils.js';
+import type {
+  ExtractorConfig,
+  ExtractorMessage,
+  ExtractorMessageReference
+} from './types.js';
 
 export function normalizePathToPosix(filePath: string): string {
   // `path.relative` uses OS-specific separators. For stable `.po` references we
@@ -17,6 +22,13 @@ const FORBIDDEN_OBJECT_KEYS = new Set([
 
 export function isForbiddenObjectKey(key: string): boolean {
   return FORBIDDEN_OBJECT_KEYS.has(key);
+}
+
+export function hasLocalesToExtract(
+  config: Pick<ExtractorConfig, 'extract'>
+): boolean {
+  const {locales} = config.extract;
+  return locales === 'infer' || locales.length > 0;
 }
 
 // Essentialls lodash/set, but we avoid this dependency
@@ -51,16 +63,38 @@ export function setNestedProperty(
 export function getSortedMessages(
   messages: Array<ExtractorMessage>
 ): Array<ExtractorMessage> {
-  return messages.toSorted((messageA, messageB) => {
-    const refA = messageA.references?.[0];
-    const refB = messageB.references?.[0];
+  const warnedMissingReferenceIds = new Set<string>();
 
-    // No references: preserve original (extraction) order
-    if (!refA || !refB) return 0;
+  return messages.toSorted((messageA, messageB) => {
+    const refA = messageA.references[0];
+    const refB = messageB.references[0];
+
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (refA == null) {
+      warnAboutMissingReference(messageA.id, warnedMissingReferenceIds);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (refB == null) {
+      warnAboutMissingReference(messageB.id, warnedMissingReferenceIds);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (refA == null || refB == null) {
+      return 0;
+    }
 
     // Sort by path, then line. Same path+line: preserve original order
     return compareReferences(refA, refB);
   });
+}
+
+function warnAboutMissingReference(
+  id: string,
+  warnedMissingReferenceIds: Set<string>
+): void {
+  if (warnedMissingReferenceIds.has(id)) return;
+  warnedMissingReferenceIds.add(id);
+  warn(`Missing file reference for extracted message: ${id}`);
 }
 
 export function localeCompare(a: string, b: string) {

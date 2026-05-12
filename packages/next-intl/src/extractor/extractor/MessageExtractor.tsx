@@ -1,22 +1,18 @@
 import {createRequire} from 'module';
 import path from 'path';
 import {transform} from '@swc/core';
-import type {ExtractorMessage} from '../types.js';
+import type {SourceMessage} from '../types.js';
 import {getDefaultProjectRoot, normalizePathToPosix} from '../utils.js';
 import LRUCache from './LRUCache.js';
 
 const require = createRequire(import.meta.url);
-
-type StrictExtractedMessage = ExtractorMessage & {
-  references: NonNullable<ExtractorMessage['references']>;
-};
 
 export default class MessageExtractor {
   private isDevelopment: boolean;
   private projectRoot: string;
   private sourceMap: boolean;
   private compileCache = new LRUCache<{
-    messages: Array<StrictExtractedMessage>;
+    messages: Array<SourceMessage>;
     code: string;
     map?: string;
   }>(750);
@@ -35,7 +31,7 @@ export default class MessageExtractor {
     absoluteFilePath: string,
     source: string
   ): Promise<{
-    messages: Array<StrictExtractedMessage>;
+    messages: Array<SourceMessage>;
     code: string;
     map?: string;
   }> {
@@ -85,7 +81,7 @@ export default class MessageExtractor {
     const output = (result as any).output as string;
     const messages = JSON.parse(
       JSON.parse(output).results
-    ) as Array<StrictExtractedMessage>;
+    ) as Array<SourceMessage>;
 
     const extractionResult = {
       code: result.code,

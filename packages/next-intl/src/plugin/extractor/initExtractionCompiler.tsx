@@ -1,7 +1,7 @@
 import ExtractionCompiler from '../../extractor/ExtractionCompiler.js';
 import type {ExtractorConfig} from '../../extractor/types.js';
+import {hasLocalesToExtract} from '../../extractor/utils.js';
 import {isDevelopment, isNextBuild} from '../config.js';
-import type {PluginConfig} from '../types.js';
 import {once} from '../utils.js';
 
 // Single compiler instance, initialized once per process
@@ -9,9 +9,10 @@ let compiler: ExtractionCompiler | undefined;
 
 const runOnce = once('_NEXT_INTL_EXTRACT');
 
-export default function initExtractionCompiler(pluginConfig: PluginConfig) {
-  const experimental = pluginConfig.experimental;
-  if (!experimental?.extract) {
+export default function initExtractionCompiler(
+  extractorConfig?: ExtractorConfig
+) {
+  if (!extractorConfig || !hasLocalesToExtract(extractorConfig)) {
     return;
   }
 
@@ -31,12 +32,6 @@ export default function initExtractionCompiler(pluginConfig: PluginConfig) {
   if (!shouldRun) return;
 
   runOnce(() => {
-    const extractorConfig: ExtractorConfig = {
-      srcPath: experimental.srcPath!,
-      sourceLocale: experimental.extract!.sourceLocale,
-      messages: experimental.messages!
-    };
-
     compiler = new ExtractionCompiler(extractorConfig, {
       isDevelopment,
       projectRoot: process.cwd()
