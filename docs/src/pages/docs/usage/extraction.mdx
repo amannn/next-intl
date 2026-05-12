@@ -90,8 +90,6 @@ With this, every time you call `next dev` or `next build`, messages will be extr
 
 See [`createNextIntlPlugin`](/docs/usage/plugin#extract) for details.
 
-For details on compiler limitations and unsupported patterns (passing translators, unsupported `await getExtracted()` shapes, imports, and `t.raw`), see [**Static analyzability**](#static-analyzability) below.
-
 <Details id="manual">
 <summary>Can I extract messages manually?</summary>
 
@@ -116,37 +114,6 @@ console.log('✔ Messages extracted');
 This can be useful when you're developing a package like a component library, where you don't have a Next.js dev server running and you want to provide messages along with the package.
 
 </Details>
-
-## Static analyzability [#static-analyzability]
-
-Message extraction relies on an SWC plugin at compile time. It rewrites `useExtracted` to `useTranslations`, `getExtracted` to `getTranslations`, and replaces each extracted literal with a catalog key only when literals can be tied directly to hook bindings (`const t = useExtracted()` or `const t = await getExtracted()` in supported shapes)—the same invariant future tooling (catalog tree-shaking, AOT compilation, validators) aims to reuse.
-
-Treat the translator as lexical to where you instantiate the hook. Do not pass it onward like a reusable callback (`translate={t}`, `helper(t)`, `{t}`, `[t]`, etc.).
-
-Typical compliant flow:
-
-```tsx
-function Example() {
-  const t = useExtracted();
-
-  function inner() {
-    t('scoped');
-    t(`also fine`);
-    t({message: 'metadata', description: 'tooltip'});
-  }
-
-  inner();
-}
-```
-
-Patterns that silently skipped extraction before now fail compilation:
-
-- Forwarding translators (props/arguments/array entries/object literals/returns exposing `t`)
-- Non-static message expressions (`t(variable)`, concatenation, templates with `${…}`, dynamically chosen keys). `t.raw` and analogous fully dynamic accessors are incompatible with extraction—combine catalogs plus `useTranslations` when payloads mirror raw blobs ([arrays of messages](/docs/usage/translations#arrays-of-messages) document extractor-friendly structuring for catalog-based workflows)
-- Re-export/import indirection wrapping `next-intl` entry points—the plugin only recognizes direct `next-intl` / `next-intl/server` imports
-- `await` choreography that hides hooks inside combinators (`Promise.all`, `.then()`, nested expressions)—use `const t = await getExtracted()` (optionally parenthesized) with localized configuration arguments supplied on that hook call alone
-
-Inferring translators across modules or reconstructed parameters demands data flow analysis this extractor intentionally skips—instantiate hooks where JSX runs and localize inline there.
 
 ## Inline messages
 
@@ -189,7 +156,7 @@ t.rich('Please refer to the <link>guidelines</link>.', {
 });
 ```
 
-The one exception is `t.raw`—pairs poorly with extraction because everything must stay literal-bound (see [**Static analyzability**](#static-analyzability)); structured payloads normally flow through catalogs and `useTranslations` instead ([arrays of messages](/docs/usage/translations#arrays-of-messages)).
+The one exception is `t.raw`, this feature is not intended to be used with message extraction.
 
 ### Descriptions
 
@@ -311,3 +278,53 @@ Messages can be extracted as [`.json`](/docs/usage/plugin#formats-json), [`.po`]
 AI-based translation can be automated with a translation management system like [Crowdin](/docs/workflows/localization-management).
 
 </Callout>
+
+## Static analysis [#static-analysis]
+
+Message extraction relies [static analysis](https://en.wikipedia.org/wiki/Static_program_analysis).
+
+In practice, this means:
+
+1. `t` must receive a literal string as its message argument
+2. `t` must be called in the same function body where it was retrieved from `useExtracted` or `getExtracted`
+
+**Valid usage:**
+
+```tsx
+import {useExtracted} from 'next-intl';
+
+function Example({name}) {
+  // ✅ Makes `t` available in this component
+  const t = useExtracted();
+
+  function onClick() {
+    // ✅ String literals are supported
+    t('Hello there!');
+
+    // ✅ Arguments can be used for dynamic values
+    t('Hello {name}!', {name});
+  }
+
+  // ✅ Usage inside JSX is supported
+  return <button onClick={onClick}>{t('Click me')}</button>;
+}
+```
+
+In contrast, the following patterns are **not supported**:
+
+```tsx
+import {useExtracted} from 'next-intl';
+
+function Example({key}) {
+  const t = useExtracted();
+
+  // ❌ `key` is only known at runtime
+  t(key);
+
+  // ❌ Passing `t` to another function
+  getName(t);
+}
+
+// ❌ Re-exporting the hook
+export const useExtractedExport = useExtracted;
+```
