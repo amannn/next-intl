@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.11.2 (2026-05-11)
+
+### Bug Fixes
+
+* Revert x-forwarded-host redirect domain change ([#2322](https://github.com/amannn/next-intl/issues/2322)) ([eb3a6a4](https://github.com/amannn/next-intl/commit/eb3a6a4eb26a6e0c02a297efbe1b139983faae4e)) – by @amannn
+
 ## 4.11.1 (2026-05-08)
 
 ### Bug Fixes
