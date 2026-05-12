@@ -59,6 +59,9 @@ pub struct TransformVisitor {
 
     translator_map: FxHashMap<Id, TranslatorInfo>,
 
+    /// >0 while visiting the initializer of `const translator = await? hook()` (simple binding only).
+    approved_hook_initializer_depth: u32,
+
     /// Messages keyed by ID to aggregate duplicate usages (IndexMap preserves insertion order)
     results_by_id: IndexMap<Wtf8Atom, StrictExtractedMessage>,
 }
@@ -75,6 +78,7 @@ impl TransformVisitor {
             source_map,
             hook_local_names: Default::default(),
             translator_map: Default::default(),
+            approved_hook_initializer_depth: 0,
             results_by_id: Default::default(),
         }
     }
@@ -86,6 +90,379 @@ impl TransformVisitor {
     fn define_translator(&mut self, name: Id, namespace: Option<Wtf8Atom>) {
         self.translator_map
             .insert(name, TranslatorInfo { namespace });
+    }
+
+    fn call_is_extractor_hook(&self, callee: &Callee) -> bool {
+        match callee {
+            Callee::Expr(box Expr::Ident(ident)) => {
+                self.hook_local_names.contains_key(&ident.to_id())
+            }
+            _ => false,
+        }
+    }
+
+    fn maybe_report_extractor_hook_bad_site(&self, callee: &Callee, span: swc_common::Span) {
+        if !self.call_is_extractor_hook(callee) {
+            return;
+        }
+
+        if self.approved_hook_initializer_depth > 0 {
+            return;
+        }
+
+        Self::emit_use_extracted_hook_site_error(span);
+    }
+
+    fn emit_use_extracted_hook_site_error(span: swc_common::Span) {
+        HANDLER.with(|handler| {
+            handler
+                .struct_span_err(
+                    span,
+                    "`useExtracted()` and `getExtracted()` must be assigned directly like `const t \
+                     = useExtracted()` or `const t = await getExtracted()` inside the same scope. Patterns \
+                     like `Promise.all`, callbacks, `.then()`, or assigning to destructured bindings are \
+                     not statically analyzable for extraction.",
+                )
+                .emit();
+        });
+    }
+
+    fn maybe_report_extractor_hook_inside_promise_combinator(&self, call: &CallExpr) {
+        let promise_method = match &call.callee {
+            Callee::Expr(box Expr::Member(MemberExpr {
+                obj: box Expr::Ident(obj),
+                prop: MemberProp::Ident(prop),
+                ..
+            })) if obj.sym == "Promise"
+                && matches!(
+                    prop.sym.as_ref(),
+                    "all" | "allSettled" | "any" | "race" | "try"
+                ) =>
+            {
+                prop.sym.as_ref()
+            }
+            _ => return,
+        };
+
+        for arg in &call.args {
+            if promise_method == "all" || promise_method == "allSettled" {
+                match &*arg.expr {
+                    Expr::Array(arr) => {
+                        for elem in &arr.elems {
+                            if let Some(ExprOrSpread {
+                                expr: elem_expr,
+                                spread: None,
+                            }) = elem
+                            {
+                                if self.expr_tree_contains_extractor_hook_call(elem_expr) {
+                                    self.emit_extractor_hook_inside_promise_combinator(call.span());
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                    other => {
+                        if self.expr_tree_contains_extractor_hook_call(other) {
+                            self.emit_extractor_hook_inside_promise_combinator(call.span());
+                            return;
+                        }
+                    }
+                }
+            } else if self.expr_tree_contains_extractor_hook_call(&arg.expr) {
+                self.emit_extractor_hook_inside_promise_combinator(call.span());
+                return;
+            }
+        }
+    }
+
+    fn emit_extractor_hook_inside_promise_combinator(&self, span: swc_common::Span) {
+        HANDLER.with(|handler| {
+            handler
+                .struct_span_err(
+                    span,
+                    "`getExtracted()` / `useExtracted()` calls cannot be bundled into \
+                     `Promise.all`, `Promise.race`, or similar combinators — the extractor only \
+                     recognizes a plain `await getExtracted()` (or `useExtracted()`) initializer.",
+                )
+                .emit();
+        });
+    }
+
+    fn emit_wrong_module_for_extracted_hooks(&self, span: swc_common::Span) {
+        HANDLER.with(|handler| {
+            handler
+                .struct_span_err(
+                    span,
+                    "`useExtracted` must be imported from `next-intl` and `getExtracted` from \
+                     `next-intl/server`. Re-exporting or importing these identifiers from another \
+                     module breaks extraction.",
+                )
+                .emit();
+        });
+    }
+
+    fn emit_translator_must_not_escape(&self, span: swc_common::Span) {
+        // Only identifiers already rewritten into translator_map participate. Forwarding aliases,
+        // props, reassigned bindings across functions/files are cross-scope dataflow—the plugin
+        // deliberately avoids whole-program tracking (see RFC + extraction docs tradeoffs).
+        HANDLER.with(|handler| {
+            handler
+                .struct_span_err(
+                    span,
+                    "The translator returned by `useExtracted` / `getExtracted` cannot be forwarded \
+                     (as a prop, argument, array element, object value, JSX expression, assignment, etc.). \
+                     Call it in the same function where you invoked the hook, with string / template \
+                     message literals.",
+                )
+                .emit();
+        });
+    }
+
+    /// Optional chaining prevents unifying `OptChainExpr` with `Expr`; keep hook checks explicit.
+    fn opt_call_is_extractor_hook(&self, oc: &OptCall) -> bool {
+        matches!(
+            oc.callee.as_ref(),
+            Expr::Ident(i) if self.hook_local_names.contains_key(&i.to_id())
+        )
+    }
+
+    fn expr_tree_contains_extractor_hook_call(&self, expr: &Expr) -> bool {
+        match Self::peel_expr_parens(expr) {
+            Expr::Await(AwaitExpr { arg, .. }) => self.expr_tree_contains_extractor_hook_call(arg),
+            Expr::Seq(SeqExpr { exprs, .. }) => exprs
+                .iter()
+                .any(|e| self.expr_tree_contains_extractor_hook_call(e)),
+            Expr::Call(CallExpr { callee, args, .. }) => {
+                if self.call_is_extractor_hook(callee) {
+                    return true;
+                }
+
+                args.iter()
+                    .any(|a| self.expr_tree_contains_extractor_hook_call(&a.expr))
+            }
+            Expr::OptChain(OptChainExpr { base, .. }) => match &**base {
+                OptChainBase::Call(oc) => {
+                    self.opt_call_is_extractor_hook(oc)
+                        || oc
+                            .args
+                            .iter()
+                            .any(|a| self.expr_tree_contains_extractor_hook_call(&a.expr))
+                }
+                OptChainBase::Member(m) => self.expr_tree_contains_extractor_hook_call(&m.obj),
+            },
+            Expr::Array(ArrayLit { elems, .. }) => elems.iter().any(|maybe| match maybe {
+                Some(ExprOrSpread {
+                    expr: e,
+                    spread: None,
+                }) => self.expr_tree_contains_extractor_hook_call(e),
+                _ => false,
+            }),
+            Expr::Object(ObjectLit { props, .. }) => props.iter().any(|prop| match prop {
+                PropOrSpread::Spread(SpreadElement { expr, .. }) => {
+                    self.expr_tree_contains_extractor_hook_call(expr)
+                }
+                PropOrSpread::Prop(box prop) => match prop {
+                    Prop::KeyValue(KeyValueProp { value, .. }) => {
+                        self.expr_tree_contains_extractor_hook_call(value)
+                    }
+                    Prop::Assign(AssignProp { value, .. }) => {
+                        self.expr_tree_contains_extractor_hook_call(value)
+                    }
+                    _ => false,
+                },
+            }),
+            Expr::Assign(AssignExpr { right, .. }) => {
+                self.expr_tree_contains_extractor_hook_call(right)
+            }
+            Expr::Cond(CondExpr {
+                test, cons, alt, ..
+            }) => {
+                self.expr_tree_contains_extractor_hook_call(test)
+                    || self.expr_tree_contains_extractor_hook_call(cons)
+                    || self.expr_tree_contains_extractor_hook_call(alt)
+            }
+            Expr::Tpl(Tpl { exprs, .. }) => exprs
+                .iter()
+                .any(|e| self.expr_tree_contains_extractor_hook_call(e)),
+            Expr::Unary(UnaryExpr { arg, .. }) => self.expr_tree_contains_extractor_hook_call(arg),
+            Expr::Bin(BinExpr { left, right, .. }) => {
+                self.expr_tree_contains_extractor_hook_call(left)
+                    || self.expr_tree_contains_extractor_hook_call(right)
+            }
+            Expr::New(NewExpr { args, callee, .. }) => {
+                self.expr_tree_contains_extractor_hook_call(callee.as_ref())
+                    || args.as_ref().is_some_and(|arguments| {
+                        arguments
+                            .iter()
+                            .any(|a| self.expr_tree_contains_extractor_hook_call(&a.expr))
+                    })
+            }
+            _ => false,
+        }
+    }
+
+    fn peel_expr_parens(mut expr: &Expr) -> &Expr {
+        while let Expr::Paren(ParenExpr { expr: inner, .. }) = expr {
+            expr = inner;
+        }
+        expr
+    }
+
+    fn peel_awaits_then_parens(mut expr: &Expr) -> &Expr {
+        loop {
+            expr = Self::peel_expr_parens(expr);
+            match expr {
+                Expr::Await(AwaitExpr { arg, .. }) => expr = arg,
+                other => break other,
+            }
+        }
+    }
+
+    fn expr_matches_plain_extractor_hook_initializer(&self, expr: &Expr) -> bool {
+        let expr = Self::peel_awaits_then_parens(expr);
+        match Self::peel_expr_parens(expr) {
+            Expr::Call(CallExpr { callee, .. }) => self.call_is_extractor_hook(callee),
+            Expr::OptChain(OptChainExpr {
+                base: box OptChainBase::Call(oc),
+                ..
+            }) => self.opt_call_is_extractor_hook(oc),
+            _ => false,
+        }
+    }
+
+    fn check_translator_not_forwarded_in_expr(&mut self, expr: &Expr) {
+        match Self::peel_expr_parens(expr) {
+            Expr::Ident(ident) => {
+                if self.translator_map.contains_key(&ident.to_id()) {
+                    self.emit_translator_must_not_escape(ident.span());
+                }
+            }
+
+            Expr::Await(AwaitExpr { arg, .. }) => self.check_translator_not_forwarded_in_expr(arg),
+
+            Expr::Call(CallExpr { callee, args, .. }) => {
+                for arg in args {
+                    self.check_translator_not_forwarded_in_expr(&arg.expr);
+                }
+
+                match callee {
+                    Callee::Expr(..) => {}
+                    _ => {}
+                }
+            }
+
+            Expr::OptChain(OptChainExpr { base, .. }) => match &**base {
+                OptChainBase::Call(oc) => {
+                    self.check_translator_not_forwarded_in_expr(oc.callee.as_ref());
+                    for a in &oc.args {
+                        self.check_translator_not_forwarded_in_expr(&a.expr);
+                    }
+                }
+                OptChainBase::Member(MemberExpr { obj, .. }) => {
+                    self.check_translator_not_forwarded_in_expr(obj);
+                }
+            },
+
+            Expr::Seq(SeqExpr { exprs, .. }) => {
+                for e in exprs {
+                    self.check_translator_not_forwarded_in_expr(e);
+                }
+            }
+
+            Expr::Array(ArrayLit { elems, .. }) => {
+                for elem in elems {
+                    if let Some(ExprOrSpread { expr: e, .. }) = elem {
+                        self.check_translator_not_forwarded_in_expr(e);
+                    }
+                }
+            }
+
+            Expr::Object(ObjectLit { props, .. }) => {
+                for prop in props {
+                    match prop {
+                        PropOrSpread::Spread(SpreadElement { expr, .. }) => {
+                            self.check_translator_not_forwarded_in_expr(expr);
+                        }
+                        PropOrSpread::Prop(box Prop::KeyValue(KeyValueProp { value, .. })) => {
+                            self.check_translator_not_forwarded_in_expr(value);
+                        }
+                        PropOrSpread::Prop(box Prop::Assign(AssignProp { value, .. })) => {
+                            self.check_translator_not_forwarded_in_expr(value);
+                        }
+                        _ => {}
+                    }
+                }
+            }
+
+            Expr::Assign(AssignExpr { right, .. }) => {
+                self.check_translator_not_forwarded_in_expr(right)
+            }
+
+            Expr::Cond(CondExpr {
+                test, cons, alt, ..
+            }) => {
+                self.check_translator_not_forwarded_in_expr(test);
+                self.check_translator_not_forwarded_in_expr(cons);
+                self.check_translator_not_forwarded_in_expr(alt);
+            }
+
+            Expr::Tpl(Tpl { exprs, .. }) => {
+                for e in exprs {
+                    self.check_translator_not_forwarded_in_expr(e);
+                }
+            }
+
+            Expr::Unary(UnaryExpr { arg, .. }) => self.check_translator_not_forwarded_in_expr(arg),
+
+            Expr::Bin(BinExpr { left, right, .. }) => {
+                self.check_translator_not_forwarded_in_expr(left);
+                self.check_translator_not_forwarded_in_expr(right);
+            }
+
+            Expr::New(NewExpr { callee, args, .. }) => {
+                self.check_translator_not_forwarded_in_expr(callee);
+                if let Some(arguments) = args {
+                    for a in arguments {
+                        self.check_translator_not_forwarded_in_expr(&a.expr);
+                    }
+                }
+            }
+
+            Expr::TaggedTpl(tpl) => {
+                self.check_translator_not_forwarded_in_expr(&tpl.tag);
+                for e in tpl.tpl.exprs.iter() {
+                    self.check_translator_not_forwarded_in_expr(e);
+                }
+            }
+
+            Expr::Arrow(ArrowExpr { body, .. }) => match body.as_ref() {
+                BlockStmtOrExpr::Expr(e) => self.check_translator_not_forwarded_in_expr(e),
+                BlockStmtOrExpr::BlockStmt(_) => {}
+            },
+
+            Expr::Paren(_) => {}
+
+            _ => {}
+        }
+    }
+
+    fn check_translator_args_after_message(&mut self, call: &CallExpr) {
+        let skip_initial = match &call.callee {
+            Callee::Expr(box Expr::Ident(_)) => 1,
+            Callee::Expr(box Expr::Member(MemberExpr {
+                prop: MemberProp::Ident(prop),
+                ..
+            })) if matches!(prop.sym.as_ref(), "rich" | "markup" | "has") => 1,
+            _ => 0,
+        };
+
+        let start_after_message = usize::try_from(skip_initial)
+            .unwrap_or(0)
+            .min(call.args.len());
+
+        for arg in call.args.iter().skip(start_after_message) {
+            self.check_translator_not_forwarded_in_expr(&arg.expr);
+        }
     }
 }
 
@@ -141,7 +518,59 @@ impl HookType {
 }
 
 impl VisitMut for TransformVisitor {
+    fn visit_mut_assign_expr(&mut self, assign: &mut AssignExpr) {
+        self.check_translator_not_forwarded_in_expr(&assign.right);
+        assign.visit_mut_children_with(self);
+    }
+
+    fn visit_mut_return_stmt(&mut self, stmt: &mut ReturnStmt) {
+        if let Some(arg) = &stmt.arg {
+            self.check_translator_not_forwarded_in_expr(arg);
+        }
+        stmt.visit_mut_children_with(self);
+    }
+
+    fn visit_mut_jsx_opening_element(&mut self, el: &mut JSXOpeningElement) {
+        for attr in &mut el.attrs {
+            match attr {
+                JSXAttrOrSpread::SpreadElement(SpreadElement { expr, .. }) => {
+                    self.check_translator_not_forwarded_in_expr(expr);
+                }
+                JSXAttrOrSpread::JSXAttr(jsx_attr) => {
+                    if let Some(JSXAttrValue::JSXExprContainer(container)) = &mut jsx_attr.value {
+                        match &mut container.expr {
+                            JSXExpr::Expr(box expr) => {
+                                self.check_translator_not_forwarded_in_expr(expr);
+                            }
+                            JSXExpr::JSXEmptyExpr(_) => {}
+                        }
+                    }
+                }
+            }
+        }
+        el.visit_mut_children_with(self);
+    }
+
+    fn visit_mut_jsx_expr_container(&mut self, c: &mut JSXExprContainer) {
+        match &mut c.expr {
+            JSXExpr::Expr(box expr) => self.check_translator_not_forwarded_in_expr(expr),
+            JSXExpr::JSXEmptyExpr(_) => {}
+        }
+        c.visit_mut_children_with(self);
+    }
+
+    fn visit_mut_jsx_spread_child(&mut self, node: &mut JSXSpreadChild) {
+        self.check_translator_not_forwarded_in_expr(&node.expr);
+        node.visit_mut_children_with(self);
+    }
+
     fn visit_mut_call_expr(&mut self, call: &mut CallExpr) {
+        self.maybe_report_extractor_hook_inside_promise_combinator(call);
+
+        if let Callee::Expr(box Expr::Ident(i)) = &call.callee {
+            self.maybe_report_extractor_hook_bad_site(&call.callee, i.span());
+        }
+
         let mut is_translator_call = false;
         let mut namespace = None;
 
@@ -348,6 +777,12 @@ impl VisitMut for TransformVisitor {
                     );
                 }
             }
+
+            self.check_translator_args_after_message(call);
+        } else if !matches!(&call.callee, Callee::Import(..)) {
+            for arg in &call.args {
+                self.check_translator_not_forwarded_in_expr(&arg.expr);
+            }
         }
 
         call.visit_mut_children_with(self);
@@ -356,6 +791,31 @@ impl VisitMut for TransformVisitor {
     fn visit_mut_module(&mut self, module: &mut Module) {
         for import in module.body.iter_mut() {
             if let ModuleItem::ModuleDecl(ModuleDecl::Import(import)) = import {
+                let bytes = import.src.value.as_bytes();
+                if bytes != b"next-intl" && bytes != b"next-intl/server" {
+                    for specifier in &import.specifiers {
+                        let ImportSpecifier::Named(named_spec) = specifier else {
+                            continue;
+                        };
+
+                        let orig_name = named_spec
+                            .imported
+                            .as_ref()
+                            .and_then(|exported| match exported {
+                                ModuleExportName::Ident(ident) => Some(ident.sym.clone()),
+                                ModuleExportName::Str(..) => None,
+                            })
+                            .unwrap_or_else(|| named_spec.local.sym.clone());
+
+                        if orig_name == HookType::UseTranslation.extracted_name()
+                            || orig_name == HookType::GetTranslation.extracted_name()
+                        {
+                            let span = import.span;
+                            self.emit_wrong_module_for_extracted_hooks(span);
+                        }
+                    }
+                }
+
                 match import.src.value.as_bytes() {
                     b"next-intl" => {
                         for specifier in &mut import.specifiers {
@@ -426,6 +886,18 @@ impl VisitMut for TransformVisitor {
     }
 
     fn visit_mut_var_declarator(&mut self, node: &mut VarDeclarator) {
+        let simple_pat = matches!(&node.name, Pat::Ident(_));
+        let approved_init = simple_pat
+            && node
+                .init
+                .as_ref()
+                .is_some_and(|init| self.expr_matches_plain_extractor_hook_initializer(init));
+
+        let prev_depth = self.approved_hook_initializer_depth;
+        if approved_init {
+            self.approved_hook_initializer_depth += 1;
+        }
+
         if let Some(name) = node.name.as_ident() {
             let mut call_expr = None;
 
@@ -492,6 +964,10 @@ impl VisitMut for TransformVisitor {
         }
 
         node.visit_mut_children_with(self);
+
+        if approved_init {
+            self.approved_hook_initializer_depth = prev_depth;
+        }
     }
 }
 

@@ -276,18 +276,16 @@ export default class CatalogManager implements Disposable {
     let messages: Array<ExtractorMessage> = [];
     try {
       const content = await fs.readFile(absoluteFilePath, 'utf8');
-      let extraction: Awaited<ReturnType<typeof this.extractor.extract>>;
-      try {
-        extraction = await this.extractor.extract(absoluteFilePath, content);
-      } catch {
-        return false;
-      }
+      const extraction = await this.extractor.extract(
+        absoluteFilePath,
+        content
+      );
       messages = extraction.messages;
     } catch (err) {
       if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
         throw err;
       }
-      // ENOENT -> treat as no messages
+      // ENOENT → treat file as absent; behave like discovering no messages.
     }
 
     const prevFileMessages = this.messagesByFile.get(absoluteFilePath);

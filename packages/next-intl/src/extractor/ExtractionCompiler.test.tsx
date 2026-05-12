@@ -319,7 +319,7 @@ describe('json format', () => {
     });
   });
 
-  it('omits file with parse error during initial scan but continues processing others (dev)', async () => {
+  it('surfaces extraction failures during catalog scan until sources compile (dev)', async () => {
     filesystem.project.src['Valid.tsx'] = `
     import {useExtracted} from 'next-intl';
     function Valid() {
@@ -339,41 +339,32 @@ describe('json format', () => {
       'en.json': '{}'
     };
 
-    using compiler = createCompiler();
-    await compiler.extractAll();
+    {
+      using compiler = createCompiler();
+      await expect(compiler.extractAll()).rejects.toThrow(/Expected '\}'/);
+    }
+
+    filesystem.project.src['Invalid.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Invalid() {
+      const t = useExtracted();
+      return <div>{t('Now valid')}</div>;
+    }
+    `;
+
+    using compilerAfterFix = createCompiler();
+    await compilerAfterFix.extractAll();
     await waitForWriteFileCalls(1);
     expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
       [
         [
           "messages/en.json",
           "{
-        "HovSZ7": "Valid message"
-      }
-      ",
-        ],
-      ]
-    `);
-
-    await simulateSourceFileUpdate(
-      '/project/src/Invalid.tsx',
-      `
-    import {useExtracted} from 'next-intl';
-    function Invalid() {
-      const t = useExtracted();
-      return <div>{t('Now valid')}</div>;
-    }
-    `
-    );
-    await waitForWriteFileCalls(2);
-
-    expect(vi.mocked(fs.writeFile).mock.calls.at(-1)).toMatchInlineSnapshot(`
-      [
-        "messages/en.json",
-        "{
         "KvzhZT": "Now valid",
         "HovSZ7": "Valid message"
       }
       ",
+        ],
       ]
     `);
   });

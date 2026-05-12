@@ -225,4 +225,76 @@ export default function Invalid() {
       'Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
     );
   });
+
+  it('throws when useExtracted is imported outside next-intl', async () => {
+    await expect(async () => {
+      await process(
+        `
+    import {useExtracted} from './reexport';
+
+    function Component() {
+      const t = useExtracted();
+      t('Hi');
+    }
+    `
+      );
+    }).rejects.toThrow(
+      '`useExtracted` must be imported from `next-intl` and `getExtracted` from `next-intl/server`.'
+    );
+  });
+
+  it('throws when getExtracted is used inside Promise.all', async () => {
+    await expect(async () => {
+      await process(
+        `
+    import {getExtracted} from 'next-intl/server';
+
+    async function run() {
+      await Promise.all([getExtracted()]);
+    }
+    `
+      );
+    }).rejects.toThrow('`Promise.all`');
+  });
+
+  it('throws when the extracted translator is passed as a function argument', async () => {
+    await expect(async () => {
+      await process(
+        `
+    import {useExtracted} from 'next-intl';
+
+    function helper(fn: unknown) {}
+
+    function Component() {
+      const t = useExtracted();
+      helper(t);
+      return null;
+    }
+    `
+      );
+    }).rejects.toThrow(
+      'The translator returned by `useExtracted` / `getExtracted` cannot be forwarded'
+    );
+  });
+
+  it('throws when the extracted translator is passed as a JSX prop', async () => {
+    await expect(async () => {
+      await process(
+        `
+    import {useExtracted} from 'next-intl';
+
+    function Row(props: Record<string, unknown>) {
+      return null;
+    }
+
+    function Component() {
+      const t = useExtracted();
+      return <Row translate={t} />;
+    }
+    `
+      );
+    }).rejects.toThrow(
+      'The translator returned by `useExtracted` / `getExtracted` cannot be forwarded'
+    );
+  });
 });
