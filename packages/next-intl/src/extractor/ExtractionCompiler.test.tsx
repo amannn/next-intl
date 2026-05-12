@@ -364,25 +364,29 @@ describe('json format', {timeout: 20_000}, () => {
         ],
       ]
     `);
-  });
 
-  it('surfaces static analyzability errors during catalog scan (dev)', async () => {
-    filesystem.project.src['Invalid.tsx'] = `
+    await simulateSourceFileUpdate(
+      '/project/src/Invalid.tsx',
+      `
     import {useExtracted} from 'next-intl';
     function Invalid() {
       const t = useExtracted();
-      const message = 'Dynamic';
-      return <div>{t(message)}</div>;
+      return <div>{t('Now valid')}</div>;
     }
-    `;
-    filesystem.project.messages = {
-      'en.json': '{}'
-    };
-
-    using compiler = createCompiler();
-    await expect(compiler.extractAll()).rejects.toThrow(
-      'Cannot extract message from dynamic expression'
+    `
     );
+    await waitForWriteFileCalls(2);
+
+    expect(vi.mocked(fs.writeFile).mock.calls.at(-1)).toMatchInlineSnapshot(`
+      [
+        "messages/en.json",
+        "{
+        "KvzhZT": "Now valid",
+        "HovSZ7": "Valid message"
+      }
+      ",
+      ]
+    `);
   });
 });
 
