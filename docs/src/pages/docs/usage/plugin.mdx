@@ -225,7 +225,7 @@ When using this option, your messages will look like this:
 
 ```po
 #. Advance to the next slide
-#: src/components/Carousel.tsx:13
+#: src/components/Carousel.tsx
 msgid "carousel.next"
 msgstr "Right"
 ```
@@ -234,14 +234,16 @@ msgstr "Right"
 
 ```po
 #. Advance to the next slide
-#: src/components/Carousel.tsx:13
+#: src/components/Carousel.tsx
 msgid "5VpL9Z"
 msgstr "Right"
 ```
 
-Besides the message key and the label itself, this format also supports optional descriptions and file references to all modules that consume this message.
+Besides the message key and the label itself, this format also supports optional descriptions and file references for modules that consume this message.
 
 For local editing of .po files, you can use e.g. a tool like [Poedit](https://poedit.net/).
+
+**Note:** The default PO format emits path-only references (no line numbers) to avoid noisy diffs. If you'd like to store line numbers as well, you can create a [custom format](#formats-custom) that emits this format.
 
 ##### Custom format [#formats-custom]
 

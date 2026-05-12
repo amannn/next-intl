@@ -54,12 +54,17 @@ export default defineCodec(() => {
           ? id.slice(lastDotIndex + NAMESPACE_SEPARATOR.length)
           : id;
 
+        // Path-only refs (no `:line`), unique paths
+        const pathOnlyRefs: Array<{path: string}> = [
+          ...new Set(references.map((ref) => ref.path))
+        ].map((path) => ({path}));
+
         return {
           msgid,
           msgstr: message,
           ...(description.length > 0 && {extractedComments: description}),
           ...(hasNamespace && {msgctxt: id.slice(0, lastDotIndex)}),
-          ...(references.length > 0 && {references}),
+          ...(pathOnlyRefs.length > 0 && {references: pathOnlyRefs}),
           ...rest
         };
       });

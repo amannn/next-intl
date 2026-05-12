@@ -43,7 +43,7 @@ export default function Greeting() {
   expect(content).toContain('Newly extracted');
 });
 
-it('tracks all line numbers when same message appears multiple times in one file', async ({
+it('conflates file references when the same message appears multiple times in one file', async ({
   page
 }) => {
   await using _ = await withTempEditApp(
@@ -74,8 +74,8 @@ export default function Greeting() {
   const entry = getPoEntry(content, 'OpKKos');
   expect(entry).toMatch(/msgstr "Hello!"/);
   expect(entry).toMatch(/Greeting\.tsx/);
-  const greetingRefs = entry!.match(/#: [^\n]*Greeting\.tsx[^\n]*/g) ?? [];
-  expect(greetingRefs.length).toBeGreaterThanOrEqual(2);
+  const greetingRefs = entry!.match(/^#: [^\n]*Greeting\.tsx[^\n]*$/gm) ?? [];
+  expect(greetingRefs.length).toBe(1);
 });
 
 it("saves catalog when it's missing", async ({page}) => {
@@ -448,7 +448,7 @@ msgstr ""
 "X-Something-Else: test\\n"
 "Language: en\\n"
 
-#: src/components/Greeting.tsx:5
+#: src/components/Greeting.tsx
 msgid "+YJVTi"
 msgstr "Hey!"
 `
