@@ -9,10 +9,10 @@ const APP_ROOT = path.join(__dirname, '..');
 const MESSAGES_DIR = path.join(APP_ROOT, 'messages');
 
 const {expectCatalog} = createPoCatalogUtils(MESSAGES_DIR);
-const withTempEditApp = (filePath: string, content: string) =>
-  withTempEdit(APP_ROOT, filePath, content);
 const withTempFileApp = (filePath: string, content: string) =>
   withTempFile(APP_ROOT, filePath, content);
+const withTempEditApp = (filePath: string, content: string) =>
+  withTempEdit(APP_ROOT, filePath, content);
 const withTempRemoveApp = (filePath: string) =>
   withTempRemove(APP_ROOT, filePath);
 
