@@ -57,9 +57,21 @@ export default defineCodec(() => {
 
         // Store the hashed ID in msgctxt so we can restore it during decode
         const {description = [], id, message, references, ...rest} = msg;
+
+        // Path-only refs (no `:line`), unique paths
+        const pathOnlyRefs: Array<{path: string}> = [];
+        if (references.length > 0) {
+          const seenPaths = new Set<string>();
+          for (const reference of references) {
+            if (seenPaths.has(reference.path)) continue;
+            seenPaths.add(reference.path);
+            pathOnlyRefs.push({path: reference.path});
+          }
+        }
+
         return {
           ...(description.length > 0 && {extractedComments: description}),
-          ...(references.length > 0 && {references}),
+          ...(pathOnlyRefs.length > 0 && {references: pathOnlyRefs}),
           ...rest,
           msgctxt: id,
           msgid: sourceMessage,

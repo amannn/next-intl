@@ -6,6 +6,6 @@ msgstr ""
 "X-Generator: next-intl\n"
 "X-Crowdin-SourceKey: msgstr\n"
 
-#: src/app/page.tsx:8
+#: src/app/page.tsx
 msgid "F6UyFs"
 msgstr "First-party headline"
