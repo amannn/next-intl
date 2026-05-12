@@ -74,8 +74,7 @@ export default function Greeting() {
   const entry = getPoEntry(content, 'OpKKos');
   expect(entry).toMatch(/msgstr "Hello!"/);
   expect(entry).toMatch(/Greeting\.tsx/);
-  const greetingRefs =
-    entry!.match(/^#: [^\n]*Greeting\.tsx[^\n]*$/gm) ?? [];
+  const greetingRefs = entry!.match(/^#: [^\n]*Greeting\.tsx[^\n]*$/gm) ?? [];
   expect(greetingRefs.length).toBe(1);
 });
 
