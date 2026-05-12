@@ -319,7 +319,7 @@ describe('json format', () => {
     });
   });
 
-  it('surfaces extraction failures during catalog scan until sources compile (dev)', async () => {
+  it('omits file with parse error during initial scan but continues processing others (dev)', async () => {
     filesystem.project.src['Valid.tsx'] = `
     import {useExtracted} from 'next-intl';
     function Valid() {
@@ -339,34 +339,39 @@ describe('json format', () => {
       'en.json': '{}'
     };
 
-    {
-      using compiler = createCompiler();
-      await expect(compiler.extractAll()).rejects.toThrow(/Expected '\}'/);
-    }
-
-    filesystem.project.src['Invalid.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    function Invalid() {
-      const t = useExtracted();
-      return <div>{t('Now valid')}</div>;
-    }
-    `;
-
-    using compilerAfterFix = createCompiler();
-    await compilerAfterFix.extractAll();
+    using compiler = createCompiler();
+    await compiler.extractAll();
     await waitForWriteFileCalls(1);
     expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
       [
         [
           "messages/en.json",
           "{
-        "KvzhZT": "Now valid",
         "HovSZ7": "Valid message"
       }
       ",
         ],
       ]
     `);
+  });
+
+  it('surfaces static analyzability errors during catalog scan (dev)', async () => {
+    filesystem.project.src['Invalid.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Invalid() {
+      const t = useExtracted();
+      const message = 'Dynamic';
+      return <div>{t(message)}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.json': '{}'
+    };
+
+    using compiler = createCompiler();
+    await expect(compiler.extractAll()).rejects.toThrow(
+      'Cannot extract message from dynamic expression'
+    );
   });
 });
 

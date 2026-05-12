@@ -226,24 +226,7 @@ export default function Invalid() {
     );
   });
 
-  it('throws when useExtracted is imported outside next-intl', async () => {
-    await expect(async () => {
-      await process(
-        `
-    import {useExtracted} from './reexport';
-
-    function Component() {
-      const t = useExtracted();
-      t('Hi');
-    }
-    `
-      );
-    }).rejects.toThrow(
-      '`useExtracted` must be imported from `next-intl` and `getExtracted` from `next-intl/server`.'
-    );
-  });
-
-  it('throws when getExtracted is used inside Promise.all', async () => {
+  it('throws when getExtracted is passed to another expression', async () => {
     await expect(async () => {
       await process(
         `
@@ -254,7 +237,9 @@ export default function Invalid() {
     }
     `
       );
-    }).rejects.toThrow('`Promise.all`');
+    }).rejects.toThrow(
+      '`useExtracted()` and `getExtracted()` must be assigned directly'
+    );
   });
 
   it('throws when the extracted translator is passed as a function argument', async () => {
@@ -290,6 +275,44 @@ export default function Invalid() {
     function Component() {
       const t = useExtracted();
       return <Row translate={t} />;
+    }
+    `
+      );
+    }).rejects.toThrow(
+      'The translator returned by `useExtracted` / `getExtracted` cannot be forwarded'
+    );
+  });
+
+  it('throws when the extracted translator is assigned to another variable', async () => {
+    await expect(async () => {
+      await process(
+        `
+    import {useExtracted} from 'next-intl';
+
+    function Component() {
+      const t = useExtracted();
+      const translate = t;
+      return translate('Hi');
+    }
+    `
+      );
+    }).rejects.toThrow(
+      'The translator returned by `useExtracted` / `getExtracted` cannot be forwarded'
+    );
+  });
+
+  it('throws when an extracted translator method is passed around', async () => {
+    await expect(async () => {
+      await process(
+        `
+    import {useExtracted} from 'next-intl';
+
+    function helper(fn: unknown) {}
+
+    function Component() {
+      const t = useExtracted();
+      helper(t.rich);
+      return null;
     }
     `
       );
