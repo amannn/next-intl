@@ -39,13 +39,11 @@ export default getRequestConfig(async ({locale, requestLocale}) => {
     const paramValue = await rootParams.locale();
     if (hasLocale(routing.locales, paramValue)) {
       resolvedLocale = paramValue;
-    }
-  }
-
-  if (!resolvedLocale) {
-    const requested = await requestLocale;
-    if (hasLocale(routing.locales, requested)) {
-      resolvedLocale = requested;
+    } else if (paramValue == null) {
+      const requested = await requestLocale;
+      if (hasLocale(routing.locales, requested)) {
+        resolvedLocale = requested;
+      }
     }
   }
 
