@@ -1014,6 +1014,58 @@ describe('po format', {timeout: 20_000}, () => {
     `);
   });
 
+  it('orders same-reference messages independently of file processing order', async () => {
+    async function extractWithDelayedFile(delayedFileName: string) {
+      filesystem.project = {
+        src: {
+          'A.tsx': `
+          import {useExtracted} from 'next-intl';
+          export default function A() {
+            const t = useExtracted();
+            return <div>{t('apple')}{t('banana')}</div>;
+          }
+          `,
+          'B.tsx': `
+          import {useExtracted} from 'next-intl';
+          export default function B() {
+            const t = useExtracted();
+            return <div>{t('banana')}{t('apple')}</div>;
+          }
+          `
+        },
+        messages: {}
+      };
+      fileTimestamps.clear();
+      readFileInterceptors.clear();
+      vi.mocked(fs.writeFile).mockClear();
+
+      let delayedFileReadStarted = false;
+      let resolveDelayedFile: (() => void) | undefined;
+      const delayedFilePromise = new Promise<void>((resolve) => {
+        resolveDelayedFile = resolve;
+      });
+      readFileInterceptors.set(delayedFileName, async () => {
+        delayedFileReadStarted = true;
+        await delayedFilePromise;
+      });
+
+      using compiler = createCompiler();
+      const extractAllPromise = compiler.extractAll();
+
+      await vi.waitFor(() => expect(delayedFileReadStarted).toBe(true));
+      resolveDelayedFile?.();
+      await extractAllPromise;
+      await waitForWriteFileCalls(1);
+
+      return filesystem.project.messages!['en.po'];
+    }
+
+    const aDelayedContent = await extractWithDelayedFile('A.tsx');
+    const bDelayedContent = await extractWithDelayedFile('B.tsx');
+
+    expect(aDelayedContent).toEqual(bDelayedContent);
+  });
+
   it('removes flags when externally deleted', async () => {
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
