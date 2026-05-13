@@ -211,7 +211,7 @@ export default function RootLayout({children}: LayoutProps<'/'>) {
 
 This needs to be removed now as otherwise this will qualify as a root layout instead of the one defined at `src/app/[locale]/layout.tsx`.
 
-Instead, you can use [`global-not-found.js`](https://nextjs.org/docs/app/api-reference/file-conventions/not-found#global-not-foundjs-experimental) for this now.
+Instead, you can use [`global-not-found`](/docs/environments/error-files#catching-non-localized-requests) for this now.
 
 ### Avoid reading the `[locale]` segment
 
