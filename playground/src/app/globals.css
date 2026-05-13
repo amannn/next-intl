@@ -154,6 +154,65 @@
   }
 }
 
+/* Accent palette — switched via [data-accent] on <html>. Default is blue,
+   already provided by --primary/--ring above. */
+html[data-accent='teal'] {
+  --primary: oklch(0.58 0.13 190);
+  --ring: oklch(0.58 0.13 190);
+  --sidebar-primary: oklch(0.58 0.13 190);
+  --sidebar-ring: oklch(0.58 0.13 190);
+}
+html[data-accent='teal'].dark {
+  --primary: oklch(0.78 0.13 190);
+  --ring: oklch(0.78 0.13 190);
+  --sidebar-primary: oklch(0.78 0.13 190);
+  --sidebar-ring: oklch(0.78 0.13 190);
+}
+html[data-accent='violet'] {
+  --primary: oklch(0.56 0.18 290);
+  --ring: oklch(0.56 0.18 290);
+  --sidebar-primary: oklch(0.56 0.18 290);
+  --sidebar-ring: oklch(0.56 0.18 290);
+}
+html[data-accent='violet'].dark {
+  --primary: oklch(0.78 0.17 290);
+  --ring: oklch(0.78 0.17 290);
+  --sidebar-primary: oklch(0.78 0.17 290);
+  --sidebar-ring: oklch(0.78 0.17 290);
+}
+html[data-accent='amber'] {
+  --primary: oklch(0.66 0.16 70);
+  --ring: oklch(0.66 0.16 70);
+  --sidebar-primary: oklch(0.66 0.16 70);
+  --sidebar-ring: oklch(0.66 0.16 70);
+}
+html[data-accent='amber'].dark {
+  --primary: oklch(0.82 0.16 75);
+  --ring: oklch(0.82 0.16 75);
+  --sidebar-primary: oklch(0.82 0.16 75);
+  --sidebar-ring: oklch(0.82 0.16 75);
+}
+
+/* Reduce motion — opt-in via Settings dialog OR system preference. */
+html[data-reduce-motion='true'] *,
+html[data-reduce-motion='true'] *::before,
+html[data-reduce-motion='true'] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* Subtle dot-grid backdrop for the "output" boundary box */
 .dotgrid {
   background-image: radial-gradient(

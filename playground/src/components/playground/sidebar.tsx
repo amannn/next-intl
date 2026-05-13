@@ -11,6 +11,7 @@ import {sections} from '@/lib/nav';
 import {ThemeToggle} from './theme-toggle';
 import {LinkStatus} from './link-status';
 import {LocaleSwitcher} from './locale-switcher';
+import {SettingsDialog} from './settings-dialog';
 
 export function PlaygroundSidebar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -34,6 +35,7 @@ export function PlaygroundSidebar() {
         <div className="ml-auto flex items-center gap-1">
           <LocaleSwitcher />
           <ThemeToggle />
+          <SettingsDialog />
           <Button
             variant="ghost"
             size="sm"

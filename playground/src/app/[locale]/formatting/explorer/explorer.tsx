@@ -10,6 +10,7 @@ import {
 import {Check, Copy} from 'lucide-react';
 import {routing} from '@/i18n/routing';
 import {formats as registry} from '@/i18n/formats';
+import {useSettings} from '@/lib/settings';
 import {CodeBlock} from '@/components/code/code-block';
 import {Input} from '@/components/ui/input';
 import {Label} from '@/components/ui/label';
@@ -768,6 +769,7 @@ function ListBody({
 /* ─── Output ─────────────────────────────────────────────────────────── */
 
 function OutputPanel({state, locales}: {state: State; locales: string[]}) {
+  const {settings} = useSettings();
   return (
     <section aria-labelledby="explorer-output-heading">
       <h2
@@ -778,7 +780,7 @@ function OutputPanel({state, locales}: {state: State; locales: string[]}) {
       </h2>
       <div
         className="dotgrid divide-y divide-border border border-border"
-        aria-live="polite"
+        aria-live={settings.announceOutput ? 'polite' : 'off'}
         aria-atomic="true"
       >
         {locales.map((loc) => (
