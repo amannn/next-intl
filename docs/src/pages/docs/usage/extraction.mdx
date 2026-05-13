@@ -333,6 +333,15 @@ function Example({key}) {
 
 // ❌ Re-exporting the hook
 export const useExtractedExport = useExtracted;
+
+async function AsyncExample() {
+  // ❌ Passing `t` to `Promise.all`
+  const [t] = await Promise.all([getExtracted()]);
+
+  // Note: `getExtracted` is cached internally and even
+  // the first invocation typically takes less than 1ms.
+  // Therefore, there's no need to parallelize this.
+}
 ```
 
 ## Monorepos and external packages [#monorepos-external-packages]
