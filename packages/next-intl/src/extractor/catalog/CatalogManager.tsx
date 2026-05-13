@@ -298,11 +298,12 @@ export default class CatalogManager implements Disposable {
 
   private async processFile(absoluteFilePath: string): Promise<boolean> {
     const messages = await this.extractFile(absoluteFilePath);
-    if (messages) {
-      return this.applyFileMessages(absoluteFilePath, messages);
-    } else {
-      return false;
-    }
+
+    // `undefined` only when `extractFile()` throws. An empty array is success
+    // and must still run `applyFileMessages` to clear stale ids for this file.
+    if (!messages) return false;
+
+    return this.applyFileMessages(absoluteFilePath, messages);
   }
 
   private async extractFile(
