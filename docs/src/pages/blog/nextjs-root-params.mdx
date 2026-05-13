@@ -1,15 +1,15 @@
 ---
-title: 'Using next/root-params in Next.js 16.2'
+title: 'Using next/root-params in Next.js 16.3'
 ---
 
 import StayUpdated from '@/components/StayUpdated.mdx';
 import CourseBanner from '@/components/CourseBanner';
 
-# Using `next/root-params` in Next.js 16.2
+# Using `next/root-params` in Next.js 16.3
 
 <small>Mar 18, 2026 · by Jan Amann</small>
 
-Next.js v16.2 was just released and comes with a new feature: `next/root-params`.
+Next.js v16.3 was just released and comes with a new feature: `next/root-params`.
 
 This new API fills in the [missing piece](https://github.com/vercel/next.js/discussions/58862) that allows apps that use top-level dynamic segments like `[locale]` to read segment values deeply in Server Components:
 
@@ -132,14 +132,7 @@ export function generateStaticParams() {
 // ...
 ```
 
-In combination with [`dynamicParams`](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamicparams), we can furthermore instruct Next.js to disallow values that are encountered at runtime and do not match the values we've provided to `generateStaticParams`:
-
-```tsx filename="src/app/[locale]/layout.tsx"
-// Return a 404 for any unknown locales
-export const dynamicParams = false;
-
-// ...
-```
+Note that [`dynamicParams = false`](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config/dynamicParams) doesn't work with Cache Components, therefore if you want to treat your `locales` array as exhaustive, you might be better off adding runtime validation for the `[locale]` segment and call `notFound()` to guard against unknown locales.
 
 ## Leveraging `next/root-params` in `next-intl`
 
@@ -149,26 +142,58 @@ Similarly to how we've defined the `getLocale` function above, we do in fact alr
 
 So let's use `next/root-params` here:
 
-```tsx filename="src/i18n/request.ts" {7}
+```tsx filename="src/i18n/request.ts" {1,8}
 import * as rootParams from 'next/root-params';
 import {getRequestConfig} from 'next-intl/server';
 import {hasLocale} from 'next-intl';
 import {routing} from './routing';
+import {notFound} from 'next/navigation';
 
 export default getRequestConfig(async () => {
   const paramValue = await rootParams.locale();
-  const locale = hasLocale(routing.locales, paramValue)
-    ? paramValue
-    : routing.defaultLocale;
+
+  let locale;
+  if (hasLocale(routing.locales, paramValue)) {
+    locale = paramValue;
+  } else {
+    // Runtime validation for unknown locales
+    notFound();
+  }
 
   return {
-    locale,
-    messages: (await import(`../../messages/${locale}.json`)).default
+    locale
+    // ...
   };
 });
 ```
 
 That's it—with a single change to `i18n/request.ts` you can start using `next/root-params`!
+
+---
+
+**One caveat though**: `next/root-params` currently doesn't work in Route Handlers or Server Actions. If you're passing an explicit `locale` to functions like `getTranslations` at those call sites, you can incorporate it in `getRequestConfig` as well:
+
+```tsx filename="i18n/request.ts"
+// ...
+
+export default getRequestConfig(async ({locale}) => {
+  // Only read from `next/root-params` if no explicit
+  // override is provided by the caller
+  if (!locale) {
+    const paramValue = await rootParams.locale();
+    if (hasLocale(routing.locales, paramValue)) {
+      locale = paramValue;
+    } else {
+      notFound();
+    }
+  }
+
+  return {
+    locale
+    // ...
+  };
+});
+```
 
 ## Time for spring cleaning
 
@@ -210,6 +235,13 @@ export default async function RootLayout({
 }
 ```
 
+If you've augmented the [`Locale` type](/docs/workflows/typescript#locale) you'll now also benefit from type safety here:
+
+```tsx
+// ✅ 'en' | 'de'
+const locale = await getLocale();
+```
+
 Behind the scenes, if you call `useLocale` or `getLocale` in a Server Component, your `i18n/request.ts` config will be consulted, potentially using a fallback that you have defined.
 
 ### Remove manual locale overrides [#locale-override]
@@ -230,46 +262,10 @@ export async function generateMetadata(
 }
 ```
 
-TODO
+The cases where you still require a locale override are:
 
-The only rare case where you might still want to pass a locale to `getTranslations` is if your UI renders messages from multiple locales in parallel:
-
-```tsx
-// Use messages from the current locale
-const t = getTranslations();
-
-// Use messages from 'en', regardless of what the current user locale is
-const t = getTranslations({locale: 'en'});
-```
-
-In this case, you should make sure to accept an override in your `i18n/request.ts` config:
-
-```tsx filename="src/i18n/request.ts"
-import * as rootParams from 'next/root-params';
-import {getRequestConfig} from 'next-intl/server';
-import {hasLocale} from 'next-intl';
-import {routing} from './routing';
-
-export default getRequestConfig(async ({locale}) => {
-  // Use a locale based on these priorities:
-  // 1. An override passed to the function
-  // 2. A locale from the `[locale]` segment
-  // 3. A default locale
-  if (!locale) {
-    const paramValue = await rootParams.locale();
-    locale = hasLocale(routing.locales, paramValue)
-      ? paramValue
-      : routing.defaultLocale;
-  }
-
-  return {
-    locale
-    // ...
-  };
-});
-```
-
-This is a very rare case, so if you're unsure, you very likely don't need this.
+1. When you're using functions from `next-intl` in **Route Handlers** or **Server Actions** (these are not supported by `next/root-params`)
+2. If your UI renders messages from **multiple locales** in parallel
 
 ### Static rendering
 
@@ -286,35 +282,6 @@ If you've previously used `setRequestLocale` to enable static rendering, you can
 ```
 
 Note that `generateStaticParams` is naturally still required though.
-
-### Handling unknown locales
-
-Not strictly a new feature of Next.js, but in case you're using `generateStaticParams`, the easiest way to ensure that only the locales you've defined are allowed is to configure [`dynamicParams`](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamicparams) in your root layout:
-
-```tsx filename="src/app/[locale]/layout.tsx"
-// Return a 404 for any unknown locales
-export const dynamicParams = false;
-```
-
-If you don't use `generateStaticParams`, you can still disallow unknown locales by manually calling `notFound()` based on `params` in your root layout:
-
-```tsx filename="src/app/[locale]/layout.tsx"
-import {hasLocale} from 'next-intl';
-import {notFound} from 'next/navigation';
-import {routing} from '@/i18n/routing';
-
-export default async function RootLayout({
-  children,
-  params
-}: LayoutProps<'/[locale]'>) {
-  const {locale} = await params;
-  if (!hasLocale(routing.locales, locale)) {
-    return notFound();
-  }
-
-  // ...
-}
-```
 
 ### Custom routing setups
 
@@ -342,8 +309,8 @@ export default getRequestConfig(async () => {
   const locale = tenant.locale;
 
   return {
-    locale,
-    messages: (await import(`../../messages/${locale}.json`)).default
+    locale
+    // ...
   };
 });
 ```
