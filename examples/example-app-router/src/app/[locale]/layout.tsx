@@ -16,6 +16,11 @@ export async function generateMetadata(
   props: Omit<LayoutProps<'/[locale]'>, 'children'>
 ) {
   const {locale} = await props.params;
+
+  if (!hasLocale(routing.locales, locale)) {
+    notFound();
+  }
+
   setRequestLocale(locale);
 
   const t = await getTranslations('LocaleLayout');
@@ -30,11 +35,12 @@ export default async function LocaleLayout({
   params
 }: LayoutProps<'/[locale]'>) {
   const {locale} = await params;
-  setRequestLocale(locale);
 
   if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
+
+  setRequestLocale(locale);
 
   return (
     <html className="h-full" lang={locale}>

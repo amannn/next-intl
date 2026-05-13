@@ -1,6 +1,7 @@
 import {Metadata} from 'next';
 import {Inter} from 'next/font/google';
-import {NextIntlClientProvider} from 'next-intl';
+import {notFound} from 'next/navigation';
+import {NextIntlClientProvider, hasLocale} from 'next-intl';
 import {
   getFormatter,
   getNow,
@@ -8,6 +9,7 @@ import {
   getTranslations,
   setRequestLocale
 } from 'next-intl/server';
+import {routing} from '@/i18n/routing';
 import Navigation from '../../components/Navigation';
 
 const inter = Inter({subsets: ['latin']});
@@ -16,6 +18,9 @@ export async function generateMetadata(
   props: Omit<LayoutProps<'/[locale]'>, 'children'>
 ): Promise<Metadata> {
   const {locale} = await props.params;
+  if (!hasLocale(routing.locales, locale)) {
+    notFound();
+  }
   setRequestLocale(locale);
 
   const t = await getTranslations('LocaleLayout');
@@ -44,6 +49,9 @@ export default async function LocaleLayout({
   params
 }: LayoutProps<'/[locale]'>) {
   const {locale} = await params;
+  if (!hasLocale(routing.locales, locale)) {
+    notFound();
+  }
   setRequestLocale(locale);
 
   return (
