@@ -1,4 +1,9 @@
-import {getSortedMessages, setNestedProperty} from '../../utils.js';
+import type {ExtractorMessage} from '../../types.js';
+import {
+  getSortedMessages,
+  isForbiddenObjectKey,
+  setNestedProperty
+} from '../../utils.js';
 import {defineCodec} from '../ExtractorCodec.js';
 
 interface StoredFormat {
@@ -8,10 +13,10 @@ interface StoredFormat {
 export default defineCodec(() => ({
   decode(source) {
     const json: StoredFormat = JSON.parse(source);
-    const messages: Array<{id: string; message: string}> = [];
+    const messages: Array<ExtractorMessage> = [];
 
     traverseMessages(json, (message, id) => {
-      messages.push({id, message});
+      messages.push({id, message, references: [], description: []});
     });
 
     return messages;
@@ -38,6 +43,9 @@ function traverseMessages(
   const NAMESPACE_SEPARATOR = '.';
 
   for (const key of Object.keys(obj)) {
+    if (isForbiddenObjectKey(key)) {
+      throw new Error(`Invalid message catalog key: \`${key}\`.`);
+    }
     const newPath = path ? path + NAMESPACE_SEPARATOR + key : key;
     const value = obj[key];
     if (typeof value === 'string') {

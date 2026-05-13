@@ -553,6 +553,21 @@ describe('select', () => {
     ).toMatchInlineSnapshot(`"They"`);
   });
 
+  it('falls back to other when the value matches an Object.prototype key', () => {
+    const compiled = compile(
+      '{role, select, admin {Admin} user {User} other {Guest}}'
+    );
+    for (const key of [
+      'constructor',
+      'hasOwnProperty',
+      'toString',
+      'valueOf',
+      '__proto__'
+    ]) {
+      expect(formatMessage(compiled, 'en', {role: key})).toBe('Guest');
+    }
+  });
+
   it('formats arguments in branches', () => {
     const compiled = compile(
       '{gender, select, female {{name} is a woman} other {{name} is a person}}'

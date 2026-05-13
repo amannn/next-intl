@@ -1,3 +1,2 @@
 /target/*
 !/target/wasm32-wasip1/release/swc_plugin_extractor.wasm
-Cargo.lock

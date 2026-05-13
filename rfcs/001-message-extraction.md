@@ -255,7 +255,7 @@ The following file formats are being considered:
 
 ```
 #. Advance to the next slide
-#: src/components/Carousel.tsx:13
+#: src/components/Carousel.tsx
 msgid "5VpL9Z"
 msgstr "Right"
 

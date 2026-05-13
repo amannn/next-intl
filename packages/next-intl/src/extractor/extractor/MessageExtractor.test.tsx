@@ -31,7 +31,7 @@ it('can extract with source maps', async () => {
   expect(result.map).not.toContain('<anon>');
 });
 
-it('extracts same message used multiple times in one file with all references', async () => {
+it('extracts same message used multiple times in one file as separate source messages', async () => {
   const result = await process(
     `import {useExtracted} from 'next-intl';
 
@@ -53,16 +53,59 @@ it('extracts same message used multiple times in one file with all references', 
         "description": null,
         "id": "OpKKos",
         "message": "Hello!",
-        "references": [
-          {
-            "line": 7,
-            "path": "test.tsx",
-          },
-          {
-            "line": 8,
-            "path": "test.tsx",
-          },
-        ],
+        "reference": {
+          "line": 7,
+          "path": "test.tsx",
+        },
+      },
+      {
+        "description": null,
+        "id": "OpKKos",
+        "message": "Hello!",
+        "reference": {
+          "line": 8,
+          "path": "test.tsx",
+        },
+      },
+    ]
+  `);
+});
+
+it('keeps descriptions on separate source message uses', async () => {
+  const result = await process(
+    `import {useExtracted} from 'next-intl';
+
+    function Component() {
+      const t = useExtracted();
+      return (
+        <div>
+          {t({message: 'Save', description: 'Button label'})}
+          {t({message: 'Save', description: 'Menu item label'})}
+        </div>
+      );
+    }
+  `
+  );
+
+  expect(result.messages).toMatchInlineSnapshot(`
+    [
+      {
+        "description": "Button label",
+        "id": "jvo0vs",
+        "message": "Save",
+        "reference": {
+          "line": 7,
+          "path": "test.tsx",
+        },
+      },
+      {
+        "description": "Menu item label",
+        "id": "jvo0vs",
+        "message": "Save",
+        "reference": {
+          "line": 8,
+          "path": "test.tsx",
+        },
       },
     ]
   `);
@@ -94,12 +137,10 @@ it('does not add a fallback message in production', async () => {
           "description": null,
           "id": "+YJVTi",
           "message": "Hey!",
-          "references": [
-            {
-              "line": 5,
-              "path": "test.tsx",
-            },
-          ],
+          "reference": {
+            "line": 5,
+            "path": "test.tsx",
+          },
         },
       ],
     }
@@ -107,6 +148,20 @@ it('does not add a fallback message in production', async () => {
 });
 
 describe('error handling', () => {
+  it('throws when source has parse error', async () => {
+    await expect(
+      process(
+        `'use client';
+import {useExtracted} from 'next-intl';
+export default function Invalid() {
+  const t = useExtracted();
+  return <div>{t('Initially invalid')}</div>;
+// Missing closing brace
+`
+      )
+    ).rejects.toThrow();
+  });
+
   it('throws when using a template literal with interpolation', async () => {
     await expect(async () => {
       await process(

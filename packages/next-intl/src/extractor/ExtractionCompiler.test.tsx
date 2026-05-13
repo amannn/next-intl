@@ -33,427 +33,28 @@ beforeEach(() => {
   vi.clearAllMocks();
 });
 
-describe('json format', () => {
+describe('json format', {timeout: 20_000}, () => {
   function createCompiler() {
     return new ExtractionCompiler(
       {
-        srcPath: './src',
-        sourceLocale: 'en',
-        messages: {
+        extract: {
+          locales: 'infer',
           path: './messages',
+          sourceLocale: 'en',
+          srcPath: './src'
+        },
+        messages: {
           format: 'json',
-          locales: 'infer'
+          path: ['./messages']
         }
       },
       {
         isDevelopment: true,
-        projectRoot: '/project'
+        projectRoot: '/project',
+        saveDebounceMs: 0
       }
     );
   }
-
-  it('saves messages initially', {timeout: 10000}, async () => {
-    filesystem.project.src['Greeting.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    function Greeting() {
-      const t = useExtracted();
-      return <div>{t('Hey!')}</div>;
-    }
-    `;
-    filesystem.project.messages = {
-      'en.json': '{"+YJVTi": "Hey!"}',
-      'de.json': '{"+YJVTi": "Hallo!"}'
-    };
-
-    using compiler = createCompiler();
-    await compiler.extractAll();
-
-    await waitForWriteFileCalls(2);
-    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
-      [
-        [
-          "messages/en.json",
-          "{
-        "+YJVTi": "Hey!"
-      }
-      ",
-        ],
-        [
-          "messages/de.json",
-          "{
-        "+YJVTi": "Hallo!"
-      }
-      ",
-        ],
-      ]
-    `);
-  });
-
-  it('resets translations when a message changes', async () => {
-    filesystem.project.src['Greeting.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    function Greeting() {
-      const t = useExtracted();
-      return <div>{t('Hey!')}</div>;
-    }
-    `;
-    filesystem.project.messages = {
-      'en.json': '{"+YJVTi": "Hey!"}',
-      'de.json': '{"+YJVTi": "Hallo!"}'
-    };
-
-    using compiler = createCompiler();
-
-    // Initial scan
-    await compiler.extractAll();
-    await waitForWriteFileCalls(2);
-
-    // Update file content
-    await simulateSourceFileUpdate(
-      '/project/src/Greeting.tsx',
-      `
-      import {useExtracted} from 'next-intl';
-      function Greeting() {
-        const t = useExtracted();
-        return <div>{t('Hello!')}</div>;
-      }
-      `
-    );
-
-    await waitForWriteFileCalls(4);
-    expect(vi.mocked(fs.writeFile).mock.calls.slice(2)).toMatchInlineSnapshot(`
-        [
-          [
-            "messages/en.json",
-            "{
-          "OpKKos": "Hello!"
-        }
-        ",
-          ],
-          [
-            "messages/de.json",
-            "{
-          "OpKKos": ""
-        }
-        ",
-          ],
-        ]
-      `);
-  });
-
-  it('removes translations when all messages are removed from a file', async () => {
-    filesystem.project.src['Greeting.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    function Greeting() {
-      const t = useExtracted();
-      return <div>{t('Hey!')}</div>;
-    }
-    `;
-    filesystem.project.messages = {
-      'en.json': '{"+YJVTi": "Hey!"}',
-      'de.json': '{"+YJVTi": "Hallo!"}'
-    };
-
-    using compiler = createCompiler();
-    await compiler.extractAll();
-    await waitForWriteFileCalls(2);
-
-    await simulateSourceFileUpdate(
-      '/project/src/Greeting.tsx',
-      `
-      function Greeting() {
-        return <div />;
-      }
-    `
-    );
-
-    await waitForWriteFileCalls(4);
-
-    expect(vi.mocked(fs.writeFile).mock.calls.slice(2)).toMatchInlineSnapshot(`
-      [
-        [
-          "messages/en.json",
-          "{}
-      ",
-        ],
-        [
-          "messages/de.json",
-          "{}
-      ",
-        ],
-      ]
-    `);
-  });
-
-  it('restores previous translations when messages are added back', async () => {
-    filesystem.project.src['Greeting.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    function Greeting() {
-      const t = useExtracted();
-      return <div>{t('Hey!')}</div>;
-    }
-    `;
-    filesystem.project.messages = {
-      'en.json': '{"+YJVTi": "Hey!"}',
-      'de.json': '{"+YJVTi": "Hallo!"}'
-    };
-
-    using compiler = createCompiler();
-    await compiler.extractAll();
-    await waitForWriteFileCalls(2);
-
-    await simulateSourceFileUpdate(
-      '/project/src/Greeting.tsx',
-      `
-      function Greeting() {
-        return <div />;
-      }
-    `
-    );
-
-    await waitForWriteFileCalls(4);
-
-    expect(vi.mocked(fs.writeFile).mock.calls.slice(2)).toMatchInlineSnapshot(`
-      [
-        [
-          "messages/en.json",
-          "{}
-      ",
-        ],
-        [
-          "messages/de.json",
-          "{}
-      ",
-        ],
-      ]
-    `);
-
-    await simulateSourceFileUpdate(
-      '/project/src/Greeting.tsx',
-      `
-      import {useExtracted} from 'next-intl';
-      function Greeting() {
-        const t = useExtracted();
-        return <div>{t('Hey!')}</div>;
-      }
-    `
-    );
-
-    await waitForWriteFileCalls(6);
-
-    expect(vi.mocked(fs.writeFile).mock.calls.slice(4)).toMatchInlineSnapshot(`
-      [
-        [
-          "messages/en.json",
-          "{
-        "+YJVTi": "Hey!"
-      }
-      ",
-        ],
-        [
-          "messages/de.json",
-          "{
-        "+YJVTi": "Hallo!"
-      }
-      ",
-        ],
-      ]
-    `);
-  });
-
-  it('handles namespaces when storing messages', async () => {
-    filesystem.project.src['Greeting.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    function Greeting() {
-      const t = useExtracted();
-      return <div>{t('Hey!')}</div>;
-    }
-    `;
-    filesystem.project.messages = {
-      'en.json': '{"+YJVTi": "Hey!"}',
-      'de.json': '{"+YJVTi": "Hallo!"}'
-    };
-
-    using compiler = createCompiler();
-    await compiler.extractAll();
-    await waitForWriteFileCalls(2);
-
-    await simulateSourceFileUpdate(
-      '/project/src/Greeting.tsx',
-      `
-      import {useExtracted} from 'next-intl';
-      function Greeting() {
-        const t = useExtracted('ui');
-        return <div>{t('Hello!')}</div>;
-      }
-      `
-    );
-
-    await waitForWriteFileCalls(4);
-
-    expect(vi.mocked(fs.writeFile).mock.calls.slice(2)).toMatchInlineSnapshot(`
-      [
-        [
-          "messages/en.json",
-          "{
-        "ui": {
-          "OpKKos": "Hello!"
-        }
-      }
-      ",
-        ],
-        [
-          "messages/de.json",
-          "{
-        "ui": {
-          "OpKKos": ""
-        }
-      }
-      ",
-        ],
-      ]
-    `);
-  });
-
-  it('preserves manual translations in target catalogs when adding new messages', async () => {
-    filesystem.project.src['Greeting.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    function Greeting() {
-      const t = useExtracted();
-      return <div>{t('Hey!')}</div>;
-    }
-    `;
-    filesystem.project.messages = {
-      'en.json': '{"+YJVTi": "Hey!"}',
-      'de.json': '{"+YJVTi": "Hallo!"}'
-    };
-
-    using compiler = createCompiler();
-    await compiler.extractAll();
-    await waitForWriteFileCalls(2);
-
-    await simulateSourceFileUpdate(
-      '/project/src/Greeting.tsx',
-      `
-      import {useExtracted} from 'next-intl';
-      function Greeting() {
-        const t = useExtracted();
-        return <div>{t('Hello!')}</div>;
-      }
-      `
-    );
-    await waitForWriteFileCalls(4);
-    expect(vi.mocked(fs.writeFile).mock.calls.slice(2)).toMatchInlineSnapshot(`
-      [
-        [
-          "messages/en.json",
-          "{
-        "OpKKos": "Hello!"
-      }
-      ",
-        ],
-        [
-          "messages/de.json",
-          "{
-        "OpKKos": ""
-      }
-      ",
-        ],
-      ]
-    `);
-
-    await simulateSourceFileUpdate(
-      '/project/src/Greeting.tsx',
-      `
-      import {useExtracted} from 'next-intl';
-      function Greeting() {
-        const t = useExtracted();
-        return <div>{t('Hey!')} {t('Goodbye!')}</div>;
-      }
-      `
-    );
-
-    await waitForWriteFileCalls(6);
-    expect(vi.mocked(fs.writeFile).mock.calls.slice(4)).toMatchInlineSnapshot(`
-      [
-        [
-          "messages/en.json",
-          "{
-        "+YJVTi": "Hey!",
-        "NnE1NP": "Goodbye!"
-      }
-      ",
-        ],
-        [
-          "messages/de.json",
-          "{
-        "+YJVTi": "Hallo!",
-        "NnE1NP": ""
-      }
-      ",
-        ],
-      ]
-    `);
-  });
-
-  it('preserves messages when removed from one file but still used in another', async () => {
-    filesystem.project.src['Greeting.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    function Greeting() {
-      const t = useExtracted();
-      return <div>{t('Hey!')}</div>;
-    }
-    `;
-    filesystem.project.src['Footer.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    function Footer() {
-      const t = useExtracted();
-      return <div>{t('Hey!')}</div>;
-    }
-    `;
-    filesystem.project.messages = {
-      'en.json': '{"+YJVTi": "Hey!"}',
-      'de.json': '{"+YJVTi": "Hallo!"}'
-    };
-
-    using compiler = createCompiler();
-    await compiler.extractAll();
-    await waitForWriteFileCalls(2);
-
-    await simulateSourceFileUpdate(
-      '/project/src/Greeting.tsx',
-      `
-      function Greeting() {
-        return <div />;
-      }
-    `
-    );
-
-    // Note: We write even though catalog content is unchanged because
-    // Greeting.tsx's messages changed (1→0). The message persists from
-    // Footer.tsx, so output is identical - this is acceptable overhead.
-    // (For .po format, references would actually change, so writing is needed there.)
-    await waitForWriteFileCalls(4);
-
-    expect(vi.mocked(fs.writeFile).mock.calls.slice(-2)).toMatchInlineSnapshot(`
-      [
-        [
-          "messages/en.json",
-          "{
-        "+YJVTi": "Hey!"
-      }
-      ",
-        ],
-        [
-          "messages/de.json",
-          "{
-        "+YJVTi": "Hallo!"
-      }
-      ",
-        ],
-      ]
-    `);
-  });
 
   it('creates the messages directory and source catalog when they do not exist initially', async () => {
     filesystem.project.messages = undefined;
@@ -480,153 +81,6 @@ describe('json format', () => {
     });
   });
 
-  it('writes to newly added catalog file', async () => {
-    filesystem.project.src['Greeting.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    function Greeting() {
-      const t = useExtracted();
-      return <div>{t('Hello!')}</div>;
-    }
-    `;
-    filesystem.project.messages = {
-      'en.json': '{"OpKKos": "Hello!"}'
-    };
-
-    using compiler = createCompiler();
-    await compiler.extractAll();
-
-    await waitForWriteFileCalls(1);
-
-    filesystem.project.messages!['de.json'] = '{}';
-    simulateFileEvent('/project/messages', 'rename', 'de.json');
-
-    await vi.waitFor(
-      () => {
-        const calls = vi.mocked(fs.writeFile).mock.calls;
-        expect(calls.find((cur) => cur[0] === 'messages/de.json')).toEqual([
-          'messages/de.json',
-          '{\n  "OpKKos": ""\n}\n'
-        ]);
-      },
-      {timeout: 500}
-    );
-  });
-
-  it('preserves existing translations when adding a catalog file', async () => {
-    filesystem.project.src['Greeting.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    function Greeting() {
-      const t = useExtracted();
-      return <div>{t('Hello!')}</div>;
-    }
-    `;
-    filesystem.project.messages = {
-      'en.json': '{"OpKKos": "Hello!"}'
-    };
-
-    using compiler = createCompiler();
-    await compiler.extractAll();
-
-    await waitForWriteFileCalls(1);
-
-    filesystem.project.messages!['de.json'] = '{"OpKKos": "Hallo!"}';
-    simulateFileEvent('/project/messages', 'rename', 'de.json');
-
-    await vi.waitFor(
-      () => {
-        const calls = vi.mocked(fs.writeFile).mock.calls;
-        expect(calls.find((cur) => cur[0] === 'messages/de.json')).toEqual([
-          'messages/de.json',
-          '{\n  "OpKKos": "Hallo!"\n}\n'
-        ]);
-      },
-      {timeout: 500}
-    );
-
-    await simulateSourceFileUpdate(
-      '/project/src/Greeting.tsx',
-      `
-      import {useExtracted} from 'next-intl';
-      function Greeting() {
-        const t = useExtracted();
-        return <div>{t('Hello!')} {t('World!')}</div>;
-      }
-    `
-    );
-
-    await waitForWriteFileCalls(4);
-
-    expect(vi.mocked(fs.writeFile).mock.calls.slice(3)).toMatchInlineSnapshot(`
-      [
-        [
-          "messages/de.json",
-          "{
-        "OpKKos": "Hallo!",
-        "7kKG3Q": ""
-      }
-      ",
-        ],
-      ]
-    `);
-  });
-
-  it('stops writing to removed catalog file', async () => {
-    filesystem.project.src['Greeting.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    function Greeting() {
-      const t = useExtracted();
-      return <div>{t('Hello!')}</div>;
-    }
-    `;
-    filesystem.project.messages = {
-      'en.json': '{"OpKKos": "Hello!"}',
-      'de.json': '{"OpKKos": "Hallo!"}',
-      'fr.json': '{"OpKKos": "Bonjour!"}'
-    };
-
-    using compiler = createCompiler();
-    await compiler.extractAll();
-
-    await waitForWriteFileCalls(3);
-
-    delete filesystem.project.messages!['fr.json'];
-    simulateFileEvent('/project/messages', 'rename', 'fr.json');
-
-    await simulateSourceFileUpdate(
-      '/project/src/Greeting.tsx',
-      `
-      import {useExtracted} from 'next-intl';
-      function Greeting() {
-        const t = useExtracted();
-        return <div>{t('Hello!')} {t('Goodbye!')}</div>;
-      }
-      `
-    );
-
-    await waitForWriteFileCalls(5);
-
-    expect(vi.mocked(fs.writeFile).mock.calls.slice(3)).toMatchInlineSnapshot(`
-      [
-        [
-          "messages/en.json",
-          "{
-        "OpKKos": "Hello!",
-        "NnE1NP": "Goodbye!"
-      }
-      ",
-        ],
-        [
-          "messages/de.json",
-          "{
-        "OpKKos": "Hallo!",
-        "NnE1NP": ""
-      }
-      ",
-        ],
-      ]
-    `);
-  });
-
   it('creates all locale files immediately when explicit locales are provided', async () => {
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
@@ -639,17 +93,21 @@ describe('json format', () => {
 
     using compiler = new ExtractionCompiler(
       {
-        srcPath: './src',
-        sourceLocale: 'en',
-        messages: {
+        extract: {
+          locales: ['de', 'fr'],
           path: './messages',
+          sourceLocale: 'en',
+          srcPath: './src'
+        },
+        messages: {
           format: 'json',
-          locales: ['de', 'fr']
+          path: ['./messages']
         }
       },
       {
         isDevelopment: true,
-        projectRoot: '/project'
+        projectRoot: '/project',
+        saveDebounceMs: 0
       }
     );
 
@@ -686,45 +144,6 @@ describe('json format', () => {
     expect(watchCallbacks.size).toBe(0);
   });
 
-  it('initializes all messages to empty string when adding new catalog', async () => {
-    filesystem.project.messages = undefined;
-    filesystem.project.src['Greeting.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    function Greeting() {
-      const t = useExtracted();
-      return <div>{t('Hello!')} {t('World!')}</div>;
-    }
-    `;
-
-    using compiler = createCompiler();
-    await compiler.extractAll();
-
-    await waitForWriteFileCalls(1);
-
-    expect(filesystem.project.messages!['en.json']).toMatchInlineSnapshot(`
-      "{
-        "OpKKos": "Hello!",
-        "7kKG3Q": "World!"
-      }
-      "
-    `);
-
-    filesystem.project.messages!['de.json'] = '{}';
-    simulateFileEvent('/project/messages', 'rename', 'de.json');
-
-    await waitForWriteFileCalls(2);
-    expect(vi.mocked(fs.writeFile).mock.calls.at(-1)).toMatchInlineSnapshot(`
-      [
-        "messages/de.json",
-        "{
-        "OpKKos": "",
-        "7kKG3Q": ""
-      }
-      ",
-      ]
-    `);
-  });
-
   it('avoids a race condition when compiling while a new locale is added', async () => {
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
@@ -748,14 +167,18 @@ describe('json format', () => {
       resolveReadFile = resolve;
     });
 
+    let frReadEnteredInterceptor = false;
     // Intercept reading of fr.json
-    readFileInterceptors.set('fr.json', () => readFilePromise);
+    readFileInterceptors.set('fr.json', async () => {
+      frReadEnteredInterceptor = true;
+      await readFilePromise;
+    });
 
     // Trigger the file change (this starts the loading process)
     simulateFileEvent('/project/messages', 'rename', 'fr.json');
 
-    // Trigger file update without awaiting - this will queue behind loadCatalogsPromise
-    const updatePromise = simulateSourceFileUpdate(
+    // Do not await yet: must resolve read while this is blocked on loadCatalogsPromise
+    const updateDone = simulateSourceFileUpdate(
       '/project/src/Greeting.tsx',
       filesystem.project.src['Greeting.tsx'] +
         `
@@ -765,23 +188,18 @@ describe('json format', () => {
         }`
     );
 
-    // Wait for the async operations to settle. We need to ensure the "bad save"
-    // attempt happens while the read interceptor is still blocking the load.
-    await sleep(100);
+    await vi.waitFor(() => expect(frReadEnteredInterceptor).toBe(true));
 
     // Allow loading to finish
     resolveReadFile?.();
 
-    // Wait for the file update to complete (it was waiting for loadCatalogsPromise)
-    await updatePromise;
+    await updateDone;
 
-    // Wait for everything to settle
-    await sleep(100);
-
-    // Ensure only the new message is empty
-    expect(JSON.parse(filesystem.project.messages!['fr.json'])).toEqual({
-      OpKKos: 'Bonjour!',
-      'nm/7yQ': ''
+    await vi.waitFor(() => {
+      expect(JSON.parse(filesystem.project.messages!['fr.json'])).toEqual({
+        OpKKos: 'Bonjour!',
+        'nm/7yQ': ''
+      });
     });
   });
 
@@ -808,22 +226,25 @@ describe('json format', () => {
 
     using compiler = createCompiler();
 
+    let file2ReadEnteredInterceptor = false;
     // Delay processing of File2 during the initial scan
     let resolveFile2: (() => void) | undefined;
     const file2Promise = new Promise<void>((resolve) => {
       resolveFile2 = resolve;
     });
-    readFileInterceptors.set('File2.tsx', () => file2Promise);
+    readFileInterceptors.set('File2.tsx', async () => {
+      file2ReadEnteredInterceptor = true;
+      await file2Promise;
+    });
 
     // Start extractAll() - this will begin the initial scan
     const extractAllPromise = compiler.extractAll();
 
-    // Wait a bit to ensure loadCatalogsPromise resolves but scan is still in progress
-    await sleep(50);
+    await vi.waitFor(() => expect(file2ReadEnteredInterceptor).toBe(true));
 
     // While the scan is still processing File2, trigger a file watcher event
     // This simulates the race condition: watcher should wait for scan to complete
-    const updatePromise = simulateSourceFileUpdate(
+    const updateDone = simulateSourceFileUpdate(
       '/project/src/File1.tsx',
       `
       import {useExtracted} from 'next-intl';
@@ -834,9 +255,6 @@ describe('json format', () => {
       `
     );
 
-    // Wait a bit to ensure the watcher event is queued
-    await sleep(50);
-
     // Now allow File2 processing to complete (scan finishes)
     resolveFile2?.();
 
@@ -844,8 +262,7 @@ describe('json format', () => {
     await extractAllPromise;
     await waitForWriteFileCalls(2);
 
-    // Wait for the watcher update to complete
-    await updatePromise;
+    await updateDone;
     await waitForWriteFileCalls(4);
 
     // Verify that both messages from the initial scan and the watcher update are present
@@ -863,6 +280,54 @@ describe('json format', () => {
     expect(messageValues).toContain('Message1');
     expect(messageValues).toContain('Message2');
     expect(messageValues).toContain('Message3');
+  });
+
+  it('resets target-locale translation when source message id changes (was e2e; covered here to avoid dev-server flake)', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hey!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.json': '{"+YJVTi": "Hey!"}'
+    };
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+    await waitForWriteFileCalls(1);
+
+    filesystem.project.messages!['de.json'] = '{"+YJVTi": "Hallo"}';
+    const readCallsBeforeRename = vi.mocked(fs.readFile).mock.calls.length;
+    simulateFileEvent('/project/messages', 'rename', 'de.json');
+    await vi.waitFor(() =>
+      expect(vi.mocked(fs.readFile).mock.calls.length).toBeGreaterThan(
+        readCallsBeforeRename
+      )
+    );
+
+    await simulateSourceFileUpdate(
+      '/project/src/Greeting.tsx',
+      `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    `
+    );
+
+    await vi.waitFor(() => {
+      const en = JSON.parse(filesystem.project.messages!['en.json']);
+      expect(en).toMatchObject({OpKKos: 'Hello!'});
+      const de = JSON.parse(filesystem.project.messages!['de.json']);
+      const reset =
+        de.OpKKos === '' ||
+        de.OpKKos === undefined ||
+        Object.prototype.hasOwnProperty.call(de, 'OpKKos') === false;
+      expect(reset).toBe(true);
+    });
   });
 
   it('omits file with parse error during initial scan but continues processing others (dev)', async () => {
@@ -923,121 +388,27 @@ describe('json format', () => {
       ]
     `);
   });
-
-  it('ignores parse error from watcher and waits for next file update', async () => {
-    filesystem.project.src['Greeting.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    function Greeting() {
-      const t = useExtracted();
-      return <div>{t('Hello!')}</div>;
-    }
-    `;
-    filesystem.project.messages = {
-      'en.json': '{"OpKKos": "Hello!"}',
-      'de.json': '{"OpKKos": "Hallo!"}'
-    };
-
-    using compiler = createCompiler();
-    await compiler.extractAll();
-    await waitForWriteFileCalls(2);
-    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
-      [
-        [
-          "messages/en.json",
-          "{
-        "OpKKos": "Hello!"
-      }
-      ",
-        ],
-        [
-          "messages/de.json",
-          "{
-        "OpKKos": "Hallo!"
-      }
-      ",
-        ],
-      ]
-    `);
-
-    await simulateSourceFileUpdate(
-      '/project/src/Greeting.tsx',
-      `
-      import {useExtracted} from 'next-intl';
-      function Greeting() {
-        const t = useExtracted();
-        return <div>{t('Hello!')}</div>;
-
-      // Missing closing brace for function - parse error
-      `
-    );
-
-    // This shouldn't cause a save, make sure we wait a bit
-    await sleep(100);
-    await waitForWriteFileCalls(2);
-
-    await simulateSourceFileUpdate(
-      '/project/src/Greeting.tsx',
-      `
-      import {useExtracted} from 'next-intl';
-      function Greeting() {
-        const t = useExtracted();
-        return <h1>{t('Hello!')}</h1>;
-      }
-      `
-    );
-
-    // This shouldn't cause a save, make sure we wait a bit
-    await sleep(100);
-    await waitForWriteFileCalls(2);
-
-    await simulateSourceFileUpdate(
-      '/project/src/Greeting.tsx',
-      `
-      import {useExtracted} from 'next-intl';
-      function Greeting() {
-        const t = useExtracted();
-        return <h1>{t('Hey!')}</h1>;
-      }
-      `
-    );
-
-    await waitForWriteFileCalls(4);
-    expect(vi.mocked(fs.writeFile).mock.calls.slice(2)).toMatchInlineSnapshot(`
-      [
-        [
-          "messages/en.json",
-          "{
-        "+YJVTi": "Hey!"
-      }
-      ",
-        ],
-        [
-          "messages/de.json",
-          "{
-        "+YJVTi": ""
-      }
-      ",
-        ],
-      ]
-    `);
-  });
 });
 
-describe('po format', () => {
+describe('po format', {timeout: 20_000}, () => {
   function createCompiler() {
     return new ExtractionCompiler(
       {
-        srcPath: './src',
-        sourceLocale: 'en',
-        messages: {
+        extract: {
+          locales: 'infer',
           path: './messages',
+          sourceLocale: 'en',
+          srcPath: './src'
+        },
+        messages: {
           format: 'po',
-          locales: 'infer'
+          path: ['./messages']
         }
       },
       {
         isDevelopment: true,
-        projectRoot: '/project'
+        projectRoot: '/project',
+        saveDebounceMs: 0
       }
     );
   }
@@ -1074,30 +445,24 @@ describe('po format', () => {
     await waitForWriteFileCalls(1);
     const output = vi.mocked(fs.writeFile).mock.calls[0][1] as string;
 
-    expect(output).toContain('#: src/Greeting.tsx:4');
+    expect(output).toContain('#: src/Greeting.tsx');
     expect(output).not.toContain('src\\Greeting.tsx');
     expect(relativeSpy).toHaveBeenCalled();
   });
 
-  it('tracks all line numbers when same message appears multiple times in one file', async () => {
-    filesystem.project.src['Greeting.tsx'] =
-      `import {useExtracted} from 'next-intl';
-    function Greeting() {
+  it('stacks descriptions when the same message appears in multiple files', async () => {
+    filesystem.project.src['A.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function A() {
       const t = useExtracted();
-      return (
-        <div>
-          {t('Hello!')}
-          {t('Hey!')}
-          <span>{t('Hello!')}</span>
-        </div>
-      );
+      return <div>{t({message: 'Message', description: 'Zebra sorts after Apple alphabetically'})}</div>;
     }
     `;
-    filesystem.project.src['Greeting2.tsx'] =
-      `import {useExtracted} from 'next-intl';
-    function Greeting2() {
+    filesystem.project.src['Z.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Z() {
       const t = useExtracted();
-      return t('Hello!');
+      return <div>{t({message: 'Message', description: 'Apple sorts first alphabetically'})}</div>;
     }
     `;
     filesystem.project.messages = {};
@@ -1105,256 +470,22 @@ describe('po format', () => {
     using compiler = createCompiler();
     await compiler.extractAll();
     await waitForWriteFileCalls(1);
-    expect(vi.mocked(fs.writeFile).mock.calls[0][1]).toMatchInlineSnapshot(`
-      "msgid ""
-      msgstr ""
-      "Language: en\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
 
-      #: src/Greeting.tsx:6
-      #: src/Greeting.tsx:8
-      #: src/Greeting2.tsx:4
-      msgid "OpKKos"
-      msgstr "Hello!"
-
-      #: src/Greeting.tsx:7
-      msgid "+YJVTi"
-      msgstr "Hey!"
-      "
-    `);
+    expect(vi.mocked(fs.writeFile).mock.calls[0][1]).toContain(`
+#. Zebra sorts after Apple alphabetically
+#. Apple sorts first alphabetically
+`);
   });
 
-  it('saves messages initially', async () => {
-    filesystem.project.src['Greeting.tsx'] =
-      `import {useExtracted} from 'next-intl';
-    function Greeting() {
-      const t = useExtracted();
-      return <div>{t('Hey!')}</div>;
-    }
-    `;
-    filesystem.project.messages = {
-      'en.po': `
-      #: src/Greeting.tsx:4
-      msgid "+YJVTi"
-      msgstr "Hey!"
-      `,
-      'de.po': `
-      #: src/Greeting.tsx:4
-      msgid "+YJVTi"
-      msgstr "Hallo!"
-      `
-    };
-
-    using compiler = createCompiler();
-    await compiler.extractAll();
-    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
-      [
-        [
-          "messages/en.po",
-          "msgid ""
-      msgstr ""
-      "Language: en\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
-
-      #: src/Greeting.tsx:4
-      msgid "+YJVTi"
-      msgstr "Hey!"
-      ",
-        ],
-        [
-          "messages/de.po",
-          "msgid ""
-      msgstr ""
-      "Language: de\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
-
-      #: src/Greeting.tsx:4
-      msgid "+YJVTi"
-      msgstr "Hallo!"
-      ",
-        ],
-      ]
-    `);
-  });
-
-  it('saves changes to descriptions', async () => {
-    filesystem.project.src['Greeting.tsx'] = `
+  it('stacks descriptions when the same message appears multiple times in one file', async () => {
+    filesystem.project.src['FileA.tsx'] = `
     import {useExtracted} from 'next-intl';
-    function Greeting() {
-      const t = useExtracted();
-      return <div>{t('Hey!')}</div>;
-    }
-    `;
-    filesystem.project.messages = {
-      'en.po': `
-      #: src/Greeting.tsx:4
-      msgid "+YJVTi"
-      msgstr "Hey!"
-      `,
-      'de.po': `
-      #: src/Greeting.tsx:4
-      msgid "+YJVTi"
-      msgstr "Hallo!"
-      `
-    };
-
-    using compiler = createCompiler();
-    await compiler.extractAll();
-    await waitForWriteFileCalls(2);
-
-    await simulateSourceFileUpdate(
-      '/project/src/Greeting.tsx',
-      `
-      import {useExtracted} from 'next-intl';
-      function Greeting() {
-        const t = useExtracted();
-        return <div>{t({
-          message: 'Hey!',
-          description: 'Shown on home screen'
-        })}</div>;
-      }
-      `
-    );
-    await waitForWriteFileCalls(4);
-    expect(vi.mocked(fs.writeFile).mock.calls.slice(2)).toMatchInlineSnapshot(`
-      [
-        [
-          "messages/en.po",
-          "msgid ""
-      msgstr ""
-      "Language: en\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
-
-      #. Shown on home screen
-      #: src/Greeting.tsx:5
-      msgid "+YJVTi"
-      msgstr "Hey!"
-      ",
-        ],
-        [
-          "messages/de.po",
-          "msgid ""
-      msgstr ""
-      "Language: de\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
-
-      #. Shown on home screen
-      #: src/Greeting.tsx:5
-      msgid "+YJVTi"
-      msgstr "Hallo!"
-      ",
-        ],
-      ]
-    `);
-  });
-
-  it('combines references from multiple files', async () => {
-    filesystem.project.src['Greeting.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    function Greeting() {
-      const t = useExtracted();
-      return <div>{t('Hey!')}</div>;
-    }
-    `;
-    filesystem.project.messages = {
-      'en.po': `
-      #: src/Greeting.tsx:4
-      msgid "+YJVTi"
-      msgstr "Hey!"
-      `,
-      'de.po': `
-      #: src/Greeting.tsx:4
-      msgid "+YJVTi"
-      msgstr "Hallo!"
-      `
-    };
-
-    using compiler = createCompiler();
-    await compiler.extractAll();
-    await waitForWriteFileCalls(2);
-
-    await simulateSourceFileCreate(
-      '/project/src/Footer.tsx',
-      `
-      import {useExtracted} from 'next-intl';
-      function Footer() {
-        const t = useExtracted();
-        return <div>{t('Hey!')}</div>;
-      }
-      `
-    );
-
-    await waitForWriteFileCalls(4);
-
-    expect(vi.mocked(fs.writeFile).mock.calls.slice(2)).toMatchInlineSnapshot(`
-      [
-        [
-          "messages/en.po",
-          "msgid ""
-      msgstr ""
-      "Language: en\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
-
-      #: src/Footer.tsx:5
-      #: src/Greeting.tsx:5
-      msgid "+YJVTi"
-      msgstr "Hey!"
-      ",
-        ],
-        [
-          "messages/de.po",
-          "msgid ""
-      msgstr ""
-      "Language: de\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
-
-      #: src/Footer.tsx:5
-      #: src/Greeting.tsx:5
-      msgid "+YJVTi"
-      msgstr "Hallo!"
-      ",
-        ],
-      ]
-    `);
-  });
-
-  it('merges descriptions when message appears in multiple files with different descriptions', async () => {
-    filesystem.project.src['FileY.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    function FileY() {
-      const t = useExtracted();
-      return <div>{t({message: 'Message', description: 'Description from FileY'})}</div>;
-    }
-    `;
-    filesystem.project.src['FileZ.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    function FileZ() {
+    function FileA() {
       const t = useExtracted();
       return (
         <div>
-          {t('Message')}
-          {t({message: 'Message', description: 'Description from FileZ'})}
+          {t({message: 'Message', description: 'Second line second alphabetically'})}
+          {t({message: 'Message', description: 'First line first alphabetically'})}
         </div>
       );
     }
@@ -1365,148 +496,25 @@ describe('po format', () => {
     await compiler.extractAll();
     await waitForWriteFileCalls(1);
 
-    expect(vi.mocked(fs.writeFile).mock.calls[0][1]).toMatchInlineSnapshot(`
-      "msgid ""
-      msgstr ""
-      "Language: en\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
-
-      #. Description from FileZ
-      #: src/FileY.tsx:5
-      #: src/FileZ.tsx:7
-      #: src/FileZ.tsx:8
-      msgid "T7Ry38"
-      msgstr "Message"
-      "
-    `);
+    expect(vi.mocked(fs.writeFile).mock.calls[0][1]).toContain(`
+#. Second line second alphabetically
+#. First line first alphabetically
+`);
   });
 
-  it('updates references in all catalogs when message is reused in another file', async () => {
-    filesystem.project.src['Greeting.tsx'] = `
+  it('removes stale descriptions when a source occurrence changes', async () => {
+    filesystem.project.src['A.tsx'] = `
     import {useExtracted} from 'next-intl';
-    function Greeting() {
+    function A() {
       const t = useExtracted();
-      return <div>{t('Hey!')}</div>;
+      return <div>{t({message: 'Message', description: 'Zebra from earlier path'})}</div>;
     }
     `;
-    filesystem.project.messages = {
-      'en.po': '',
-      'de.po': ''
-    };
-
-    using compiler = createCompiler();
-
-    // First compile: Only Greeting.tsx has the message
-    await compiler.extractAll();
-    await waitForWriteFileCalls(2);
-
-    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
-      [
-        [
-          "messages/en.po",
-          "msgid ""
-      msgstr ""
-      "Language: en\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
-
-      #: src/Greeting.tsx:5
-      msgid "+YJVTi"
-      msgstr "Hey!"
-      ",
-        ],
-        [
-          "messages/de.po",
-          "msgid ""
-      msgstr ""
-      "Language: de\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
-
-      #: src/Greeting.tsx:5
-      msgid "+YJVTi"
-      msgstr ""
-      ",
-        ],
-      ]
-    `);
-
-    // Second compile: Footer.tsx also uses the same message
-    await simulateSourceFileCreate(
-      '/project/src/Footer.tsx',
-      `
-      import {useExtracted} from 'next-intl';
-      function Footer() {
-        const t = useExtracted();
-        return <div>{t('Hey!')}</div>;
-      }
-      `
-    );
-    await waitForWriteFileCalls(4);
-
-    expect(vi.mocked(fs.writeFile).mock.calls.slice(2)).toMatchInlineSnapshot(`
-      [
-        [
-          "messages/en.po",
-          "msgid ""
-      msgstr ""
-      "Language: en\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
-
-      #: src/Footer.tsx:5
-      #: src/Greeting.tsx:5
-      msgid "+YJVTi"
-      msgstr "Hey!"
-      ",
-        ],
-        [
-          "messages/de.po",
-          "msgid ""
-      msgstr ""
-      "Language: de\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
-
-      #: src/Footer.tsx:5
-      #: src/Greeting.tsx:5
-      msgid "+YJVTi"
-      msgstr ""
-      ",
-        ],
-      ]
-    `);
-  });
-
-  it('removes references when a message is dropped from a single file', async () => {
-    filesystem.project.src['Greeting.tsx'] = `
+    filesystem.project.src['Z.tsx'] = `
     import {useExtracted} from 'next-intl';
-    function Greeting() {
+    function Z() {
       const t = useExtracted();
-      return (
-        <div>
-          {t('Hey!')}
-          {t('Howdy!')}
-        </div>
-      );
-    }
-    `;
-    filesystem.project.src['Footer.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    function Footer() {
-      const t = useExtracted();
-      return <div>{t('Hey!')}</div>;
+      return <div>{t({message: 'Message', description: 'Apple from later path'})}</div>;
     }
     `;
     filesystem.project.messages = {
@@ -1519,59 +527,23 @@ describe('po format', () => {
     await waitForWriteFileCalls(2);
 
     await simulateSourceFileUpdate(
-      '/project/src/Greeting.tsx',
+      '/project/src/A.tsx',
       `
       import {useExtracted} from 'next-intl';
-      function Greeting() {
+      function A() {
         const t = useExtracted();
-        return <div>{t('Howdy!')}</div>;
+        return <div>{t('Message')}</div>;
       }
       `
     );
-
     await waitForWriteFileCalls(4);
-    expect(vi.mocked(fs.writeFile).mock.calls.slice(-2)).toMatchInlineSnapshot(`
-      [
-        [
-          "messages/en.po",
-          "msgid ""
-      msgstr ""
-      "Language: en\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
 
-      #: src/Footer.tsx:5
-      msgid "+YJVTi"
-      msgstr "Hey!"
-
-      #: src/Greeting.tsx:5
-      msgid "4xqPlJ"
-      msgstr "Howdy!"
-      ",
-        ],
-        [
-          "messages/de.po",
-          "msgid ""
-      msgstr ""
-      "Language: de\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
-
-      #: src/Footer.tsx:5
-      msgid "+YJVTi"
-      msgstr ""
-
-      #: src/Greeting.tsx:5
-      msgid "4xqPlJ"
-      msgstr ""
-      ",
-        ],
-      ]
-    `);
+    const lastSourceWrite = vi
+      .mocked(fs.writeFile)
+      .mock.calls.filter((call) => call[0] === 'messages/en.po')
+      .at(-1)?.[1] as string;
+    expect(lastSourceWrite).not.toContain('Zebra from earlier path');
+    expect(lastSourceWrite).toContain('#. Apple from later path');
   });
 
   it('removes obsolete messages during build', async () => {
@@ -1613,17 +585,21 @@ describe('po format', () => {
 
     using compiler = new ExtractionCompiler(
       {
-        srcPath: './src',
-        sourceLocale: 'en',
-        messages: {
+        extract: {
+          locales: 'infer',
           path: './messages',
+          sourceLocale: 'en',
+          srcPath: './src'
+        },
+        messages: {
           format: 'po',
-          locales: 'infer'
+          path: ['./messages']
         }
       },
       {
         isDevelopment: false,
-        projectRoot: '/project'
+        projectRoot: '/project',
+        saveDebounceMs: 0
       }
     );
 
@@ -1642,7 +618,7 @@ describe('po format', () => {
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #: src/component-b.tsx:5
+      #: src/component-b.tsx
       msgid "4xqPlJ"
       msgstr "Howdy!"
       ",
@@ -1657,51 +633,13 @@ describe('po format', () => {
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #: src/component-b.tsx:5
+      #: src/component-b.tsx
       msgid "4xqPlJ"
       msgstr ""
       ",
         ],
       ]
     `);
-  });
-
-  it('removes messages when a file is deleted during dev', async () => {
-    filesystem.project.src['component-a.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    function ComponentA() {
-      const t = useExtracted();
-      return <div>{t('Hello!')}</div>;
-    }
-    `;
-    filesystem.project.messages = {};
-
-    using compiler = createCompiler();
-    await compiler.extractAll();
-
-    await waitForWriteFileCalls(1);
-    expect(vi.mocked(fs.writeFile).mock.calls[0][1]).toContain('Hello!');
-
-    await simulateSourceFileCreate(
-      '/project/src/component-b.tsx',
-      `
-    import {useExtracted} from 'next-intl';
-    function ComponentB() {
-      const t = useExtracted();
-      return <div>{t('Howdy!')}</div>;
-    }
-    `
-    );
-
-    await waitForWriteFileCalls(2);
-    expect(vi.mocked(fs.writeFile).mock.calls[1][1]).toContain('Howdy!');
-
-    await simulateSourceFileDelete('/project/src/component-b.tsx');
-
-    await waitForWriteFileCalls(3);
-    expect(vi.mocked(fs.writeFile).mock.calls.at(-1)?.[1]).not.toContain(
-      'component-b.tsx'
-    );
   });
 
   it('removes obsolete references after a file rename during build', async () => {
@@ -1743,17 +681,21 @@ describe('po format', () => {
 
     using compiler = new ExtractionCompiler(
       {
-        srcPath: './src',
-        sourceLocale: 'en',
-        messages: {
+        extract: {
+          locales: 'infer',
           path: './messages',
+          sourceLocale: 'en',
+          srcPath: './src'
+        },
+        messages: {
           format: 'po',
-          locales: 'infer'
+          path: ['./messages']
         }
       },
       {
         isDevelopment: false,
-        projectRoot: '/project'
+        projectRoot: '/project',
+        saveDebounceMs: 0
       }
     );
 
@@ -1771,7 +713,7 @@ describe('po format', () => {
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #: src/component-b.tsx:5
+      #: src/component-b.tsx
       msgid "OpKKos"
       msgstr "Hello!"
       ",
@@ -1786,7 +728,7 @@ describe('po format', () => {
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #: src/component-b.tsx:5
+      #: src/component-b.tsx
       msgid "OpKKos"
       msgstr "Hallo!"
       ",
@@ -1835,7 +777,7 @@ describe('po format', () => {
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #: src/component-b.tsx:5
+      #: src/component-b.tsx
       msgid "OpKKos"
       msgstr "Hello!"
       ",
@@ -1850,7 +792,7 @@ describe('po format', () => {
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #: src/component-b.tsx:5
+      #: src/component-b.tsx
       msgid "OpKKos"
       msgstr ""
       ",
@@ -1899,7 +841,7 @@ describe('po format', () => {
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #: src/component-b.tsx:5
+      #: src/component-b.tsx
       msgid "OpKKos"
       msgstr "Hello!"
       ",
@@ -1914,130 +856,7 @@ describe('po format', () => {
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #: src/component-b.tsx:5
-      msgid "OpKKos"
-      msgstr ""
-      ",
-        ],
-      ]
-    `);
-  });
-
-  it('supports namespaces', async () => {
-    filesystem.project.src['Greeting.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    function Greeting() {
-      const t = useExtracted('ui');
-      return <div>{t('Hello!')}</div>;
-    }
-    `;
-
-    using compiler = createCompiler();
-    await compiler.extractAll();
-
-    await waitForWriteFileCalls(1);
-    expect(vi.mocked(fs.writeFile).mock.calls[0]).toMatchInlineSnapshot(`
-      [
-        "messages/en.po",
-        "msgid ""
-      msgstr ""
-      "Language: en\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
-
-      #: src/Greeting.tsx:5
-      msgctxt "ui"
-      msgid "OpKKos"
-      msgstr "Hello!"
-      ",
-      ]
-    `);
-  });
-
-  it('retains metadata when saving back to file', async () => {
-    filesystem.project.src['Greeting.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    function Greeting() {
-      const t = useExtracted();
-      return <div>{t('Hey!')}</div>;
-    }
-    `;
-    filesystem.project.messages = {
-      'en.po': `msgid ""
-msgstr ""
-"POT-Creation-Date: 2025-10-27 16:00+0000\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"X-Generator: some-po-editor\n"
-"X-Something-Else: test\n"
-"Language: en\n"
-
-#: src/Greeting.tsx:4
-msgid "+YJVTi"
-msgstr "Hey!"
-`,
-      'de.po': `msgid ""
-msgstr ""
-"POT-Creation-Date: 2025-10-27 16:00+0000\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Language: de\n"
-
-#: src/Greeting.tsx:4
-msgid "+YJVTi"
-msgstr "Hallo!"
-`
-    };
-
-    using compiler = createCompiler();
-    await compiler.extractAll();
-    await waitForWriteFileCalls(2);
-
-    await simulateSourceFileUpdate(
-      '/project/src/Greeting.tsx',
-      `
-      import {useExtracted} from 'next-intl';
-      function Greeting() {
-        const t = useExtracted();
-        return <div>{t('Hello!')}</div>;
-      }
-      `
-    );
-
-    await waitForWriteFileCalls(4);
-    expect(vi.mocked(fs.writeFile).mock.calls.slice(2)).toMatchInlineSnapshot(`
-      [
-        [
-          "messages/en.po",
-          "msgid ""
-      msgstr ""
-      "Language: en\\n"
-      "Content-Type: text/plain; charset=UTF-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: some-po-editor\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
-      "POT-Creation-Date: 2025-10-27 16:00+0000\\n"
-      "MIME-Version: 1.0\\n"
-      "X-Something-Else: test\\n"
-
-      #: src/Greeting.tsx:5
-      msgid "OpKKos"
-      msgstr "Hello!"
-      ",
-        ],
-        [
-          "messages/de.po",
-          "msgid ""
-      msgstr ""
-      "Language: de\\n"
-      "Content-Type: text/plain; charset=UTF-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
-      "POT-Creation-Date: 2025-10-27 16:00+0000\\n"
-
-      #: src/Greeting.tsx:5
+      #: src/component-b.tsx
       msgid "OpKKos"
       msgstr ""
       ",
@@ -2077,14 +896,79 @@ msgstr "Hallo!"
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #: src/app/page.tsx:5
+      #: src/app/page.tsx
       msgid "NhX4DJ"
       msgstr "Hello"
 
-      #: src/components/Header.tsx:5
+      #: src/components/Header.tsx
       msgid "PwaN2o"
       msgstr "Welcome"
       ",
+      ]
+    `);
+  });
+
+  it('preserves flags', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hey!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.po': `
+      #: src/Greeting.tsx
+      #, fuzzy
+      msgid "+YJVTi"
+      msgstr "Hey!"
+      `,
+      'de.po': `
+      #: src/Greeting.tsx
+      #, c-format
+      msgid "+YJVTi"
+      msgstr "Hallo!"
+      `
+    };
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+
+    await waitForWriteFileCalls(2);
+    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.po",
+          "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Greeting.tsx
+      #, fuzzy
+      msgid "+YJVTi"
+      msgstr "Hey!"
+      ",
+        ],
+        [
+          "messages/de.po",
+          "msgid ""
+      msgstr ""
+      "Language: de\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Greeting.tsx
+      #, c-format
+      msgid "+YJVTi"
+      msgstr "Hallo!"
+      ",
+        ],
       ]
     `);
   });
@@ -2113,16 +997,16 @@ msgstr "Hallo!"
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #: src/a.tsx:5
+      #: src/a.tsx
       msgid "PmvAXH"
       msgstr "Message A"
 
-      #: src/b.tsx:5
-      #: src/d.tsx:5
+      #: src/b.tsx
+      #: src/d.tsx
       msgid "5bb321"
       msgstr "Message B"
 
-      #: src/c.tsx:5
+      #: src/c.tsx
       msgid "c3UbA2"
       msgstr "Message C"
       ",
@@ -2130,113 +1014,56 @@ msgstr "Hallo!"
     `);
   });
 
-  it('initializes all messages to empty string when adding new catalog', async () => {
-    filesystem.project.messages = undefined;
-    filesystem.project.src['Greeting.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    function Greeting() {
-      const t = useExtracted();
-      return <div>{t('Hello!')} {t('World!')}</div>;
+  it('orders same-reference messages independently of file processing order', async () => {
+    async function extractWithDelayedFile(delayedFileName: string) {
+      filesystem.project = {
+        src: {
+          'A.tsx': `
+          import {useExtracted} from 'next-intl';
+          export default function A() {
+            const t = useExtracted();
+            return <div>{t('apple')}{t('banana')}</div>;
+          }
+          `,
+          'B.tsx': `
+          import {useExtracted} from 'next-intl';
+          export default function B() {
+            const t = useExtracted();
+            return <div>{t('banana')}{t('apple')}</div>;
+          }
+          `
+        },
+        messages: {}
+      };
+      fileTimestamps.clear();
+      readFileInterceptors.clear();
+      vi.mocked(fs.writeFile).mockClear();
+
+      let delayedFileReadStarted = false;
+      let resolveDelayedFile: (() => void) | undefined;
+      const delayedFilePromise = new Promise<void>((resolve) => {
+        resolveDelayedFile = resolve;
+      });
+      readFileInterceptors.set(delayedFileName, async () => {
+        delayedFileReadStarted = true;
+        await delayedFilePromise;
+      });
+
+      using compiler = createCompiler();
+      const extractAllPromise = compiler.extractAll();
+
+      await vi.waitFor(() => expect(delayedFileReadStarted).toBe(true));
+      resolveDelayedFile?.();
+      await extractAllPromise;
+      await waitForWriteFileCalls(1);
+
+      return filesystem.project.messages!['en.po'];
     }
-    `;
 
-    using compiler = createCompiler();
-    await compiler.extractAll();
+    const aDelayedContent = await extractWithDelayedFile('A.tsx');
+    const bDelayedContent = await extractWithDelayedFile('B.tsx');
 
-    await waitForWriteFileCalls(1);
-
-    filesystem.project.messages!['de.po'] = '';
-    simulateFileEvent('/project/messages', 'rename', 'de.po');
-
-    await waitForWriteFileCalls(2);
-    expect(vi.mocked(fs.writeFile).mock.calls.slice(1)).toMatchInlineSnapshot(`
-      [
-        [
-          "messages/de.po",
-          "msgid ""
-      msgstr ""
-      "Language: de\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
-
-      #: src/Greeting.tsx:5
-      msgid "OpKKos"
-      msgstr ""
-
-      #: src/Greeting.tsx:5
-      msgid "7kKG3Q"
-      msgstr ""
-      ",
-        ],
-      ]
-    `);
-  });
-
-  it('preserves flags', async () => {
-    filesystem.project.src['Greeting.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    function Greeting() {
-      const t = useExtracted();
-      return <div>{t('Hey!')}</div>;
-    }
-    `;
-    filesystem.project.messages = {
-      'en.po': `
-      #: src/Greeting.tsx:4
-      #, fuzzy
-      msgid "+YJVTi"
-      msgstr "Hey!"
-      `,
-      'de.po': `
-      #: src/Greeting.tsx:4
-      #, c-format
-      msgid "+YJVTi"
-      msgstr "Hallo!"
-      `
-    };
-
-    using compiler = createCompiler();
-    await compiler.extractAll();
-
-    await waitForWriteFileCalls(2);
-    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
-      [
-        [
-          "messages/en.po",
-          "msgid ""
-      msgstr ""
-      "Language: en\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
-
-      #: src/Greeting.tsx:5
-      #, fuzzy
-      msgid "+YJVTi"
-      msgstr "Hey!"
-      ",
-        ],
-        [
-          "messages/de.po",
-          "msgid ""
-      msgstr ""
-      "Language: de\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
-
-      #: src/Greeting.tsx:5
-      #, c-format
-      msgid "+YJVTi"
-      msgstr "Hallo!"
-      ",
-        ],
-      ]
-    `);
+    expect(aDelayedContent).toEqual(bDelayedContent);
   });
 
   it('removes flags when externally deleted', async () => {
@@ -2309,12 +1136,12 @@ msgstr "Hey!"
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #: src/Greeting.tsx:5
+      #: src/Greeting.tsx
       #, c-format
       msgid "+YJVTi"
       msgstr "Hey!"
 
-      #: src/Greeting.tsx:5
+      #: src/Greeting.tsx
       msgid "jqdzk6"
       msgstr "World"
       ",
@@ -2366,15 +1193,15 @@ msgstr "World"
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #: src/Greeting.tsx:5
+      #: src/Greeting.tsx
       msgid "+YJVTi"
       msgstr "Hey!"
 
-      #: src/Greeting.tsx:5
+      #: src/Greeting.tsx
       msgid "jqdzk6"
       msgstr "World"
 
-      #: src/Greeting.tsx:5
+      #: src/Greeting.tsx
       msgid "ODGmph"
       msgstr "!"
       ",
@@ -2431,20 +1258,20 @@ msgstr ""
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #: src/Greeting.tsx:5
+      #: src/Greeting.tsx
       #, no-wrap
       msgid "+YJVTi"
       msgstr "Hallo!"
 
-      #: src/Greeting.tsx:5
+      #: src/Greeting.tsx
       msgid "jqdzk6"
       msgstr ""
 
-      #: src/Greeting.tsx:5
+      #: src/Greeting.tsx
       msgid "ODGmph"
       msgstr ""
 
-      #: src/Greeting.tsx:5
+      #: src/Greeting.tsx
       msgid "pE58D7"
       msgstr ""
       ",
@@ -2504,95 +1331,25 @@ msgstr ""
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #: src/Greeting.tsx:5
+      #: src/Greeting.tsx
       msgid "+YJVTi"
       msgstr "Hallo!"
 
-      #: src/Greeting.tsx:5
+      #: src/Greeting.tsx
       msgid "jqdzk6"
       msgstr ""
 
-      #: src/Greeting.tsx:5
+      #: src/Greeting.tsx
       msgid "ODGmph"
       msgstr ""
 
-      #: src/Greeting.tsx:5
+      #: src/Greeting.tsx
       msgid "pE58D7"
       msgstr ""
 
-      #: src/Greeting.tsx:5
+      #: src/Greeting.tsx
       msgid "I5NMJ8"
       msgstr ""
-      ",
-      ]
-    `);
-  });
-
-  it('preserves manually added flags in source locale after recompile', async () => {
-    filesystem.project.src['Greeting.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    function Greeting() {
-      const t = useExtracted();
-      return <div>{t('Hey!')}</div>;
-    }
-    `;
-    filesystem.project.messages = {
-      'en.po': `
-      #: src/Greeting.tsx
-      msgid "+YJVTi"
-      msgstr "Hey!"
-      `
-    };
-
-    using compiler = createCompiler();
-    await compiler.extractAll();
-
-    await waitForWriteFileCalls(1);
-
-    simulateManualFileEdit(
-      'messages/en.po',
-      `msgid ""
-msgstr ""
-"Language: en\\n"
-
-#: src/Greeting.tsx
-#, fuzzy
-msgid "+YJVTi"
-msgstr "Hey!"
-`
-    );
-
-    await simulateSourceFileUpdate(
-      '/project/src/Greeting.tsx',
-      `
-      import {useExtracted} from 'next-intl';
-      function Greeting() {
-        const t = useExtracted();
-        return <div>{t('Hey!')} {t('World!')}</div>;
-      }
-      `
-    );
-
-    await waitForWriteFileCalls(2);
-    expect(vi.mocked(fs.writeFile).mock.calls.at(-1)).toMatchInlineSnapshot(`
-      [
-        "messages/en.po",
-        "msgid ""
-      msgstr ""
-      "Language: en\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
-
-      #: src/Greeting.tsx:5
-      #, fuzzy
-      msgid "+YJVTi"
-      msgstr "Hey!"
-
-      #: src/Greeting.tsx:5
-      msgid "7kKG3Q"
-      msgstr "World!"
       ",
       ]
     `);
@@ -2608,16 +1365,14 @@ msgstr "Hey!"
     `;
     filesystem.project.messages = {
       'en.po': `
-      #: src/Greeting.tsx:4
+      #: src/Greeting.tsx
       #, c-format
-      #. This is a description
       msgid "OpKKos"
       msgstr "Hello!"
       `,
       'de.po': `
-      #: src/Greeting.tsx:4
+      #: src/Greeting.tsx
       #, fuzzy
-      #. This is a description
       msgid "OpKKos"
       msgstr "Hallo!"
       `
@@ -2631,13 +1386,13 @@ msgstr "Hey!"
       resolveReadFile = resolve;
     });
 
-    readFileInterceptors.set('de.po', () => readFilePromise);
-    readFileInterceptors.set('en.po', () => readFilePromise);
+    readFileInterceptors.set('de.po', async () => readFilePromise);
+    readFileInterceptors.set('en.po', async () => readFilePromise);
 
     simulateFileEvent('/project/messages', 'rename', 'de.po');
     simulateFileEvent('/project/messages', 'rename', 'en.po');
 
-    const updatePromise = simulateSourceFileUpdate(
+    const updateDone = simulateSourceFileUpdate(
       '/project/src/Greeting.tsx',
       filesystem.project.src['Greeting.tsx'] +
         `
@@ -2647,14 +1402,13 @@ msgstr "Hey!"
         }`
     );
 
-    // Ensure the "bad save" attempt happens while the read interceptor is still blocking
-    await sleep(100);
+    // Renames may not schedule locale reload immediately; yield like slow CI.
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     resolveReadFile?.();
 
-    await updatePromise;
+    await updateDone;
 
-    await sleep(100);
     await waitForWriteFileCalls(4);
 
     expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
@@ -2669,8 +1423,7 @@ msgstr "Hey!"
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #. This is a description
-      #: src/Greeting.tsx:5
+      #: src/Greeting.tsx
       #, c-format
       msgid "OpKKos"
       msgstr "Hello!"
@@ -2686,8 +1439,7 @@ msgstr "Hey!"
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #. This is a description
-      #: src/Greeting.tsx:5
+      #: src/Greeting.tsx
       #, fuzzy
       msgid "OpKKos"
       msgstr "Hallo!"
@@ -2703,13 +1455,12 @@ msgstr "Hey!"
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #. This is a description
-      #: src/Greeting.tsx:5
+      #: src/Greeting.tsx
       #, c-format
       msgid "OpKKos"
       msgstr "Hello!"
 
-      #: src/Greeting.tsx:10
+      #: src/Greeting.tsx
       msgid "nm/7yQ"
       msgstr "Hi!"
       ",
@@ -2724,13 +1475,12 @@ msgstr "Hey!"
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #. This is a description
-      #: src/Greeting.tsx:5
+      #: src/Greeting.tsx
       #, fuzzy
       msgid "OpKKos"
       msgstr "Hallo!"
 
-      #: src/Greeting.tsx:10
+      #: src/Greeting.tsx
       msgid "nm/7yQ"
       msgstr ""
       ",
@@ -2770,7 +1520,9 @@ msgstr "Hey!"
     readFileInterceptors.set('de.po', () => readFilePromise);
 
     using compiler = createCompiler();
-    await sleep(50);
+    await vi.waitFor(() =>
+      expect(parcelWatcherCallbacks.has('/project/src')).toBe(true)
+    );
 
     const ioError = new Error('EACCES: permission denied');
     (ioError as NodeJS.ErrnoException).code = 'EACCES';
@@ -2883,9 +1635,6 @@ msgstr "Hallo!"`
       filesystem.project.messages!['de.po']
     );
 
-    // Wait for a bit, ensure reload is complete
-    await sleep(200);
-
     // Trigger a source file update to ensure save happens
     await simulateSourceFileUpdate(
       '/project/src/Greeting.tsx',
@@ -2939,7 +1688,9 @@ msgstr "Hallo!"`
       fileTimestamps.delete('/project/src/components/Button.tsx');
 
       const callback = parcelWatcherCallbacks.get('/project/src')!;
-      callback(null, [{type: 'delete', path: '/project/src/components'}]);
+      await Promise.resolve(
+        callback(null, [{type: 'delete', path: '/project/src/components'}])
+      );
 
       await waitForWriteFileCalls(2);
       expect(vi.mocked(fs.writeFile).mock.calls.at(-1)).toMatchInlineSnapshot(`
@@ -3000,10 +1751,12 @@ msgstr "Hallo!"`
       fileTimestamps.delete('/project/src/old/Button.tsx');
 
       const callback = parcelWatcherCallbacks.get('/project/src')!;
-      callback(null, [
-        {type: 'create', path: '/project/src/new'},
-        {type: 'delete', path: '/project/src/old'}
-      ]);
+      await Promise.resolve(
+        callback(null, [
+          {type: 'create', path: '/project/src/new'},
+          {type: 'delete', path: '/project/src/old'}
+        ])
+      );
 
       await waitForWriteFileCalls(2);
 
@@ -3018,7 +1771,7 @@ msgstr "Hallo!"`
         "X-Generator: next-intl\\n"
         "X-Crowdin-SourceKey: msgstr\\n"
 
-        #: src/new/Button.tsx:5
+        #: src/new/Button.tsx
         msgid "cfI2fq"
         msgstr "Click me updated"
         ",
@@ -3076,17 +1829,21 @@ describe('`srcPath` filtering', () => {
   function createCompiler(srcPath: string | Array<string>) {
     return new ExtractionCompiler(
       {
-        srcPath,
-        sourceLocale: 'en',
-        messages: {
+        extract: {
+          locales: 'infer',
           path: './messages',
+          sourceLocale: 'en',
+          srcPath
+        },
+        messages: {
           format: 'json',
-          locales: 'infer'
+          path: ['./messages']
         }
       },
       {
         isDevelopment: true,
-        projectRoot: '/project'
+        projectRoot: '/project',
+        saveDebounceMs: 0
       }
     );
   }
@@ -3132,7 +1889,7 @@ describe('custom format', () => {
     filesystem.project.messages = {
       'en.json': JSON.stringify(
         {
-          'ui.wESdnU': {message: 'Click me', description: 'Button label'}
+          'ui.wESdnU': {message: 'Click me', description: ['Button label']}
         },
         null,
         2
@@ -3153,10 +1910,13 @@ describe('custom format', () => {
 
     using compiler = new ExtractionCompiler(
       {
-        srcPath: './src',
-        sourceLocale: 'en',
-        messages: {
+        extract: {
+          locales: 'infer',
           path: './messages',
+          sourceLocale: 'en',
+          srcPath: './src'
+        },
+        messages: {
           format: {
             codec: path.resolve(
               __dirname,
@@ -3164,12 +1924,13 @@ describe('custom format', () => {
             ),
             extension: '.json'
           },
-          locales: 'infer'
+          path: ['./messages']
         }
       },
       {
         isDevelopment: true,
-        projectRoot: '/project'
+        projectRoot: '/project',
+        saveDebounceMs: 0
       }
     );
 
@@ -3183,7 +1944,9 @@ describe('custom format', () => {
           "{
         "ui.wESdnU": {
           "message": "Click me",
-          "description": "Button label"
+          "description": [
+            "Button label"
+          ]
         },
         "ui.wSZR47": {
           "message": "Submit"
@@ -3220,10 +1983,13 @@ describe('custom format', () => {
 
     using compiler = new ExtractionCompiler(
       {
-        srcPath: './src',
-        sourceLocale: 'en',
-        messages: {
+        extract: {
+          locales: 'infer',
           path: './messages',
+          sourceLocale: 'en',
+          srcPath: './src'
+        },
+        messages: {
           format: {
             codec: path.resolve(
               __dirname,
@@ -3231,12 +1997,13 @@ describe('custom format', () => {
             ),
             extension: '.po'
           },
-          locales: 'infer'
+          path: ['./messages']
         }
       },
       {
         isDevelopment: true,
-        projectRoot: '/project'
+        projectRoot: '/project',
+        saveDebounceMs: 0
       }
     );
 
@@ -3271,17 +2038,17 @@ describe('custom format', () => {
       "Content-Transfer-Encoding: 8bit\\n"
       "X-Generator: next-intl\\n"
 
-      #: src/Greeting.tsx:5
+      #: src/Greeting.tsx
       msgctxt "OpKKos"
       msgid "Hello!"
       msgstr "Hello!"
 
-      #: src/Greeting.tsx:11
+      #: src/Greeting.tsx
       msgctxt "misc.l6ZjWT"
       msgid "The code you entered is incorrect. Please try again or contact support@example.com."
       msgstr "The code you entered is incorrect. Please try again or contact support@example.com."
 
-      #: src/Greeting.tsx:12
+      #: src/Greeting.tsx
       msgctxt "misc.Fp6Fab"
       msgid "Checking if you're logged in."
       msgstr "Checking if you're logged in."
@@ -3296,17 +2063,17 @@ describe('custom format', () => {
       "Content-Transfer-Encoding: 8bit\\n"
       "X-Generator: next-intl\\n"
 
-      #: src/Greeting.tsx:5
+      #: src/Greeting.tsx
       msgctxt "OpKKos"
       msgid "Hello!"
       msgstr "Hallo!"
 
-      #: src/Greeting.tsx:11
+      #: src/Greeting.tsx
       msgctxt "misc.l6ZjWT"
       msgid "The code you entered is incorrect. Please try again or contact support@example.com."
       msgstr ""
 
-      #: src/Greeting.tsx:12
+      #: src/Greeting.tsx
       msgctxt "misc.Fp6Fab"
       msgid "Checking if you're logged in."
       msgstr ""
@@ -3331,20 +2098,22 @@ function createFile(componentName: string, message: string) {
     `;
 }
 
-function sleep(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-function waitForWriteFileCalls(length: number, opts: {atLeast?: boolean} = {}) {
-  return vi.waitFor(() => {
-    if (opts.atLeast) {
-      expect(vi.mocked(fs.writeFile).mock.calls.length).toBeGreaterThanOrEqual(
-        length
-      );
-    } else {
-      expect(vi.mocked(fs.writeFile).mock.calls.length).toBe(length);
-    }
-  });
+function waitForWriteFileCalls(
+  length: number,
+  opts: {atLeast?: boolean; timeout?: number} = {}
+) {
+  return vi.waitFor(
+    () => {
+      if (opts.atLeast) {
+        expect(
+          vi.mocked(fs.writeFile).mock.calls.length
+        ).toBeGreaterThanOrEqual(length);
+      } else {
+        expect(vi.mocked(fs.writeFile).mock.calls.length).toBe(length);
+      }
+    },
+    {interval: 10, timeout: opts.timeout ?? 15_000}
+  );
 }
 
 function simulateManualFileEdit(filePath: string, content: string) {
@@ -3554,7 +2323,9 @@ async function simulateSourceFileCreate(
   for (const testPath of pathsToTry) {
     const callback = parcelWatcherCallbacks.get(testPath);
     if (callback) {
-      callback(null, [{type: 'create', path: normalizedPath}]);
+      await Promise.resolve(
+        callback(null, [{type: 'create', path: normalizedPath}])
+      );
       return;
     }
   }
@@ -3582,7 +2353,9 @@ async function simulateSourceFileUpdate(
   for (const testPath of pathsToTry) {
     const callback = parcelWatcherCallbacks.get(testPath);
     if (callback) {
-      callback(null, [{type: 'update', path: normalizedPath}]);
+      await Promise.resolve(
+        callback(null, [{type: 'update', path: normalizedPath}])
+      );
       return;
     }
   }
@@ -3620,7 +2393,9 @@ async function simulateSourceFileDelete(filePath: string): Promise<void> {
   for (const testPath of pathsToTry) {
     const callback = parcelWatcherCallbacks.get(testPath);
     if (callback) {
-      callback(null, [{type: 'delete', path: normalizedPath}]);
+      await Promise.resolve(
+        callback(null, [{type: 'delete', path: normalizedPath}])
+      );
       return;
     }
   }

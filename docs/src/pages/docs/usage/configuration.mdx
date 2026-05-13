@@ -518,7 +518,7 @@ Prefer to watch a video?
   title="Global formats"
 />
 
-To achieve consistent date, time, number and list formatting, you can define a set of global formats.
+To achieve consistent date, time, number, list, and display name formatting, you can define a set of global formats.
 
 <Tabs items={['i18n/request.ts', 'Provider']}>
 <Tabs.Tab>
@@ -545,6 +545,11 @@ export default getRequestConfig(async () => {
         enumeration: {
           style: 'long',
           type: 'conjunction'
+        }
+      },
+      displayName: {
+        region: {
+          type: 'region'
         }
       }
     }
@@ -577,6 +582,11 @@ export default getRequestConfig(async () => {
         style: 'long',
         type: 'conjunction'
       }
+    },
+    displayName: {
+      region: {
+        type: 'region'
+      }
     }
   }}
 >
@@ -598,6 +608,7 @@ function Component() {
   format.dateTime(new Date('2020-11-20T10:36:01.516Z'), 'short');
   format.number(47.414329182, 'precise');
   format.list(['HTML', 'CSS', 'JavaScript'], 'enumeration');
+  format.displayName('US', 'region');
 }
 ```
 

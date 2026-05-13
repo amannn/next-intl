@@ -189,7 +189,7 @@ function compileDateTimeStyle(
 }
 
 function compileSelect(node: SelectElement): CompiledNode {
-  const options: SelectOptions = {};
+  const options = Object.create(null) as SelectOptions;
 
   for (const [key, option] of Object.entries(node.options)) {
     options[key] = compileNodesToNode(option.value);
@@ -203,7 +203,7 @@ function compilePlural(node: PluralElementBase): CompiledNode {
   if (process.env.NODE_ENV !== 'production' && node.offset) {
     throw new Error('Plural offsets are not supported');
   }
-  const options: PluralOptions = {};
+  const options = Object.create(null) as PluralOptions;
 
   for (const [key, option] of Object.entries(node.options)) {
     options[key] = compileNodesToNode(option.value);
