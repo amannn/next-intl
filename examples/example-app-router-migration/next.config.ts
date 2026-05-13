@@ -4,9 +4,6 @@ import createNextIntlPlugin from 'next-intl/plugin';
 const withNextIntl = createNextIntlPlugin();
 
 const config: NextConfig = {
-  experimental: {
-    rootParams: true
-  },
   // https://github.com/amannn/next-intl/issues/2121
   transpilePackages: ['next-intl']
 };

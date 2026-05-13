@@ -1,7 +1,7 @@
 import {Metadata} from 'next';
 import {Inter} from 'next/font/google';
 import {notFound} from 'next/navigation';
-import {NextIntlClientProvider, hasLocale} from 'next-intl';
+import {Locale, NextIntlClientProvider, hasLocale} from 'next-intl';
 import {
   getFormatter,
   getNow,
@@ -21,12 +21,13 @@ export async function generateMetadata(
   if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
-  setRequestLocale(locale);
 
-  const t = await getTranslations('LocaleLayout');
-  const formatter = await getFormatter();
-  const now = await getNow();
-  const timeZone = await getTimeZone();
+  const localeTyped = locale as Locale;
+
+  const t = await getTranslations({locale: localeTyped, namespace: 'LocaleLayout'});
+  const formatter = await getFormatter({locale: localeTyped});
+  const now = await getNow({locale: localeTyped});
+  const timeZone = await getTimeZone({locale: localeTyped});
 
   const base = new URL('http://localhost:3000');
   if (process.env.NEXT_PUBLIC_USE_CASE === 'base-path') {

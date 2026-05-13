@@ -1,5 +1,5 @@
 import {notFound} from 'next/navigation';
-import {hasLocale, NextIntlClientProvider} from 'next-intl';
+import {hasLocale, Locale, NextIntlClientProvider} from 'next-intl';
 import {getTranslations, setRequestLocale} from 'next-intl/server';
 import {clsx} from 'clsx';
 import {Inter} from 'next/font/google';
@@ -21,9 +21,10 @@ export async function generateMetadata(
     notFound();
   }
 
-  setRequestLocale(locale);
-
-  const t = await getTranslations('LocaleLayout');
+  const t = await getTranslations({
+    locale: locale as Locale,
+    namespace: 'LocaleLayout'
+  });
 
   return {
     title: t('title')
