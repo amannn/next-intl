@@ -1,8 +1,6 @@
-import * as rootParams from 'next/root-params';
 import {headers} from 'next/headers';
 import {Formats, hasLocale, IntlErrorCode} from 'next-intl';
 import {getRequestConfig} from 'next-intl/server';
-import {notFound} from 'next/navigation';
 import defaultMessages from '../../messages/en.json';
 import {routing} from './routing';
 
@@ -36,23 +34,10 @@ export default getRequestConfig(async ({locale, requestLocale}) => {
   let resolvedLocale = locale;
 
   if (!resolvedLocale) {
-    const paramValue = await rootParams.locale();
-    if (hasLocale(routing.locales, paramValue)) {
-      resolvedLocale = paramValue;
-    } else if (paramValue != null) {
-      notFound();
-    }
-  }
-
-  if (!resolvedLocale) {
     const requested = await requestLocale;
-    if (hasLocale(routing.locales, requested)) {
-      resolvedLocale = requested;
-    }
-  }
-
-  if (!resolvedLocale) {
-    notFound();
+    resolvedLocale = hasLocale(routing.locales, requested)
+      ? requested
+      : routing.defaultLocale;
   }
 
   const now = (await headers()).get('x-now');
