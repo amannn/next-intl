@@ -26,9 +26,8 @@ export function LocaleSwitcherExample() {
               key={loc}
               asChild
               variant="outline"
-              className={`h-auto justify-between gap-3 px-4 py-3 text-left ${
-                active ? 'border-foreground/40' : ''
-              }`}
+              data-active={active || undefined}
+              className="h-auto justify-between gap-3 px-4 py-3 text-left data-[active]:border-primary/40 data-[active]:bg-primary/10 data-[active]:hover:bg-primary/15 dark:data-[active]:bg-primary/15 dark:data-[active]:hover:bg-primary/20"
             >
               <Link
                 // @ts-expect-error: params is a generic Record

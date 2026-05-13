@@ -1062,11 +1062,8 @@ function PickerChip({
       onClick={onClick}
       aria-pressed={active}
       aria-label={ariaLabel}
-      className={`font-mono text-xs ${
-        active
-          ? 'border-primary/50 bg-primary/10 text-foreground hover:bg-primary/15'
-          : 'text-muted-foreground'
-      }`}
+      data-active={active || undefined}
+      className="font-mono text-xs text-muted-foreground data-[active]:border-primary/50 data-[active]:bg-primary/10 data-[active]:text-foreground data-[active]:hover:bg-primary/15"
     >
       {label}
     </Button>
@@ -1183,9 +1180,8 @@ function Options({
         )}
       </div>
       <div
-        className={`grid grid-cols-1 gap-3 sm:[grid-template-columns:repeat(auto-fit,minmax(220px,1fr))] ${
-          disabled ? 'pointer-events-none opacity-40' : ''
-        }`}
+        data-disabled={disabled || undefined}
+        className="grid grid-cols-1 gap-3 sm:[grid-template-columns:repeat(auto-fit,minmax(220px,1fr))] data-[disabled]:pointer-events-none data-[disabled]:opacity-40"
       >
         {children}
       </div>
@@ -1223,9 +1219,8 @@ function OptToggle<O extends object, K extends keyof O>({
   }
   return (
     <div
-      className={`flex flex-col gap-3 rounded-md border bg-background p-3.5 transition-colors ${
-        checked ? 'border-primary/40 ring-1 ring-primary/20' : 'border-border'
-      }`}
+      data-checked={checked || undefined}
+      className="flex flex-col gap-3 rounded-md border border-border bg-background p-3.5 transition-colors data-[checked]:border-primary/40 data-[checked]:ring-1 data-[checked]:ring-primary/20"
     >
       <div className="flex items-center gap-2">
         <Checkbox
@@ -1240,7 +1235,10 @@ function OptToggle<O extends object, K extends keyof O>({
           {name}
         </Label>
       </div>
-      <div className={checked ? '' : 'pointer-events-none opacity-40'}>
+      <div
+        data-disabled={!checked || undefined}
+        className="data-[disabled]:pointer-events-none data-[disabled]:opacity-40"
+      >
         {children(opts[field], set)}
       </div>
     </div>
