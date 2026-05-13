@@ -159,38 +159,50 @@
 html[data-accent='teal'] {
   --primary: oklch(0.58 0.13 190);
   --ring: oklch(0.58 0.13 190);
+  --accent: oklch(0.88 0.08 190);
   --sidebar-primary: oklch(0.58 0.13 190);
   --sidebar-ring: oklch(0.58 0.13 190);
+  --sidebar-accent: oklch(0.92 0.04 190);
 }
 html[data-accent='teal'].dark {
   --primary: oklch(0.78 0.13 190);
   --ring: oklch(0.78 0.13 190);
+  --accent: oklch(0.38 0.09 190);
   --sidebar-primary: oklch(0.78 0.13 190);
   --sidebar-ring: oklch(0.78 0.13 190);
+  --sidebar-accent: oklch(0.32 0.06 190);
 }
 html[data-accent='violet'] {
   --primary: oklch(0.56 0.18 290);
   --ring: oklch(0.56 0.18 290);
+  --accent: oklch(0.9 0.06 290);
   --sidebar-primary: oklch(0.56 0.18 290);
   --sidebar-ring: oklch(0.56 0.18 290);
+  --sidebar-accent: oklch(0.93 0.04 290);
 }
 html[data-accent='violet'].dark {
   --primary: oklch(0.78 0.17 290);
   --ring: oklch(0.78 0.17 290);
+  --accent: oklch(0.36 0.1 290);
   --sidebar-primary: oklch(0.78 0.17 290);
   --sidebar-ring: oklch(0.78 0.17 290);
+  --sidebar-accent: oklch(0.3 0.07 290);
 }
 html[data-accent='amber'] {
   --primary: oklch(0.66 0.16 70);
   --ring: oklch(0.66 0.16 70);
+  --accent: oklch(0.92 0.08 80);
   --sidebar-primary: oklch(0.66 0.16 70);
   --sidebar-ring: oklch(0.66 0.16 70);
+  --sidebar-accent: oklch(0.94 0.05 80);
 }
 html[data-accent='amber'].dark {
   --primary: oklch(0.82 0.16 75);
   --ring: oklch(0.82 0.16 75);
+  --accent: oklch(0.4 0.1 70);
   --sidebar-primary: oklch(0.82 0.16 75);
   --sidebar-ring: oklch(0.82 0.16 75);
+  --sidebar-accent: oklch(0.32 0.07 70);
 }
 
 /* Reduce motion — opt-in via Settings dialog OR system preference. */
@@ -281,7 +293,7 @@ html[data-reduce-motion='true'] *::after {
 }
 
 .mdx-content li::marker {
-  color: var(--blue-300);
+  color: var(--primary);
 }
 
 .mdx-content :not(pre) > code {

@@ -26,7 +26,7 @@ export function PlaygroundSidebar() {
           onClick={close}
           className="flex items-center gap-2.5 transition-opacity hover:opacity-80"
         >
-          <Logo className="w-6 h-6 text-blue-700 dark:text-blue-300" />
+          <Logo className="w-6 h-6 text-primary" />
           <span className="text-[15px] font-semibold tracking-tight text-sidebar-foreground">
             Playground
           </span>
@@ -43,7 +43,9 @@ export function PlaygroundSidebar() {
             onClick={() => setIsOpen(!isOpen)}
             aria-expanded={isOpen}
             aria-controls="playground-nav"
-            aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
+            aria-label={
+              isOpen ? 'Close navigation menu' : 'Open navigation menu'
+            }
           >
             {isOpen ? (
               <X className="h-5 w-5" aria-hidden />
@@ -87,14 +89,14 @@ export function PlaygroundSidebar() {
                             className={clsx(
                               'relative block px-2 py-1.5 text-[13px] transition-colors',
                               active
-                                ? 'text-foreground font-medium'
+                                ? 'text-primary font-medium'
                                 : 'text-muted-foreground hover:text-foreground'
                             )}
                           >
                             {active && (
                               <span
                                 aria-hidden
-                                className="absolute -left-3 top-1/2 h-3.5 w-px -translate-y-1/2 bg-foreground"
+                                className="absolute -left-3 top-1/2 h-3.5 w-px -translate-y-1/2 bg-primary"
                               />
                             )}
                             <span className="inline-flex items-center gap-1.5">

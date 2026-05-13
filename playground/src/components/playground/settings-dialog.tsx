@@ -30,12 +30,7 @@ export function SettingsDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          aria-label="Open settings"
-          className="bg-transparent hover:bg-transparent focus:ring-0 focus:ring-offset-0"
-        >
+        <Button variant="ghost" size="icon" aria-label="Open settings">
           <SettingsIcon className="h-5 w-5" aria-hidden />
         </Button>
       </DialogTrigger>
