@@ -6,15 +6,11 @@ msgstr ""
 "X-Generator: next-intl\n"
 "X-Crowdin-SourceKey: msgstr\n"
 
-#: src/app/page.tsx:9
+#: src/app/page.tsx
 msgid "NhX4DJ"
 msgstr "Hello"
 
-#. Shown on home screen
-#: src/components/Footer.tsx:7
+#: src/components/Footer.tsx
+#: src/components/Greeting.tsx
 msgid "+YJVTi"
 msgstr "Hey!"
-
-#: src/components/Greeting.tsx:7
-msgid "4xqPlJ"
-msgstr "Howdy!"

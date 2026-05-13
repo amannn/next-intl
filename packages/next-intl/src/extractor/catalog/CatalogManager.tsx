@@ -10,34 +10,55 @@ import SourceFileWatcher, {
 import type {
   ExtractorConfig,
   ExtractorMessage,
-  ExtractorMessageReference,
-  Locale
+  Locale,
+  SourceMessage
 } from '../types.js';
 import {
   compareReferences,
   getDefaultProjectRoot,
-  normalizePathToPosix
+  localeCompare
 } from '../utils.js';
 import CatalogLocales from './CatalogLocales.js';
 import CatalogPersister from './CatalogPersister.js';
 import SaveScheduler from './SaveScheduler.js';
 
 export default class CatalogManager implements Disposable {
+  /**
+   * Extraction-derived fields aggregated into `ExtractorMessage`.
+   * Source code is the source of truth for these fields, only ancillary
+   * codec fields may merge from disk (e.g. flags).
+   */
+  private static readonly extractorOwnedAggregatorKeys = new Set<string>([
+    'description',
+    'id',
+    'message',
+    'references'
+  ]);
+
   private config: ExtractorConfig;
 
   /**
-   * The source of truth for which messages are used.
-   * NOTE: Should be mutated in place to keep `messagesById` and `messagesByFile` in sync.
+   * Source of truth for statically extracted source messages,
+   * grouped by file and message ID.
    */
-  private messagesByFile: Map<
+  private sourceMessagesByFile: Map<
     /* File path */ string,
-    Map</* ID */ string, ExtractorMessage>
+    Map</* ID */ string, Array<SourceMessage>>
   > = new Map();
 
   /**
-   * Fast lookup for messages by ID across all files,
-   * contains the same messages as `messagesByFile`.
-   * NOTE: Should be mutated in place to keep `messagesById` and `messagesByFile` in sync.
+   * Reverse index for rebuilding aggregated messages without scanning all files.
+   * Contains the same `SourceMessage` arrays as `sourceMessagesByFile` and is
+   * kept in sync with it.
+   */
+  private sourceMessagesById: Map<
+    /* ID */ string,
+    Map</* File path */ string, Array<SourceMessage>>
+  > = new Map();
+
+  /**
+   * Fast lookup for messages by ID, aggregated across all files. This combines
+   * metadata from `sourceMessagesById`, e.g. references and descriptions.
    */
   private messagesById: Map<string, ExtractorMessage> = new Map();
 
@@ -72,14 +93,15 @@ export default class CatalogManager implements Disposable {
   public constructor(
     config: ExtractorConfig,
     opts: {
-      projectRoot?: string;
-      isDevelopment?: boolean;
-      sourceMap?: boolean;
       extractor: MessageExtractor;
+      isDevelopment?: boolean;
+      projectRoot?: string;
+      saveDebounceMs?: number;
+      sourceMap?: boolean;
     }
   ) {
     this.config = config;
-    this.saveScheduler = new SaveScheduler<void>(50);
+    this.saveScheduler = new SaveScheduler<void>(opts.saveDebounceMs ?? 50);
     this.projectRoot = opts.projectRoot ?? getDefaultProjectRoot();
     this.isDevelopment = opts.isDevelopment ?? false;
 
@@ -112,7 +134,7 @@ export default class CatalogManager implements Disposable {
       return this.persister;
     } else {
       this.persister = new CatalogPersister({
-        messagesPath: this.config.messages.path,
+        messagesPath: this.config.extract.path,
         codec: await this.getCodec(),
         extension: getFormatExtension(this.config.messages.format)
       });
@@ -124,15 +146,12 @@ export default class CatalogManager implements Disposable {
     if (this.catalogLocales) {
       return this.catalogLocales;
     } else {
-      const messagesDir = path.join(
-        this.projectRoot,
-        this.config.messages.path
-      );
+      const messagesDir = path.join(this.projectRoot, this.config.extract.path);
       this.catalogLocales = new CatalogLocales({
         messagesDir,
-        sourceLocale: this.config.sourceLocale,
         extension: getFormatExtension(this.config.messages.format),
-        locales: this.config.messages.locales
+        locales: this.config.extract.locales,
+        sourceLocale: this.config.extract.sourceLocale
       });
       return this.catalogLocales;
     }
@@ -144,9 +163,9 @@ export default class CatalogManager implements Disposable {
 
   private getSrcPaths(): Array<string> {
     return (
-      Array.isArray(this.config.srcPath)
-        ? this.config.srcPath
-        : [this.config.srcPath]
+      Array.isArray(this.config.extract.srcPath)
+        ? this.config.extract.srcPath
+        : [this.config.extract.srcPath]
     ).map((srcPath) => path.join(this.projectRoot, srcPath));
   }
 
@@ -157,14 +176,22 @@ export default class CatalogManager implements Disposable {
     await this.loadCatalogsPromise;
 
     this.scanCompletePromise = (async () => {
-      const sourceFiles = await SourceFileScanner.getSourceFiles(
-        this.getSrcPaths()
+      const sourceFiles = Array.from(
+        await SourceFileScanner.getSourceFiles(this.getSrcPaths())
+      )
+        // Stable file order keeps catalog ties independent of processing timing
+        .toSorted(localeCompare);
+      const extractedFiles = await Promise.all(
+        sourceFiles.map(async (filePath) => ({
+          filePath,
+          messages: await this.extractFile(filePath)
+        }))
       );
-      await Promise.all(
-        Array.from(sourceFiles).map(async (filePath) =>
-          this.processFile(filePath)
-        )
-      );
+      for (const {filePath, messages} of extractedFiles) {
+        if (messages) {
+          this.applyFileMessages(filePath, messages);
+        }
+      }
       this.mergeSourceDiskMetadata(sourceDiskMessages);
     })();
 
@@ -180,7 +207,7 @@ export default class CatalogManager implements Disposable {
     // Load source catalog to hydrate metadata (e.g. flags) later without
     // treating catalog entries as source of truth.
     const diskMessages = await this.loadLocaleMessages(
-      this.config.sourceLocale
+      this.config.extract.sourceLocale
     );
     const byId = new Map<string, ExtractorMessage>();
     for (const diskMessage of diskMessages) {
@@ -209,17 +236,13 @@ export default class CatalogManager implements Disposable {
   private async reloadLocaleCatalog(locale: Locale): Promise<void> {
     const diskMessages = await this.loadLocaleMessages(locale);
 
-    if (locale === this.config.sourceLocale) {
+    if (locale === this.config.extract.sourceLocale) {
       // For source: Merge additional properties like flags
       for (const diskMessage of diskMessages) {
         const prev = this.messagesById.get(diskMessage.id);
         if (prev) {
-          // Mutate the existing object instead of creating a copy
-          // to keep messagesById and messagesByFile in sync.
-          // Unknown properties (like flags): disk wins
-          // Known properties: existing (from extraction) wins
           for (const key of Object.keys(diskMessage)) {
-            if (!['id', 'message', 'description', 'references'].includes(key)) {
+            if (!CatalogManager.extractorOwnedAggregatorKeys.has(key)) {
               // For unknown properties (like flags), disk wins
               prev[key] = diskMessage[key];
             }
@@ -261,11 +284,12 @@ export default class CatalogManager implements Disposable {
       const existing = this.messagesById.get(id);
       if (!existing) continue;
 
-      // Mutate the existing object instead of creating a copy.
-      // This keeps `messagesById` and `messagesByFile` in sync since
-      // they reference the same object instance.
+      // Fill unknown metadata from disk without replacing extraction-owned fields.
       for (const key of Object.keys(diskMessage)) {
-        if (existing[key] == null) {
+        if (
+          !CatalogManager.extractorOwnedAggregatorKeys.has(key) &&
+          existing[key] == null
+        ) {
           existing[key] = diskMessage[key];
         }
       }
@@ -273,14 +297,26 @@ export default class CatalogManager implements Disposable {
   }
 
   private async processFile(absoluteFilePath: string): Promise<boolean> {
-    let messages: Array<ExtractorMessage> = [];
+    const messages = await this.extractFile(absoluteFilePath);
+
+    // `undefined` only when `extractFile()` throws. An empty array is success
+    // and must still run `applyFileMessages` to clear stale ids for this file.
+    if (!messages) return false;
+
+    return this.applyFileMessages(absoluteFilePath, messages);
+  }
+
+  private async extractFile(
+    absoluteFilePath: string
+  ): Promise<Array<SourceMessage> | undefined> {
+    let messages: Array<SourceMessage> = [];
     try {
       const content = await fs.readFile(absoluteFilePath, 'utf8');
       let extraction: Awaited<ReturnType<typeof this.extractor.extract>>;
       try {
         extraction = await this.extractor.extract(absoluteFilePath, content);
       } catch {
-        return false;
+        return undefined;
       }
       messages = extraction.messages;
     } catch (err) {
@@ -289,101 +325,130 @@ export default class CatalogManager implements Disposable {
       }
       // ENOENT -> treat as no messages
     }
+    return messages;
+  }
 
-    const prevFileMessages = this.messagesByFile.get(absoluteFilePath);
-    const relativeFilePath = normalizePathToPosix(
-      path.relative(this.projectRoot, absoluteFilePath)
-    );
+  private applyFileMessages(
+    absoluteFilePath: string,
+    messages: Array<SourceMessage>
+  ): boolean {
+    const prevFileMessages = this.sourceMessagesByFile.get(absoluteFilePath);
+    const nextFileMessages = this.groupSourceMessagesById(messages);
+    const affectedIds = new Set([
+      ...(prevFileMessages?.keys() ?? []),
+      ...nextFileMessages.keys()
+    ]);
 
-    // Init with all previous ones
-    const idsToRemove = Array.from(prevFileMessages?.keys() ?? []);
-
-    // Replace existing messages with new ones
-    const fileMessages = new Map<string, ExtractorMessage>();
-
-    for (let message of messages) {
-      const prevMessage = this.messagesById.get(message.id);
-
-      // Merge with previous message if it exists
-      if (prevMessage) {
-        message = {...message};
-
-        if (message.references) {
-          message.references = this.mergeReferences(
-            prevMessage.references ?? [],
-            relativeFilePath,
-            message.references
-          );
-        }
-
-        // Merge other properties like description, or unknown
-        // attributes like flags that are opaque to us
-        for (const key of Object.keys(prevMessage)) {
-          if (message[key] == null) {
-            message[key] = prevMessage[key];
-          }
-        }
-      }
-
-      this.messagesById.set(message.id, message);
-      fileMessages.set(message.id, message);
-
-      // This message continues to exist in this file
-      const index = idsToRemove.indexOf(message.id);
-      if (index !== -1) idsToRemove.splice(index, 1);
+    if (nextFileMessages.size > 0) {
+      this.sourceMessagesByFile.set(absoluteFilePath, nextFileMessages);
+    } else {
+      this.sourceMessagesByFile.delete(absoluteFilePath);
     }
 
-    // Clean up removed messages from `messagesById`
-    idsToRemove.forEach((id) => {
-      const message = this.messagesById.get(id);
-      if (!message) return;
-
-      const hasOtherReferences = message.references?.some(
-        (ref) => ref.path !== relativeFilePath
-      );
-
-      if (!hasOtherReferences) {
-        // No other references, delete the message entirely
-        this.messagesById.delete(id);
-      } else {
-        // Message is used elsewhere, remove this file from references
-        // Mutate the existing object to keep `messagesById` and `messagesByFile` in sync
-        message.references = message.references?.filter(
-          (ref) => ref.path !== relativeFilePath
-        );
+    // Clear this file's contribution from the reverse index, then re-insert
+    // fresh rows and rebuild aggregates (messagesById) per touched id.
+    for (const id of affectedIds) {
+      const sourceMessagesForId = this.sourceMessagesById.get(id);
+      if (sourceMessagesForId) {
+        sourceMessagesForId.delete(absoluteFilePath);
+        // No files left for this id: drop the reverse-index entry.
+        if (sourceMessagesForId.size === 0) {
+          this.sourceMessagesById.delete(id);
+        }
       }
-    });
 
-    // Update the stored messages
-    if (messages.length > 0) {
-      this.messagesByFile.set(absoluteFilePath, fileMessages);
-    } else {
-      this.messagesByFile.delete(absoluteFilePath);
+      const nextSourceMessagesForId = nextFileMessages.get(id);
+      if (nextSourceMessagesForId) {
+        let sourceMessagesByFile = this.sourceMessagesById.get(id);
+        if (!sourceMessagesByFile) {
+          sourceMessagesByFile = new Map();
+          this.sourceMessagesById.set(id, sourceMessagesByFile);
+        }
+        sourceMessagesByFile.set(absoluteFilePath, nextSourceMessagesForId);
+      }
+
+      this.rebuildMessageById(id);
     }
 
     const changed = this.haveMessagesChangedForFile(
       prevFileMessages,
-      fileMessages
+      nextFileMessages
     );
     return changed;
   }
 
-  private mergeReferences(
-    existing: Array<ExtractorMessageReference>,
-    currentFilePath: string,
-    currentFileRefs: Array<ExtractorMessageReference>
-  ): Array<ExtractorMessageReference> {
-    // Keep refs from other files, replace all refs from the current file
-    const otherFileRefs = existing.filter(
-      (ref) => ref.path !== currentFilePath
+  private groupSourceMessagesById(
+    messages: Array<SourceMessage>
+  ): Map<string, Array<SourceMessage>> {
+    const result = new Map<string, Array<SourceMessage>>();
+    for (const message of messages) {
+      const messagesById = result.get(message.id);
+      if (messagesById) {
+        messagesById.push(message);
+      } else {
+        result.set(message.id, [message]);
+      }
+    }
+    return result;
+  }
+
+  private rebuildMessageById(id: string): void {
+    const sourceMessages = Array.from(
+      this.sourceMessagesById.get(id)?.values() ?? []
+    ).flat();
+
+    if (sourceMessages.length === 0) {
+      this.messagesById.delete(id);
+      return;
+    }
+
+    const previousMessage = this.messagesById.get(id);
+    const aggregate: ExtractorMessage = {
+      description: this.mergeDescriptions(sourceMessages),
+      id,
+      message: sourceMessages[0].message,
+      references: sourceMessages
+        .map((message) => message.reference)
+        .sort(compareReferences)
+    };
+
+    if (previousMessage) {
+      for (const key of Object.keys(previousMessage)) {
+        // Preserve extra fields (e.g. from disk/codec) across rebuilds; the
+        // four core fields above are always recomputed from source messages.
+        if (
+          !CatalogManager.extractorOwnedAggregatorKeys.has(key) &&
+          aggregate[key] == null
+        ) {
+          aggregate[key] = previousMessage[key];
+        }
+      }
+    }
+
+    this.messagesById.set(id, aggregate);
+  }
+
+  private mergeDescriptions(
+    messages: Array<SourceMessage>
+  ): ExtractorMessage['description'] {
+    const sortedByReference = messages.toSorted((a, b) =>
+      compareReferences(a.reference, b.reference)
     );
-    const merged = [...otherFileRefs, ...currentFileRefs];
-    return merged.sort(compareReferences);
+
+    const merged: Array<string> = [];
+    for (const message of sortedByReference) {
+      const {description} = message;
+      if (description != null && !merged.includes(description)) {
+        merged.push(description);
+      }
+    }
+
+    return merged;
   }
 
   private haveMessagesChangedForFile(
-    beforeMessages: Map<string, ExtractorMessage> | undefined,
-    afterMessages: Map<string, ExtractorMessage>
+    beforeMessages: Map<string, Array<SourceMessage>> | undefined,
+    afterMessages: Map<string, Array<SourceMessage>>
   ): boolean {
     // If one exists and the other doesn't, there's a change
     if (!beforeMessages) {
@@ -396,9 +461,18 @@ export default class CatalogManager implements Disposable {
     }
 
     // Check differences in beforeMessages vs afterMessages
-    for (const [id, msg1] of beforeMessages) {
-      const msg2 = afterMessages.get(id);
-      if (!msg2 || !this.areMessagesEqual(msg1, msg2)) {
+    for (const [id, prevSourceMessages] of beforeMessages) {
+      const nextSourceMessages = afterMessages.get(id);
+      if (!nextSourceMessages) {
+        return true;
+      }
+
+      if (
+        !this.areSourceMessageArraysEqual(
+          prevSourceMessages,
+          nextSourceMessages
+        )
+      ) {
         return true; // Early exit on first difference
       }
     }
@@ -406,17 +480,28 @@ export default class CatalogManager implements Disposable {
     return false;
   }
 
-  private areMessagesEqual(
-    msg1: ExtractorMessage,
-    msg2: ExtractorMessage
+  private areSourceMessageArraysEqual(
+    messages1: Array<SourceMessage>,
+    messages2: Array<SourceMessage>
   ): boolean {
-    // Note: We intentionally don't compare references here.
-    // References are aggregated metadata from multiple files and comparing
-    // them would cause false positives due to parallel extraction order.
+    return (
+      messages1.length === messages2.length &&
+      messages1.every((message, index) =>
+        this.areSourceMessagesEqual(message, messages2[index])
+      )
+    );
+  }
+
+  private areSourceMessagesEqual(
+    msg1: SourceMessage,
+    msg2: SourceMessage
+  ): boolean {
     return (
       msg1.id === msg2.id &&
       msg1.message === msg2.message &&
-      msg1.description === msg2.description
+      msg1.description === msg2.description &&
+      msg1.reference.path === msg2.reference.path &&
+      msg1.reference.line === msg2.reference.line
     );
   }
 
@@ -425,7 +510,7 @@ export default class CatalogManager implements Disposable {
   }
 
   private async saveImpl(): Promise<void> {
-    await this.saveLocale(this.config.sourceLocale);
+    await this.saveLocale(this.config.extract.sourceLocale);
     const targetLocales = await this.getTargetLocales();
     await Promise.all(targetLocales.map((locale) => this.saveLocale(locale)));
   }
@@ -435,7 +520,7 @@ export default class CatalogManager implements Disposable {
 
     const messages = Array.from(this.messagesById.values());
     const persister = await this.getPersister();
-    const isSourceLocale = locale === this.config.sourceLocale;
+    const isSourceLocale = locale === this.config.extract.sourceLocale;
 
     // Check if file was modified externally (poll-at-save is cheaper than
     // watchers here since stat() is fast and avoids continuous overhead)
@@ -506,9 +591,12 @@ export default class CatalogManager implements Disposable {
     const expandedEvents =
       await this.sourceWatcher!.expandDirectoryDeleteEvents(
         events,
-        Array.from(this.messagesByFile.keys())
+        Array.from(this.sourceMessagesByFile.keys())
       );
-    for (const event of expandedEvents) {
+    // Stable file order keeps catalog ties independent of event timing.
+    for (const event of expandedEvents.toSorted((a, b) =>
+      localeCompare(a.path, b.path)
+    )) {
       const hasChanged = await this.processFile(event.path);
       changed ||= hasChanged;
     }
