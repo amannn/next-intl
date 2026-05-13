@@ -1,6 +1,6 @@
 import {notFound} from 'next/navigation';
 import {hasLocale, NextIntlClientProvider} from 'next-intl';
-import {getLocale, getTranslations} from 'next-intl/server';
+import {getTranslations, setRequestLocale} from 'next-intl/server';
 import {clsx} from 'clsx';
 import {Inter} from 'next/font/google';
 import {routing} from '@/i18n/routing';
@@ -12,7 +12,12 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({locale}));
 }
 
-export async function generateMetadata() {
+export async function generateMetadata(
+  props: Omit<LayoutProps<'/[locale]'>, 'children'>
+) {
+  const {locale} = await props.params;
+  setRequestLocale(locale);
+
   const t = await getTranslations('LocaleLayout');
 
   return {
@@ -21,9 +26,11 @@ export async function generateMetadata() {
 }
 
 export default async function LocaleLayout({
-  children
+  children,
+  params
 }: LayoutProps<'/[locale]'>) {
-  const locale = await getLocale();
+  const {locale} = await params;
+  setRequestLocale(locale);
 
   if (!hasLocale(routing.locales, locale)) {
     notFound();

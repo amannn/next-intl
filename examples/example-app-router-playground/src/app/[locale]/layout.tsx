@@ -3,16 +3,21 @@ import {Inter} from 'next/font/google';
 import {NextIntlClientProvider} from 'next-intl';
 import {
   getFormatter,
-  getLocale,
   getNow,
   getTimeZone,
-  getTranslations
+  getTranslations,
+  setRequestLocale
 } from 'next-intl/server';
 import Navigation from '../../components/Navigation';
 
 const inter = Inter({subsets: ['latin']});
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata(
+  props: Omit<LayoutProps<'/[locale]'>, 'children'>
+): Promise<Metadata> {
+  const {locale} = await props.params;
+  setRequestLocale(locale);
+
   const t = await getTranslations('LocaleLayout');
   const formatter = await getFormatter();
   const now = await getNow();
@@ -35,9 +40,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function LocaleLayout({
-  children
+  children,
+  params
 }: LayoutProps<'/[locale]'>) {
-  const locale = await getLocale();
+  const {locale} = await params;
+  setRequestLocale(locale);
 
   return (
     <html className={inter.className} lang={locale}>
