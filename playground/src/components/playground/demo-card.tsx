@@ -1,9 +1,9 @@
-import type { ReactNode } from 'react';
-import { PlaygroundBoundary } from './boundary';
+import type {ReactNode} from 'react';
+import {PlaygroundBoundary} from './boundary';
 
 export function DemoCard({
   label,
-  children,
+  children
 }: {
   label: string;
   children: ReactNode;

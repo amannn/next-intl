@@ -1,5 +1,4 @@
-
-export function Logo({ className = "w-12 h-12" }: { className?: string }) {
+export function Logo({className = 'w-12 h-12'}: {className?: string}) {
   return (
     <svg
       className={className}

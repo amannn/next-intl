@@ -1,20 +1,20 @@
 'use client';
 
-import { useLocale } from 'next-intl';
-import { useParams } from 'next/navigation';
-import { useTransition } from 'react';
-import { Globe } from 'lucide-react';
-import { routing } from '@/i18n/routing';
-import { usePathname, useRouter } from '@/i18n/navigation';
+import {useLocale} from 'next-intl';
+import {useParams} from 'next/navigation';
+import {useTransition} from 'react';
+import {Globe} from 'lucide-react';
+import {routing} from '@/i18n/routing';
+import {usePathname, useRouter} from '@/i18n/navigation';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
+  DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
+import {Button} from '@/components/ui/button';
 
-const labels: Record<string, string> = { en: 'English', de: 'Deutsch' };
+const labels: Record<string, string> = {en: 'English', de: 'Deutsch'};
 
 export function LocaleSwitcher() {
   const locale = useLocale();
@@ -27,15 +27,20 @@ export function LocaleSwitcher() {
     if (next === locale) return;
     startTransition(() => {
       // @ts-expect-error: params type is generic
-      router.replace({ pathname, params }, { locale: next });
+      router.replace({pathname, params}, {locale: next});
     });
   }
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className="gap-1.5">
-          <Globe className="h-4 w-4" />
+        <Button
+          variant="ghost"
+          size="sm"
+          className="gap-1.5"
+          aria-label={`Language: ${labels[locale] ?? locale}. Change language.`}
+        >
+          <Globe className="h-4 w-4" aria-hidden />
           <span className="text-xs uppercase">{locale}</span>
         </Button>
       </DropdownMenuTrigger>
@@ -45,6 +50,7 @@ export function LocaleSwitcher() {
             key={loc}
             onSelect={() => onSelect(loc)}
             className={loc === locale ? 'font-semibold' : undefined}
+            aria-current={loc === locale ? 'true' : undefined}
           >
             {labels[loc] ?? loc}
           </DropdownMenuItem>

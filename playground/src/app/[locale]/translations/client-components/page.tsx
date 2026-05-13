@@ -1,20 +1,20 @@
-import { setRequestLocale } from 'next-intl/server';
-import { PlaygroundBoundary } from '@/components/playground/boundary';
-import { GitHubLink } from '@/components/playground/github-link';
+import {setRequestLocale} from 'next-intl/server';
+import {PlaygroundBoundary} from '@/components/playground/boundary';
+import {GitHubLink} from '@/components/playground/github-link';
 import Content from './content.mdx';
-import { ClientExample } from './client-example';
+import {ClientExample} from './client-example';
 
 export const metadata = {
   title: 'Client Components — next-intl Playground',
-  description: 'Use translations inside Client Components.',
+  description: 'Use translations inside Client Components.'
 };
 
 export default async function ClientComponentsPage({
-  params,
+  params
 }: {
-  params: Promise<{ locale: string }>;
+  params: Promise<{locale: string}>;
 }) {
-  const { locale } = await params;
+  const {locale} = await params;
   setRequestLocale(locale);
 
   return (
@@ -24,9 +24,7 @@ export default async function ClientComponentsPage({
           <h1 className="text-2xl sm:text-[28px] font-semibold tracking-tight text-foreground leading-tight">
             Client components
           </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Translations
-          </p>
+          <p className="mt-1 text-sm text-muted-foreground">Translations</p>
         </header>
         <Content />
       </PlaygroundBoundary>

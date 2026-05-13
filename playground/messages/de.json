@@ -17,5 +17,23 @@
     "label": "Dein Name",
     "placeholder": "Frodo",
     "greeting": "Hallo, {name}!"
+  },
+  "DatesDemo": {
+    "dateStyle": "Datumsstil",
+    "timeStyle": "Uhrzeitstil"
+  },
+  "NumbersDemo": {
+    "value": "Wert",
+    "style": "Stil",
+    "currency": "Währung"
+  },
+  "MixedRoutingDemo": {
+    "currentLocale": "Aktuelle Sprache",
+    "alwaysNote": "Jede Sprache, auch die Standardsprache, erhält ein Präfix.",
+    "asNeededNote": "Die Standardsprache bleibt ohne Präfix; andere bekommen eines.",
+    "neverNote": "Kein Präfix — die Sprache wird per Cookie oder Header ermittelt."
+  },
+  "LocaleSwitcherDemo": {
+    "hint": "Wähle eine Sprache — nutzt next-intls typisiertes Link mit locale-Prop; das URL-Präfix wechselt und das Layout rendert in der neuen Sprache neu."
   }
 }

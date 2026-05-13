@@ -1,6 +1,6 @@
-import type { AnnotationHandler } from 'codehike/code';
-import { InnerLine } from 'codehike/code';
-import { PreWithFocus } from './focus.client';
+import type {AnnotationHandler} from 'codehike/code';
+import {InnerLine} from 'codehike/code';
+import {PreWithFocus} from './focus.client';
 
 export const focus: AnnotationHandler = {
   name: 'focus',
@@ -14,5 +14,5 @@ export const focus: AnnotationHandler = {
   ),
   AnnotatedLine: (props) => (
     <InnerLine merge={props} data-focus={true} className="bg-zinc-700/30" />
-  ),
+  )
 };

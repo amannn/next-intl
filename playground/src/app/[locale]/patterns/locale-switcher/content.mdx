@@ -1,0 +1,28 @@
+import {TwoColumn} from '@/components/playground/two-column';
+
+<TwoColumn>
+
+- A locale switcher replays the current path with a different locale. Use the typed `Link` exported from `@/i18n/navigation` with the `locale` prop — no client-side `router.replace` needed.
+- Pass the current pathname and route `params` so dynamic segments (e.g. `[slug]`) are preserved when the locale flips.
+- Locale lives in the URL (`[locale]` segment), so the layout re-renders on switch with the new locale's messages — that's the next-intl model.
+
+```tsx components/locale-switcher.tsx
+'use client';
+import {useParams} from 'next/navigation';
+import {routing} from '@/i18n/routing';
+import {Link, usePathname} from '@/i18n/navigation';
+
+export function LocaleSwitcher() {
+  const pathname = usePathname();
+  const params = useParams();
+
+  return routing.locales.map((loc) => (
+    // !mark
+    <Link key={loc} href={{pathname, params}} locale={loc}>
+      {loc}
+    </Link>
+  ));
+}
+```
+
+</TwoColumn>

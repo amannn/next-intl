@@ -7,7 +7,7 @@ export const PlaygroundBoundary = ({
   className,
   innerClassName,
   size = 'default',
-  variant = 'plain',
+  variant = 'plain'
 }: {
   children: React.ReactNode;
   label?: string | string[];
@@ -22,7 +22,7 @@ export const PlaygroundBoundary = ({
         'relative border border-border',
         variant === 'dotgrid' && 'dotgrid',
         size === 'default' ? 'p-5 sm:p-8 lg:p-10' : 'p-3',
-        className,
+        className
       )}
     >
       {label && (

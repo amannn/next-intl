@@ -1,0 +1,20 @@
+import {TwoColumn} from '@/components/playground/two-column';
+
+<TwoColumn>
+
+- `localePrefix` controls whether the locale appears in the URL. The three modes are `always`, `as-needed`, and `never`.
+- With `as-needed`, the default locale is served from unprefixed paths (`/about`) and other locales keep the prefix (`/de/about`).
+- Switch locales in the header to see how the same logical route renders differently below.
+
+```ts src/i18n/routing.ts
+import {defineRouting} from 'next-intl/routing';
+
+export const routing = defineRouting({
+  locales: ['en', 'de'],
+  defaultLocale: 'en',
+  // !mark
+  localePrefix: 'as-needed'
+});
+```
+
+</TwoColumn>

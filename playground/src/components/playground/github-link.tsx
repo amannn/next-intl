@@ -1,6 +1,6 @@
-import { Github, ArrowUpRight } from 'lucide-react';
+import {Github, ArrowUpRight} from 'lucide-react';
 
-export function GitHubLink({ path }: { path: string }) {
+export function GitHubLink({path}: {path: string}) {
   return (
     <a
       href={`https://github.com/amannn/next-intl/tree/main/${path}`}

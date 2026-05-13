@@ -17,5 +17,23 @@
     "label": "Your name",
     "placeholder": "Frodo",
     "greeting": "Hello, {name}!"
+  },
+  "DatesDemo": {
+    "dateStyle": "Date style",
+    "timeStyle": "Time style"
+  },
+  "NumbersDemo": {
+    "value": "Value",
+    "style": "Style",
+    "currency": "Currency"
+  },
+  "MixedRoutingDemo": {
+    "currentLocale": "Current locale",
+    "alwaysNote": "Every locale, including the default, carries a prefix.",
+    "asNeededNote": "Default locale stays bare; others get a prefix.",
+    "neverNote": "No prefix anywhere — locale is resolved via cookie or header."
+  },
+  "LocaleSwitcherDemo": {
+    "hint": "Pick a locale — uses next-intl's typed Link with a locale prop; the URL prefix updates and the layout re-renders with the new locale."
   }
 }

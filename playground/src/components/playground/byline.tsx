@@ -1,21 +1,21 @@
-import { Github, BookOpen, ArrowUpRight } from 'lucide-react';
+import {Github, BookOpen, ArrowUpRight} from 'lucide-react';
 
 const links = [
   {
     href: 'https://github.com/amannn/next-intl/tree/main/playground',
     label: 'Source code',
-    Icon: Github,
+    Icon: Github
   },
   {
     href: 'https://next-intl.dev/docs/getting-started',
     label: 'Docs',
-    Icon: BookOpen,
+    Icon: BookOpen
   },
   {
     href: 'https://app-router.vercel.app/',
     label: 'Inspired by Next.js',
-    Icon: ArrowUpRight,
-  },
+    Icon: ArrowUpRight
+  }
 ];
 
 export function PlaygroundByline() {
@@ -25,7 +25,7 @@ export function PlaygroundByline() {
         next-intl playground
       </div>
       <div className="flex flex-wrap items-center gap-x-1 gap-y-1">
-        {links.map(({ href, label, Icon }) => (
+        {links.map(({href, label, Icon}) => (
           <a
             key={href}
             href={href}

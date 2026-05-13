@@ -1,7 +1,7 @@
-import type { ReactNode } from 'react';
-import { Children, isValidElement } from 'react';
+import type {ReactNode} from 'react';
+import {Children, isValidElement} from 'react';
 
-export function TwoColumn({ children }: { children: ReactNode }) {
+export function TwoColumn({children}: {children: ReactNode}) {
   const prose: ReactNode[] = [];
   const code: ReactNode[] = [];
 
@@ -24,7 +24,7 @@ export function TwoColumn({ children }: { children: ReactNode }) {
 function isCodeBlock(node: unknown): boolean {
   if (!isValidElement(node)) return false;
   const t = node.type;
-  if (typeof t === 'function' && (t as { name?: string }).name === 'Code') {
+  if (typeof t === 'function' && (t as {name?: string}).name === 'Code') {
     return true;
   }
   return t === 'pre';

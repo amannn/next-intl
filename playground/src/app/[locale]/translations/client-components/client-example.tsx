@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useTranslations } from 'next-intl';
+import {useState} from 'react';
+import {useTranslations} from 'next-intl';
 
 export function ClientExample() {
   const t = useTranslations('ClientDemo');
@@ -19,7 +19,7 @@ export function ClientExample() {
         className="w-full max-w-xs rounded-md border border-border bg-background px-3 py-2 text-sm"
       />
       <p className="text-2xl font-semibold text-foreground">
-        {t('greeting', { name: name || t('placeholder') })}
+        {t('greeting', {name: name || t('placeholder')})}
       </p>
     </div>
   );

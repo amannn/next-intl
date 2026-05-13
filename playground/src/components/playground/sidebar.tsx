@@ -1,16 +1,16 @@
 'use client';
 
 import clsx from 'clsx';
-import { Menu, X } from 'lucide-react';
-import { useState } from 'react';
-import { Link, usePathname } from '@/i18n/navigation';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Button } from '@/components/ui/button';
-import { Logo } from '@/assets/logo';
-import { sections } from '@/lib/nav';
-import { ThemeToggle } from './theme-toggle';
-import { LinkStatus } from './link-status';
-import { LocaleSwitcher } from './locale-switcher';
+import {Menu, X} from 'lucide-react';
+import {useState} from 'react';
+import {Link, usePathname} from '@/i18n/navigation';
+import {ScrollArea} from '@/components/ui/scroll-area';
+import {Button} from '@/components/ui/button';
+import {Logo} from '@/assets/logo';
+import {sections} from '@/lib/nav';
+import {ThemeToggle} from './theme-toggle';
+import {LinkStatus} from './link-status';
+import {LocaleSwitcher} from './locale-switcher';
 
 export function PlaygroundSidebar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -39,16 +39,24 @@ export function PlaygroundSidebar() {
             size="sm"
             className="lg:hidden"
             onClick={() => setIsOpen(!isOpen)}
+            aria-expanded={isOpen}
+            aria-controls="playground-nav"
+            aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
           >
-            {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {isOpen ? (
+              <X className="h-5 w-5" aria-hidden />
+            ) : (
+              <Menu className="h-5 w-5" aria-hidden />
+            )}
           </Button>
         </div>
       </div>
 
       <div
+        id="playground-nav"
         className={clsx('overflow-y-auto lg:static lg:block', {
           'fixed inset-x-0 top-14 bottom-0 mt-px bg-sidebar': isOpen,
-          hidden: !isOpen,
+          hidden: !isOpen
         })}
       >
         <ScrollArea className="h-full">
@@ -78,7 +86,7 @@ export function PlaygroundSidebar() {
                               'relative block px-2 py-1.5 text-[13px] transition-colors',
                               active
                                 ? 'text-foreground font-medium'
-                                : 'text-muted-foreground hover:text-foreground',
+                                : 'text-muted-foreground hover:text-foreground'
                             )}
                           >
                             {active && (

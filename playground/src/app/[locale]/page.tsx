@@ -1,17 +1,17 @@
-import { setRequestLocale } from 'next-intl/server';
-import { useTranslations } from 'next-intl';
-import { ArrowRight } from 'lucide-react';
-import { Link } from '@/i18n/navigation';
-import { sections } from '@/lib/nav';
-import { LinkStatus } from '@/components/playground/link-status';
-import { PlaygroundBoundary } from '@/components/playground/boundary';
+import {setRequestLocale} from 'next-intl/server';
+import {useTranslations} from 'next-intl';
+import {ArrowRight} from 'lucide-react';
+import {Link} from '@/i18n/navigation';
+import {sections} from '@/lib/nav';
+import {LinkStatus} from '@/components/playground/link-status';
+import {PlaygroundBoundary} from '@/components/playground/boundary';
 
 export default async function HomePage({
-  params,
+  params
 }: {
-  params: Promise<{ locale: string }>;
+  params: Promise<{locale: string}>;
 }) {
-  const { locale } = await params;
+  const {locale} = await params;
   setRequestLocale(locale);
   return <Home />;
 }
@@ -39,12 +39,16 @@ function Home() {
                   <Icon className="h-3 w-3" strokeWidth={2} />
                   {section.title}
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-border">
+                <div
+                  className={`grid grid-cols-1 gap-px bg-border ${
+                    section.items.length > 1 ? 'sm:grid-cols-2' : ''
+                  }`}
+                >
                   {section.items.map((item) => (
                     <Link
                       href={item.slug}
                       key={item.title}
-                      className="group flex flex-col gap-1.5 bg-background px-5 py-4 transition-colors hover:bg-card/50"
+                      className="group flex flex-col gap-2 bg-background px-6 py-5 sm:px-7 sm:py-6 transition-colors hover:bg-card/40"
                     >
                       <div className="flex items-center justify-between font-medium text-foreground">
                         <span className="inline-flex items-center gap-1.5">
