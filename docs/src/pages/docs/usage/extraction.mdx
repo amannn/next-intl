@@ -282,6 +282,59 @@ AI-based translation can be automated with a translation management system like 
 
 </Callout>
 
+## Static analysis [#static-analysis]
+
+Message extraction relies on [static analysis](https://en.wikipedia.org/wiki/Static_program_analysis).
+
+In practice, this means:
+
+1. `t` must receive a literal string as its message argument
+2. `t` must be called in the same function body where it was retrieved from `useExtracted` or `getExtracted`
+
+**Valid usage:**
+
+```tsx
+import {useExtracted} from 'next-intl';
+
+function Example({name}) {
+  // ✅ Makes `t` available in this component
+  const t = useExtracted();
+
+  // ✅ String literals are supported
+  t('Hello there!');
+
+  // ✅ Arguments can be used for dynamic values
+  t('Hello {name}!', {name});
+
+  function onClick() {
+    // ✅ Usage in event handlers is supported
+    t('You clicked the button!');
+  }
+
+  // ✅ Usage inside JSX is supported
+  return <button onClick={onClick}>{t('Click me')}</button>;
+}
+```
+
+In contrast, these are examples of patterns that are **not supported**:
+
+```tsx
+import {useExtracted} from 'next-intl';
+
+function Example({key}) {
+  const t = useExtracted();
+
+  // ❌ `key` is only known at runtime
+  t(key);
+
+  // ❌ Passing `t` to another function
+  getName(t);
+}
+
+// ❌ Re-exporting the hook
+export const useExtractedExport = useExtracted;
+```
+
 ## Monorepos and external packages [#monorepos-external-packages]
 
 Whenever your app pulls in external modules that call `useExtracted`, whether it's a sibling package in your monorepo or a reusable library installed in `node_modules`, there are two typical setups you can choose from.
@@ -401,56 +454,3 @@ const messages = {
 To avoid key collisions between packages, you can consider using [namespaces](#namespaces).
 
 </Callout>
-
-## Static analysis [#static-analysis]
-
-Message extraction relies on [static analysis](https://en.wikipedia.org/wiki/Static_program_analysis).
-
-In practice, this means:
-
-1. `t` must receive a literal string as its message argument
-2. `t` must be called in the same function body where it was retrieved from `useExtracted` or `getExtracted`
-
-**Valid usage:**
-
-```tsx
-import {useExtracted} from 'next-intl';
-
-function Example({name}) {
-  // ✅ Makes `t` available in this component
-  const t = useExtracted();
-
-  // ✅ String literals are supported
-  t('Hello there!');
-
-  // ✅ Arguments can be used for dynamic values
-  t('Hello {name}!', {name});
-
-  function onClick() {
-    // ✅ Usage in event handlers is supported
-    t('You clicked the button!');
-  }
-
-  // ✅ Usage inside JSX is supported
-  return <button onClick={onClick}>{t('Click me')}</button>;
-}
-```
-
-In contrast, these are examples of patterns that are **not supported**:
-
-```tsx
-import {useExtracted} from 'next-intl';
-
-function Example({key}) {
-  const t = useExtracted();
-
-  // ❌ `key` is only known at runtime
-  t(key);
-
-  // ❌ Passing `t` to another function
-  getName(t);
-}
-
-// ❌ Re-exporting the hook
-export const useExtractedExport = useExtracted;
-```
