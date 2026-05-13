@@ -24,7 +24,10 @@ export async function generateMetadata(
 
   const localeTyped = locale as Locale;
 
-  const t = await getTranslations({locale: localeTyped, namespace: 'LocaleLayout'});
+  const t = await getTranslations({
+    locale: localeTyped,
+    namespace: 'LocaleLayout'
+  });
   const formatter = await getFormatter({locale: localeTyped});
   const now = await getNow({locale: localeTyped});
   const timeZone = await getTimeZone({locale: localeTyped});
