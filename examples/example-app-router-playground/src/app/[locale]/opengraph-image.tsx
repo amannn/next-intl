@@ -8,6 +8,9 @@ type Props = {
 
 export default async function Image({params}: Props) {
   const {locale} = await params;
-  const t = await getTranslations({locale: locale as Locale, namespace: 'OpenGraph'});
+  const t = await getTranslations({
+    locale: locale as Locale,
+    namespace: 'OpenGraph'
+  });
   return new ImageResponse(<div style={{fontSize: 128}}>{t('title')}</div>);
 }
