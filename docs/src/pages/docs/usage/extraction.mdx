@@ -420,12 +420,15 @@ function Example({name}) {
   // ✅ Makes `t` available in this component
   const t = useExtracted();
 
-  function onClick() {
-    // ✅ String literals are supported
-    t('Hello there!');
+  // ✅ String literals are supported
+  t('Hello there!');
 
-    // ✅ Arguments can be used for dynamic values
-    t('Hello {name}!', {name});
+  // ✅ Arguments can be used for dynamic values
+  t('Hello {name}!', {name});
+
+  function onClick() {
+    // ✅ Usage in event handlers is supported
+    t('You clicked the button!');
   }
 
   // ✅ Usage inside JSX is supported

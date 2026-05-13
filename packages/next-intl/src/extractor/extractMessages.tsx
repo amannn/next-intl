@@ -9,7 +9,7 @@ export default async function extractMessages(params: ExtractorConfigInput) {
   const config = normalizeExtractorConfig(params);
 
   if (!hasLocalesToExtract(config)) {
-    warn('`extract.locales` is empty, so no messages were updated.');
+    warn('`messages.locales` is empty, so no messages were updated.');
     return;
   }
 
