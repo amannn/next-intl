@@ -1,5 +1,5 @@
 import {Metadata} from 'next';
-import {Locale, useTranslations} from 'next-intl';
+import {useTranslations} from 'next-intl';
 import {getLocale} from 'next-intl/server';
 import {use} from 'react';
 import {getPathname} from '@/i18n/navigation';
@@ -17,7 +17,7 @@ export async function generateMetadata({
           pathname: '/news/[articleId]',
           params: {articleId}
         },
-        locale: locale as Locale
+        locale
       })
     }
   };
