@@ -4,6 +4,8 @@ title: 'Using next/root-params in Next.js 16.3'
 
 import StayUpdated from '@/components/StayUpdated.mdx';
 import CourseBanner from '@/components/CourseBanner';
+import BlogVimeoVideo from '@/components/BlogVimeoVideo';
+import Details from '@/components/Details';
 
 # Using `next/root-params` in Next.js 16.3
 
@@ -34,7 +36,20 @@ Practically, for users of `next-intl` this means:
 
 But first, let's have a look at how this API works in practice.
 
-## Root layouts
+## Introduction to root layouts
+
+<div className="mt-4">
+  <Details>
+    <summary>Prefer to watch a video?</summary>
+    <div className="max-w-[calc(100%-1rem)]">
+      <BlogVimeoVideo
+        src="https://player.vimeo.com/video/1192542770?h=1f120c3595&badge=0&autopause=0&player_id=0&app_id=58479"
+        title="Introduction to next/root-params"
+      />
+    </div>
+    → Continue reading at [static rendering](#static-rendering)
+  </Details>
+</div>
 
 Previously, Next.js required a [root layout](https://nextjs.org/docs/app/api-reference/file-conventions/layout#root-layouts) to be present at `app/layout.tsx`—the root of your app.
 
@@ -171,7 +186,19 @@ That's it—with a single change to `i18n/request.ts` you can start using `next/
 
 ---
 
-**One caveat though**: `next/root-params` currently doesn't work in Route Handlers or Server Actions. If you're passing an explicit `locale` to functions like `getTranslations` at those call sites, you can incorporate it in `getRequestConfig` as well:
+**One caveat though**: `next/root-params` currently doesn't work in Route Handlers or Server Actions.
+
+You can work around that though by passing an explicit `locale` param at relevant call sites:
+
+```tsx {3}
+async function action(locale: string) {
+  'use server';
+  const t = await getTranslations({locale, namespace: 'ContactForm'});
+  // ...
+}
+```
+
+… and then incorporate the override in `getRequestConfig`:
 
 ```tsx filename="i18n/request.ts"
 // ...
@@ -265,7 +292,7 @@ export async function generateMetadata(
 The cases where you still require a locale override are:
 
 1. When you're using functions from `next-intl` in **Route Handlers** or **Server Actions** (these are not supported by `next/root-params`)
-2. If your UI renders messages from **multiple locales** in parallel
+2. If your UI renders messages from **multiple locales** in parallel (uncommon)
 
 ### Static rendering
 
