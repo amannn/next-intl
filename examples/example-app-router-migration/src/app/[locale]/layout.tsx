@@ -1,19 +1,10 @@
-import {notFound} from 'next/navigation';
-import {NextIntlClientProvider, hasLocale} from 'next-intl';
-import {ReactNode} from 'react';
-import {routing} from '@/i18n/routing';
+import {NextIntlClientProvider} from 'next-intl';
+import {getLocale} from 'next-intl/server';
 
-type Props = {
-  children: ReactNode;
-  params: Promise<{locale: string}>;
-};
-
-export default async function LocaleLayout({children, params}: Props) {
-  const {locale} = await params;
-
-  if (!hasLocale(routing.locales, locale)) {
-    notFound();
-  }
+export default async function LocaleLayout({
+  children
+}: LayoutProps<'/[locale]'>) {
+  const locale = await getLocale();
 
   return (
     <html lang={locale}>

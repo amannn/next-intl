@@ -1,6 +1,8 @@
 import {headers} from 'next/headers';
 import {Formats, hasLocale, IntlErrorCode} from 'next-intl';
 import {getRequestConfig} from 'next-intl/server';
+import {notFound} from 'next/navigation';
+import * as rootParams from 'next/root-params';
 import defaultMessages from '../../messages/en.json';
 import {routing} from './routing';
 
@@ -30,24 +32,24 @@ export const formats = {
   }
 } satisfies Formats;
 
-export default getRequestConfig(async ({locale, requestLocale}) => {
-  let resolvedLocale = locale;
-
-  if (!resolvedLocale) {
-    const requested = await requestLocale;
-    resolvedLocale = hasLocale(routing.locales, requested)
-      ? requested
-      : routing.defaultLocale;
+export default getRequestConfig(async ({locale}) => {
+  if (!locale) {
+    const paramValue = await rootParams.locale();
+    if (hasLocale(routing.locales, paramValue)) {
+      locale = paramValue;
+    } else {
+      notFound();
+    }
   }
 
   const now = (await headers()).get('x-now');
   const timeZone = (await headers()).get('x-time-zone') ?? 'Europe/Vienna';
-  const localeMessages = (await import(`../../messages/${resolvedLocale}.json`))
+  const localeMessages = (await import(`../../messages/${locale}.json`))
     .default;
   const messages = {...defaultMessages, ...localeMessages};
 
   return {
-    locale: resolvedLocale,
+    locale,
     now: now
       ? new Date(now)
       : // Ensure a consistent value for a render

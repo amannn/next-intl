@@ -1,36 +1,22 @@
 import {Metadata} from 'next';
 import {Inter} from 'next/font/google';
-import {notFound} from 'next/navigation';
-import {Locale, NextIntlClientProvider, hasLocale} from 'next-intl';
+import {NextIntlClientProvider} from 'next-intl';
 import {
   getFormatter,
+  getLocale,
   getNow,
   getTimeZone,
-  getTranslations,
-  setRequestLocale
+  getTranslations
 } from 'next-intl/server';
-import {routing} from '@/i18n/routing';
 import Navigation from '../../components/Navigation';
 
 const inter = Inter({subsets: ['latin']});
 
-export async function generateMetadata(
-  props: Omit<LayoutProps<'/[locale]'>, 'children'>
-): Promise<Metadata> {
-  const {locale} = await props.params;
-  if (!hasLocale(routing.locales, locale)) {
-    notFound();
-  }
-
-  const localeTyped = locale as Locale;
-
-  const t = await getTranslations({
-    locale: localeTyped,
-    namespace: 'LocaleLayout'
-  });
-  const formatter = await getFormatter({locale: localeTyped});
-  const now = await getNow({locale: localeTyped});
-  const timeZone = await getTimeZone({locale: localeTyped});
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('LocaleLayout');
+  const formatter = await getFormatter();
+  const now = await getNow();
+  const timeZone = await getTimeZone();
 
   const base = new URL('http://localhost:3000');
   if (process.env.NEXT_PUBLIC_USE_CASE === 'base-path') {
@@ -49,14 +35,9 @@ export async function generateMetadata(
 }
 
 export default async function LocaleLayout({
-  children,
-  params
+  children
 }: LayoutProps<'/[locale]'>) {
-  const {locale} = await params;
-  if (!hasLocale(routing.locales, locale)) {
-    notFound();
-  }
-  setRequestLocale(locale);
+  const locale = await getLocale();
 
   return (
     <html className={inter.className} lang={locale}>
