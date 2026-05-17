@@ -1,5 +1,5 @@
-import {throwError, warn} from '../plugin/utils.js';
 import type {ExtractorConfig, ExtractorConfigInput} from './types.js';
+import {throwError, warn} from './utils.js';
 
 function stripTrailingSlash(dirPath: string): string {
   if (dirPath.endsWith('/')) {

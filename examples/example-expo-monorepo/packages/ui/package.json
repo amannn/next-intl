@@ -1,0 +1,21 @@
+{
+  "name": "@example-monorepo/ui",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Shared UI components consumed by both the Next.js and Expo apps. Uses `_useExtracted as useExtracted` from `use-intl/react` so it works across bundlers.",
+  "main": "./src/index.tsx",
+  "types": "./src/index.tsx",
+  "exports": {
+    ".": "./src/index.tsx",
+    "./greeting": "./src/greeting.tsx",
+    "./locale-switcher": "./src/locale-switcher.tsx"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "use-intl": "*"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "typescript": "^6.0.0"
+  }
+}

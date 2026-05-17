@@ -1,7 +1,7 @@
 import path from 'path';
-import {throwError} from '../../plugin/utils.js';
 import type ExtractorCodec from './ExtractorCodec.js';
 import type {BuiltInMessagesFormat, MessagesFormat} from './types.js';
+import {throwError} from '../utils.js';
 
 const formats = {
   json: {codec: () => import('./codecs/JSONCodec.js'), extension: '.json'},

@@ -1,5 +1,4 @@
-import MessageExtractor from '../../extractor/extractor/MessageExtractor.js';
-import type {ExtractorConfig} from '../../extractor/types.js';
+import {type ExtractorConfig, MessageExtractor} from 'intl-extractor';
 import type {TurbopackLoaderContext} from '../types.js';
 
 // Module-level extractor instance for transformation caching.

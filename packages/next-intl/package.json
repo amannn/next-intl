@@ -125,12 +125,9 @@
   ],
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.8.1",
-    "@parcel/watcher": "^2.4.1",
-    "@swc/core": "^1.15.2",
     "icu-minify": "workspace:^",
+    "intl-extractor": "workspace:^",
     "negotiator": "^1.0.0",
-    "next-intl-swc-plugin-extractor": "workspace:^",
-    "po-parser": "^2.1.1",
     "use-intl": "workspace:^"
   },
   "peerDependencies": {

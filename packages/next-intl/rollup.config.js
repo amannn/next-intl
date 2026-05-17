@@ -44,7 +44,8 @@ export default [
       'next-intl/config',
       'use-intl/core',
       'use-intl/react',
-      'icu-minify/compile'
+      'icu-minify/compile',
+      'intl-extractor/compile-catalog'
     ],
     output: {
       preserveModules: true

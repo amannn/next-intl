@@ -1,5 +1,5 @@
+import type {ExtractorConfigInput} from 'intl-extractor';
 import type {LoaderContext} from 'webpack';
-import type {ExtractorConfigInput} from '../extractor/types.js';
 
 export type PluginConfig = {
   requestConfig?: string;

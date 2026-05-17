@@ -1,6 +1,8 @@
+import {
+  type ExtractorConfig,
+  normalizeExtractorConfig
+} from 'intl-extractor';
 import type {NextConfig} from 'next';
-import normalizeExtractorConfig from '../extractor/normalizeExtractorConfig.js';
-import type {ExtractorConfig} from '../extractor/types.js';
 import createMessagesDeclaration from './declaration/index.js';
 import initExtractionCompiler from './extractor/initExtractionCompiler.js';
 import getNextConfig from './getNextConfig.js';

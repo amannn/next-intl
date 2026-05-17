@@ -1,10 +1,21 @@
 import path from 'path';
-import {warn} from '../plugin/utils.js';
 import type {
   ExtractorConfig,
   ExtractorMessage,
   ExtractorMessageReference
 } from './types.js';
+
+function formatMessage(message: string) {
+  return `\n[intl-extractor] ${message}\n`;
+}
+
+export function throwError(message: string): never {
+  throw new Error(formatMessage(message));
+}
+
+export function warn(message: string): void {
+  console.warn(formatMessage(message));
+}
 
 export function normalizePathToPosix(filePath: string): string {
   // `path.relative` uses OS-specific separators. For stable `.po` references we

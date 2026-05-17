@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "mobile-app",
+    "slug": "example-expo-monorepo-mobile",
+    "version": "1.0.0",
+    "scheme": "mobileapp",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "dev.amann.example.expo.monorepo"
+    },
+    "android": {
+      "edgeToEdgeEnabled": true,
+      "package": "dev.amann.example.expo.monorepo"
+    },
+    "plugins": ["expo-router"],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

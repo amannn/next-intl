@@ -1,6 +1,8 @@
-import ExtractionCompiler from '../../extractor/ExtractionCompiler.js';
-import type {ExtractorConfig} from '../../extractor/types.js';
-import {hasLocalesToExtract} from '../../extractor/utils.js';
+import {
+  ExtractionCompiler,
+  type ExtractorConfig,
+  hasLocalesToExtract
+} from 'intl-extractor';
 import {isDevelopment, isNextBuild} from '../config.js';
 import {once} from '../utils.js';
 
