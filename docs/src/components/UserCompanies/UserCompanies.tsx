@@ -2,8 +2,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import adidasRunningLogo from './adidas-running.svg';
 import bigcommerceLogo from './bigcommerce-logo.svg';
-import boleroLogo from './bolero-logo.svg';
 import boltLogo from './bolt-logo.svg';
+import elevenlabsLogo from './elevenlabs-logo.svg';
 import ethereumLogo from './ethereum-logo.svg';
 import hashicorpLogo from './hashicorp-logo.svg';
 import icelandairLogo from './icelandair-logo.svg';
@@ -39,10 +39,10 @@ const companies = [
     url: 'https://bolt.eu'
   },
   {
-    name: 'Bolero',
-    logo: boleroLogo,
-    scale: 0.8,
-    url: 'https://www.boleromusic.com'
+    name: 'ElevenLabs',
+    logo: elevenlabsLogo,
+    scale: 1.1,
+    url: 'https://elevenlabs.io'
   },
   {
     name: 'Ethereum',
@@ -86,16 +86,16 @@ const companies = [
     url: 'https://solana.com'
   },
   {
-    name: 'Speechify',
-    logo: speechifyLogo,
-    scale: 1.15,
-    url: 'https://speechify.com'
-  },
-  {
     name: 'Soundtrack',
     logo: soundtrackLogo,
     scale: 1.1,
     url: 'https://www.soundtrack.io'
+  },
+  {
+    name: 'Speechify',
+    logo: speechifyLogo,
+    scale: 1.15,
+    url: 'https://speechify.com'
   },
   {
     name: 'Todoist',
