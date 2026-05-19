@@ -45,9 +45,7 @@ export function LocaleSwitcherExample() {
                     {labels[loc] ?? loc}
                   </span>
                 </span>
-                {active ? (
-                  <Check className="h-4 w-4 text-foreground" />
-                ) : null}
+                {active ? <Check className="h-4 w-4 text-foreground" /> : null}
               </Link>
             </Button>
           );

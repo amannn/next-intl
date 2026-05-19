@@ -1096,7 +1096,11 @@ function LocalePicker({
     }
   }
   return (
-    <div className="flex flex-wrap gap-2" role="group" aria-label="Preview locales">
+    <div
+      className="flex flex-wrap gap-2"
+      role="group"
+      aria-label="Preview locales"
+    >
       {LOCALE_OPTIONS.map((loc) => (
         <PickerChip
           key={loc}

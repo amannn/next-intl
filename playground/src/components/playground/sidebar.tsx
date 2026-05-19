@@ -3,6 +3,7 @@
 import clsx from 'clsx';
 import {Menu, X} from 'lucide-react';
 import {useState} from 'react';
+import {useTranslations} from 'next-intl';
 import {Link, usePathname} from '@/i18n/navigation';
 import {ScrollArea} from '@/components/ui/scroll-area';
 import {Button} from '@/components/ui/button';
@@ -16,6 +17,7 @@ import {SettingsDialog} from './settings-dialog';
 export function PlaygroundSidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const t = useTranslations('Nav');
   const close = () => setIsOpen(false);
 
   return (
@@ -68,29 +70,32 @@ export function PlaygroundSidebar() {
             {sections.map((section) => {
               const Icon = section.icon;
               return (
-                <div key={section.title}>
+                <div key={section.titleKey}>
                   <div className="mb-2 flex items-center gap-2 px-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                     <Icon className="h-3 w-3" strokeWidth={2} />
-                    {section.title}
+                    {t(section.titleKey)}
                   </div>
                   <div>
                     {section.items.length === 0 ? (
                       <div className="px-2 text-xs text-muted-foreground/50 italic">
-                        coming soon
+                        {t('soon')}
                       </div>
                     ) : (
                       section.items.map((item) => {
                         const active = pathname === item.slug;
+                        const soon = item.comingSoon === true;
                         return (
                           <Link
                             key={item.slug}
                             href={item.slug}
                             onClick={close}
                             className={clsx(
-                              'relative block px-2 py-1.5 text-[13px] transition-colors',
+                              'relative flex items-center justify-between gap-2 px-2 py-1.5 text-[13px] transition-colors',
                               active
                                 ? 'text-primary font-medium'
-                                : 'text-muted-foreground hover:text-foreground'
+                                : soon
+                                  ? 'text-muted-foreground/60 hover:text-muted-foreground'
+                                  : 'text-muted-foreground hover:text-foreground'
                             )}
                           >
                             {active && (
@@ -100,9 +105,14 @@ export function PlaygroundSidebar() {
                               />
                             )}
                             <span className="inline-flex items-center gap-1.5">
-                              {item.title}
+                              {t(item.titleKey)}
                               <LinkStatus />
                             </span>
+                            {soon && (
+                              <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-muted-foreground/60">
+                                {t('soon')}
+                              </span>
+                            )}
                           </Link>
                         );
                       })

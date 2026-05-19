@@ -1,12 +1,33 @@
 {
   "Layout": {
     "title": "next-intl Playground",
-    "tagline": "Translations, formatting, routing, and patterns with Next.js."
+    "tagline": "Translations, formatting, routing, and patterns with Next.js.",
+    "examplesLabel": "Examples"
   },
   "Nav": {
     "translations": "Translations",
+    "formatting": "Formatting",
+    "routing": "Routing",
+    "patterns": "Patterns",
     "serverComponents": "Server components",
-    "clientComponents": "Client components"
+    "serverComponentsDesc": "Read translated strings inside async Server Components — zero client JS.",
+    "clientComponents": "Client components",
+    "clientComponentsDesc": "Use translations from Client Components for interactive content.",
+    "dates": "Dates",
+    "datesDesc": "Format dates and times for the active locale with useFormatter.",
+    "numbers": "Numbers",
+    "numbersDesc": "Format numbers, currencies, and percentages — separators flip per locale.",
+    "explorer": "Explorer",
+    "explorerDesc": "Drive useFormatter() with live options and compare output across locales.",
+    "mixedRouting": "Mixed routing",
+    "mixedRoutingDesc": "Locale-prefixed vs unprefixed paths — see the three localePrefix modes side by side.",
+    "localeSwitcher": "Locale switcher",
+    "localeSwitcherDesc": "Replay the current path under a different locale while preserving params.",
+    "browserLanguage": "Browser language",
+    "browserLanguageDesc": "Detect the user's preferred locale from the Accept-Language header via next-intl middleware.",
+    "cacheComponents": "Cache components",
+    "cacheComponentsDesc": "Combine next-intl with Next's Cache Components — 'use cache', cacheLife, cacheTag.",
+    "soon": "soon"
   },
   "ServerDemo": {
     "title": "Server Components",
@@ -35,5 +56,43 @@
   },
   "LocaleSwitcherDemo": {
     "hint": "Pick a locale — uses next-intl's typed Link with a locale prop; the URL prefix updates and the layout re-renders with the new locale."
+  },
+  "CacheComponents": {
+    "boundaryLabel": "Coming soon",
+    "kicker": "Patterns",
+    "title": "Cache components",
+    "intro": "Coming soon. Here's what this page will demo.",
+    "useCacheTitle": "'use cache' on getTranslations",
+    "useCacheBody": "See how a cached Server Component reuses translated content across requests with a locale-scoped cache key.",
+    "cacheLifeTitle": "cacheLife profiles",
+    "cacheLifeBody": "Pin a translated section to seconds, minutes, or hours — and watch invalidation in real time.",
+    "cacheTagTitle": "cacheTag for surgical revalidation",
+    "cacheTagBody": "Tag translations with a key, then trigger updateTag from a Server Action to refresh just that surface.",
+    "tryExplorer": "Try the Explorer in the meantime",
+    "readRfc": "Read the use cache RFC ↗"
+  },
+  "NotFound": {
+    "kicker": "Error 404 · Page not found",
+    "title": "This route is missing a translation key.",
+    "subtitle": "The URL you tried doesn't match any page in the playground. While you're here, type something into the boxes below — next-intl will format it live in your current locale.",
+    "playgroundLabel": "While you're here",
+    "takeMeBack": "Take me somewhere real",
+    "greeting": "Hi {name},",
+    "scoreLine": "your wandering-into-404s score is {score}.",
+    "nameLabel": "Your name",
+    "scoreLabel": "404 score",
+    "placeholder": "Frodo",
+    "hint": "Formatted via useFormatter() and useTranslations() in the {locale} locale — same APIs the rest of the playground uses."
+  },
+  "BrowserLanguageDemo": {
+    "acceptLanguage": "Accept-Language header",
+    "noHeader": "(no header sent)",
+    "preferences": "Parsed preferences",
+    "resolved": "Resolved locale",
+    "matchKind": "Match kind",
+    "exactMatch": "exact",
+    "languageMatch": "language",
+    "fallbackMatch": "fallback",
+    "currentNote": "You're currently viewing the {locale} version because the URL prefix wins over the header. Visit / without a prefix to see header-based detection take effect."
   }
 }

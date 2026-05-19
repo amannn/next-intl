@@ -1,12 +1,33 @@
 {
   "Layout": {
     "title": "next-intl Playground",
-    "tagline": "Übersetzungen, Formatierung, Routing und Patterns mit Next.js."
+    "tagline": "Übersetzungen, Formatierung, Routing und Patterns mit Next.js.",
+    "examplesLabel": "Beispiele"
   },
   "Nav": {
     "translations": "Übersetzungen",
+    "formatting": "Formatierung",
+    "routing": "Routing",
+    "patterns": "Patterns",
     "serverComponents": "Server-Komponenten",
-    "clientComponents": "Client-Komponenten"
+    "serverComponentsDesc": "Übersetzte Strings in async Server Components lesen — null Client-JS.",
+    "clientComponents": "Client-Komponenten",
+    "clientComponentsDesc": "Übersetzungen aus Client Components für interaktive Inhalte verwenden.",
+    "dates": "Datum & Uhrzeit",
+    "datesDesc": "Datum und Uhrzeit für die aktive Sprache mit useFormatter formatieren.",
+    "numbers": "Zahlen",
+    "numbersDesc": "Zahlen, Währungen und Prozente formatieren — Trennzeichen wechseln je nach Sprache.",
+    "explorer": "Explorer",
+    "explorerDesc": "useFormatter() mit Live-Optionen steuern und das Ergebnis sprachübergreifend vergleichen.",
+    "mixedRouting": "Gemischtes Routing",
+    "mixedRoutingDesc": "Mit und ohne Sprachpräfix — die drei localePrefix-Modi nebeneinander.",
+    "localeSwitcher": "Sprachumschalter",
+    "localeSwitcherDesc": "Aktuellen Pfad unter einer anderen Sprache erneut aufrufen und Params erhalten.",
+    "browserLanguage": "Browser-Sprache",
+    "browserLanguageDesc": "Bevorzugte Sprache der Nutzer:innen aus dem Accept-Language-Header via next-intl-Middleware ermitteln.",
+    "cacheComponents": "Cache Components",
+    "cacheComponentsDesc": "next-intl mit Next's Cache Components kombinieren — 'use cache', cacheLife, cacheTag.",
+    "soon": "demnächst"
   },
   "ServerDemo": {
     "title": "Server-Komponenten",
@@ -35,5 +56,43 @@
   },
   "LocaleSwitcherDemo": {
     "hint": "Wähle eine Sprache — nutzt next-intls typisiertes Link mit locale-Prop; das URL-Präfix wechselt und das Layout rendert in der neuen Sprache neu."
+  },
+  "CacheComponents": {
+    "boundaryLabel": "Demnächst",
+    "kicker": "Patterns",
+    "title": "Cache Components",
+    "intro": "Demnächst. Hier ist, was diese Seite zeigen wird.",
+    "useCacheTitle": "'use cache' auf getTranslations",
+    "useCacheBody": "Sieh dir an, wie eine gecachte Server Component übersetzte Inhalte über Anfragen hinweg mit einem sprachspezifischen Cache-Key wiederverwendet.",
+    "cacheLifeTitle": "cacheLife-Profile",
+    "cacheLifeBody": "Pinne einen übersetzten Abschnitt auf Sekunden, Minuten oder Stunden — und beobachte die Invalidierung in Echtzeit.",
+    "cacheTagTitle": "cacheTag für gezielte Revalidierung",
+    "cacheTagBody": "Versieh Übersetzungen mit einem Schlüssel und löse updateTag aus einer Server Action aus, um genau diese Fläche neu zu laden.",
+    "tryExplorer": "Probier in der Zwischenzeit den Explorer",
+    "readRfc": "use-cache-RFC lesen ↗"
+  },
+  "NotFound": {
+    "kicker": "Fehler 404 · Seite nicht gefunden",
+    "title": "Dieser Route fehlt ein Übersetzungsschlüssel.",
+    "subtitle": "Die aufgerufene URL passt zu keiner Seite im Playground. Solange du hier bist — tippe etwas in die Felder unten, next-intl formatiert es live in deiner aktuellen Sprache.",
+    "playgroundLabel": "Solange du hier bist",
+    "takeMeBack": "Bring mich woandershin",
+    "greeting": "Hi {name},",
+    "scoreLine": "dein In-404er-stolpern-Score liegt bei {score}.",
+    "nameLabel": "Dein Name",
+    "scoreLabel": "404-Score",
+    "placeholder": "Frodo",
+    "hint": "Formatiert mit useFormatter() und useTranslations() in der Sprache {locale} — dieselben APIs wie überall sonst im Playground."
+  },
+  "BrowserLanguageDemo": {
+    "acceptLanguage": "Accept-Language-Header",
+    "noHeader": "(kein Header gesendet)",
+    "preferences": "Geparste Präferenzen",
+    "resolved": "Ermittelte Sprache",
+    "matchKind": "Trefferart",
+    "exactMatch": "exakt",
+    "languageMatch": "Sprache",
+    "fallbackMatch": "Fallback",
+    "currentNote": "Du siehst gerade die {locale}-Version, weil das URL-Präfix Vorrang vor dem Header hat. Öffne / ohne Präfix, um die Header-Erkennung in Aktion zu sehen."
   }
 }

@@ -2,89 +2,86 @@ import type {LucideIcon} from 'lucide-react';
 import {Languages, Calculator, Route, Wrench} from 'lucide-react';
 
 export type NavItem = {
-  title: string;
+  titleKey: string;
   slug: string;
-  description?: string;
-  status?: 'available' | 'coming-soon';
+  descriptionKey?: string;
+  comingSoon?: boolean;
 };
 
 export type NavSection = {
-  title: string;
+  titleKey: string;
   icon: LucideIcon;
   items: NavItem[];
 };
 
 export const sections: NavSection[] = [
   {
-    title: 'Translations',
+    titleKey: 'translations',
     icon: Languages,
     items: [
       {
-        title: 'Server components',
+        titleKey: 'serverComponents',
         slug: '/translations/server-components',
-        description:
-          'Read translated strings inside async Server Components — zero client JS.',
-        status: 'available'
+        descriptionKey: 'serverComponentsDesc'
       },
       {
-        title: 'Client components',
+        titleKey: 'clientComponents',
         slug: '/translations/client-components',
-        description:
-          'Use translations from Client Components for interactive content.',
-        status: 'available'
+        descriptionKey: 'clientComponentsDesc'
       }
     ]
   },
   {
-    title: 'Formatting',
+    titleKey: 'formatting',
     icon: Calculator,
     items: [
       {
-        title: 'Dates',
+        titleKey: 'dates',
         slug: '/formatting/dates',
-        description:
-          'Format dates and times for the active locale with useFormatter.',
-        status: 'available'
+        descriptionKey: 'datesDesc'
       },
       {
-        title: 'Numbers',
+        titleKey: 'numbers',
         slug: '/formatting/numbers',
-        description:
-          'Format numbers, currencies, and percentages — separators flip per locale.',
-        status: 'available'
+        descriptionKey: 'numbersDesc'
       },
       {
-        title: 'Explorer',
+        titleKey: 'explorer',
         slug: '/formatting/explorer',
-        description:
-          'Drive useFormatter() with live options and compare output across locales.',
-        status: 'available'
+        descriptionKey: 'explorerDesc'
       }
     ]
   },
   {
-    title: 'Routing',
+    titleKey: 'routing',
     icon: Route,
     items: [
       {
-        title: 'Mixed routing',
+        titleKey: 'mixedRouting',
         slug: '/routing/mixed-routing',
-        description:
-          'Locale-prefixed vs unprefixed paths — see the three localePrefix modes side by side.',
-        status: 'available'
+        descriptionKey: 'mixedRoutingDesc'
       }
     ]
   },
   {
-    title: 'Patterns',
+    titleKey: 'patterns',
     icon: Wrench,
     items: [
       {
-        title: 'Locale switcher',
+        titleKey: 'localeSwitcher',
         slug: '/patterns/locale-switcher',
-        description:
-          'Replay the current path under a different locale while preserving params.',
-        status: 'available'
+        descriptionKey: 'localeSwitcherDesc'
+      },
+      {
+        titleKey: 'browserLanguage',
+        slug: '/patterns/browser-language',
+        descriptionKey: 'browserLanguageDesc'
+      },
+      {
+        titleKey: 'cacheComponents',
+        slug: '/patterns/cache-components',
+        descriptionKey: 'cacheComponentsDesc',
+        comingSoon: true
       }
     ]
   }
