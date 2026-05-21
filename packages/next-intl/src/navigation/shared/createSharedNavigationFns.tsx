@@ -82,10 +82,12 @@ export default function createSharedNavigationFns<
         : HrefOrUrlObjectWithParams<Pathname>;
       /** @see https://next-intl.dev/docs/routing/navigation#link */
       locale?: Locale;
+      /** @see https://next-intl.dev/docs/routing/navigation#link-locale */
+      forcePrefix?: boolean;
     } & DOMAttributes<HTMLAnchorElement>
   >;
   function Link<Pathname extends keyof AppPathnames = never>(
-    {href, locale, ...rest}: LinkProps<Pathname>,
+    {forcePrefix, href, locale, ...rest}: LinkProps<Pathname>,
     ref: ComponentProps<typeof BaseLink>['ref']
   ) {
     let pathname, params;
@@ -110,8 +112,13 @@ export default function createSharedNavigationFns<
           locale: locale || curLocale,
           // @ts-expect-error -- This is ok
           href: pathnames == null ? pathname : {pathname, params},
-          // Always include a prefix when changing locales
-          forcePrefix: locale != null || undefined
+          // Always include a prefix when changing locales. Passing
+          // `forcePrefix={false}` opts out of this and defers to the
+          // natural `localePrefix` behavior instead.
+          forcePrefix:
+            forcePrefix === false
+              ? undefined
+              : (forcePrefix ?? (locale != null || undefined))
         })
       : pathname;
 

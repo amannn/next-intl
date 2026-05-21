@@ -794,6 +794,25 @@ describe.each([
         expect(markup).toContain('href="/en/about"');
       });
 
+      it('can opt out of the forced prefix when linking to the default locale', () => {
+        mockCurrentLocale('de');
+        const markup = renderToString(
+          <Link forcePrefix={false} href="/about" locale="en">
+            About
+          </Link>
+        );
+        expect(markup).toContain('href="/about"');
+      });
+
+      it('still applies a natural prefix for a secondary locale when `forcePrefix={false}`', () => {
+        const markup = renderToString(
+          <Link forcePrefix={false} href="/about" locale="de">
+            Über uns
+          </Link>
+        );
+        expect(markup).toContain('href="/de/about"');
+      });
+
       it('renders an object href', () => {
         render(
           <Link href={{pathname: '/about', query: {foo: 'bar'}}}>About</Link>

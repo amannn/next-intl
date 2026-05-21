@@ -533,6 +533,20 @@ describe("localePrefix: 'as-needed'", () => {
         expect(useNextRouter()[method]).toHaveBeenCalledWith('/en/about');
       });
 
+      it('can opt out of the forced prefix when switching to the default locale', () => {
+        invokeRouter((router) =>
+          router[method]('/about', {locale: 'en', forcePrefix: false})
+        );
+        expect(useNextRouter()[method]).toHaveBeenCalledWith('/about');
+      });
+
+      it('still applies a natural prefix for a secondary locale when `forcePrefix: false`', () => {
+        invokeRouter((router) =>
+          router[method]('/about', {locale: 'de', forcePrefix: false})
+        );
+        expect(useNextRouter()[method]).toHaveBeenCalledWith('/de/about');
+      });
+
       it('sets a cookie when switching to the default locale', () => {
         global.document.cookie = 'NEXT_LOCALE=de';
         mockCurrentLocale('de');

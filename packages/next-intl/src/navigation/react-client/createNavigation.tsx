@@ -81,9 +81,9 @@ export default function createNavigation<
       >(fn: Fn) {
         return function handler(
           href: Parameters<typeof getPathname>[0]['href'],
-          options?: Partial<Options> & {locale?: Locale}
+          options?: Partial<Options> & {locale?: Locale; forcePrefix?: boolean}
         ): void {
-          const {locale: nextLocale, ...rest} = options || {};
+          const {forcePrefix, locale: nextLocale, ...rest} = options || {};
 
           const pathname = getPathname({
             href,
@@ -93,8 +93,13 @@ export default function createNavigation<
             // the full detection is rather expensive, and this behavior is
             // consistent with the `Link` component. The downside is an
             // additional redirect for users in other situations. Locale
-            // changes should be rare though, so this might be fine.
-            forcePrefix: nextLocale != null || undefined
+            // changes should be rare though, so this might be fine. Passing
+            // `forcePrefix: false` opts out of this and defers to the natural
+            // `localePrefix` behavior instead.
+            forcePrefix:
+              forcePrefix === false
+                ? undefined
+                : (forcePrefix ?? (nextLocale != null || undefined))
           });
 
           const args: [href: string, options?: Options] = [pathname];

@@ -169,6 +169,22 @@ The reason for this is that a potential [cookie](/docs/routing/configuration#loc
 
 If you'd like to avoid this behavior, you can instead use [`useRouter`](#userouter) to switch the locale, which can rely on updating the cookie on the client side before navigating to the target page.
 
+Alternatively, you can opt out of the forced prefix by passing `forcePrefix={false}`. The link will then follow your [`localePrefix`](/docs/routing/configuration#localeprefix) setting — switching to the default locale produces an unprefixed pathname, switching to a secondary locale still produces a prefix. This is useful when there's no cookie to defeat in the first place, e.g. when using [`output: 'export'`](https://nextjs.org/docs/app/guides/static-exports) where there's no middleware to perform the rewrite:
+
+```tsx
+// With `localePrefix: 'as-needed'` and `en` as the default locale:
+// Links to `/about`
+<Link href="/about" locale="en" forcePrefix={false}>
+  About
+</Link>
+// Links to `/de/about`
+<Link href="/about" locale="de" forcePrefix={false}>
+  Über uns
+</Link>
+```
+
+The same option is available on [`useRouter`](#userouter) (`push`, `replace`, `prefetch`).
+
 </Details>
 
 <Details id="link-unknown-routes">
