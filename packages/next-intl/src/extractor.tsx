@@ -1,1 +1,4 @@
-export * from './extractor/index.js';
+export {
+  unstable_extractMessages,
+  defineCodec
+} from 'intl-extractor';

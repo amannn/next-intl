@@ -9,3 +9,8 @@ dist/
 tsconfig.tsbuildinfo
 .turbo
 .swc
+/examples/example-expo/.claude
+/examples/example-expo-monorepo/apps/mobile/.expo
+/examples/example-expo-monorepo/apps/mobile/android
+/examples/example-expo-monorepo/apps/mobile/ios
+/examples/example-expo/ios

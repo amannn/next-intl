@@ -1,0 +1,13 @@
+{
+  "name": "example-expo-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Monorepo example: one shared UI package consumed by an Expo (`expo-intl`) app and a Next.js (`next-intl`) app, all extracted by a single SWC pipeline.",
+  "scripts": {
+    "extract": "node ./scripts/extract.mjs",
+    "translate": "node ./scripts/apply-translations.mjs"
+  },
+  "devDependencies": {
+    "intl-extractor": "workspace:^"
+  }
+}

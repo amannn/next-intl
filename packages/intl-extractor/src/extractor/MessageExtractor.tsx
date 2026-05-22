@@ -1,0 +1,104 @@
+import {createRequire} from 'module';
+import path from 'path';
+import {transform} from '@swc/core';
+import type {SourceMessage} from '../types.js';
+import {getDefaultProjectRoot, normalizePathToPosix} from '../utils.js';
+import LRUCache from './LRUCache.js';
+
+const require = createRequire(import.meta.url);
+
+export default class MessageExtractor {
+  private isDevelopment: boolean;
+  private projectRoot: string;
+  /**
+   * Base path used to compute relative paths in catalog references
+   * (e.g. `#:` lines in PO). Defaults to `projectRoot`. Set this to a
+   * monorepo root to keep references stable across multiple apps that
+   * share a single catalog.
+   */
+  private referenceRoot: string;
+  private sourceMap: boolean;
+  private compileCache = new LRUCache<{
+    messages: Array<SourceMessage>;
+    code: string;
+    map?: string;
+  }>(750);
+
+  public constructor(opts: {
+    isDevelopment?: boolean;
+    projectRoot?: string;
+    referenceRoot?: string;
+    sourceMap?: boolean;
+  }) {
+    this.isDevelopment = opts.isDevelopment ?? false;
+    this.projectRoot = opts.projectRoot ?? getDefaultProjectRoot();
+    this.referenceRoot = opts.referenceRoot ?? this.projectRoot;
+    this.sourceMap = opts.sourceMap ?? false;
+  }
+
+  public async extract(
+    absoluteFilePath: string,
+    source: string
+  ): Promise<{
+    messages: Array<SourceMessage>;
+    code: string;
+    map?: string;
+  }> {
+    const cacheKey = [source, absoluteFilePath].join('!');
+    const cached = this.compileCache.get(cacheKey);
+    if (cached) return cached;
+
+    // Shortcut parsing if hook is not used. The Turbopack integration already
+    // pre-filters this, but for webpack this feature doesn't exist, so we need
+    // to do it here.
+    if (!source.includes('useExtracted') && !source.includes('getExtracted')) {
+      return {messages: [], code: source};
+    }
+
+    const filePath = normalizePathToPosix(
+      path.relative(this.referenceRoot, absoluteFilePath)
+    );
+    const result = await transform(source, {
+      jsc: {
+        target: 'esnext',
+        parser: {
+          syntax: 'typescript',
+          tsx: true,
+          decorators: true
+        },
+        experimental: {
+          cacheRoot: 'node_modules/.cache/swc',
+          disableBuiltinTransformsForInternalTesting: true,
+          disableAllLints: true,
+          plugins: [
+            [
+              require.resolve('next-intl-swc-plugin-extractor'),
+              {
+                isDevelopment: this.isDevelopment,
+                filePath
+              }
+            ]
+          ]
+        }
+      },
+      sourceMaps: this.sourceMap,
+      sourceFileName: filePath,
+      filename: filePath
+    });
+
+    // TODO: Improve the typing of @swc/core
+    const output = (result as any).output as string;
+    const messages = JSON.parse(
+      JSON.parse(output).results
+    ) as Array<SourceMessage>;
+
+    const extractionResult = {
+      code: result.code,
+      map: result.map,
+      messages
+    };
+
+    this.compileCache.set(cacheKey, extractionResult);
+    return extractionResult;
+  }
+}

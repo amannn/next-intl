@@ -1,0 +1,106 @@
+{
+  "name": "expo-intl",
+  "version": "0.1.0",
+  "sideEffects": false,
+  "author": "Hugo Persson",
+  "description": "Internationalization (i18n) for Expo / React Native, with build-time message extraction via Metro.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.10.0"
+  },
+  "homepage": "https://next-intl.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amannn/next-intl.git"
+  },
+  "scripts": {
+    "build": "rm -rf dist && rollup -c",
+    "test": "TZ=Europe/Berlin vitest",
+    "lint": "pnpm run lint:source && pnpm run lint:package",
+    "lint:source": "eslint src && tsc --noEmit",
+    "lint:package": "publint",
+    "prepublishOnly": "turbo build"
+  },
+  "type": "module",
+  "main": "./dist/esm/production/index.js",
+  "typings": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "development": "./dist/esm/development/index.js",
+      "default": "./dist/esm/production/index.js"
+    },
+    "./plugin": {
+      "import": {
+        "types": "./dist/types/plugin.d.ts",
+        "development": "./dist/esm/development/plugin.js",
+        "default": "./dist/esm/production/plugin.js"
+      },
+      "require": {
+        "types": "./plugin.d.cts",
+        "default": "./dist/cjs/development/plugin.cjs"
+      },
+      "default": "./dist/esm/production/plugin.js"
+    },
+    "./transformer": {
+      "require": {
+        "types": "./transformer.d.cts",
+        "default": "./dist/cjs/production/transformer.cjs"
+      },
+      "default": "./dist/cjs/production/transformer.cjs"
+    },
+    "./extractor": {
+      "types": "./dist/types/extractor.d.ts",
+      "development": "./dist/esm/development/extractor.js",
+      "default": "./dist/esm/production/extractor.js"
+    }
+  },
+  "files": [
+    "dist",
+    "plugin.d.ts",
+    "plugin.d.cts",
+    "transformer.d.cts",
+    "extractor.d.ts"
+  ],
+  "keywords": [
+    "react-native",
+    "expo",
+    "intl",
+    "i18n",
+    "internationalization",
+    "localization",
+    "translate",
+    "translation",
+    "metro"
+  ],
+  "dependencies": {
+    "icu-minify": "workspace:^",
+    "intl-extractor": "workspace:^",
+    "use-intl": "workspace:^"
+  },
+  "peerDependencies": {
+    "expo": ">=51",
+    "react": ">=18",
+    "react-native": ">=0.74"
+  },
+  "peerDependenciesMeta": {
+    "expo": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.5",
+    "eslint": "9.11.1",
+    "eslint-config-molindo": "^8.0.0",
+    "publint": "^0.2.8",
+    "react": "^19.2.3",
+    "rollup": "^4.18.0",
+    "tools": "workspace:^",
+    "typescript": "^6.0.0",
+    "vitest": "^3.0.8"
+  },
+  "prettier": "eslint-config-molindo/.prettierrc.json"
+}

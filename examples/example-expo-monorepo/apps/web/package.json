@@ -1,0 +1,27 @@
+{
+  "name": "web-app",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "extract": "node ./scripts/extract-messages.mjs"
+  },
+  "dependencies": {
+    "@example-monorepo/ui": "workspace:*",
+    "next": "^16.2.2",
+    "next-intl": "workspace:^",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "use-intl": "workspace:^"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.5",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "intl-extractor": "workspace:^",
+    "typescript": "^6.0.0"
+  }
+}

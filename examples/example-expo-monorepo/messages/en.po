@@ -1,0 +1,32 @@
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: next-intl\n"
+"X-Crowdin-SourceKey: msgstr\n"
+
+#: ../../packages/ui/src/greeting.tsx
+msgctxt "shared-ui.greeting"
+msgid "Vl1vzv"
+msgstr "Hej på dig  "
+
+#: ../../packages/ui/src/greeting.tsx
+msgctxt "shared-ui.greeting"
+msgid "Wzy5/1"
+msgstr "Hello <strong>{name}</strong>, you have {count} unread messages."
+
+#: ../../packages/ui/src/locale-switcher.tsx
+msgctxt "shared-ui.locale-switcher"
+msgid "y1Z3or"
+msgstr "Language"
+
+#: ../mobile/src/app/index.tsx
+msgctxt "home"
+msgid "QOAwWZ"
+msgstr "Mobile app — shared UI demo"
+
+#: src/app/page.tsx
+msgctxt "home"
+msgid "7yl+zD"
+msgstr "Web app — shared UI demo"

@@ -1,5 +1,4 @@
-import MessageExtractor from '../../extractor/extractor/MessageExtractor.js';
-import type {ExtractorConfig} from '../../extractor/types.js';
+import {type ExtractorConfig, MessageExtractor} from 'intl-extractor';
 import type {TurbopackLoaderContext} from '../types.js';
 
 // Module-level extractor instance for transformation caching.
@@ -14,6 +13,8 @@ export default function extractionLoader(
 ) {
   const callback = this.async();
   const projectRoot = this.rootContext;
+  const options = this.getOptions();
+  const referenceRoot = options.referenceRoot;
 
   // Avoid rollup's `replace` plugin to compile this away
   const isDevelopment = process.env['NODE_ENV'.trim()] === 'development';
@@ -22,6 +23,7 @@ export default function extractionLoader(
     extractor = new MessageExtractor({
       isDevelopment,
       projectRoot,
+      ...(referenceRoot != null && {referenceRoot}),
       sourceMap: this.sourceMap
     });
   }

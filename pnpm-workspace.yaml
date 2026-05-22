@@ -1,6 +1,8 @@
 packages:
   - 'packages/*'
   - 'examples/*'
+  - 'examples/example-expo-monorepo/apps/*'
+  - 'examples/example-expo-monorepo/packages/*'
   - 'e2e/*'
   - 'docs'
   - 'tools'

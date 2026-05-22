@@ -1,6 +1,8 @@
-import ExtractionCompiler from '../../extractor/ExtractionCompiler.js';
-import type {ExtractorConfig} from '../../extractor/types.js';
-import {hasLocalesToExtract} from '../../extractor/utils.js';
+import {
+  ExtractionCompiler,
+  type ExtractorConfig,
+  hasLocalesToExtract
+} from 'intl-extractor';
 import {isDevelopment, isNextBuild} from '../config.js';
 import {once} from '../utils.js';
 
@@ -34,7 +36,10 @@ export default function initExtractionCompiler(
   runOnce(() => {
     compiler = new ExtractionCompiler(extractorConfig, {
       isDevelopment,
-      projectRoot: process.cwd()
+      projectRoot: process.cwd(),
+      ...(extractorConfig.referenceRoot != null && {
+        referenceRoot: extractorConfig.referenceRoot
+      })
     });
 
     // Fire-and-forget: Start extraction, don't block config return.

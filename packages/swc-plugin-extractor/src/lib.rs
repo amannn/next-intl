@@ -347,7 +347,25 @@ impl VisitMut for TransformVisitor {
         for import in module.body.iter_mut() {
             if let ModuleItem::ModuleDecl(ModuleDecl::Import(import)) = import {
                 match import.src.value.as_bytes() {
-                    b"next-intl" => {
+                    // `next-intl` (React/Next.js) and `expo-intl` (Expo/Metro) share the
+                    // same client-side `useExtracted` surface. Both are recognized here so
+                    // calls in Expo code paths get the same compile-time rewrite.
+                    //
+                    // `use-intl` / `use-intl/react` are also recognized: they expose the
+                    // primitive as `_useExtracted`. This lets cross-platform packages
+                    // (e.g. a shared UI library that has to work in both Next.js and
+                    // Expo apps) import directly from the framework-agnostic core.
+                    b"next-intl" | b"expo-intl" | b"use-intl" | b"use-intl/react" => {
+                        let is_use_intl = matches!(
+                            import.src.value.as_bytes(),
+                            b"use-intl" | b"use-intl/react"
+                        );
+                        let expected_name = if is_use_intl {
+                            "_useExtracted"
+                        } else {
+                            HookType::UseTranslation.extracted_name()
+                        };
+
                         for specifier in &mut import.specifiers {
                             if let ImportSpecifier::Named(named_spec) = specifier {
                                 let orig_name = named_spec
@@ -360,7 +378,7 @@ impl VisitMut for TransformVisitor {
                                     .unwrap_or_else(|| named_spec.local.sym.clone())
                                     .clone();
 
-                                if orig_name == HookType::UseTranslation.extracted_name() {
+                                if orig_name == expected_name {
                                     self.hook_local_names
                                         .insert(named_spec.local.to_id(), HookType::UseTranslation);
 
