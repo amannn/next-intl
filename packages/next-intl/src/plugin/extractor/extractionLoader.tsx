@@ -13,6 +13,8 @@ export default function extractionLoader(
 ) {
   const callback = this.async();
   const projectRoot = this.rootContext;
+  const options = this.getOptions();
+  const referenceRoot = options.referenceRoot;
 
   // Avoid rollup's `replace` plugin to compile this away
   const isDevelopment = process.env['NODE_ENV'.trim()] === 'development';
@@ -21,6 +23,7 @@ export default function extractionLoader(
     extractor = new MessageExtractor({
       isDevelopment,
       projectRoot,
+      ...(referenceRoot != null && {referenceRoot}),
       sourceMap: this.sourceMap
     });
   }

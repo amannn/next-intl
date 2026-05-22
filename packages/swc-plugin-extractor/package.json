@@ -16,7 +16,7 @@
   "scripts": {
     "prepublishOnly": "turbo build",
     "test": "cargo test --release",
-    "build": "cargo build --release --target wasm32-wasip1 --target-dir target"
+    "build": "test -f target/wasm32-wasip1/release/swc_plugin_extractor.wasm || cargo build --release --target wasm32-wasip1 --target-dir target"
   },
   "main": "target/wasm32-wasip1/release/swc_plugin_extractor.wasm",
   "files": [

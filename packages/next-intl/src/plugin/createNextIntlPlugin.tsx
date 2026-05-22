@@ -39,7 +39,8 @@ function initPlugin(
     extractorConfig = normalizeExtractorConfig({
       extract,
       messages: experimental.messages,
-      srcPath: experimental.srcPath
+      srcPath: experimental.srcPath,
+      referenceRoot: experimental.referenceRoot
     });
   }
 

@@ -63,6 +63,9 @@ export default function createExpoIntlPlugin(
   return function withExpoIntl(metroConfig: MetroConfig): MetroConfig {
     const projectRoot = process.cwd();
     const isDevelopment = process.env['NODE_ENV'] !== 'production';
+    const referenceRoot = pluginConfig.experimental?.referenceRoot
+      ? path.resolve(pluginConfig.experimental.referenceRoot)
+      : undefined;
 
     let extractorConfig: ExtractorConfig | undefined;
     const experimental = pluginConfig.experimental;
@@ -70,17 +73,23 @@ export default function createExpoIntlPlugin(
       extractorConfig = normalizeExtractorConfig({
         extract: experimental.extract,
         messages: experimental.messages,
-        srcPath: experimental.srcPath
+        srcPath: experimental.srcPath,
+        referenceRoot
       });
     }
 
-    initExtractionCompiler(extractorConfig, {projectRoot, isDevelopment});
+    initExtractionCompiler(extractorConfig, {
+      projectRoot,
+      referenceRoot,
+      isDevelopment
+    });
 
     return applyMetroConfig({
       metroConfig,
       pluginConfig,
       extractorConfig,
       projectRoot,
+      referenceRoot,
       isDevelopment
     });
   };
@@ -91,9 +100,11 @@ function applyMetroConfig(args: {
   pluginConfig: PluginConfig;
   extractorConfig: ExtractorConfig | undefined;
   projectRoot: string;
+  referenceRoot: string | undefined;
   isDevelopment: boolean;
 }): MetroConfig {
-  const {metroConfig, pluginConfig, projectRoot, isDevelopment} = args;
+  const {metroConfig, pluginConfig, projectRoot, referenceRoot, isDevelopment} =
+    args;
   const messages = pluginConfig.experimental?.messages;
   if (!messages) {
     warn(
@@ -130,6 +141,7 @@ function applyMetroConfig(args: {
     messagesPaths,
     extension,
     projectRoot,
+    ...(referenceRoot != null && {referenceRoot}),
     isDevelopment
   };
 

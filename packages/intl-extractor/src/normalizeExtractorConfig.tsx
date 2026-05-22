@@ -89,6 +89,7 @@ export default function normalizeExtractorConfig(
     messages: {
       format: input.messages.format,
       path: messagesPath
-    }
+    },
+    ...(input.referenceRoot != null && {referenceRoot: input.referenceRoot})
   };
 }

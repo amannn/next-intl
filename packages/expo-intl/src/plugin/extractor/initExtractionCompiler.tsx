@@ -21,7 +21,11 @@ const runOnce = once('_EXPO_INTL_EXTRACT');
  */
 export default function initExtractionCompiler(
   extractorConfig: ExtractorConfig | undefined,
-  options: {readonly projectRoot: string; readonly isDevelopment: boolean}
+  options: {
+    readonly projectRoot: string;
+    readonly referenceRoot?: string;
+    readonly isDevelopment: boolean;
+  }
 ): void {
   if (!extractorConfig || !hasLocalesToExtract(extractorConfig)) {
     return;
@@ -30,7 +34,10 @@ export default function initExtractionCompiler(
   runOnce(() => {
     compiler = new ExtractionCompiler(extractorConfig, {
       isDevelopment: options.isDevelopment,
-      projectRoot: options.projectRoot
+      projectRoot: options.projectRoot,
+      ...(options.referenceRoot != null && {
+        referenceRoot: options.referenceRoot
+      })
     });
 
     // Fire-and-forget: don't block Metro config evaluation.

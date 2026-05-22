@@ -36,7 +36,10 @@ export default function initExtractionCompiler(
   runOnce(() => {
     compiler = new ExtractionCompiler(extractorConfig, {
       isDevelopment,
-      projectRoot: process.cwd()
+      projectRoot: process.cwd(),
+      ...(extractorConfig.referenceRoot != null && {
+        referenceRoot: extractorConfig.referenceRoot
+      })
     });
 
     // Fire-and-forget: Start extraction, don't block config return.

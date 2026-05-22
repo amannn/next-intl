@@ -15,7 +15,8 @@ export default async function extractMessages(params: ExtractorConfigInput) {
   const compiler = new ExtractionCompiler(config, {
     extractor: new MessageExtractor({
       isDevelopment: false,
-      projectRoot: getDefaultProjectRoot()
+      projectRoot: getDefaultProjectRoot(),
+      ...(config.referenceRoot != null && {referenceRoot: config.referenceRoot})
     })
   });
   await compiler.extractAll();

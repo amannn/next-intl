@@ -27,6 +27,14 @@ export interface PluginConfig {
      * Enables the usage of [`useExtracted`](https://next-intl.dev/docs/usage/extraction).
      */
     extract?: ExtractorConfigInput['extract'];
+
+    /**
+     * Absolute base path used when computing relative paths in catalog
+     * references (e.g. `#:` lines in PO). Defaults to the project root
+     * (Expo project directory). Set this to a monorepo root to keep
+     * references stable across multiple apps that share a single catalog.
+     */
+    referenceRoot?: string;
   };
 }
 
@@ -66,5 +74,6 @@ export interface SerializedTransformerOptions {
   readonly messagesPaths: ReadonlyArray<string>;
   readonly extension: string;
   readonly projectRoot: string;
+  readonly referenceRoot?: string;
   readonly isDevelopment: boolean;
 }

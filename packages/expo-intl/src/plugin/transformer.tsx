@@ -113,6 +113,9 @@ export async function transform(
     cachedExtractor ??= new MessageExtractor({
       isDevelopment: options.isDevelopment,
       projectRoot: options.projectRoot,
+      ...(options.referenceRoot != null && {
+        referenceRoot: options.referenceRoot
+      }),
       sourceMap: input.options.sourceMap === true
     });
 

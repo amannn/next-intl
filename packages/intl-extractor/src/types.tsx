@@ -44,6 +44,13 @@ export type ExtractorConfigInput = {
    * Relative path(s) to your source code files.
    */
   srcPath?: string | Array<string>;
+  /**
+   * Absolute base path used when computing relative paths in catalog
+   * references (e.g. `#:` lines in PO). Defaults to the project root.
+   * Set this to a monorepo root to keep references stable across
+   * multiple apps that share a single catalog.
+   */
+  referenceRoot?: string;
   messages: {
     /** The format of your messages files. */
     format: MessagesFormat;
@@ -81,6 +88,11 @@ export type ExtractorConfig = {
     format: MessagesFormat;
     path: Array<string>;
   };
+  /**
+   * Absolute base path used when computing relative paths in catalog
+   * references. When unset, the project root is used.
+   */
+  referenceRoot?: string;
 };
 
 export type CatalogLoaderConfig = {

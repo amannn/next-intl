@@ -10,6 +10,13 @@ const require = createRequire(import.meta.url);
 export default class MessageExtractor {
   private isDevelopment: boolean;
   private projectRoot: string;
+  /**
+   * Base path used to compute relative paths in catalog references
+   * (e.g. `#:` lines in PO). Defaults to `projectRoot`. Set this to a
+   * monorepo root to keep references stable across multiple apps that
+   * share a single catalog.
+   */
+  private referenceRoot: string;
   private sourceMap: boolean;
   private compileCache = new LRUCache<{
     messages: Array<SourceMessage>;
@@ -20,10 +27,12 @@ export default class MessageExtractor {
   public constructor(opts: {
     isDevelopment?: boolean;
     projectRoot?: string;
+    referenceRoot?: string;
     sourceMap?: boolean;
   }) {
     this.isDevelopment = opts.isDevelopment ?? false;
     this.projectRoot = opts.projectRoot ?? getDefaultProjectRoot();
+    this.referenceRoot = opts.referenceRoot ?? this.projectRoot;
     this.sourceMap = opts.sourceMap ?? false;
   }
 
@@ -47,7 +56,7 @@ export default class MessageExtractor {
     }
 
     const filePath = normalizePathToPosix(
-      path.relative(this.projectRoot, absoluteFilePath)
+      path.relative(this.referenceRoot, absoluteFilePath)
     );
     const result = await transform(source, {
       jsc: {

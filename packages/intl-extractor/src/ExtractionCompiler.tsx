@@ -11,6 +11,7 @@ export default class ExtractionCompiler implements Disposable {
       extractor?: MessageExtractor;
       isDevelopment?: boolean;
       projectRoot?: string;
+      referenceRoot?: string;
       saveDebounceMs?: number;
       sourceMap?: boolean;
     } = {}
