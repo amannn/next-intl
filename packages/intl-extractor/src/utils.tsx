@@ -42,7 +42,7 @@ export function hasLocalesToExtract(
   return locales === 'infer' || locales.length > 0;
 }
 
-// Essentialls lodash/set, but we avoid this dependency
+// Essentially lodash/set, but we avoid this dependency
 export function setNestedProperty(
   obj: Record<string, any>,
   keyPath: string,

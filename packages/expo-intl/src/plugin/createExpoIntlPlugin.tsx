@@ -182,9 +182,10 @@ function applyMetroConfig(args: {
   // 4) When `precompile: true`, swap `use-intl/format-message` for the
   //    `format-only` runtime that understands precompiled ICU ASTs.
   if (messages.precompile) {
-    const previousResolveRequest = metroConfig.resolver?.resolveRequest as
-      | MetroResolveRequest
-      | undefined;
+    const candidate: unknown = metroConfig.resolver?.resolveRequest;
+    const previousResolveRequest = isMetroResolveRequest(candidate)
+      ? candidate
+      : undefined;
     next.resolver.resolveRequest = createFormatMessageRedirect({
       previousResolveRequest
     });
@@ -232,6 +233,10 @@ type MetroResolveRequest = (
   moduleName: string,
   platform: string | null
 ) => MetroResolutionResult;
+
+function isMetroResolveRequest(value: unknown): value is MetroResolveRequest {
+  return typeof value === 'function';
+}
 
 function createFormatMessageRedirect({
   previousResolveRequest

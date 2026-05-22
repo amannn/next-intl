@@ -40,8 +40,14 @@ export default function initExtractionCompiler(
       })
     });
 
-    // Fire-and-forget: don't block Metro config evaluation.
-    compiler.extractAll();
+    // Fire-and-forget: don't block Metro config evaluation, but surface
+    // failures so they don't become silent unhandled rejections.
+    Promise.resolve(compiler.extractAll()).catch((error: unknown) => {
+      console.error(
+        `[expo-intl] extractAll() failed (projectRoot: ${options.projectRoot}):`,
+        error
+      );
+    });
 
     function cleanup(): void {
       if (compiler) {

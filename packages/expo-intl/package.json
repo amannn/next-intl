@@ -5,6 +5,9 @@
   "author": "Hugo Persson",
   "description": "Internationalization (i18n) for Expo / React Native, with build-time message extraction via Metro.",
   "license": "MIT",
+  "engines": {
+    "node": ">=20.10.0"
+  },
   "homepage": "https://next-intl.dev",
   "repository": {
     "type": "git",

@@ -30,7 +30,6 @@ export function Greeting({ name, unreadCount = 0, Text, Strong }: GreetingProps)
   // and import it in your entry before the IntlProvider is rendered.
   return (
     <Text>
-      {t("Hej på dig  ")}
       {t.rich('Hello <strong>{name}</strong>, you have {count} unread messages.', {
         name,
         count: unreadCount,

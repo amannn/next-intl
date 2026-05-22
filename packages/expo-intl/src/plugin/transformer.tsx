@@ -57,6 +57,15 @@ function getOptions(): SerializedTransformerOptions | null {
   }
 }
 
+function normalizeDottedExtension(extension: unknown): `.${string}` {
+  if (typeof extension !== 'string' || extension.length === 0) {
+    throw new Error(
+      `[expo-intl] customFormat.extension must be a non-empty string (got ${String(extension)}).`
+    );
+  }
+  return (extension.startsWith('.') ? extension : `.${extension}`) as `.${string}`;
+}
+
 function isCatalogPath(
   filename: string,
   options: SerializedTransformerOptions
@@ -83,7 +92,9 @@ export async function transform(
       ? {
           format: {
             codec: options.customFormat.codec,
-            extension: options.customFormat.extension as `.${string}`
+            extension: normalizeDottedExtension(
+              options.customFormat.extension
+            )
           },
           precompile: options.precompile
         }

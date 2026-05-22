@@ -9,7 +9,7 @@ Two apps + one shared UI package + one shared message catalog:
 
 The shared package imports `_useExtracted as useExtracted` from `use-intl/react`. The SWC plugin recognizes that import source, so calls inside `packages/ui` get the same compile-time rewrite as calls inside the apps themselves.
 
-```
+```text
 examples/example-expo-monorepo/
 ├── messages/{en,de}.po       # everything lives here
 ├── scripts/extract.mjs       # workspace-wide extraction
