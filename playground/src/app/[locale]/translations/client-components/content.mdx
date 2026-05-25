@@ -1,0 +1,27 @@
+import {TwoColumn} from '@/components/playground/two-column';
+
+<TwoColumn>
+
+- Use `useTranslations()` inside Client Components for any UI that reacts to user input.
+- Messages for client-side namespaces are sent to the browser — only the keys you actually call.
+- ICU placeholders (`{name}`) interpolate at render time and stay locale-aware.
+
+```tsx app/greet.tsx
+'use client';
+import {useState} from 'react';
+import {useTranslations} from 'next-intl';
+
+export function Greet() {
+  const t = useTranslations('ClientDemo');
+  const [name, setName] = useState('Frodo');
+  return (
+    <>
+      <input value={name} onChange={(e) => setName(e.target.value)} />
+      // !mark
+      <p>{t('greeting', {name})}</p>
+    </>
+  );
+}
+```
+
+</TwoColumn>

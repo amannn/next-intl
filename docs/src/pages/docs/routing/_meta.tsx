@@ -1,6 +1,6 @@
 export default {
   setup: 'Setup',
   configuration: 'Configuration',
-  middleware: 'Middleware',
+  middleware: 'Proxy / middleware',
   navigation: 'Navigation'
 };

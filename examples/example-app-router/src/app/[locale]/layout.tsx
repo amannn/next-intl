@@ -5,7 +5,6 @@ import {clsx} from 'clsx';
 import {Inter} from 'next/font/google';
 import {routing} from '@/i18n/routing';
 import Navigation from '@/components/Navigation';
-import './styles.css';
 
 const inter = Inter({subsets: ['latin']});
 

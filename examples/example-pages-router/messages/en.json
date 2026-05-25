@@ -1,10 +1,13 @@
 {
   "Index": {
-    "title": "Home",
-    "description": "This is the home page."
+    "description": "This is the home page.",
+    "title": "Home"
   },
   "LocaleSwitcher": {
     "switchLocale": "Switch to {locale, select, de {German} en {English} other {Unknown}}"
+  },
+  "NotFound": {
+    "title": "Not found (404)"
   },
   "PageLayout": {
     "pageTitle": "next-intl"

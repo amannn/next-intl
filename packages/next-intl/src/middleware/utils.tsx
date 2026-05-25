@@ -227,11 +227,13 @@ export function getRouteParams(template: string, pathname: string) {
   const match = regex.exec(normalizedPathname);
   if (!match) return undefined;
   const params: Record<string, string> = {};
+  const keys = normalizedTemplate.match(/\[([^\]]+)\]/g) ?? [];
   for (let i = 1; i < match.length; i++) {
-    const key = normalizedTemplate
-      .match(/\[([^\]]+)\]/g)
-      ?.[i - 1].replace(/[[\]]/g, '');
-    if (key) params[key] = match[i];
+    const rawKey = keys[i - 1];
+    if (!rawKey) continue;
+    const key = rawKey.replace(/[[\]]/g, '');
+    const value = match[i] ?? '';
+    params[key] = value;
   }
   return params;
 }
@@ -320,7 +322,18 @@ export function getLocaleAsPrefix<AppLocales extends Locales>(
 
 export function sanitizePathname(pathname: string) {
   // Sanitize malicious URIs, e.g.:
-  // '/en/\\example.org → /en/%5C%5Cexample.org'
-  // '/en////example.org → /en/example.org'
-  return pathname.replace(/\\/g, '%5C').replace(/\/+/g, '/');
+  // '/en/\\example.org'  → '/en/%5Cexample.org'     (backslash → %5C)
+  // '/en/\t/example.org' → '/en/example.org'        (WHATWG-stripped TAB)
+  // '/en/\n/example.org' → '/en/example.org'        (WHATWG-stripped LF)
+  // '/en/\r/example.org' → '/en/example.org'        (WHATWG-stripped CR)
+  // '/en////example.org' → '/en/example.org'        (consecutive slashes)
+  //
+  // U+0009/000A/000D are silently stripped by the WHATWG URL parser
+  // (https://url.spec.whatwg.org/#concept-url-parser). Without removing
+  // them here, a decoded TAB in a segment separator position causes
+  // new URL("/\t/host", base) to collapse to "//host" → open redirect.
+  return pathname
+    .replace(/\\/g, '%5C')
+    .replace(/[\t\n\r]/g, '')
+    .replace(/\/+/g, '/');
 }

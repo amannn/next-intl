@@ -19,7 +19,7 @@
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-replace": "^6.0.2",
     "@rollup/plugin-terser": "^0.4.3",
-    "eslint": "9.11.1",
+    "eslint": "^9.38.0",
     "eslint-config-molindo": "^8.0.0",
     "execa": "^9.5.2",
     "globals": "^16.0.0",

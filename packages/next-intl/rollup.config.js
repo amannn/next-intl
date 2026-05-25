@@ -30,15 +30,21 @@ export default [
       middleware: 'src/middleware.tsx',
       routing: 'src/routing.tsx',
       plugin: 'src/plugin.tsx',
-      config: 'src/config.tsx'
+      config: 'src/config.tsx',
+      extractor: 'src/extractor.tsx',
+      'extractor/extractionLoader': 'src/plugin/extractor/extractionLoader.tsx',
+      'extractor/catalogLoader': 'src/plugin/catalog/catalogLoader.tsx'
     },
     external: [
       ...Object.keys(pkg.dependencies),
       ...Object.keys(pkg.peerDependencies),
+
+      // Subpath exports need to be explicitly externalized
       'react/jsx-runtime',
       'next-intl/config',
       'use-intl/core',
-      'use-intl/react'
+      'use-intl/react',
+      'icu-minify/compile'
     ],
     output: {
       preserveModules: true
@@ -70,7 +76,9 @@ export default [
     output: {
       dir: 'dist/cjs/development',
       format: 'cjs',
-      entryFileNames: '[name].cjs'
+      entryFileNames: '[name].cjs',
+      chunkFileNames: '[name]-[hash].cjs',
+      interop: 'compat'
     }
   })
 ];

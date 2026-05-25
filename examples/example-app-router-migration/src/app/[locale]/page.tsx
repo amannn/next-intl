@@ -12,7 +12,7 @@ export default function Index() {
       <p>{t('description')}</p>
       <LocaleSwitcher />
       <p>
-        <Link href="/about" locale={locale as any}>
+        <Link href="/about" locale={locale}>
           {t('navigateToAbout')}
         </Link>
       </p>

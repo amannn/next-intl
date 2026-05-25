@@ -15,7 +15,7 @@ export default function ZodForm({action, children}: Props) {
   return (
     <form action={formAction}>
       {children}
-      {hasErrors && <p>{state.fieldErrors.task?.join(', ')}</p>}
+      {hasErrors && <p>{state.errors.fieldErrors?.task?.join(', ')}</p>}
     </form>
   );
 }

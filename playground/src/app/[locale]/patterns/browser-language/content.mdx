@@ -1,0 +1,24 @@
+import {TwoColumn} from '@/components/playground/two-column';
+
+<TwoColumn>
+
+- `next-intl/middleware` reads `Accept-Language` and picks the best match from `routing.locales` when a request hits a path without a locale prefix. The `NEXT_LOCALE` cookie wins over the header; an explicit prefix in the URL wins over both.
+- Detection is on by default — set `localeDetection: false` on the middleware to opt out and always fall back to `defaultLocale`.
+- The output below reads the request's `Accept-Language` header in a Server Component and shows the resolved locale.
+
+```ts middleware.ts
+import createMiddleware from 'next-intl/middleware';
+import {routing} from '@/i18n/routing';
+
+export default createMiddleware({
+  ...routing,
+  // !mark
+  localeDetection: true
+});
+
+export const config = {
+  matcher: ['/((?!api|_next|.*\\..*).*)']
+};
+```
+
+</TwoColumn>

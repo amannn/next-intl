@@ -14,6 +14,7 @@ export {default as useNow} from './useNow.js';
 export {default as useTimeZone} from './useTimeZone.js';
 export {default as useMessages} from './useMessages.js';
 export {default as NextIntlClientProvider} from './NextIntlClientProviderServer.js';
+export {default as useExtracted} from './useExtracted.js';
 
 // Everything from `core`
 export * from 'use-intl/core';

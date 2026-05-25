@@ -29,3 +29,6 @@ export type {default as RelativeTimeFormatOptions} from './RelativeTimeFormatOpt
 export type {default as Timezone} from './TimeZone.js';
 export type {default as ICUArgs} from './ICUArgs.js';
 export type {default as ICUTags} from './ICUTags.js';
+
+/** @private -- Only for type portability */
+export type {Translator as _Translator} from './createTranslator.js';

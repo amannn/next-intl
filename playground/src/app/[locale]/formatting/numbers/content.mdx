@@ -1,0 +1,20 @@
+import {TwoColumn} from '@/components/playground/two-column';
+
+<TwoColumn>
+
+- `format.number(value, options)` wraps `Intl.NumberFormat` with the active locale baked in.
+- Switch `style` to `currency` (with `currency: 'USD'`) or `percent` for ready-to-use locale formatting.
+- Compare the same number across `en` and `de` using the locale switcher in the header — note the thousands and decimal separators flip.
+
+```tsx app/price.tsx
+'use client';
+import {useFormatter} from 'next-intl';
+
+export function Price({amount}: {amount: number}) {
+  const format = useFormatter();
+  // !mark
+  return <p>{format.number(amount, {style: 'currency', currency: 'USD'})}</p>;
+}
+```
+
+</TwoColumn>

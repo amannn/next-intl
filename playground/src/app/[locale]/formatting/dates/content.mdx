@@ -1,0 +1,22 @@
+import {TwoColumn} from '@/components/playground/two-column';
+
+<TwoColumn>
+
+- Call `useFormatter()` to get a formatter bound to the active locale.
+- `format.dateTime(date, options)` accepts the same options as `Intl.DateTimeFormat` — `dateStyle`, `timeStyle`, `weekday`, `year`, ...
+- Use `useNow()` to get a stable "now" reference that hydrates safely across server and client.
+
+```tsx app/page.tsx
+'use client';
+import {useFormatter, useNow} from 'next-intl';
+
+export function Today() {
+  const format = useFormatter();
+  const now = useNow();
+
+  // !mark
+  return <p>{format.dateTime(now, {dateStyle: 'long', timeStyle: 'short'})}</p>;
+}
+```
+
+</TwoColumn>

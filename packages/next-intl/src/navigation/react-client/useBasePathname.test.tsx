@@ -1,7 +1,8 @@
 import {render, screen} from '@testing-library/react';
 import {usePathname as useNextPathname} from 'next/navigation.js';
+import {useLocale} from 'use-intl';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
-import {NextIntlClientProvider, useLocale} from '../../index.react-client.js';
+import {NextIntlClientProvider} from '../../index.react-client.js';
 import useBasePathname from './useBasePathname.js';
 
 vi.mock('next/navigation.js');

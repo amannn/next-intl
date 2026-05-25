@@ -223,7 +223,10 @@ export default function BlogPostPublishedDate({published, timeZone}: Props) {
 
 Sticking to a single time zone for your app is definitely the easiest solution here. However, in case you'd like to format dates in the user's time zone, a reasonable approach might require having the time zone available on the server side so that it can be used in server-only code.
 
-As browsers don't include the time zone of the user in an HTTP request, one way to get an approximation of the user's time zone is to use geographical information from the user's IP address. In case you're running your app on Vercel, the [`x-vercel-ip-timezone`](https://vercel.com/docs/edge-network/headers#x-vercel-ip-timezone) request header can be used as a convenient way to retrieve this value. However, it's important to note that this is only an approximation, so letting the user choose their time zone explicitly might still be sensible.
+As browsers don't include the time zone of the user in an HTTP request, there are two primary ways to retrieve it on the server side:
+
+1. Set a cookie with the browser time zone on the client and retrieve it on the server side using [`cookies()`](https://nextjs.org/docs/app/api-reference/functions/cookies)
+2. Use approximate geographical information from the user's IP address (e.g. [`x-vercel-ip-timezone`](https://vercel.com/docs/headers/request-headers#x-vercel-ip-timezone)). However, it's important to note that this is only an approximation.
 
 ## Localized date formatting
 

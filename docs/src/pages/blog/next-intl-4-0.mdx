@@ -230,7 +230,7 @@ To make it easier to work with error handling functions on the client side, `Nex
 
 ## Stricter config for `domains` [#domains-config]
 
-So far, when using [`domains`](/docs/routing/configuration#domains) in combination with [`localePrefix: 'as-needed'`](/docs/routing/configuration#locale-prefix-as-needed), `next-intl` had to make some [tradeoffs](https://v3.next-intl.dev/docs/routing/configuration#domains-localeprefix-asneeded) to avoid reading the current host of the incoming request in components.
+So far, when using [`domains`](/docs/routing/configuration#domains) in combination with [`localePrefix: 'as-needed'`](/docs/routing/configuration#locale-prefix-as-needed), `next-intl` had to make some [tradeoffs](https://v3.next-intl.dev/docs/routing#domains-localeprefix-asneeded) to avoid reading the current host of the incoming request in components.
 
 Now, by introducing two new constraints, `next-intl` can avoid these tradeoffs altogether:
 

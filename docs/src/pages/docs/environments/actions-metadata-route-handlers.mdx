@@ -83,23 +83,20 @@ async function loginAction(data: FormData) {
   const values = Object.fromEntries(data);
 
   const result = loginFormSchema.safeParse(values, {
-    errorMap(issue, ctx) {
-      const path = issue.path.join('.');
-
-      const message = {
-        email: t('invalidEmail')
-        password: t('invalidPassword')
-      }[path];
-
-      return {message: message || ctx.defaultError};
+    error(issue) {
+      if (issue.path) {
+        const path = issue.path.join('.');
+        return {
+          email: t('invalidEmail'),
+          password: t('invalidPassword')
+        }[path];
+      }
     }
   });
 
   // ...
 }
 ```
-
-See the [App Router without locale-based routing example](/examples#app-router-without-i18n-routing) for a working implementation.
 
 </Details>
 
@@ -128,7 +125,7 @@ However, if you're using [locale-based routing](/docs/routing) and you've custom
 
 If this applies to your app, you can adapt your [matcher](/docs/routing/middleware#matcher-config) to bypass requests to the `opengraph-image.tsx` file:
 
-```tsx filename="middleware.ts"
+```tsx filename="proxy.ts"
 // ...
 
 export const config = {

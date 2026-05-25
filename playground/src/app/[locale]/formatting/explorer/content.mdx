@@ -1,0 +1,20 @@
+import {TwoColumn} from '@/components/playground/two-column';
+
+<TwoColumn>
+
+- The explorer drives a single `useFormatter()` hook — pick a method, tweak options, and see the formatted result across multiple locales at once.
+- Every preview cell below is wrapped in a `NextIntlClientProvider` so the formatter inside each cell speaks the right locale — there are no raw `Intl.*` calls anywhere on this page.
+- The generated code on the right is the actual next-intl snippet you'd drop into a component.
+
+```tsx app/price.tsx
+'use client';
+import {useFormatter} from 'next-intl';
+
+export function Price({amount}: {amount: number}) {
+  const format = useFormatter();
+  // !mark
+  return <p>{format.number(amount, {style: 'currency', currency: 'USD'})}</p>;
+}
+```
+
+</TwoColumn>

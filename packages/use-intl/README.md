@@ -10,7 +10,7 @@ Internationalization (i18n) is an essential part of the user experience, therefo
 - 📅 **Dates, times & numbers**: Apply appropriate formatting without worrying about server/client differences like time zones.
 - ✅ **Type-safe**: Speed up development with autocompletion for message keys and catch typos early with compile-time checks.
 - 💡 **Hooks-based API**: Learn a single API that can be used across your code base to turn translations into plain strings or rich text.
-- ⚔️ **Standards-based**: Use the best parts of built-in JavaScript APIs and supplemental lower-level APIs from Format.JS.
+- 🛠️ **Standards-based**: Use the best parts of built-in JavaScript APIs and supplemental lower-level APIs from Format.JS.
 
 ## What does it look like?
 

@@ -40,6 +40,9 @@ export type Pathnames<AppLocales extends Locales> = Record<
 >;
 
 export type DomainConfig<AppLocales extends Locales> = {
+  /* Override the Locale Prefix mode for this domain */
+  localePrefix?: LocalePrefixMode;
+
   /* Used by default if none of the defined locales match. */
   defaultLocale: AppLocales[number];
 

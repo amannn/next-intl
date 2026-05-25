@@ -20,3 +20,27 @@ it('updates the cookie correctly', async ({page}) => {
   await expect(page).toHaveURL('/base/path');
   assertLocaleCookieValue(page, 'en', {path: '/base/path'});
 });
+
+it('omits a base path from usePathname', async ({page}) => {
+  await page.goto('/base/path/client');
+  await expect(page.getByTestId('UnlocalizedPathname')).toHaveText('/client');
+});
+
+it('returns the correct canonical URL when using getPathname', async ({
+  page
+}) => {
+  async function getCanonicalPathname() {
+    const href = await page
+      .locator('link[rel="canonical"]')
+      .getAttribute('href');
+    return new URL(href!).pathname;
+  }
+
+  await page.goto('/base/path/news/1');
+  await expect(getCanonicalPathname()).resolves.toBe('/base/path/news/1');
+
+  await page.goto('/base/path/de/neuigkeiten/1');
+  await expect(getCanonicalPathname()).resolves.toBe(
+    '/base/path/de/neuigkeiten/1'
+  );
+});

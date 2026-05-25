@@ -75,13 +75,18 @@ it('handles basic interpolation', () => {
 });
 
 it('can escape curly brackets', () => {
-  renderMessage("Hello '{name'}");
+  renderMessage("Hello '{name}'");
   screen.getByText('Hello {name}');
+});
+
+it('can can use single quotes', () => {
+  renderMessage("Hello 'name'");
+  screen.getByText("Hello 'name'");
 });
 
 it('can escape curly brackets in production', () => {
   vi.stubEnv('NODE_ENV', 'production');
-  renderMessage("Hello '{name'}");
+  renderMessage("Hello '{name}'");
   screen.getByText('Hello {name}');
   vi.unstubAllEnvs();
 });
@@ -185,7 +190,7 @@ it('supports pluralisation via tags like "zero" and "one" if the locale supports
 
 it('handles selects', () => {
   renderMessage(
-    '{gender, select, male {He} female {She} other {They}} is online.',
+    '{gender, select, male {He is} female {She is} other {They are}} online.',
     {gender: 'female'}
   );
   screen.getByText('She is online.');
@@ -598,7 +603,11 @@ describe('t.has', () => {
   it('returns false when no messages are provided', () => {
     const {result: t} = renderHook(() => useTranslations(), {
       wrapper({children}: PropsWithChildren) {
-        return <IntlProvider locale="en">{children}</IntlProvider>;
+        return (
+          <IntlProvider locale="en" onError={vi.fn()}>
+            {children}
+          </IntlProvider>
+        );
       }
     });
     expect(t.current.has('foo')).toBe(false);
@@ -810,7 +819,7 @@ describe('error handling', () => {
     const error: IntlError = onError.mock.calls[0][0];
     expect(error.code).toBe(IntlErrorCode.INVALID_KEY);
     expect(error.message.split('\n').slice(0, 3).join('\n')).toBe(
-      'INVALID_KEY: Namespace keys can not contain the character "." as this is used to express nesting. Please remove it or replace it with another character.\n\nInvalid keys: a.b, c.d (at a.b), h.j (at f.g)'
+      'INVALID_KEY: Namespace keys cannot contain the character "." as this is used to express nesting. Please remove it or replace it with another character.\n\nInvalid keys: a.b, c.d (at a.b), h.j (at f.g)'
     );
 
     expect(container.innerHTML).toBe(
@@ -839,7 +848,7 @@ describe('error handling', () => {
     const error: IntlError = onError.mock.calls[0][0];
     expect(error.code).toBe(IntlErrorCode.INSUFFICIENT_PATH);
     expect(error.message).toBe(
-      'INSUFFICIENT_PATH: Message at `Component.object` resolved to an object, but only strings are supported. Use a `.` to retrieve nested messages. See https://next-intl.dev/docs/usage/messages#structuring-messages'
+      'INSUFFICIENT_PATH: Message at `Component.object` resolved to `object`, but only strings are supported. Use a `.` to retrieve nested messages. See https://next-intl.dev/docs/usage/translations#structuring-messages'
     );
   });
 
@@ -864,7 +873,7 @@ describe('error handling', () => {
     const error: IntlError = onError.mock.calls[0][0];
     expect(error.code).toBe(IntlErrorCode.INSUFFICIENT_PATH);
     expect(error.message).toBe(
-      'INSUFFICIENT_PATH: Message at `Component.object` resolved to an object, but only strings are supported. Use a `.` to retrieve nested messages. See https://next-intl.dev/docs/usage/messages#structuring-messages'
+      'INSUFFICIENT_PATH: Message at `Component.object` resolved to `object`, but only strings are supported. Use a `.` to retrieve nested messages. See https://next-intl.dev/docs/usage/translations#structuring-messages'
     );
   });
 
@@ -889,7 +898,7 @@ describe('error handling', () => {
     const error: IntlError = onError.mock.calls[0][0];
     expect(error.code).toBe(IntlErrorCode.INVALID_MESSAGE);
     expect(error.message).toBe(
-      'INVALID_MESSAGE: Message at `Component.array` resolved to an array, but only strings are supported. See https://next-intl.dev/docs/usage/messages#arrays-of-messages'
+      'INVALID_MESSAGE: Message at `Component.array` resolved to an array, but only strings are supported. See https://next-intl.dev/docs/usage/translations#arrays-of-messages'
     );
   });
 
@@ -914,7 +923,7 @@ describe('error handling', () => {
     const error: IntlError = onError.mock.calls[0][0];
     expect(error.code).toBe(IntlErrorCode.INVALID_MESSAGE);
     expect(error.message).toBe(
-      'INVALID_MESSAGE: Message at `Component.array` resolved to an array, but only strings are supported. See https://next-intl.dev/docs/usage/messages#arrays-of-messages'
+      'INVALID_MESSAGE: Message at `Component.array` resolved to an array, but only strings are supported. See https://next-intl.dev/docs/usage/translations#arrays-of-messages'
     );
   });
 });

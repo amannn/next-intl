@@ -16,17 +16,16 @@ In case Server Components establish themselves in React apps outside of Next.js,
 
 In contrast, `use-intl` contains all APIs that are necessary for handling i18n in regular React apps:
 
-- [`useTranslations`](/docs/usage/messages) for translating messages
+- [`useTranslations`](/docs/usage/translations) for translating messages
 - `useFormatter` for formatting [numbers](/docs/usage/numbers), [dates & times](/docs/usage/dates-times) and [lists](/docs/usage/lists)
 - [Configuration APIs](/docs/usage/configuration) (note however that `NextIntlProvider` is called `IntlProvider` in `use-intl`)
 
 This allows you to use the same APIs that you know from `next-intl` in other environments:
 
 1. React Apps ([example](/examples#use-intl))
-2. React Native ([example](/examples#react-native))
-3. Remix ([example](/examples#remix))
-4. Testing environments like Jest ([example](https://github.com/amannn/next-intl/blob/main/examples/example-app-router/src/components/Navigation.spec.tsx))
-5. [Storybook](/docs/workflows/storybook)
+2. React Native
+3. Testing environments like Jest ([example](https://github.com/amannn/next-intl/blob/main/examples/example-app-router/src/components/Navigation.spec.tsx))
+4. [Storybook](/docs/workflows/storybook)
 
 **Basic usage:**
 

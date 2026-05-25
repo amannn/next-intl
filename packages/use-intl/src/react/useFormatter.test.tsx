@@ -770,3 +770,75 @@ describe('list', () => {
     });
   });
 });
+
+describe('displayName', () => {
+  function renderDisplayName(value: string, options: Intl.DisplayNamesOptions) {
+    function Component() {
+      const format = useFormatter();
+      return <>{format.displayName(value, options)}</>;
+    }
+
+    render(
+      <MockProvider>
+        <Component />
+      </MockProvider>
+    );
+  }
+
+  it('formats a region', () => {
+    renderDisplayName('US', {type: 'region'});
+    screen.getByText('United States');
+  });
+
+  it('formats a language', () => {
+    renderDisplayName('en', {type: 'language'});
+    screen.getByText('English');
+  });
+
+  it('formats a currency', () => {
+    renderDisplayName('USD', {type: 'currency'});
+    screen.getByText('US Dollar');
+  });
+
+  it('can use a global format', () => {
+    function Component() {
+      const format = useFormatter();
+      return <>{format.displayName('US', 'region')}</>;
+    }
+
+    render(
+      <MockProvider formats={{displayName: {region: {type: 'region'}}}}>
+        <Component />
+      </MockProvider>
+    );
+
+    screen.getByText('United States');
+  });
+
+  describe('performance', () => {
+    let DisplayNames: SpyImpl;
+    beforeEach(() => {
+      DisplayNames = spyOn(globalThis.Intl, 'DisplayNames');
+    });
+
+    it('caches `Intl.DisplayNames` instances', () => {
+      function Component() {
+        const format = useFormatter();
+        return [
+          format.displayName('US', {type: 'region'}),
+          format.displayName('CA', {type: 'region'}),
+          format.displayName('USD', {type: 'currency'}),
+          format.displayName('CAD', {type: 'currency'})
+        ].join(';');
+      }
+
+      render(
+        <MockProvider>
+          <Component />
+        </MockProvider>
+      );
+
+      expect(DisplayNames.callCount).toBe(2);
+    });
+  });
+});

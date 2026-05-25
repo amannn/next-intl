@@ -46,7 +46,7 @@ export default function useBasePathname<
     if (isPathnamePrefixed) {
       unlocalizedPathname = unprefixPathname(pathname, prefix);
     } else if (
-      config.localePrefix.mode === 'as-needed' &&
+      config.localePrefix.mode !== 'never' &&
       config.localePrefix.prefixes
     ) {
       // Workaround for https://github.com/vercel/next.js/issues/73085
