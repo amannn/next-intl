@@ -198,7 +198,7 @@ describe('json format', {timeout: 20_000}, () => {
     await vi.waitFor(() => {
       expect(JSON.parse(filesystem.project.messages!['fr.json'])).toEqual({
         OpKKos: 'Bonjour!',
-        'nm_7yQ': ''
+        nm_7yQ: ''
       });
     });
   });
