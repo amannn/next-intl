@@ -29,7 +29,7 @@ export default interface ExtractorCodec {
    * Turns the content of a file into a JSON string that represents extracted
    * messages. The returned value will be passed to `JSON.parse`.
    *
-   * @return E.g. `[{"id":"+YJVTi","message":"Hey!"}]`
+   * @return E.g. `[{"id":"-YJVTi","message":"Hey!"}]`
    *
    * This is used when loading messages into your application, typically via a
    * dynamic import (e.g. `import(`../messages/${locale}.json`)`).

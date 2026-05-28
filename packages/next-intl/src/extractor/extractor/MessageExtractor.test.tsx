@@ -128,14 +128,14 @@ it('does not add a fallback message in production', async () => {
       "code": "import { useTranslations as useTranslations$1 } from 'next-intl';
     function Component() {
         const t = useTranslations$1();
-        t("+YJVTi");
+        t("-YJVTi");
     }
     ",
       "map": undefined,
       "messages": [
         {
           "description": null,
-          "id": "+YJVTi",
+          "id": "-YJVTi",
           "message": "Hey!",
           "reference": {
             "line": 5,

@@ -77,7 +77,7 @@ describe('json format', {timeout: 20_000}, () => {
       expect.any(String)
     );
     expect(JSON.parse(filesystem.project.messages!['en.json'])).toEqual({
-      '+YJVTi': 'Hey!'
+      '-YJVTi': 'Hey!'
     });
   });
 
@@ -198,7 +198,7 @@ describe('json format', {timeout: 20_000}, () => {
     await vi.waitFor(() => {
       expect(JSON.parse(filesystem.project.messages!['fr.json'])).toEqual({
         OpKKos: 'Bonjour!',
-        'nm/7yQ': ''
+        'nm_7yQ': ''
       });
     });
   });
@@ -291,14 +291,14 @@ describe('json format', {timeout: 20_000}, () => {
     }
     `;
     filesystem.project.messages = {
-      'en.json': '{"+YJVTi": "Hey!"}'
+      'en.json': '{"-YJVTi": "Hey!"}'
     };
 
     using compiler = createCompiler();
     await compiler.extractAll();
     await waitForWriteFileCalls(1);
 
-    filesystem.project.messages!['de.json'] = '{"+YJVTi": "Hallo"}';
+    filesystem.project.messages!['de.json'] = '{"-YJVTi": "Hallo"}';
     const readCallsBeforeRename = vi.mocked(fs.readFile).mock.calls.length;
     simulateFileEvent('/project/messages', 'rename', 'de.json');
     await vi.waitFor(() =>
@@ -920,13 +920,13 @@ describe('po format', {timeout: 20_000}, () => {
       'en.po': `
       #: src/Greeting.tsx
       #, fuzzy
-      msgid "+YJVTi"
+      msgid "-YJVTi"
       msgstr "Hey!"
       `,
       'de.po': `
       #: src/Greeting.tsx
       #, c-format
-      msgid "+YJVTi"
+      msgid "-YJVTi"
       msgstr "Hallo!"
       `
     };
@@ -949,7 +949,7 @@ describe('po format', {timeout: 20_000}, () => {
 
       #: src/Greeting.tsx
       #, fuzzy
-      msgid "+YJVTi"
+      msgid "-YJVTi"
       msgstr "Hey!"
       ",
         ],
@@ -965,7 +965,7 @@ describe('po format', {timeout: 20_000}, () => {
 
       #: src/Greeting.tsx
       #, c-format
-      msgid "+YJVTi"
+      msgid "-YJVTi"
       msgstr "Hallo!"
       ",
         ],
@@ -1078,13 +1078,13 @@ describe('po format', {timeout: 20_000}, () => {
       'en.po': `
       #: src/Greeting.tsx
       #, fuzzy, c-format
-      msgid "+YJVTi"
+      msgid "-YJVTi"
       msgstr "Hey!"
       `,
       'de.po': `
       #: src/Greeting.tsx
       #, fuzzy, no-wrap
-      msgid "+YJVTi"
+      msgid "-YJVTi"
       msgstr "Hallo!"
       `
     };
@@ -1103,7 +1103,7 @@ msgstr ""
 
 #: src/Greeting.tsx
 #, c-format
-msgid "+YJVTi"
+msgid "-YJVTi"
 msgstr "Hey!"
 `
     );
@@ -1138,7 +1138,7 @@ msgstr "Hey!"
 
       #: src/Greeting.tsx
       #, c-format
-      msgid "+YJVTi"
+      msgid "-YJVTi"
       msgstr "Hey!"
 
       #: src/Greeting.tsx
@@ -1156,7 +1156,7 @@ msgstr ""
 "Language: en\\n"
 
 #: src/Greeting.tsx
-msgid "+YJVTi"
+msgid "-YJVTi"
 msgstr "Hey!"
 
 #: src/Greeting.tsx
@@ -1194,7 +1194,7 @@ msgstr "World"
       "X-Crowdin-SourceKey: msgstr\\n"
 
       #: src/Greeting.tsx
-      msgid "+YJVTi"
+      msgid "-YJVTi"
       msgstr "Hey!"
 
       #: src/Greeting.tsx
@@ -1217,7 +1217,7 @@ msgstr ""
 
 #: src/Greeting.tsx
 #, no-wrap
-msgid "+YJVTi"
+msgid "-YJVTi"
 msgstr "Hallo!"
 
 #: src/Greeting.tsx
@@ -1260,7 +1260,7 @@ msgstr ""
 
       #: src/Greeting.tsx
       #, no-wrap
-      msgid "+YJVTi"
+      msgid "-YJVTi"
       msgstr "Hallo!"
 
       #: src/Greeting.tsx
@@ -1286,7 +1286,7 @@ msgstr ""
 "Language: de\\n"
 
 #: src/Greeting.tsx
-msgid "+YJVTi"
+msgid "-YJVTi"
 msgstr "Hallo!"
 
 #: src/Greeting.tsx
@@ -1332,7 +1332,7 @@ msgstr ""
       "X-Crowdin-SourceKey: msgstr\\n"
 
       #: src/Greeting.tsx
-      msgid "+YJVTi"
+      msgid "-YJVTi"
       msgstr "Hallo!"
 
       #: src/Greeting.tsx
@@ -1461,7 +1461,7 @@ msgstr ""
       msgstr "Hello!"
 
       #: src/Greeting.tsx
-      msgid "nm/7yQ"
+      msgid "nm_7yQ"
       msgstr "Hi!"
       ",
         ],
@@ -1481,7 +1481,7 @@ msgstr ""
       msgstr "Hallo!"
 
       #: src/Greeting.tsx
-      msgid "nm/7yQ"
+      msgid "nm_7yQ"
       msgstr ""
       ",
         ],
@@ -1857,7 +1857,7 @@ describe('`srcPath` filtering', () => {
         [
           "messages/en.json",
           "{
-        "+YJVTi": "Hey!"
+        "-YJVTi": "Hey!"
       }
       ",
         ],
@@ -1875,7 +1875,7 @@ describe('`srcPath` filtering', () => {
           "messages/en.json",
           "{
         "JwjlWH": "panel.source",
-        "+YJVTi": "Hey!"
+        "-YJVTi": "Hey!"
       }
       ",
         ],

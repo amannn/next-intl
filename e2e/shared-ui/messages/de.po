@@ -7,5 +7,5 @@ msgstr ""
 "X-Crowdin-SourceKey: msgstr\n"
 
 #: src/ProfileCard.tsx
-msgid "Cq+Nds"
-msgstr "Profilkarte"
+msgid "Cq-Nds"
+msgstr ""

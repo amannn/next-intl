@@ -12,5 +12,5 @@ msgstr "Hello"
 
 #: src/components/Footer.tsx
 #: src/components/Greeting.tsx
-msgid "+YJVTi"
+msgid "-YJVTi"
 msgstr "Hey!"
