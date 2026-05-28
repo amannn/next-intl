@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.13.0 (2026-05-28)
+
+### Features
+
+* Use URL-safe base64 for auto-generated message keys of `useExtracted` ([#2330](https://github.com/amannn/next-intl/issues/2330)) ([a003d3a](https://github.com/amannn/next-intl/commit/a003d3ae81819a5ba646daed0f45f3106e1eee1b)) – by @spokodev
+
 ## 4.12.0 (2026-05-13)
 
 ### Features
