@@ -337,7 +337,7 @@ Instead, keys should only hash the message content:
 ```tsx
 const message = 'Hello {name}';
 const hash = crypto.createHash('sha512').update(message).digest();
-const base64 = hash.toString('base64');
+const base64 = hash.toString('base64url');
 const key = base64.slice(0, 6);
 
 key === 'QM7ITA';
@@ -346,7 +346,7 @@ key === 'QM7ITA';
 **Notes:**
 
 - In my benchmarks on a 2019 MacBook Pro, SHA-512 appears to produce similar results as SHA-256 for real-world use cases, there doesn't seem to be a clear winner. FormatJS uses SHA-512, so being compatible here might be helpful.
-- Base64 is helpful to reduce collision risk (e.g. compared to hex), while keeping the key readable (e.g. avoiding cryptic symbols)
+- Base64 is helpful to reduce collision risk (e.g. compared to hex), while keeping the key readable. URL-safe base64 is used to avoid `+` and `/` characters, which can be misinterpreted as URL paths when they appear in serialized page data.
 - Descriptions are another candidate for the hash, but could lead to an increase in accidental invalidation. If collisions should be avoided for a particular message, an [explicit ID](#explicit-ids) should be used instead.
 
 ### Catalog generation
