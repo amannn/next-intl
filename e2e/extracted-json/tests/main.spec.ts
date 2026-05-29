@@ -21,7 +21,7 @@ const withTempRemoveApp = (filePath: string) =>
 
 it('extracts newly referenced messages in components', async ({page}) => {
   await page.goto('/');
-  await expectCatalog('en.json', {'+YJVTi': 'Hey!', NhX4DJ: 'Hello'});
+  await expectCatalog('en.json', {'-YJVTi': 'Hey!', NhX4DJ: 'Hello'});
 
   await using _ = await withTempEditApp(
     'src/components/Greeting.tsx',
@@ -45,19 +45,19 @@ export default function Greeting() {
 
 it('writes to newly added catalog file', async ({page}) => {
   await page.goto('/');
-  await expectCatalog('en.json', {'+YJVTi': 'Hey!', NhX4DJ: 'Hello'});
+  await expectCatalog('en.json', {'-YJVTi': 'Hey!', NhX4DJ: 'Hello'});
 
   await using _ = await withTempFileApp('messages/fr.json', '{}');
 
   await page.goto('/');
   const fr = await expectCatalog(
     'fr.json',
-    {'+YJVTi': '', NhX4DJ: ''},
+    {'-YJVTi': '', NhX4DJ: ''},
     {
       timeout: 15_000
     }
   );
-  expect(fr['+YJVTi']).toBe('');
+  expect(fr['-YJVTi']).toBe('');
   expect(fr['NhX4DJ']).toBe('');
 });
 
@@ -65,11 +65,11 @@ it('preserves manual translations in target catalogs when adding new messages', 
   page
 }) => {
   await page.goto('/');
-  await expectCatalog('en.json', {'+YJVTi': 'Hey!', NhX4DJ: 'Hello'});
+  await expectCatalog('en.json', {'-YJVTi': 'Hey!', NhX4DJ: 'Hello'});
 
   await using _ = await withTempEditApp(
     'messages/de.json',
-    '{"+YJVTi": "Hallo", "NhX4DJ": "Hallo"}'
+    '{"-YJVTi": "Hallo", "NhX4DJ": "Hallo"}'
   );
 
   await using __ = await withTempEditApp(
@@ -92,18 +92,18 @@ export default function Greeting() {
 
   await page.goto('/');
   const de = await expectCatalog('de.json', {
-    '+YJVTi': 'Hallo',
+    '-YJVTi': 'Hallo',
     NhX4DJ: 'Hallo',
     OpKKos: ''
   });
-  expect(de['+YJVTi']).toBe('Hallo');
+  expect(de['-YJVTi']).toBe('Hallo');
   expect(de['NhX4DJ']).toBe('Hallo');
   expect(de['OpKKos']).toBe('');
 });
 
 it('stops writing to removed catalog file', async ({page}) => {
   await page.goto('/');
-  await expectCatalog('en.json', {'+YJVTi': 'Hey!', NhX4DJ: 'Hello'});
+  await expectCatalog('en.json', {'-YJVTi': 'Hey!', NhX4DJ: 'Hello'});
   await expectCatalog('de.json', {NhX4DJ: 'Hallo'});
 
   await using _ = await withTempRemoveApp('messages/de.json');
@@ -140,7 +140,7 @@ it('removes translations when all messages removed from a file', async ({
   page
 }) => {
   await page.goto('/');
-  await expectCatalog('en.json', {'+YJVTi': 'Hey!', NhX4DJ: 'Hello'});
+  await expectCatalog('en.json', {'-YJVTi': 'Hey!', NhX4DJ: 'Hello'});
 
   await using _ = await withTempEditApp(
     'src/components/Greeting.tsx',
@@ -164,9 +164,9 @@ export default function Footer() {
   await page.goto('/');
   const en = await expectCatalogPredicate(
     'en.json',
-    (json) => json['NhX4DJ'] === 'Hello' && json['+YJVTi'] == null
+    (json) => json['NhX4DJ'] === 'Hello' && json['-YJVTi'] == null
   );
-  expect(en['+YJVTi']).toBeUndefined();
+  expect(en['-YJVTi']).toBeUndefined();
   expect(en['NhX4DJ']).toBe('Hello');
 });
 
@@ -174,7 +174,7 @@ it('preserves messages when removed from one file but still used in another', as
   page
 }) => {
   await page.goto('/');
-  await expectCatalog('en.json', {'+YJVTi': 'Hey!'});
+  await expectCatalog('en.json', {'-YJVTi': 'Hey!'});
 
   await using _ = await withTempEditApp(
     'src/components/Greeting.tsx',
@@ -187,16 +187,16 @@ export default function Greeting() {
   );
 
   await page.goto('/');
-  const en = await expectCatalog('en.json', {'+YJVTi': 'Hey!'});
-  expect(en['+YJVTi']).toBe('Hey!');
+  const en = await expectCatalog('en.json', {'-YJVTi': 'Hey!'});
+  expect(en['-YJVTi']).toBe('Hey!');
 });
 
 it('restores previous translations when messages are added back', async ({
   page
 }) => {
   await page.goto('/');
-  await expectCatalog('en.json', {'+YJVTi': 'Hey!', NhX4DJ: 'Hello'});
-  await expectCatalog('de.json', {'+YJVTi': '', NhX4DJ: 'Hallo'});
+  await expectCatalog('en.json', {'-YJVTi': 'Hey!', NhX4DJ: 'Hello'});
+  await expectCatalog('de.json', {'-YJVTi': '', NhX4DJ: 'Hallo'});
 
   await using _ = await withTempEditApp(
     'src/app/page.tsx',
@@ -238,13 +238,13 @@ export default function Page() {
 `
   );
 
-  await expectCatalog('en.json', {'+YJVTi': 'Hey!', NhX4DJ: 'Hello'});
+  await expectCatalog('en.json', {'-YJVTi': 'Hey!', NhX4DJ: 'Hello'});
   await expectCatalogPredicate('de.json', (json) => json['NhX4DJ'] === 'Hallo');
 });
 
 it('handles namespaces when storing messages', async ({page}) => {
   await page.goto('/');
-  await expectCatalog('en.json', {'+YJVTi': 'Hey!'});
+  await expectCatalog('en.json', {'-YJVTi': 'Hey!'});
 
   await using _ = await withTempEditApp(
     'src/components/Greeting.tsx',

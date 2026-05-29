@@ -9,10 +9,10 @@ const APP_ROOT = path.join(__dirname, '..');
 const MESSAGES_DIR = path.join(APP_ROOT, 'messages');
 
 const {expectCatalog} = createPoCatalogUtils(MESSAGES_DIR);
-const withTempEditApp = (filePath: string, content: string) =>
-  withTempEdit(APP_ROOT, filePath, content);
 const withTempFileApp = (filePath: string, content: string) =>
   withTempFile(APP_ROOT, filePath, content);
+const withTempEditApp = (filePath: string, content: string) =>
+  withTempEdit(APP_ROOT, filePath, content);
 const withTempRemoveApp = (filePath: string) =>
   withTempRemove(APP_ROOT, filePath);
 
@@ -20,7 +20,7 @@ it('extracts newly referenced messages in components', async ({page}) => {
   await page.goto('/');
   await expectCatalog(
     'en.po',
-    (content) => getPoEntry(content, '+YJVTi') != null
+    (content) => getPoEntry(content, '-YJVTi') != null
   );
 
   await using _ = await withTempEditApp(
@@ -43,7 +43,7 @@ export default function Greeting() {
   expect(content).toContain('Newly extracted');
 });
 
-it('tracks all line numbers when same message appears multiple times in one file', async ({
+it('conflates file references when the same message appears multiple times in one file', async ({
   page
 }) => {
   await using _ = await withTempEditApp(
@@ -74,15 +74,15 @@ export default function Greeting() {
   const entry = getPoEntry(content, 'OpKKos');
   expect(entry).toMatch(/msgstr "Hello!"/);
   expect(entry).toMatch(/Greeting\.tsx/);
-  const greetingRefs = entry!.match(/#: [^\n]*Greeting\.tsx[^\n]*/g) ?? [];
-  expect(greetingRefs.length).toBeGreaterThanOrEqual(2);
+  const greetingRefs = entry!.match(/^#: [^\n]*Greeting\.tsx[^\n]*$/gm) ?? [];
+  expect(greetingRefs.length).toBe(1);
 });
 
 it("saves catalog when it's missing", async ({page}) => {
   await page.goto('/');
   await expectCatalog(
     'en.po',
-    (content) => getPoEntry(content, '+YJVTi') != null
+    (content) => getPoEntry(content, '-YJVTi') != null
   );
 
   await using _ = await withTempRemoveApp('messages/en.po');
@@ -103,7 +103,7 @@ export default function Greeting() {
   await expectCatalog(
     'en.po',
     (content) =>
-      getPoEntry(content, '+YJVTi') != null &&
+      getPoEntry(content, '-YJVTi') != null &&
       getPoEntry(content, 'OpKKos') != null
   );
 });
@@ -112,7 +112,7 @@ it('saves changes to descriptions', async ({page}) => {
   await page.goto('/');
   await expectCatalog(
     'en.po',
-    (content) => getPoEntry(content, '+YJVTi') != null
+    (content) => getPoEntry(content, '-YJVTi') != null
   );
 
   await using _ = await withTempEditApp(
@@ -137,25 +137,25 @@ export default function Greeting() {
 
   await page.goto('/');
   const content = await expectCatalog('en.po', (content) => {
-    const entry = getPoEntry(content, '+YJVTi');
+    const entry = getPoEntry(content, '-YJVTi');
     return entry != null && entry.includes('#. Shown on home screen');
   });
-  const entry = getPoEntry(content, '+YJVTi');
+  const entry = getPoEntry(content, '-YJVTi');
   expect(entry).toMatch(/#\. Shown on home screen/);
-  expect(entry).toMatch(/msgid "\+YJVTi"/);
+  expect(entry).toMatch(/msgid "\-YJVTi"/);
 });
 
 it('combines references from multiple files', async ({page}) => {
   await page.goto('/');
   const content = await expectCatalog('en.po', (content) => {
-    const entry = getPoEntry(content, '+YJVTi');
+    const entry = getPoEntry(content, '-YJVTi');
     return (
       entry != null &&
       entry.includes('Footer.tsx') &&
       entry.includes('Greeting.tsx')
     );
   });
-  const entry = getPoEntry(content, '+YJVTi');
+  const entry = getPoEntry(content, '-YJVTi');
   expect(entry).toMatch(/Footer\.tsx/);
   expect(entry).toMatch(/Greeting\.tsx/);
 });
@@ -164,7 +164,7 @@ it('supports namespaces', async ({page}) => {
   await page.goto('/');
   await expectCatalog(
     'en.po',
-    (content) => getPoEntry(content, '+YJVTi') != null
+    (content) => getPoEntry(content, '-YJVTi') != null
   );
 
   await using _ = await withTempEditApp(
@@ -214,7 +214,7 @@ export default function Greeting() {
   await expectCatalog(
     'en.po',
     (content) =>
-      getPoEntry(content, '+YJVTi') != null &&
+      getPoEntry(content, '-YJVTi') != null &&
       getPoEntry(content, '4xqPlJ') != null
   );
 
@@ -233,7 +233,7 @@ export default function Greeting() {
 
   await page.goto('/');
   const content = await expectCatalog('en.po', (content) => {
-    const heyEntry = getPoEntry(content, '+YJVTi');
+    const heyEntry = getPoEntry(content, '-YJVTi');
     const howdyEntry = getPoEntry(content, '4xqPlJ');
     return (
       heyEntry != null &&
@@ -242,7 +242,7 @@ export default function Greeting() {
       !heyEntry.includes('Greeting.tsx')
     );
   });
-  const heyEntry = getPoEntry(content, '+YJVTi');
+  const heyEntry = getPoEntry(content, '-YJVTi');
   const howdyEntry = getPoEntry(content, '4xqPlJ');
   expect(heyEntry).toMatch(/Footer\.tsx/);
   expect(heyEntry).not.toMatch(/Greeting\.tsx/);
@@ -435,7 +435,7 @@ export default function NewName() {
 
 it('retains metadata when saving back to file', async ({page}) => {
   await page.goto('/');
-  await expectCatalog('en.po', (c) => getPoEntry(c, '+YJVTi') != null);
+  await expectCatalog('en.po', (c) => getPoEntry(c, '-YJVTi') != null);
 
   await using _ = await withTempEditApp(
     'messages/en.po',
@@ -448,8 +448,8 @@ msgstr ""
 "X-Something-Else: test\\n"
 "Language: en\\n"
 
-#: src/components/Greeting.tsx:5
-msgid "+YJVTi"
+#: src/components/Greeting.tsx
+msgid "-YJVTi"
 msgstr "Hey!"
 `
   );
@@ -485,7 +485,7 @@ it('initializes all messages to empty string when adding new catalog', async ({
   await expectCatalog(
     'en.po',
     (content) =>
-      getPoEntry(content, '+YJVTi') != null &&
+      getPoEntry(content, '-YJVTi') != null &&
       getPoEntry(content, 'NhX4DJ') != null
   );
 
@@ -495,7 +495,7 @@ it('initializes all messages to empty string when adding new catalog', async ({
   await expectCatalog(
     'fr.po',
     (content) =>
-      getPoEntry(content, '+YJVTi') != null &&
+      getPoEntry(content, '-YJVTi') != null &&
       getPoEntry(content, 'NhX4DJ') != null
   );
 });

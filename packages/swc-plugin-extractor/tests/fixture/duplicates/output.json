@@ -3,15 +3,18 @@
     "id": "OpKKos",
     "message": "Hello!",
     "description": null,
-    "references": [
-      {
-        "path": "input.js",
-        "line": 5
-      },
-      {
-        "path": "input.js",
-        "line": 10
-      }
-    ]
+    "reference": {
+      "path": "input.js",
+      "line": 5
+    }
+  },
+  {
+    "id": "OpKKos",
+    "message": "Hello!",
+    "description": null,
+    "reference": {
+      "path": "input.js",
+      "line": 10
+    }
   }
 ]

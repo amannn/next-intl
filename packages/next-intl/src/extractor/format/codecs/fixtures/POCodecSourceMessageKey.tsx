@@ -21,27 +21,27 @@ export default defineCodec(() => {
         catalog.messages || ([] as NonNullable<typeof catalog.messages>);
 
       return messages.map((msg) => {
-        const {extractedComments, msgctxt, msgid, msgstr, ...rest} = msg;
+        const {
+          extractedComments,
+          msgctxt,
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          msgid,
+          msgstr,
+          references,
+          ...rest
+        } = msg;
 
         // Necessary to restore the ID
         if (!msgctxt) {
           throw new Error('msgctxt is required');
         }
 
-        if (extractedComments && extractedComments.length > 1) {
-          throw new Error(
-            `Multiple extracted comments are not supported. Found ${extractedComments.length} comments for msgid "${msgid}".`
-          );
-        }
-
         return {
           ...rest,
           id: msgctxt,
           message: msgstr,
-          ...(extractedComments &&
-            extractedComments.length > 0 && {
-              description: extractedComments[0]
-            })
+          description: extractedComments ?? [],
+          references: references ?? []
         };
       });
     },
@@ -56,9 +56,16 @@ export default defineCodec(() => {
         }
 
         // Store the hashed ID in msgctxt so we can restore it during decode
-        const {description, id, message, ...rest} = msg;
+        const {description = [], id, message, references, ...rest} = msg;
+
+        // Path-only refs (no `:line`), unique paths
+        const pathOnlyRefs: Array<{path: string}> = [
+          ...new Set(references.map((ref) => ref.path))
+        ].map((path) => ({path}));
+
         return {
-          ...(description && {extractedComments: [description]}),
+          ...(description.length > 0 && {extractedComments: description}),
+          ...(pathOnlyRefs.length > 0 && {references: pathOnlyRefs}),
           ...rest,
           msgctxt: id,
           msgid: sourceMessage,

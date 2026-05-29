@@ -1,4 +1,6 @@
 import type {NextConfig} from 'next';
+import normalizeExtractorConfig from '../extractor/normalizeExtractorConfig.js';
+import type {ExtractorConfig} from '../extractor/types.js';
 import createMessagesDeclaration from './declaration/index.js';
 import initExtractionCompiler from './extractor/initExtractionCompiler.js';
 import getNextConfig from './getNextConfig.js';
@@ -27,11 +29,23 @@ function initPlugin(
     );
   }
 
-  if (!skipWatchers) {
-    initExtractionCompiler(pluginConfig);
+  let extractorConfig: ExtractorConfig | undefined;
+
+  const experimental = pluginConfig.experimental;
+  const extract = experimental?.extract;
+  if (extract) {
+    extractorConfig = normalizeExtractorConfig({
+      extract,
+      messages: experimental.messages,
+      srcPath: experimental.srcPath
+    });
   }
 
-  return getNextConfig(pluginConfig, nextConfig);
+  if (!skipWatchers) {
+    initExtractionCompiler(extractorConfig);
+  }
+
+  return getNextConfig(pluginConfig, nextConfig, extractorConfig);
 }
 
 export default function createNextIntlPlugin(
