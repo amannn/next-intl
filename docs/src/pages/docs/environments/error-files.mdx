@@ -49,14 +49,12 @@ After this change, all requests that are matched within the `[locale]` segment w
 
 When the user requests a route that is not matched by the `next-intl` [middleware](/docs/routing/middleware), there's no locale associated with the request (depending on your [`matcher` config](/docs/routing/middleware#matcher-config), e.g. `/unknown.txt` might not be matched).
 
-You can add a root `not-found` page to handle these cases too.
+You can add a [`global-not-found`](https://nextjs.org/docs/app/api-reference/file-conventions/not-found#global-not-foundjs-experimental) page to handle these cases too:
 
-```tsx filename="app/not-found.tsx"
-'use client';
-
+```tsx filename="app/global-not-found.tsx"
 import Error from 'next/error';
 
-export default function NotFound() {
+export default function GlobalNotFound() {
   return (
     <html lang="en">
       <body>
@@ -67,32 +65,7 @@ export default function NotFound() {
 }
 ```
 
-Note that the presence of `app/not-found.tsx` requires that a root layout is available, even if it's just passing `children` through.
-
-```tsx filename="app/layout.tsx"
-// Since we have a root `not-found.tsx` page, a layout file
-// is required, even if it's just passing children through.
-export default function RootLayout({children}) {
-  return children;
-}
-```
-
-For the 404 page to render, we need to call the `notFound` function in the root layout when we detect an incoming `locale` param that isn't valid.
-
-```tsx filename="app/[locale]/layout.tsx"
-import {hasLocale} from 'next-intl';
-import {notFound} from 'next/navigation';
-import {routing} from '@/i18n/routing';
-
-export default function LocaleLayout({children, params}) {
-  const {locale} = await params;
-  if (!hasLocale(routing.locales, locale)) {
-    notFound();
-  }
-
-  // ...
-}
-```
+For the 404 page to render, we need to call the `notFound` function when an unknown value for the `[locale]` segment is encountered—typically in [`i18n/request.ts`](/docs/routing/setup#i18n-request).
 
 ## `error.js`
 

@@ -106,25 +106,44 @@ export const {Link, redirect, usePathname, useRouter, getPathname} =
 
 ### `src/i18n/request.ts` [#i18n-request]
 
-Now, we can read the matched locale in our request configuration:
+Now, we can read the matched locale from [`next/root-params`](/blog/nextjs-root-params) in our request configuration:
 
 ```tsx filename="src/i18n/request.ts"
+import * as rootParams from 'next/root-params';
+import {notFound} from 'next/navigation';
 import {getRequestConfig} from 'next-intl/server';
 import {hasLocale} from 'next-intl';
 import {routing} from './routing';
 
-export default getRequestConfig(async ({requestLocale}) => {
-  // Typically corresponds to the `[locale]` segment
-  const requested = await requestLocale;
-  const locale = hasLocale(routing.locales, requested)
-    ? requested
-    : routing.defaultLocale;
+export default getRequestConfig(async ({locale}) => {
+  if (!locale) {
+    const paramValue = await rootParams.locale();
+    if (hasLocale(routing.locales, paramValue)) {
+      locale = paramValue;
+    } else {
+      notFound();
+    }
+  }
 
   return {
     locale
     // ...
   };
 });
+```
+
+The `locale` argument that is passed to `getRequestConfig` can be used for edge cases where you need to override the current locale.
+
+**Note:** `next/root-params` is currently experimental and needs to be enabled in your Next.js config:
+
+```tsx filename="next.config.tsx"
+const nextConfig = {
+  experimental: {
+    rootParams: true
+  }
+};
+
+// ...
 ```
 
 ### `src/app/[locale]/layout.tsx` [#layout]
@@ -140,42 +159,68 @@ src
         └── ...
 ```
 
-The `locale` that was matched is now available via the `[locale]` param:
+</Steps>
+
+That's all it takes!
+
+The `locale` that was matched is now correctly incorporated in all functionality from `next-intl`:
 
 ```tsx filename="app/[locale]/layout.tsx"
-import {NextIntlClientProvider, hasLocale} from 'next-intl';
-import {notFound} from 'next/navigation';
-import {routing} from '@/i18n/routing';
+import {useTranslations} from 'next-intl';
 
-type Props = {
-  children: React.ReactNode;
-  params: Promise<{locale: string}>;
-};
-
-export default async function LocaleLayout({children, params}: Props) {
-  // Ensure that the incoming `locale` is valid
-  const {locale} = await params;
-  if (!hasLocale(routing.locales, locale)) {
-    notFound();
-  }
+export default function Page() {
+  // ✅ Uses the locale from `i18n/request.ts`
+  const t = useTranslations();
 
   // ...
 }
 ```
 
-</Steps>
-
-That's all it takes! From here, you can [configure your routing](/docs/routing/configuration) to cater to your specific needs.
+From here, you can [configure your routing](/docs/routing/configuration) to cater to your specific needs.
 
 In case you ran into an issue, have a look at the [App Router example](/examples#app-router) to explore a working app.
 
 ## Static rendering
 
+### With `next/root-params`
+
+When you follow the setup instructions with `next/root-params` above, your app is automatically eligible for static rendering. Since we are using a dynamic route segment for the `[locale]` param, we need to use [`generateStaticParams`](https://nextjs.org/docs/app/api-reference/functions/generate-static-params) so that the routes can be rendered at build time.
+
+Depending on your needs, you can add `generateStaticParams` either to a layout or pages:
+
+1. **Layout**: Enables static rendering for all pages within this layout (e.g. `app/[locale]/layout.tsx`)
+2. **Individual pages**: Enables static rendering for a specific page (e.g. `app/[locale]/page.tsx`)
+
+**Example:**
+
+```tsx
+import {routing} from '@/i18n/routing';
+
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({locale}));
+}
+```
+
+<Details id="generatestaticparams-locales">
+<summary>Do I need to return all locales from `generateStaticParams`?</summary>
+
+If you prefer to only render certain locales at build time, or none at all, you can be selective about the ones you return from `generateStaticParams` (see [Static Rendering](https://nextjs.org/docs/app/api-reference/functions/generate-static-params#static-rendering) in the Next.js docs).
+
+</Details>
+
+### With `setRequestLocale` (legacy)
+
+<Callout type="warning">
+
+`setRequestLocale` is a legacy API that was added until `next/root-params` was introduced. It is still supported for backwards compatibility, but it is recommended to use `next/root-params` instead.
+
+</Callout>
+
 When using locale-based routing, `next-intl` will currently opt into dynamic rendering when APIs like `useTranslations` are used in Server Components. This is a limitation that we aim to remove in the future, but as a stopgap solution, `next-intl` provides a temporary API that can be used to enable static rendering.
 
 <Steps>
 
-### Add `generateStaticParams`
+#### Add `generateStaticParams`
 
 Since we are using a dynamic route segment for the `[locale]` param, we need to use [`generateStaticParams`](https://nextjs.org/docs/app/api-reference/functions/generate-static-params) so that the routes can be rendered at build time.
 
@@ -201,7 +246,7 @@ If you prefer to only render certain locales at build time, or none at all, you 
 
 </Details>
 
-### Add `setRequestLocale` to all relevant layouts and pages
+#### Add `setRequestLocale` to all relevant layouts and pages
 
 `next-intl` provides an API that can be used to distribute the locale that is received via `params` in layouts and pages for usage in all Server Components that are rendered as part of the request.
 
@@ -280,7 +325,7 @@ By using `setRequestLocale`, you can provide the locale that is received in layo
 
 </Details>
 
-### Use the `locale` param in metadata
+#### Use the `locale` param in metadata
 
 In addition to the rendering of your pages, also page metadata needs to qualify for static rendering.
 

@@ -6,9 +6,11 @@ import thumb from './thumb.jpg';
 
 type Props = {
   title: string;
+  description: string;
 };
 
 export default function CourseBanner({
+  description = 'Learn how to build delightful, multilingual apps with Next.js—from the basics to advanced patterns, all through a real-world project.',
   title = "Internationalization isn't just translating words"
 }: Props) {
   const id = useId();
@@ -32,8 +34,7 @@ export default function CourseBanner({
       <div>
         <h3 className="text-balance text-lg font-semibold">{title}</h3>
         <p className="mt-1 text-balance text-sm text-slate-600 dark:text-slate-400">
-          Learn how to build delightful, multilingual apps with Next.js—from the
-          basics to advanced patterns, all through a real-world project.
+          {description}
         </p>
         <LinkButton className="mt-3" href="https://learn.next-intl.dev">
           Get started
