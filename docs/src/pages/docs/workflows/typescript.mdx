@@ -129,6 +129,21 @@ declare module 'next-intl' {
 }
 ```
 
+If some of your locales have different keys (e.g., a key exists in `en.json` but is missing in `es.json`), you can use a union type to catch these inconsistencies at the call site.
+With this setup, only keys that are present in **all** locale files are accessible via the translator — using a key missing in any locale will result in a TypeScript error.
+
+```ts filename="global.ts"
+import messagesEn from './messages/en.json';
+import messagesEs from './messages/es.json';
+
+declare module 'next-intl' {
+  interface AppConfig {
+    // ...
+    Messages: typeof messagesEn | typeof messagesEs;
+  }
+}
+```
+
 You can freely define the interface, but if you have your messages available locally, it can be helpful to automatically create the type based on the messages from your default locale.
 
 <Details id="messages-performance-tsc">
