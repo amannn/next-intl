@@ -1,0 +1,20 @@
+- `useTranslations` works the same in Client Components, so interactive UI can read messages too.
+- ICU arguments like `{name}` are resolved in the browser as state changes — try typing below.
+
+```tsx app/greet.tsx
+'use client';
+import {useState} from 'react';
+import {useTranslations} from 'next-intl';
+
+export function Greet() {
+  const t = useTranslations('ClientComponentsPage');
+  const [name, setName] = useState('Frodo');
+  return (
+    <>
+      <input value={name} onChange={(e) => setName(e.target.value)} />
+      // !mark
+      <p>{t('greeting', {name})}</p>
+    </>
+  );
+}
+```

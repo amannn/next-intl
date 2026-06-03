@@ -1,0 +1,243 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --color-white: #ffffff;
+
+  --color-gray-50: #f7f7f8;
+  --color-gray-100: #ebebef;
+  --color-gray-200: #d1d1db;
+  --color-gray-300: #a9a9bc;
+  --color-gray-400: #8a8aa3;
+  --color-gray-500: #6c6c89;
+  --color-gray-600: #55556d;
+  --color-gray-700: #3f3f50;
+  --color-gray-800: #282833;
+  --color-gray-900: #121217;
+
+  --color-blue-300: #70d2ff;
+  --color-blue-700: #008fd6;
+
+  --font-mono:
+    Monaco, ui-monospace, SFMono-Regular, Menlo, Consolas, Liberation Mono,
+    Courier New, monospace;
+}
+
+/* Semantic tokens flip under `.dark` for runtime theme switching. */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+}
+
+:root {
+  --background: var(--color-gray-50);
+  --foreground: var(--color-gray-900);
+  --card: var(--color-white);
+  --card-foreground: var(--color-gray-900);
+  --popover: var(--color-white);
+  --popover-foreground: var(--color-gray-900);
+  --primary: var(--color-blue-700);
+  --primary-foreground: var(--color-white);
+  --secondary: var(--color-gray-200);
+  --secondary-foreground: var(--color-gray-900);
+  --muted: var(--color-gray-200);
+  --muted-foreground: var(--color-gray-600);
+  --accent: var(--color-blue-300);
+  --accent-foreground: var(--color-gray-900);
+  --border: var(--color-gray-200);
+  --input: var(--color-gray-200);
+  --ring: var(--color-blue-700);
+  --sidebar: var(--color-gray-50);
+  --sidebar-foreground: var(--color-gray-900);
+  --sidebar-border: var(--color-gray-200);
+}
+
+.dark {
+  --background: var(--color-gray-900);
+  --foreground: var(--color-gray-50);
+  --card: var(--color-gray-800);
+  --card-foreground: var(--color-gray-50);
+  --popover: var(--color-gray-800);
+  --popover-foreground: var(--color-gray-50);
+  --primary: var(--color-blue-300);
+  --primary-foreground: var(--color-gray-900);
+  --secondary: var(--color-gray-700);
+  --secondary-foreground: var(--color-gray-50);
+  --muted: var(--color-gray-700);
+  --muted-foreground: var(--color-gray-300);
+  --accent: var(--color-blue-700);
+  --accent-foreground: var(--color-gray-50);
+  --border: var(--color-gray-700);
+  --input: var(--color-gray-700);
+  --ring: var(--color-blue-300);
+  --sidebar: var(--color-gray-900);
+  --sidebar-foreground: var(--color-gray-50);
+  --sidebar-border: var(--color-gray-700);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+  button:not([disabled]),
+  [role='button']:not([disabled]) {
+    cursor: pointer;
+  }
+}
+
+/* Subtle dot-grid backdrop for the "output" boundary box */
+.dotgrid {
+  background-image: radial-gradient(
+    circle at center,
+    color-mix(in oklch, var(--muted-foreground) 28%, transparent) 1px,
+    transparent 1px
+  );
+  background-size: 14px 14px;
+  background-position: 0 0;
+}
+
+/* MDX content typography (scoped — no @tailwindcss/typography needed) */
+.mdx-content {
+  color: var(--foreground);
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+.mdx-content > * + * {
+  margin-top: 1rem;
+}
+
+.mdx-content p {
+  color: var(--muted-foreground);
+}
+
+.mdx-content ul {
+  list-style: disc;
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mdx-content li {
+  color: var(--muted-foreground);
+}
+
+.mdx-content li::marker {
+  color: var(--muted-foreground);
+}
+
+.mdx-content :not(pre) > code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--muted);
+  color: var(--foreground);
+  padding: 0.1em 0.35em;
+  border-radius: 0.25rem;
+  border: 1px solid var(--border);
+}
+
+.mdx-content a {
+  color: var(--primary);
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 3px;
+}
+
+.mdx-content a:hover {
+  text-decoration-style: solid;
+}
+
+.mdx-content h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--foreground);
+  margin-top: 1.75rem;
+}
+
+.mdx-content h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin-top: 1.25rem;
+}
+
+/* Code Hike — github-from-css theme variables */
+:root {
+  --ch-0: light;
+  --ch-1: #6e7781;
+  --ch-2: #0550ae;
+  --ch-3: #953800;
+  --ch-4: #24292f;
+  --ch-5: #8250df;
+  --ch-6: #116329;
+  --ch-7: #cf222e;
+  --ch-8: #0a3069;
+  --ch-9: #82071e;
+  --ch-10: #f6f8fa;
+  --ch-11: #ffebe9;
+  --ch-12: #ffd8b5;
+  --ch-13: #eaeef2;
+  --ch-14: #57606a;
+  --ch-15: #ffffff;
+  --ch-16: #eaeef2;
+  --ch-17: #fdf2f8;
+  --ch-18: #1f883d;
+  --ch-19: #cf222e;
+  --ch-20: #8250df;
+  --ch-21: #fff8c5;
+  --ch-22: #fbf0a4;
+  --ch-23: #6e7781;
+  --ch-24: #ffffffe6;
+}
+
+.dark {
+  --ch-0: dark;
+  --ch-1: #8b949e;
+  --ch-2: #79c0ff;
+  --ch-3: #ffa657;
+  --ch-4: #c9d1d9;
+  --ch-5: #d2a8ff;
+  --ch-6: #7ee787;
+  --ch-7: #ff7b72;
+  --ch-8: #a5d6ff;
+  --ch-9: #ffa198;
+  --ch-10: #f0f6fc;
+  --ch-11: #490202;
+  --ch-12: #5a1e02;
+  --ch-13: #161b22;
+  --ch-14: #8b949e;
+  --ch-15: #0d1117;
+  --ch-16: #30363d;
+  --ch-17: #261d2d;
+  --ch-18: #56d364;
+  --ch-19: #f85149;
+  --ch-20: #d2a8ff;
+  --ch-21: #5a1e02;
+  --ch-22: #693e00;
+  --ch-23: #8b949e;
+  --ch-24: #1f6feb1a;
+}

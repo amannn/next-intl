@@ -1,0 +1,28 @@
+{
+  "Layout": {
+    "title": "next-intl playground",
+    "tagline": "Translations, formatting, routing and patterns with Next.js.",
+    "examples": "Examples"
+  },
+  "Nav": {
+    "translations": "Translations",
+    "serverComponents": "Server Components",
+    "serverComponentsDescription": "Read translated strings inside Server Components.",
+    "clientComponents": "Client Components",
+    "clientComponentsDescription": "Use translations in interactive Client Components."
+  },
+  "ServerComponentsPage": {
+    "title": "Server Components",
+    "subtitle": "Translations",
+    "output": "Output",
+    "greeting": "Hello, world!"
+  },
+  "ClientComponentsPage": {
+    "title": "Client Components",
+    "subtitle": "Translations",
+    "output": "Output",
+    "label": "Your name",
+    "placeholder": "Frodo",
+    "greeting": "Hello, {name}!"
+  }
+}
