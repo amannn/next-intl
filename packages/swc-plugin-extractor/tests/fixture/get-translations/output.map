@@ -1,0 +1,1 @@
+{"version":3,"sources":["input.js"],"sourcesContent":["import {getTranslations} from 'next-intl/server';\n\nasync function Page() {\n  const t = await getTranslations('Account');\n  t('name');\n}\n"],"names":[],"mappings":"AAAA,SAAQ,eAAe,QAAO,mBAAmB;AAEjD,eAAe;IACb,MAAM,IAAI,MAAM,gBAAgB;IAChC,EAAE;AACJ"}
