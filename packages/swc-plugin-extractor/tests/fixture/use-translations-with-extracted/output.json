@@ -4,9 +4,17 @@
     "id": "OpKKos",
     "message": "Hello!",
     "reference": {
-      "line": 5,
+      "line": 7,
       "path": "input.js"
     },
     "type": "extracted"
+  },
+  {
+    "id": "Namespace.title",
+    "reference": {
+      "line": 8,
+      "path": "input.js"
+    },
+    "type": "translation"
   }
 ]

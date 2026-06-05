@@ -1,29 +1,32 @@
 [
   {
+    "description": null,
     "id": "OpKKos",
     "message": "Hello!",
-    "description": null,
     "reference": {
-      "path": "input.js",
-      "line": 5
-    }
+      "line": 5,
+      "path": "input.js"
+    },
+    "type": "extracted"
   },
   {
+    "description": null,
     "id": "-YJVTi",
     "message": "Hey!",
-    "description": null,
     "reference": {
-      "path": "input.js",
-      "line": 6
-    }
+      "line": 6,
+      "path": "input.js"
+    },
+    "type": "extracted"
   },
   {
+    "description": null,
     "id": "nm_7yQ",
     "message": "Hi!",
-    "description": null,
     "reference": {
-      "path": "input.js",
-      "line": 7
-    }
+      "line": 7,
+      "path": "input.js"
+    },
+    "type": "extracted"
   }
 ]
