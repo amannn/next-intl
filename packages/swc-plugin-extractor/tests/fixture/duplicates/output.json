@@ -1,20 +1,22 @@
 [
   {
+    "description": null,
     "id": "OpKKos",
     "message": "Hello!",
-    "description": null,
     "reference": {
-      "path": "input.js",
-      "line": 5
-    }
+      "line": 5,
+      "path": "input.js"
+    },
+    "type": "extracted"
   },
   {
+    "description": null,
     "id": "OpKKos",
     "message": "Hello!",
-    "description": null,
     "reference": {
-      "path": "input.js",
-      "line": 10
-    }
+      "line": 10,
+      "path": "input.js"
+    },
+    "type": "extracted"
   }
 ]

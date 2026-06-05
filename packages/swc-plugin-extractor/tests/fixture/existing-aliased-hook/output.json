@@ -1,11 +1,20 @@
 [
   {
+    "description": null,
     "id": "piskIR",
     "message": "Hello from extracted!",
-    "description": null,
     "reference": {
-      "path": "input.js",
-      "line": 6
-    }
+      "line": 6,
+      "path": "input.js"
+    },
+    "type": "extracted"
+  },
+  {
+    "id": "greeting",
+    "reference": {
+      "line": 7,
+      "path": "input.js"
+    },
+    "type": "translation"
   }
 ]

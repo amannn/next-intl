@@ -1,74 +1,82 @@
 [
   {
+    "description": null,
     "id": "tnuBMt",
     "message": "Page title",
-    "description": null,
     "reference": {
-      "path": "input.js",
-      "line": 7
-    }
+      "line": 7,
+      "path": "input.js"
+    },
+    "type": "extracted"
   },
   {
+    "description": null,
     "id": "OpKKos",
     "message": "Hello!",
-    "description": null,
     "reference": {
-      "path": "input.js",
-      "line": 13
-    }
+      "line": 13,
+      "path": "input.js"
+    },
+    "type": "extracted"
   },
   {
+    "description": null,
     "id": "mOPTEA",
     "message": "Server data message",
-    "description": null,
     "reference": {
-      "path": "input.js",
-      "line": 18
-    }
+      "line": 18,
+      "path": "input.js"
+    },
+    "type": "extracted"
   },
   {
+    "description": null,
     "id": "MgvtBu",
     "message": "Component message",
-    "description": null,
     "reference": {
-      "path": "input.js",
-      "line": 23
-    }
+      "line": 23,
+      "path": "input.js"
+    },
+    "type": "extracted"
   },
   {
+    "description": null,
     "id": "sJK5Uk",
     "message": "Another one 1",
-    "description": null,
     "reference": {
-      "path": "input.js",
-      "line": 28
-    }
+      "line": 28,
+      "path": "input.js"
+    },
+    "type": "extracted"
   },
   {
+    "description": null,
     "id": "2k7cS1",
     "message": "Another one 2",
-    "description": null,
     "reference": {
-      "path": "input.js",
-      "line": 33
-    }
+      "line": 33,
+      "path": "input.js"
+    },
+    "type": "extracted"
   },
   {
+    "description": null,
     "id": "another.6jb0KP",
     "message": "Two 1",
-    "description": null,
     "reference": {
-      "path": "input.js",
-      "line": 38
-    }
+      "line": 38,
+      "path": "input.js"
+    },
+    "type": "extracted"
   },
   {
+    "description": null,
     "id": "another.KVQtmd",
     "message": "Two 2",
-    "description": null,
     "reference": {
-      "path": "input.js",
-      "line": 43
-    }
+      "line": 43,
+      "path": "input.js"
+    },
+    "type": "extracted"
   }
 ]

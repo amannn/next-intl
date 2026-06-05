@@ -1,11 +1,12 @@
 [
   {
+    "description": null,
     "id": "greeting",
     "message": "Hello {name}!",
-    "description": null,
     "reference": {
-      "path": "input.js",
-      "line": 5
-    }
+      "line": 5,
+      "path": "input.js"
+    },
+    "type": "extracted"
   }
 ]

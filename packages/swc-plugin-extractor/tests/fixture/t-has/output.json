@@ -6,7 +6,8 @@
     "reference": {
       "line": 5,
       "path": "input.js"
-    }
+    },
+    "type": "extracted"
   },
   {
     "description": null,
@@ -15,7 +16,8 @@
     "reference": {
       "line": 6,
       "path": "input.js"
-    }
+    },
+    "type": "extracted"
   },
   {
     "description": null,
@@ -24,6 +26,7 @@
     "reference": {
       "line": 8,
       "path": "input.js"
-    }
+    },
+    "type": "extracted"
   }
 ]
