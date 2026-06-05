@@ -1,12 +1,18 @@
 name: release
 
+# A single workflow file so npm Trusted Publishing can be configured against it.
+# The branch determines which release runs: `main` → stable (latest), `canary`
+# → prerelease (canary). Only the job matching the pushed branch runs.
 on:
   push:
     branches:
       - main
+      - canary
 
 jobs:
-  main:
+  stable:
+    name: stable (latest)
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -16,15 +22,47 @@ jobs:
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
-          cache: "pnpm"
+          cache: 'pnpm'
           node-version: 20.x
-          registry-url: "https://registry.npmjs.org"
+          registry-url: 'https://registry.npmjs.org'
       - run: npm install -g npm@latest # Trusted publishers
       - run: pnpm install
       - run: |
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
       - run: pnpm run publish
+        if: "${{startsWith(github.event.head_commit.message, 'fix: ') || startsWith(github.event.head_commit.message, 'feat: ') || startsWith(github.event.head_commit.message, 'feat!: ')}}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # No NODE_AUTH_TOKEN since we use Trusted Publishers
+
+  canary:
+    name: prerelease (canary)
+    if: github.ref == 'refs/heads/canary'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          cache: 'pnpm'
+          node-version: 20.x
+          registry-url: 'https://registry.npmjs.org'
+      - run: npm install -g npm@latest # Trusted publishers
+      - run: pnpm install
+      - run: pnpm turbo run build --filter './packages/**'
+      - run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+      # Change workspace dependencies from "workspace:^" to "workspace:"
+      - run: |
+          sed -i 's/"use-intl": "workspace:\^"/"use-intl": "workspace:"/' ./packages/next-intl/package.json && \
+          sed -i 's/"next-intl-swc-plugin-extractor": "workspace:\^"/"next-intl-swc-plugin-extractor": "workspace:"/' ./packages/next-intl/package.json && \
+          git commit -am "use fixed version"
+      - run: pnpm lerna publish 0.0.0-canary-${GITHUB_SHA::7} --no-git-reset --dist-tag canary --no-push --yes
         if: "${{startsWith(github.event.head_commit.message, 'fix: ') || startsWith(github.event.head_commit.message, 'feat: ') || startsWith(github.event.head_commit.message, 'feat!: ')}}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
