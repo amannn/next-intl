@@ -1,0 +1,50 @@
+[
+  {
+    "id": "Namespace.title",
+    "reference": {
+      "line": 7,
+      "path": "input.js"
+    },
+    "type": "translation"
+  },
+  {
+    "id": "Namespace.rich",
+    "reference": {
+      "line": 8,
+      "path": "input.js"
+    },
+    "type": "translation"
+  },
+  {
+    "id": "Namespace.markup",
+    "reference": {
+      "line": 9,
+      "path": "input.js"
+    },
+    "type": "translation"
+  },
+  {
+    "id": "Namespace.has",
+    "reference": {
+      "line": 10,
+      "path": "input.js"
+    },
+    "type": "translation"
+  },
+  {
+    "id": "Namespace.raw",
+    "reference": {
+      "line": 11,
+      "path": "input.js"
+    },
+    "type": "translation"
+  },
+  {
+    "id": "global",
+    "reference": {
+      "line": 12,
+      "path": "input.js"
+    },
+    "type": "translation"
+  }
+]

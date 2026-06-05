@@ -11,7 +11,7 @@ export type ExtractorMessageReference = {
 };
 
 /** A single statically extracted source-code usage before any aggregation. */
-export type SourceMessage = {
+export type SourceExtractedMessage = {
   id: string;
   message: string;
   description: string | null;

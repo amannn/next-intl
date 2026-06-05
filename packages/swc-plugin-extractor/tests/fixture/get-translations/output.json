@@ -1,0 +1,10 @@
+[
+  {
+    "id": "Account.name",
+    "reference": {
+      "line": 5,
+      "path": "input.js"
+    },
+    "type": "translation"
+  }
+]
