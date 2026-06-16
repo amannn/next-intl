@@ -1,40 +1,58 @@
-import {PlaygroundBoundary} from '@/components/playground/boundary';
-import {GitHubLink} from '@/components/playground/github-link';
+import {Code} from '@/components/Code';
+import {GitHubLink} from '@/components/GitHubLink';
+import {PlaygroundBoundary} from '@/components/PlaygroundBoundary';
+import {Prose} from '@/components/Prose';
+import {useExtracted} from 'next-intl';
+import {ClientExample} from './ClientExample';
+
+const sample = `'use client';
+import {useState} from 'react';
 import {useTranslations} from 'next-intl';
-import {setRequestLocale} from 'next-intl/server';
-import {ClientExample} from './client-example';
-import Content from './content.mdx';
 
-type Props = {
-  params: Promise<{locale: string}>;
-};
-
-export default async function ClientComponentsPage({params}: Props) {
-  const {locale} = await params;
-  setRequestLocale(locale);
-  return <ClientComponentsView />;
-}
-
-function ClientComponentsView() {
+export function Greet() {
+  // !mark
   const t = useTranslations('ClientComponentsPage');
+  const [name, setName] = useState('Frodo');
+  return (
+    <>
+      <input value={name} onChange={(e) => setName(e.target.value)} />
+      <p>{t('greeting', {name})}</p>
+    </>
+  );
+}`;
+
+export default function ClientComponentsPage() {
+  const t = useExtracted();
 
   return (
     <div className="pb-12">
       <header className="mb-6">
-        <p className="text-muted-foreground font-mono text-[10px] font-semibold tracking-[0.18em] uppercase">
-          {t('subtitle')}
+        <p className="font-mono text-[10px] font-semibold tracking-[0.18em] text-gray-600 uppercase dark:text-gray-300">
+          {t('Translations')}
         </p>
-        <h1 className="text-foreground mt-1 text-2xl font-semibold tracking-tight sm:text-[28px]">
-          {t('title')}
+        <h1 className="mt-1 text-2xl font-semibold tracking-tight text-gray-900 sm:text-[28px] dark:text-gray-50">
+          {t('Client Components')}
         </h1>
       </header>
 
-      <div className="mdx-content max-w-2xl">
-        <Content />
-      </div>
+      <Prose className="max-w-2xl">
+        <ul>
+          <li>
+            {t(
+              'useTranslations can be called in Client Components to incorporate client-side state.'
+            )}
+          </li>
+          <li>
+            {t(
+              "ICU arguments like '{name}' are resolved in the browser as state changes."
+            )}
+          </li>
+        </ul>
+        <Code value={sample} label={t('Code')} />
+      </Prose>
 
       <PlaygroundBoundary
-        label={t('output')}
+        label={t('Output')}
         variant="dotgrid"
         className="mt-8"
       >

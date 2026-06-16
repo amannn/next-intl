@@ -1,0 +1,136 @@
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: next-intl\n"
+"X-Crowdin-SourceKey: msgstr\n"
+
+#: src/app/[locale]/page.tsx
+#: src/app/[locale]/translations/client-components/page.tsx
+#: src/app/[locale]/translations/server-components/page.tsx
+#: src/components/PlaygroundSidebar.tsx
+msgid "aFyu8N"
+msgstr "Translations"
+
+#: src/app/[locale]/page.tsx
+#: src/app/[locale]/translations/server-components/page.tsx
+#: src/components/PlaygroundSidebar.tsx
+msgid "Jm_gm4"
+msgstr "Server Components"
+
+#: src/app/[locale]/page.tsx
+msgid "kka9Id"
+msgstr "Read translated strings inside Server Components."
+
+#: src/app/[locale]/page.tsx
+#: src/app/[locale]/translations/client-components/page.tsx
+#: src/components/PlaygroundSidebar.tsx
+msgid "qwpdfx"
+msgstr "Client Components"
+
+#: src/app/[locale]/page.tsx
+msgid "5oEQPR"
+msgstr "Use translations in interactive Client Components."
+
+#: src/app/[locale]/page.tsx
+msgid "k2qvag"
+msgstr "next-intl playground"
+
+#: src/app/[locale]/page.tsx
+msgid "zllk1P"
+msgstr "Translations, formatting, routing and patterns with Next.js."
+
+#: src/app/[locale]/page.tsx
+msgid "CxfKLC"
+msgstr "Pages"
+
+#: src/app/[locale]/translations/client-components/ClientExample.tsx
+msgid "vlKhIl"
+msgstr "Your name"
+
+#: src/app/[locale]/translations/client-components/ClientExample.tsx
+msgid "nCfqYd"
+msgstr "Frodo"
+
+#: src/app/[locale]/translations/client-components/ClientExample.tsx
+msgid "tBFOH1"
+msgstr "Hello, {name}!"
+
+#: src/app/[locale]/translations/client-components/page.tsx
+msgid "3L0BvJ"
+msgstr "useTranslations can be called in Client Components to incorporate client-side state."
+
+#: src/app/[locale]/translations/client-components/page.tsx
+msgid "3mdXe-"
+msgstr "ICU arguments like '{name}' are resolved in the browser as state changes."
+
+#: src/app/[locale]/translations/client-components/page.tsx
+#: src/app/[locale]/translations/server-components/page.tsx
+msgid "h2vipu"
+msgstr "Code"
+
+#: src/app/[locale]/translations/client-components/page.tsx
+#: src/app/[locale]/translations/server-components/page.tsx
+msgid "fio5op"
+msgstr "Output"
+
+#: src/app/[locale]/translations/server-components/page.tsx
+msgid "n5Juxa"
+msgstr "Messages stay on the server, so no translation runtime is shipped to the client."
+
+#: src/app/[locale]/translations/server-components/page.tsx
+msgid "fZd-wY"
+msgstr "Async components"
+
+#: src/app/[locale]/translations/server-components/page.tsx
+msgid "4-bDMC"
+msgstr "In async Server Components, await getTranslations to read messages."
+
+#: src/app/[locale]/translations/server-components/page.tsx
+msgid "xh8Irc"
+msgstr "Non-async components"
+
+#: src/app/[locale]/translations/server-components/page.tsx
+msgid "OLpN6c"
+msgstr "In non-async Server Components, call useTranslations directly — no await needed."
+
+#: src/app/[locale]/translations/server-components/ServerExample.tsx
+msgid "wVJ82J"
+msgstr "Hello, world!"
+
+#: src/components/GitHubLink.tsx
+msgid "80g19N"
+msgstr "View on GitHub"
+
+#: src/components/LocaleSwitcher.tsx
+msgid "dISpGP"
+msgstr "Switch language"
+
+#: src/components/PlaygroundByline.tsx
+msgid "GAUX9p"
+msgstr "Source code"
+
+#: src/components/PlaygroundByline.tsx
+msgid "_6_sPX"
+msgstr "Docs"
+
+#: src/components/PlaygroundSidebar.tsx
+msgid "XqRXu6"
+msgstr "Playground"
+
+#: src/components/PlaygroundSidebar.tsx
+msgid "SRsuWF"
+msgstr "Close navigation"
+
+#: src/components/PlaygroundSidebar.tsx
+msgid "oM3yjO"
+msgstr "Open navigation"
+
+#: src/components/ThemeToggle.tsx
+msgid "dLFYnK"
+msgstr "Switch to light theme"
+
+#: src/components/ThemeToggle.tsx
+msgid "sDxHcF"
+msgstr "Switch to dark theme"

@@ -1,1 +1,0 @@
-export {mark} from './mark';

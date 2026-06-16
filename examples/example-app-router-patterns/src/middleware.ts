@@ -4,6 +4,5 @@ import {routing} from './i18n/routing';
 export default createMiddleware(routing);
 
 export const config = {
-  // Skip API routes, Next internals, the `/design` reference page and files
-  matcher: ['/((?!api|_next|design|.*\\..*).*)']
+  matcher: ['/((?!api|_next|.*\\..*).*)']
 };

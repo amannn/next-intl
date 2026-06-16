@@ -1,7 +1,7 @@
-import type {AnnotationHandler} from 'codehike/code';
-import {InnerLine} from 'codehike/code';
+import {type AnnotationHandler, InnerLine, Pre, highlight} from 'codehike/code';
+import {PlaygroundBoundary} from './PlaygroundBoundary';
 
-export const mark: AnnotationHandler = {
+const mark: AnnotationHandler = {
   name: 'mark',
   Line: ({annotation, ...props}) => {
     const color = annotation?.query || 'rgb(14 165 233)';
@@ -33,3 +33,38 @@ export const mark: AnnotationHandler = {
     );
   }
 };
+
+export async function Code({
+  value,
+  lang = 'tsx',
+  label
+}: {
+  value: string;
+  lang?: string;
+  label?: string;
+}) {
+  const highlighted = await highlight(
+    {value, lang, meta: ''},
+    'github-from-css'
+  );
+
+  const pre = (
+    <Pre
+      code={highlighted}
+      handlers={[mark]}
+      className="m-0 overflow-x-auto !bg-transparent py-3 !text-[13px] !leading-6"
+    />
+  );
+
+  if (label) {
+    return (
+      <PlaygroundBoundary label={label} size="compact">
+        {pre}
+      </PlaygroundBoundary>
+    );
+  }
+
+  return (
+    <div className="border border-gray-200 p-3 dark:border-gray-700">{pre}</div>
+  );
+}

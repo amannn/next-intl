@@ -448,15 +448,6 @@ importers:
 
   examples/example-app-router-patterns:
     dependencies:
-      '@mdx-js/loader':
-        specifier: ^3.1.0
-        version: 3.1.1(webpack@5.104.1)
-      '@mdx-js/react':
-        specifier: ^3.1.0
-        version: 3.1.1(@types/react@19.2.14)(react@19.2.3)
-      '@next/mdx':
-        specifier: ^15.5.4
-        version: 15.5.18(@mdx-js/loader@3.1.1(webpack@5.104.1))(@mdx-js/react@3.1.1(@types/react@19.2.14)(react@19.2.3))
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -491,9 +482,6 @@ importers:
       '@tailwindcss/postcss':
         specifier: ^4.1.12
         version: 4.2.4
-      '@types/mdx':
-        specifier: ^2.0.13
-        version: 2.0.13
       '@types/node':
         specifier: ^20.14.5
         version: 20.19.29
@@ -3133,17 +3121,6 @@ packages:
 
   '@next/eslint-plugin-next@16.2.2':
     resolution: {integrity: sha512-IOPbWzDQ+76AtjZioaCjpIY72xNSDMnarZ2GMQ4wjNLvnJEJHqxQwGFhgnIWLV9klb4g/+amg88Tk5OXVpyLTw==}
-
-  '@next/mdx@15.5.18':
-    resolution: {integrity: sha512-vslfcoGsX330qhcFMfksM2xPE1zCd5OGG4E47EBHH4asCG9l39CNoKv6X906kAgzvACHBKGcTxv1wlLVnagUjA==}
-    peerDependencies:
-      '@mdx-js/loader': '>=0.15.0'
-      '@mdx-js/react': '>=0.15.0'
-    peerDependenciesMeta:
-      '@mdx-js/loader':
-        optional: true
-      '@mdx-js/react':
-        optional: true
 
   '@next/mdx@16.2.2':
     resolution: {integrity: sha512-2CbRTXE6sJ7zDAaKXknb5FrrPs46iJeMPzuoBXsAOV/XVnxABGD4mSDusn0VuCoII/KjUZ+zsuo2VFbchYQXng==}
@@ -14594,15 +14571,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@mdx-js/loader@3.1.1(webpack@5.104.1)':
-    dependencies:
-      '@mdx-js/mdx': 3.0.1
-      source-map: 0.7.4
-    optionalDependencies:
-      webpack: 5.104.1
-    transitivePeerDependencies:
-      - supports-color
-
   '@mdx-js/mdx@3.0.1':
     dependencies:
       '@types/estree': 1.0.8
@@ -14767,13 +14735,6 @@ snapshots:
   '@next/eslint-plugin-next@16.2.2':
     dependencies:
       fast-glob: 3.3.1
-
-  '@next/mdx@15.5.18(@mdx-js/loader@3.1.1(webpack@5.104.1))(@mdx-js/react@3.1.1(@types/react@19.2.14)(react@19.2.3))':
-    dependencies:
-      source-map: 0.7.6
-    optionalDependencies:
-      '@mdx-js/loader': 3.1.1(webpack@5.104.1)
-      '@mdx-js/react': 3.1.1(@types/react@19.2.14)(react@19.2.3)
 
   '@next/mdx@16.2.2(@mdx-js/loader@3.1.1(webpack@5.104.1(esbuild@0.25.1)))(@mdx-js/react@3.1.1(@types/react@19.2.14)(react@19.2.3))':
     dependencies:
@@ -25987,16 +25948,6 @@ snapshots:
     optionalDependencies:
       esbuild: 0.25.1
 
-  terser-webpack-plugin@5.3.16(webpack@5.104.1):
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.31
-      jest-worker: 27.5.1
-      schema-utils: 4.3.3
-      serialize-javascript: 6.0.2
-      terser: 5.45.0
-      webpack: 5.104.1
-    optional: true
-
   terser@5.36.0:
     dependencies:
       '@jridgewell/source-map': 0.3.6
@@ -27060,39 +27011,6 @@ snapshots:
       tapable: 2.2.3
       terser-webpack-plugin: 5.3.14(esbuild@0.25.1)(webpack@5.102.0(esbuild@0.25.1))
       watchpack: 2.4.4
-      webpack-sources: 3.3.3
-    transitivePeerDependencies:
-      - '@swc/core'
-      - esbuild
-      - uglify-js
-    optional: true
-
-  webpack@5.104.1:
-    dependencies:
-      '@types/eslint-scope': 3.7.7
-      '@types/estree': 1.0.8
-      '@types/json-schema': 7.0.15
-      '@webassemblyjs/ast': 1.14.1
-      '@webassemblyjs/wasm-edit': 1.14.1
-      '@webassemblyjs/wasm-parser': 1.14.1
-      acorn: 8.15.0
-      acorn-import-phases: 1.0.4(acorn@8.15.0)
-      browserslist: 4.28.1
-      chrome-trace-event: 1.0.4
-      enhanced-resolve: 5.18.4
-      es-module-lexer: 2.0.0
-      eslint-scope: 5.1.1
-      events: 3.3.0
-      glob-to-regexp: 0.4.1
-      graceful-fs: 4.2.11
-      json-parse-even-better-errors: 2.3.1
-      loader-runner: 4.3.1
-      mime-types: 2.1.35
-      neo-async: 2.6.2
-      schema-utils: 4.3.3
-      tapable: 2.3.0
-      terser-webpack-plugin: 5.3.16(webpack@5.104.1)
-      watchpack: 2.5.1
       webpack-sources: 3.3.3
     transitivePeerDependencies:
       - '@swc/core'
