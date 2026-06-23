@@ -28,10 +28,6 @@ export default defineCodec(() => ({
       setNestedProperty(root, message.id, message.message);
     }
     return JSON.stringify(root, null, 2) + '\n';
-  },
-
-  toJSONString(source) {
-    return source;
   }
 }));
 

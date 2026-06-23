@@ -1,5 +1,5 @@
 import POParser from 'po-parser';
-import {getSortedMessages, setNestedProperty} from '../../utils.js';
+import {getSortedMessages} from '../../utils.js';
 import {defineCodec} from '../ExtractorCodec.js';
 
 export default defineCodec(() => {
@@ -77,15 +77,6 @@ export default defineCodec(() => {
         },
         messages: encodedMessages
       });
-    },
-
-    toJSONString(source, context) {
-      const parsed = this.decode(source, context);
-      const messagesObject = {};
-      for (const message of parsed) {
-        setNestedProperty(messagesObject, message.id, message.message);
-      }
-      return JSON.stringify(messagesObject);
     }
   };
 });

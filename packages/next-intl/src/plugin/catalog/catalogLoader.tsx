@@ -16,6 +16,8 @@ import type {TurbopackLoaderContext} from '../types.js';
 // create multiple loader instances so don't expect a singleton.
 let cachedCodec: ExtractorCodec | null = null;
 
+let hasWarnedAboutToJSONString = false;
+
 type CompiledMessageCacheEntry = {
   compiledMessage: unknown;
   messageValue: string;
@@ -62,24 +64,64 @@ export default function catalogLoader(
 
   getCodec(options, this.rootContext)
     .then((codec) => {
-      const locale = path.basename(this.resourcePath, extension);
-      let outputString: string;
+      warnIfToJSONStringProvided(codec);
 
+      const locale = path.basename(this.resourcePath, extension);
+      const decoded = codec.decode(source, {locale});
+
+      let messages: Record<string, unknown>;
       if (options.messages.precompile) {
-        const decoded = codec.decode(source, {locale});
         const cache = getMessageCache(this.resourcePath);
-        const precompiled = precompileMessages(decoded, cache);
-        outputString = JSON.stringify(precompiled);
+        messages = precompileMessages(decoded, cache);
       } else {
-        outputString = codec.toJSONString(source, {locale});
+        messages = buildMessages(decoded);
       }
 
       // https://v8.dev/blog/cost-of-javascript-2019#json
-      const result = `export default JSON.parse(${JSON.stringify(outputString)});`;
+      const result = `export default JSON.parse(${JSON.stringify(JSON.stringify(messages))});`;
 
       callback(null, result);
     })
     .catch(callback);
+}
+
+function warnIfToJSONStringProvided(codec: ExtractorCodec) {
+  if (hasWarnedAboutToJSONString || !codec.toJSONString) return;
+  hasWarnedAboutToJSONString = true;
+  console.warn(
+    '`toJSONString` is deprecated and no longer needed, please remove it.'
+  );
+}
+
+/**
+ * Builds a nested messages object from decoded messages, mirroring the shape
+ * produced by `precompileMessages` but keeping the raw message strings.
+ */
+function buildMessages(
+  messages: Array<ExtractorMessage>
+): Record<string, unknown> {
+  const result = Object.create(null) as Record<string, unknown>;
+  for (const message of messages) {
+    assertStringMessage(message);
+    setNestedProperty(result, message.id, message.message);
+  }
+  return result;
+}
+
+function assertStringMessage(message: ExtractorMessage) {
+  const messageValue = message.message;
+
+  if (Array.isArray(messageValue)) {
+    throw new Error(
+      `Message at \`${message.id}\` resolved to an array, but only strings are supported. See https://next-intl.dev/docs/usage/translations#arrays-of-messages`
+    );
+  }
+
+  if (typeof messageValue === 'object') {
+    throw new Error(
+      `Message at \`${message.id}\` resolved to \`${typeof messageValue}\`, but only strings are supported. Use a \`.\` to retrieve nested messages. See https://next-intl.dev/docs/usage/translations#structuring-messages`
+    );
+  }
 }
 
 /**
@@ -95,19 +137,8 @@ function precompileMessages(
 
   for (const message of messages) {
     cacheKeysToEvict.delete(message.id);
+    assertStringMessage(message);
     const messageValue = message.message;
-
-    if (Array.isArray(messageValue)) {
-      throw new Error(
-        `Message at \`${message.id}\` resolved to an array, but only strings are supported. See https://next-intl.dev/docs/usage/translations#arrays-of-messages`
-      );
-    }
-
-    if (typeof messageValue === 'object') {
-      throw new Error(
-        `Message at \`${message.id}\` resolved to \`${typeof messageValue}\`, but only strings are supported. Use a \`.\` to retrieve nested messages. See https://next-intl.dev/docs/usage/translations#structuring-messages`
-      );
-    }
 
     const cachedEntry = cache.get(message.id);
     const hasCacheMatch = cachedEntry?.messageValue === messageValue;
