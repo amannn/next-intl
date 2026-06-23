@@ -89,7 +89,7 @@ function warnIfToJSONStringProvided(codec: ExtractorCodec) {
   if (hasWarnedAboutToJSONString || !codec.toJSONString) return;
   hasWarnedAboutToJSONString = true;
   console.warn(
-    '`toJSONString` is deprecated and no longer used, please remove it.'
+    '`toJSONString` is deprecated and no longer needed, please remove it.'
   );
 }
 
