@@ -26,18 +26,11 @@ export default interface ExtractorCodec {
   ): string;
 
   /**
-   * Turns the content of a file into a JSON string that represents extracted
-   * messages. The returned value will be passed to `JSON.parse`.
-   *
-   * @return E.g. `[{"id":"-YJVTi","message":"Hey!"}]`
-   *
-   * This is used when loading messages into your application, typically via a
-   * dynamic import (e.g. `import(`../messages/${locale}.json`)`).
-   *
-   * If your file content is JSON and should be used as-is, you can set this to
-   * an identity function.
+   * @deprecated No longer used. Catalogs are loaded into your application via
+   * `decode`, so you can remove `toJSONString` from your codec. Providing it
+   * logs a deprecation warning and has no effect.
    */
-  toJSONString(content: string, context: ExtractorCodecContext): string;
+  toJSONString?(content: string, context: ExtractorCodecContext): string;
 }
 
 export function defineCodec(factory: () => ExtractorCodec) {
