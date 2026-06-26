@@ -18,7 +18,7 @@
     "@types/react": "^19.2.3",
     "@types/react-dom": "^19.2.3",
     "eslint": "^9.38.0",
-    "eslint-config-next": "^16.0.10",
+    "eslint-config-next": "16.3.0-preview.5",
     "next-intl": "workspace:*",
     "prettier": "^3.3.3",
     "typescript": "^5.5.3"
