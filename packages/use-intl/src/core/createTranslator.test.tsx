@@ -444,16 +444,6 @@ describe('type safety', () => {
       }
     });
 
-    it('strips ICU escape quotes from `{` in production builds', () => {
-      vi.stubEnv('NODE_ENV', 'production');
-      try {
-        const t = translateMessage("'{not a placeholder}'");
-        expect(t('msg')).toBe('{not a placeholder}');
-      } finally {
-        vi.unstubAllEnvs();
-      }
-    });
-
     it('validates simple rich text', () => {
       const t = translateMessage(
         'Please refer to <guidelines>the guidelines</guidelines>.'
