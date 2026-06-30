@@ -38,8 +38,8 @@ function getPlainMessage(
   return (
     // 1. Values are provided
     values ||
-      // 2. There are escaped braces (e.g. "'{name'}")
-      /'[{}]/.test(candidate) ||
+      // 2. There are ICU escape sequences (e.g. "'{name'}")
+      /'[{}<#|']/.test(candidate) ||
       // 3. There are missing arguments or tags (dev-only error handling)
       (process.env.NODE_ENV !== 'production' && /<|{/.test(candidate))
       ? undefined // Compile

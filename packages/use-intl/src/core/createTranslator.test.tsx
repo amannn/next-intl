@@ -429,6 +429,21 @@ describe('type safety', () => {
       };
     });
 
+    it('strips ICU escape quotes from `<` in production builds', () => {
+      // `getPlainMessage`'s production fast-path skips ICU compilation when
+      // no values are passed and the message contains no `'{`/`'}`. But ICU
+      // also uses single quotes to escape `<` (so a literal `<locale>` can be
+      // written as `'<locale>'`). The fast-path was returning the candidate
+      // verbatim and leaking the escape quotes into the output.
+      vi.stubEnv('NODE_ENV', 'production');
+      try {
+        const t = translateMessage("styleguide.'<locale>'.md");
+        expect(t('msg')).toBe('styleguide.<locale>.md');
+      } finally {
+        vi.unstubAllEnvs();
+      }
+    });
+
     it('validates simple rich text', () => {
       const t = translateMessage(
         'Please refer to <guidelines>the guidelines</guidelines>.'
