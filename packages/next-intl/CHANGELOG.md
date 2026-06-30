@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.13.1 (2026-06-30)
+
+### Bug Fixes
+
+* Handle ICU escape sequences around `<` consistently in dev and production ([#2352](https://github.com/amannn/next-intl/issues/2352)) ([4025d1f](https://github.com/amannn/next-intl/commit/4025d1f106ce245ad2887449001e626bee76402f)) – by @amannn
+
 ## 4.13.0 (2026-05-28)
 
 ### Features
