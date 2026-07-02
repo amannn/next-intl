@@ -1,74 +1,162 @@
 [
   {
+    "description": null,
     "id": "tnuBMt",
     "message": "Page title",
-    "description": null,
+    "ranges": {
+      "argument": {
+        "end": 201,
+        "start": 189
+      },
+      "message": {
+        "end": 201,
+        "start": 189
+      }
+    },
     "reference": {
-      "path": "input.js",
-      "line": 7
-    }
+      "line": 7,
+      "path": "input.js"
+    },
+    "type": "extracted"
   },
   {
+    "description": null,
     "id": "OpKKos",
     "message": "Hello!",
-    "description": null,
+    "ranges": {
+      "argument": {
+        "end": 297,
+        "start": 289
+      },
+      "message": {
+        "end": 297,
+        "start": 289
+      }
+    },
     "reference": {
-      "path": "input.js",
-      "line": 13
-    }
+      "line": 13,
+      "path": "input.js"
+    },
+    "type": "extracted"
   },
   {
+    "description": null,
     "id": "mOPTEA",
     "message": "Server data message",
-    "description": null,
+    "ranges": {
+      "argument": {
+        "end": 416,
+        "start": 395
+      },
+      "message": {
+        "end": 416,
+        "start": 395
+      }
+    },
     "reference": {
-      "path": "input.js",
-      "line": 18
-    }
+      "line": 18,
+      "path": "input.js"
+    },
+    "type": "extracted"
   },
   {
+    "description": null,
     "id": "MgvtBu",
     "message": "Component message",
-    "description": null,
+    "ranges": {
+      "argument": {
+        "end": 517,
+        "start": 498
+      },
+      "message": {
+        "end": 517,
+        "start": 498
+      }
+    },
     "reference": {
-      "path": "input.js",
-      "line": 23
-    }
+      "line": 23,
+      "path": "input.js"
+    },
+    "type": "extracted"
   },
   {
+    "description": null,
     "id": "sJK5Uk",
     "message": "Another one 1",
-    "description": null,
+    "ranges": {
+      "argument": {
+        "end": 644,
+        "start": 629
+      },
+      "message": {
+        "end": 644,
+        "start": 629
+      }
+    },
     "reference": {
-      "path": "input.js",
-      "line": 28
-    }
+      "line": 28,
+      "path": "input.js"
+    },
+    "type": "extracted"
   },
   {
+    "description": null,
     "id": "2k7cS1",
     "message": "Another one 2",
-    "description": null,
+    "ranges": {
+      "argument": {
+        "end": 758,
+        "start": 743
+      },
+      "message": {
+        "end": 758,
+        "start": 743
+      }
+    },
     "reference": {
-      "path": "input.js",
-      "line": 33
-    }
+      "line": 33,
+      "path": "input.js"
+    },
+    "type": "extracted"
   },
   {
+    "description": null,
     "id": "another.6jb0KP",
     "message": "Two 1",
-    "description": null,
+    "ranges": {
+      "argument": {
+        "end": 886,
+        "start": 879
+      },
+      "message": {
+        "end": 886,
+        "start": 879
+      }
+    },
     "reference": {
-      "path": "input.js",
-      "line": 38
-    }
+      "line": 38,
+      "path": "input.js"
+    },
+    "type": "extracted"
   },
   {
+    "description": null,
     "id": "another.KVQtmd",
     "message": "Two 2",
-    "description": null,
+    "ranges": {
+      "argument": {
+        "end": 1001,
+        "start": 994
+      },
+      "message": {
+        "end": 1001,
+        "start": 994
+      }
+    },
     "reference": {
-      "path": "input.js",
-      "line": 43
-    }
+      "line": 43,
+      "path": "input.js"
+    },
+    "type": "extracted"
   }
 ]

@@ -25,15 +25,5 @@ export default defineCodec(() => ({
       };
     }
     return JSON.stringify(obj, null, 2) + '\n';
-  },
-
-  toJSONString(content) {
-    const data = JSON.parse(content);
-    const result: Record<string, string> = {};
-    for (const [id, value] of Object.entries(data)) {
-      const obj = value as StoredMessage;
-      result[id] = obj.message;
-    }
-    return JSON.stringify(result);
   }
 }));

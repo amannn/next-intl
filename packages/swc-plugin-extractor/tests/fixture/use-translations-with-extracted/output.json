@@ -1,0 +1,30 @@
+[
+  {
+    "description": null,
+    "id": "OpKKos",
+    "message": "Hello!",
+    "ranges": {
+      "argument": {
+        "end": 164,
+        "start": 156
+      },
+      "message": {
+        "end": 164,
+        "start": 156
+      }
+    },
+    "reference": {
+      "line": 7,
+      "path": "input.js"
+    },
+    "type": "extracted"
+  },
+  {
+    "id": "Namespace.title",
+    "reference": {
+      "line": 8,
+      "path": "input.js"
+    },
+    "type": "translation"
+  }
+]

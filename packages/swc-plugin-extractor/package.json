@@ -2,9 +2,9 @@
   "name": "next-intl-swc-plugin-extractor",
   "version": "4.13.1",
   "sideEffects": false,
-  "author": "강동윤 <kdy1997.dev@gmail.com>",
+  "author": "Jan Amann <jan@amann.work>",
   "contributors": [
-    "Jan Amann <jan@amann.work>"
+    "강동윤 <kdy1997.dev@gmail.com>"
   ],
   "description": "SWC plugin for extracting inline messages.",
   "license": "MIT",

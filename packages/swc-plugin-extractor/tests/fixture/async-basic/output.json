@@ -1,11 +1,22 @@
 [
   {
+    "description": null,
     "id": "0KGiQf",
     "message": "Hello there!",
-    "description": null,
+    "ranges": {
+      "argument": {
+        "end": 129,
+        "start": 115
+      },
+      "message": {
+        "end": 129,
+        "start": 115
+      }
+    },
     "reference": {
-      "path": "input.js",
-      "line": 5
-    }
+      "line": 5,
+      "path": "input.js"
+    },
+    "type": "extracted"
   }
 ]

@@ -1,0 +1,46 @@
+[
+  {
+    "description": null,
+    "id": "th21Di",
+    "message": "Héllo wörld 🌍",
+    "ranges": {
+      "argument": {
+        "end": 116,
+        "start": 96
+      },
+      "message": {
+        "end": 116,
+        "start": 96
+      }
+    },
+    "reference": {
+      "line": 5,
+      "path": "input.js"
+    },
+    "type": "extracted"
+  },
+  {
+    "description": "Ünïcode chäracters before the message",
+    "id": "EIL0FA",
+    "message": "Prüfung",
+    "ranges": {
+      "argument": {
+        "end": 201,
+        "start": 123
+      },
+      "description": {
+        "end": 200,
+        "start": 158
+      },
+      "message": {
+        "end": 143,
+        "start": 133
+      }
+    },
+    "reference": {
+      "line": 6,
+      "path": "input.js"
+    },
+    "type": "extracted"
+  }
+]
