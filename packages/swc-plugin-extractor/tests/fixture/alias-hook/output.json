@@ -3,6 +3,16 @@
     "description": null,
     "id": "-YJVTi",
     "message": "Hey!",
+    "ranges": {
+      "argument": {
+        "end": 114,
+        "start": 108
+      },
+      "message": {
+        "end": 114,
+        "start": 108
+      }
+    },
     "reference": {
       "line": 5,
       "path": "input.js"

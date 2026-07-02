@@ -3,6 +3,16 @@
     "description": null,
     "id": "C-nN8a",
     "message": "Hello <b>Alice</b>!",
+    "ranges": {
+      "argument": {
+        "end": 124,
+        "start": 103
+      },
+      "message": {
+        "end": 124,
+        "start": 103
+      }
+    },
     "reference": {
       "line": 5,
       "path": "input.js"

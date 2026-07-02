@@ -3,6 +3,16 @@
     "description": null,
     "id": "piskIR",
     "message": "Hello from extracted!",
+    "ranges": {
+      "argument": {
+        "end": 168,
+        "start": 145
+      },
+      "message": {
+        "end": 168,
+        "start": 145
+      }
+    },
     "reference": {
       "line": 6,
       "path": "input.js"
