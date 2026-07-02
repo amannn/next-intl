@@ -3,6 +3,16 @@
     "description": null,
     "id": "OpKKos",
     "message": "Hello!",
+    "ranges": {
+      "argument": {
+        "end": 104,
+        "start": 96
+      },
+      "message": {
+        "end": 104,
+        "start": 96
+      }
+    },
     "reference": {
       "line": 5,
       "path": "input.js"
@@ -13,6 +23,16 @@
     "description": null,
     "id": "-YJVTi",
     "message": "Hey!",
+    "ranges": {
+      "argument": {
+        "end": 117,
+        "start": 111
+      },
+      "message": {
+        "end": 117,
+        "start": 111
+      }
+    },
     "reference": {
       "line": 6,
       "path": "input.js"
@@ -23,6 +43,16 @@
     "description": null,
     "id": "nm_7yQ",
     "message": "Hi!",
+    "ranges": {
+      "argument": {
+        "end": 129,
+        "start": 124
+      },
+      "message": {
+        "end": 129,
+        "start": 124
+      }
+    },
     "reference": {
       "line": 7,
       "path": "input.js"

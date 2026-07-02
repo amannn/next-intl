@@ -3,6 +3,20 @@
     "description": null,
     "id": "greeting",
     "message": "Hello <b>Alice</b>!",
+    "ranges": {
+      "argument": {
+        "end": 207,
+        "start": 101
+      },
+      "id": {
+        "end": 121,
+        "start": 111
+      },
+      "message": {
+        "end": 157,
+        "start": 136
+      }
+    },
     "reference": {
       "line": 5,
       "path": "input.js"

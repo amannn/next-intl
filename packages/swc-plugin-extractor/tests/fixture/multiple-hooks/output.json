@@ -3,6 +3,16 @@
     "description": null,
     "id": "tnuBMt",
     "message": "Page title",
+    "ranges": {
+      "argument": {
+        "end": 201,
+        "start": 189
+      },
+      "message": {
+        "end": 201,
+        "start": 189
+      }
+    },
     "reference": {
       "line": 7,
       "path": "input.js"
@@ -13,6 +23,16 @@
     "description": null,
     "id": "OpKKos",
     "message": "Hello!",
+    "ranges": {
+      "argument": {
+        "end": 297,
+        "start": 289
+      },
+      "message": {
+        "end": 297,
+        "start": 289
+      }
+    },
     "reference": {
       "line": 13,
       "path": "input.js"
@@ -23,6 +43,16 @@
     "description": null,
     "id": "mOPTEA",
     "message": "Server data message",
+    "ranges": {
+      "argument": {
+        "end": 416,
+        "start": 395
+      },
+      "message": {
+        "end": 416,
+        "start": 395
+      }
+    },
     "reference": {
       "line": 18,
       "path": "input.js"
@@ -33,6 +63,16 @@
     "description": null,
     "id": "MgvtBu",
     "message": "Component message",
+    "ranges": {
+      "argument": {
+        "end": 517,
+        "start": 498
+      },
+      "message": {
+        "end": 517,
+        "start": 498
+      }
+    },
     "reference": {
       "line": 23,
       "path": "input.js"
@@ -43,6 +83,16 @@
     "description": null,
     "id": "sJK5Uk",
     "message": "Another one 1",
+    "ranges": {
+      "argument": {
+        "end": 644,
+        "start": 629
+      },
+      "message": {
+        "end": 644,
+        "start": 629
+      }
+    },
     "reference": {
       "line": 28,
       "path": "input.js"
@@ -53,6 +103,16 @@
     "description": null,
     "id": "2k7cS1",
     "message": "Another one 2",
+    "ranges": {
+      "argument": {
+        "end": 758,
+        "start": 743
+      },
+      "message": {
+        "end": 758,
+        "start": 743
+      }
+    },
     "reference": {
       "line": 33,
       "path": "input.js"
@@ -63,6 +123,16 @@
     "description": null,
     "id": "another.6jb0KP",
     "message": "Two 1",
+    "ranges": {
+      "argument": {
+        "end": 886,
+        "start": 879
+      },
+      "message": {
+        "end": 886,
+        "start": 879
+      }
+    },
     "reference": {
       "line": 38,
       "path": "input.js"
@@ -73,6 +143,16 @@
     "description": null,
     "id": "another.KVQtmd",
     "message": "Two 2",
+    "ranges": {
+      "argument": {
+        "end": 1001,
+        "start": 994
+      },
+      "message": {
+        "end": 1001,
+        "start": 994
+      }
+    },
     "reference": {
       "line": 43,
       "path": "input.js"

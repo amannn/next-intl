@@ -3,6 +3,16 @@
     "description": null,
     "id": "0KGiQf",
     "message": "Hello there!",
+    "ranges": {
+      "argument": {
+        "end": 129,
+        "start": 115
+      },
+      "message": {
+        "end": 129,
+        "start": 115
+      }
+    },
     "reference": {
       "line": 5,
       "path": "input.js"

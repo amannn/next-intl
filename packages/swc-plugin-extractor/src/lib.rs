@@ -6,7 +6,7 @@ mod key_generator;
 use rustc_hash::FxHashMap;
 use serde::{Deserialize, Serialize};
 use swc_atoms::Wtf8Atom;
-use swc_common::{errors::HANDLER, Spanned, DUMMY_SP};
+use swc_common::{errors::HANDLER, Span, Spanned, DUMMY_SP};
 use swc_core::{
     common::SourceMapper, plugin::proxies::TransformPluginProgramMetadata,
     transform_common::output::experimental_emit,
@@ -65,6 +65,39 @@ pub struct ExtractedMessage {
     pub message: Wtf8Atom,
     pub description: Option<Wtf8Atom>,
     pub reference: Reference,
+    /// Source ranges of the call's tokens. Absent when no source map is
+    /// available to resolve spans against.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub ranges: Option<Ranges>,
+}
+
+/// Source ranges for an extracted call. Each is a half-open range of
+/// UTF-8 byte offsets into the source file, covering a whole token
+/// including its delimiters (quotes, braces).
+#[derive(Debug, Clone, Copy, Serialize)]
+pub struct Ranges {
+    /// The whole first argument — the string literal in string form, the
+    /// object literal in object form. Tooling that rewrites a call (e.g.
+    /// converting between the two forms) replaces this range.
+    pub argument: Range,
+    /// The `message` value literal. In string form this equals `argument`,
+    /// since the argument is the message literal itself.
+    pub message: Range,
+    /// The `description` value literal, when one is provided.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub description: Option<Range>,
+    /// The explicit `id` value literal. Present only when the call provides
+    /// an id of its own, so this doubles as the explicit-id signal.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub id: Option<Range>,
+}
+
+/// A half-open range of UTF-8 byte offsets into the source file, covering a
+/// whole token including its delimiters (quotes, braces).
+#[derive(Debug, Clone, Copy, Serialize)]
+pub struct Range {
+    pub start: usize,
+    pub end: usize,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -169,6 +202,18 @@ impl TransformVisitor {
         self.results.clone()
     }
 
+    /// The span as file-relative UTF-8 byte offsets, or `None` without a
+    /// source map (spans are absolute within the source map's address space,
+    /// so they can't be normalized without one).
+    fn span_range(&self, span: Span) -> Option<Range> {
+        let source_map = self.source_map.as_ref()?;
+        let file_start = source_map.lookup_char_pos(span.lo).file.start_pos;
+        Some(Range {
+            start: (span.lo - file_start).0 as usize,
+            end: (span.hi - file_start).0 as usize,
+        })
+    }
+
     /// The kind and namespace of the translator a call's callee is bound to,
     /// honoring the member methods valid for each kind (`t`, `t.rich`, …).
     fn resolve_translator(&self, callee: &Callee) -> Option<(TranslatorKind, Option<Wtf8Atom>)> {
@@ -238,7 +283,13 @@ impl TransformVisitor {
         let mut values_node = None;
         let mut formats_node = None;
 
+        let mut argument_range = None;
+        let mut message_range = None;
+        let mut description_range = None;
+        let mut id_range = None;
+
         if let Some(arg0) = call.args.first() {
+            argument_range = self.span_range(arg0.expr.span());
             match &*arg0.expr {
                 // Handle object syntax: t({id: 'key', message: 'text'})
                 Expr::Object(ObjectLit { props, .. }) => {
@@ -253,11 +304,13 @@ impl TransformVisitor {
                                 let static_id = extract_static_string(value);
                                 if let Some(static_id) = static_id {
                                     explicit_id = Some(static_id);
+                                    id_range = self.span_range(value.span());
                                 }
                             } else if key.sym == "message" {
                                 let static_message = extract_static_string(value);
                                 if let Some(static_message) = static_message {
                                     message_text = Some(static_message);
+                                    message_range = self.span_range(value.span());
                                 } else {
                                     warn_dynamic_expression(value);
                                 }
@@ -265,6 +318,7 @@ impl TransformVisitor {
                                 let static_description = extract_static_string(value);
                                 if let Some(static_description) = static_description {
                                     description = Some(static_description);
+                                    description_range = self.span_range(value.span());
                                 } else {
                                     warn_dynamic_expression(value);
                                 }
@@ -282,6 +336,7 @@ impl TransformVisitor {
                     let static_string = extract_static_string(&arg0.expr);
                     if let Some(static_string) = static_string {
                         message_text = Some(static_string);
+                        message_range = argument_range;
                     } else {
                         // Dynamic expression (Identifier, CallExpression, BinaryExpression, etc.)
                         warn_dynamic_expression(&arg0.expr);
@@ -306,6 +361,16 @@ impl TransformVisitor {
             .as_ref()
             .map_or(0, |sm| sm.lookup_char_pos(call.span.lo).line);
 
+        let ranges = match (argument_range, message_range) {
+            (Some(argument), Some(message)) => Some(Ranges {
+                argument,
+                message,
+                description: description_range,
+                id: id_range,
+            }),
+            _ => None,
+        };
+
         self.results
             .push(SourceMessage::Extracted(ExtractedMessage {
                 id: full_key,
@@ -315,6 +380,7 @@ impl TransformVisitor {
                     path: self.file_path.clone(),
                     line,
                 },
+                ranges,
             }));
 
         // Transform the argument based on type
