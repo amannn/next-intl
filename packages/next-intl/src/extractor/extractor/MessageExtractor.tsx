@@ -91,7 +91,11 @@ export default class MessageExtractor {
         id: item.id,
         message: item.message,
         description: item.description,
-        reference: item.reference
+        reference: item.reference,
+        argumentRange: item.argumentRange,
+        messageRange: item.messageRange,
+        descriptionRange: item.descriptionRange,
+        idRange: item.idRange
       }));
 
     const extractionResult = {

@@ -1,8 +1,16 @@
 [
   {
+    "argumentRange": {
+      "end": 164,
+      "start": 156
+    },
     "description": null,
     "id": "OpKKos",
     "message": "Hello!",
+    "messageRange": {
+      "end": 164,
+      "start": 156
+    },
     "reference": {
       "line": 7,
       "path": "input.js"

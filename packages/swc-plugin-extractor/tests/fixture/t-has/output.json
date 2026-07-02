@@ -1,8 +1,16 @@
 [
   {
+    "argumentRange": {
+      "end": 117,
+      "start": 104
+    },
     "description": null,
     "id": "j0tI96",
     "message": "Hello here!",
+    "messageRange": {
+      "end": 117,
+      "start": 104
+    },
     "reference": {
       "line": 5,
       "path": "input.js"
@@ -10,9 +18,17 @@
     "type": "extracted"
   },
   {
+    "argumentRange": {
+      "end": 148,
+      "start": 135
+    },
     "description": null,
     "id": "j0tI96",
     "message": "Hello here!",
+    "messageRange": {
+      "end": 148,
+      "start": 135
+    },
     "reference": {
       "line": 6,
       "path": "input.js"
@@ -20,9 +36,17 @@
     "type": "extracted"
   },
   {
+    "argumentRange": {
+      "end": 189,
+      "start": 175
+    },
     "description": null,
     "id": "0KGiQf",
     "message": "Hello there!",
+    "messageRange": {
+      "end": 189,
+      "start": 175
+    },
     "reference": {
       "line": 8,
       "path": "input.js"

@@ -1,8 +1,16 @@
 [
   {
+    "argumentRange": {
+      "end": 104,
+      "start": 98
+    },
     "description": null,
     "id": "-YJVTi",
     "message": "Hey!",
+    "messageRange": {
+      "end": 104,
+      "start": 98
+    },
     "reference": {
       "line": 5,
       "path": "input.js"

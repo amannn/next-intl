@@ -1,8 +1,16 @@
 [
   {
+    "argumentRange": {
+      "end": 168,
+      "start": 145
+    },
     "description": null,
     "id": "piskIR",
     "message": "Hello from extracted!",
+    "messageRange": {
+      "end": 168,
+      "start": 145
+    },
     "reference": {
       "line": 6,
       "path": "input.js"

@@ -10,12 +10,39 @@ export type ExtractorMessageReference = {
   line?: number;
 };
 
+/**
+ * A half-open range of UTF-8 byte offsets into the source file, covering a
+ * whole token including its delimiters (quotes, braces).
+ */
+export type SourceMessageRange = {
+  start: number;
+  end: number;
+};
+
 /** A single statically extracted source-code usage before any aggregation. */
 export type SourceExtractedMessage = {
   id: string;
   message: string;
   description: string | null;
   reference: ExtractorMessageReference;
+  /**
+   * The whole first argument of the call — the string literal in string form,
+   * the object literal in object form. Tooling that rewrites a call (e.g.
+   * converting between the two forms) replaces this range.
+   */
+  argumentRange?: SourceMessageRange;
+  /**
+   * The `message` value literal. In string form this equals `argumentRange`,
+   * since the argument is the message literal itself.
+   */
+  messageRange?: SourceMessageRange;
+  /** The `description` value literal, when one is provided. */
+  descriptionRange?: SourceMessageRange;
+  /**
+   * The explicit `id` value literal. Present only when the call provides an
+   * id of its own, so this doubles as the explicit-id signal.
+   */
+  idRange?: SourceMessageRange;
 };
 
 /** An aggregated message that can be read from or written to a catalog. */

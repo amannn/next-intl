@@ -1,8 +1,20 @@
 [
   {
+    "argumentRange": {
+      "end": 156,
+      "start": 96
+    },
     "description": null,
     "id": "greeting",
+    "idRange": {
+      "end": 111,
+      "start": 101
+    },
     "message": "Hello!",
+    "messageRange": {
+      "end": 130,
+      "start": 122
+    },
     "reference": {
       "line": 5,
       "path": "input.js"

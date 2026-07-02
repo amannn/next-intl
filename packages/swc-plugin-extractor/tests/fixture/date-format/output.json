@@ -1,8 +1,16 @@
 [
   {
+    "argumentRange": {
+      "end": 118,
+      "start": 96
+    },
     "description": null,
     "id": "5n-ZPU",
     "message": "{date, date, short}!",
+    "messageRange": {
+      "end": 118,
+      "start": 96
+    },
     "reference": {
       "line": 5,
       "path": "input.js"
