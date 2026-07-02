@@ -1,15 +1,17 @@
 [
   {
-    "argumentRange": {
-      "end": 164,
-      "start": 156
-    },
     "description": null,
     "id": "OpKKos",
     "message": "Hello!",
-    "messageRange": {
-      "end": 164,
-      "start": 156
+    "ranges": {
+      "argument": {
+        "end": 164,
+        "start": 156
+      },
+      "message": {
+        "end": 164,
+        "start": 156
+      }
     },
     "reference": {
       "line": 7,

@@ -1,15 +1,17 @@
 [
   {
-    "argumentRange": {
-      "end": 116,
-      "start": 96
-    },
     "description": null,
     "id": "th21Di",
     "message": "Héllo wörld 🌍",
-    "messageRange": {
-      "end": 116,
-      "start": 96
+    "ranges": {
+      "argument": {
+        "end": 116,
+        "start": 96
+      },
+      "message": {
+        "end": 116,
+        "start": 96
+      }
     },
     "reference": {
       "line": 5,
@@ -18,20 +20,22 @@
     "type": "extracted"
   },
   {
-    "argumentRange": {
-      "end": 201,
-      "start": 123
-    },
     "description": "Ünïcode chäracters before the message",
-    "descriptionRange": {
-      "end": 200,
-      "start": 158
-    },
     "id": "EIL0FA",
     "message": "Prüfung",
-    "messageRange": {
-      "end": 143,
-      "start": 133
+    "ranges": {
+      "argument": {
+        "end": 201,
+        "start": 123
+      },
+      "description": {
+        "end": 200,
+        "start": 158
+      },
+      "message": {
+        "end": 143,
+        "start": 133
+      }
     },
     "reference": {
       "line": 6,

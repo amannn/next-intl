@@ -1,15 +1,17 @@
 [
   {
-    "argumentRange": {
-      "end": 145,
-      "start": 131
-    },
     "description": null,
     "id": "0KGiQf",
     "message": "Hello there!",
-    "messageRange": {
-      "end": 145,
-      "start": 131
+    "ranges": {
+      "argument": {
+        "end": 145,
+        "start": 131
+      },
+      "message": {
+        "end": 145,
+        "start": 131
+      }
     },
     "reference": {
       "line": 5,

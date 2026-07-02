@@ -1,15 +1,17 @@
 [
   {
-    "argumentRange": {
-      "end": 165,
-      "start": 142
-    },
     "description": null,
     "id": "piskIR",
     "message": "Hello from extracted!",
-    "messageRange": {
-      "end": 165,
-      "start": 142
+    "ranges": {
+      "argument": {
+        "end": 165,
+        "start": 142
+      },
+      "message": {
+        "end": 165,
+        "start": 142
+      }
     },
     "reference": {
       "line": 6,

@@ -1,15 +1,17 @@
 [
   {
-    "argumentRange": {
-      "end": 106,
-      "start": 98
-    },
     "description": null,
     "id": "OpKKos",
     "message": "Hello!",
-    "messageRange": {
-      "end": 106,
-      "start": 98
+    "ranges": {
+      "argument": {
+        "end": 106,
+        "start": 98
+      },
+      "message": {
+        "end": 106,
+        "start": 98
+      }
     },
     "reference": {
       "line": 5,
@@ -18,16 +20,18 @@
     "type": "extracted"
   },
   {
-    "argumentRange": {
-      "end": 167,
-      "start": 159
-    },
     "description": null,
     "id": "OpKKos",
     "message": "Hello!",
-    "messageRange": {
-      "end": 167,
-      "start": 159
+    "ranges": {
+      "argument": {
+        "end": 167,
+        "start": 159
+      },
+      "message": {
+        "end": 167,
+        "start": 159
+      }
     },
     "reference": {
       "line": 10,

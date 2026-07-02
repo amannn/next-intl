@@ -1,15 +1,17 @@
 [
   {
-    "argumentRange": {
-      "end": 112,
-      "start": 96
-    },
     "description": null,
     "id": "tBFOH1",
     "message": "Hello, {name}!",
-    "messageRange": {
-      "end": 112,
-      "start": 96
+    "ranges": {
+      "argument": {
+        "end": 112,
+        "start": 96
+      },
+      "message": {
+        "end": 112,
+        "start": 96
+      }
     },
     "reference": {
       "line": 5,

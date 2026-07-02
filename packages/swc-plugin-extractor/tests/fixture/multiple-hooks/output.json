@@ -1,15 +1,17 @@
 [
   {
-    "argumentRange": {
-      "end": 201,
-      "start": 189
-    },
     "description": null,
     "id": "tnuBMt",
     "message": "Page title",
-    "messageRange": {
-      "end": 201,
-      "start": 189
+    "ranges": {
+      "argument": {
+        "end": 201,
+        "start": 189
+      },
+      "message": {
+        "end": 201,
+        "start": 189
+      }
     },
     "reference": {
       "line": 7,
@@ -18,16 +20,18 @@
     "type": "extracted"
   },
   {
-    "argumentRange": {
-      "end": 297,
-      "start": 289
-    },
     "description": null,
     "id": "OpKKos",
     "message": "Hello!",
-    "messageRange": {
-      "end": 297,
-      "start": 289
+    "ranges": {
+      "argument": {
+        "end": 297,
+        "start": 289
+      },
+      "message": {
+        "end": 297,
+        "start": 289
+      }
     },
     "reference": {
       "line": 13,
@@ -36,16 +40,18 @@
     "type": "extracted"
   },
   {
-    "argumentRange": {
-      "end": 416,
-      "start": 395
-    },
     "description": null,
     "id": "mOPTEA",
     "message": "Server data message",
-    "messageRange": {
-      "end": 416,
-      "start": 395
+    "ranges": {
+      "argument": {
+        "end": 416,
+        "start": 395
+      },
+      "message": {
+        "end": 416,
+        "start": 395
+      }
     },
     "reference": {
       "line": 18,
@@ -54,16 +60,18 @@
     "type": "extracted"
   },
   {
-    "argumentRange": {
-      "end": 517,
-      "start": 498
-    },
     "description": null,
     "id": "MgvtBu",
     "message": "Component message",
-    "messageRange": {
-      "end": 517,
-      "start": 498
+    "ranges": {
+      "argument": {
+        "end": 517,
+        "start": 498
+      },
+      "message": {
+        "end": 517,
+        "start": 498
+      }
     },
     "reference": {
       "line": 23,
@@ -72,16 +80,18 @@
     "type": "extracted"
   },
   {
-    "argumentRange": {
-      "end": 644,
-      "start": 629
-    },
     "description": null,
     "id": "sJK5Uk",
     "message": "Another one 1",
-    "messageRange": {
-      "end": 644,
-      "start": 629
+    "ranges": {
+      "argument": {
+        "end": 644,
+        "start": 629
+      },
+      "message": {
+        "end": 644,
+        "start": 629
+      }
     },
     "reference": {
       "line": 28,
@@ -90,16 +100,18 @@
     "type": "extracted"
   },
   {
-    "argumentRange": {
-      "end": 758,
-      "start": 743
-    },
     "description": null,
     "id": "2k7cS1",
     "message": "Another one 2",
-    "messageRange": {
-      "end": 758,
-      "start": 743
+    "ranges": {
+      "argument": {
+        "end": 758,
+        "start": 743
+      },
+      "message": {
+        "end": 758,
+        "start": 743
+      }
     },
     "reference": {
       "line": 33,
@@ -108,16 +120,18 @@
     "type": "extracted"
   },
   {
-    "argumentRange": {
-      "end": 886,
-      "start": 879
-    },
     "description": null,
     "id": "another.6jb0KP",
     "message": "Two 1",
-    "messageRange": {
-      "end": 886,
-      "start": 879
+    "ranges": {
+      "argument": {
+        "end": 886,
+        "start": 879
+      },
+      "message": {
+        "end": 886,
+        "start": 879
+      }
     },
     "reference": {
       "line": 38,
@@ -126,16 +140,18 @@
     "type": "extracted"
   },
   {
-    "argumentRange": {
-      "end": 1001,
-      "start": 994
-    },
     "description": null,
     "id": "another.KVQtmd",
     "message": "Two 2",
-    "messageRange": {
-      "end": 1001,
-      "start": 994
+    "ranges": {
+      "argument": {
+        "end": 1001,
+        "start": 994
+      },
+      "message": {
+        "end": 1001,
+        "start": 994
+      }
     },
     "reference": {
       "line": 43,

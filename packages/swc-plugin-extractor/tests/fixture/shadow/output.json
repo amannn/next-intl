@@ -1,15 +1,17 @@
 [
   {
-    "argumentRange": {
-      "end": 102,
-      "start": 96
-    },
     "description": null,
     "id": "-YJVTi",
     "message": "Hey!",
-    "messageRange": {
-      "end": 102,
-      "start": 96
+    "ranges": {
+      "argument": {
+        "end": 102,
+        "start": 96
+      },
+      "message": {
+        "end": 102,
+        "start": 96
+      }
     },
     "reference": {
       "line": 5,

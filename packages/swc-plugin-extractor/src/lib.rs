@@ -60,28 +60,36 @@ pub enum SourceMessage {
 }
 
 #[derive(Debug, Clone, Serialize)]
-#[serde(rename_all = "camelCase")]
 pub struct ExtractedMessage {
     pub id: Wtf8Atom,
     pub message: Wtf8Atom,
     pub description: Option<Wtf8Atom>,
     pub reference: Reference,
-    /// The whole first argument of the call — the string literal in string
-    /// form, the object literal in object form. Tooling that rewrites a call
-    /// (e.g. converting between the two forms) replaces this range.
+    /// Source ranges of the call's tokens. Absent when no source map is
+    /// available to resolve spans against.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub argument_range: Option<Range>,
-    /// The `message` value literal. In string form this equals
-    /// `argument_range`, since the argument is the message literal itself.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub message_range: Option<Range>,
+    pub ranges: Option<Ranges>,
+}
+
+/// Source ranges for an extracted call. Each is a half-open range of
+/// UTF-8 byte offsets into the source file, covering a whole token
+/// including its delimiters (quotes, braces).
+#[derive(Debug, Clone, Copy, Serialize)]
+pub struct Ranges {
+    /// The whole first argument — the string literal in string form, the
+    /// object literal in object form. Tooling that rewrites a call (e.g.
+    /// converting between the two forms) replaces this range.
+    pub argument: Range,
+    /// The `message` value literal. In string form this equals `argument`,
+    /// since the argument is the message literal itself.
+    pub message: Range,
     /// The `description` value literal, when one is provided.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub description_range: Option<Range>,
+    pub description: Option<Range>,
     /// The explicit `id` value literal. Present only when the call provides
     /// an id of its own, so this doubles as the explicit-id signal.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub id_range: Option<Range>,
+    pub id: Option<Range>,
 }
 
 /// A half-open range of UTF-8 byte offsets into the source file, covering a
@@ -353,6 +361,16 @@ impl TransformVisitor {
             .as_ref()
             .map_or(0, |sm| sm.lookup_char_pos(call.span.lo).line);
 
+        let ranges = match (argument_range, message_range) {
+            (Some(argument), Some(message)) => Some(Ranges {
+                argument,
+                message,
+                description: description_range,
+                id: id_range,
+            }),
+            _ => None,
+        };
+
         self.results
             .push(SourceMessage::Extracted(ExtractedMessage {
                 id: full_key,
@@ -362,10 +380,7 @@ impl TransformVisitor {
                     path: self.file_path.clone(),
                     line,
                 },
-                argument_range,
-                message_range,
-                description_range,
-                id_range,
+                ranges,
             }));
 
         // Transform the argument based on type

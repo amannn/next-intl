@@ -1,15 +1,17 @@
 [
   {
-    "argumentRange": {
-      "end": 124,
-      "start": 103
-    },
     "description": null,
     "id": "C-nN8a",
     "message": "Hello <b>Alice</b>!",
-    "messageRange": {
-      "end": 124,
-      "start": 103
+    "ranges": {
+      "argument": {
+        "end": 124,
+        "start": 103
+      },
+      "message": {
+        "end": 124,
+        "start": 103
+      }
     },
     "reference": {
       "line": 5,

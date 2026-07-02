@@ -1,19 +1,21 @@
 [
   {
-    "argumentRange": {
-      "end": 215,
-      "start": 96
-    },
     "description": null,
     "id": "greeting",
-    "idRange": {
-      "end": 116,
-      "start": 106
-    },
     "message": "Hello!",
-    "messageRange": {
-      "end": 139,
-      "start": 131
+    "ranges": {
+      "argument": {
+        "end": 215,
+        "start": 96
+      },
+      "id": {
+        "end": 116,
+        "start": 106
+      },
+      "message": {
+        "end": 139,
+        "start": 131
+      }
     },
     "reference": {
       "line": 5,

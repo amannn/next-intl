@@ -50,38 +50,18 @@ it('extracts same message used multiple times in one file as separate source mes
   expect(result.messages).toMatchInlineSnapshot(`
     [
       {
-        "argumentRange": {
-          "end": 150,
-          "start": 142,
-        },
         "description": null,
-        "descriptionRange": undefined,
         "id": "OpKKos",
-        "idRange": undefined,
         "message": "Hello!",
-        "messageRange": {
-          "end": 150,
-          "start": 142,
-        },
         "reference": {
           "line": 7,
           "path": "test.tsx",
         },
       },
       {
-        "argumentRange": {
-          "end": 180,
-          "start": 172,
-        },
         "description": null,
-        "descriptionRange": undefined,
         "id": "OpKKos",
-        "idRange": undefined,
         "message": "Hello!",
-        "messageRange": {
-          "end": 180,
-          "start": 172,
-        },
         "reference": {
           "line": 8,
           "path": "test.tsx",
@@ -110,44 +90,18 @@ it('keeps descriptions on separate source message uses', async () => {
   expect(result.messages).toMatchInlineSnapshot(`
     [
       {
-        "argumentRange": {
-          "end": 188,
-          "start": 142,
-        },
         "description": "Button label",
-        "descriptionRange": {
-          "end": 187,
-          "start": 173,
-        },
         "id": "jvo0vs",
-        "idRange": undefined,
         "message": "Save",
-        "messageRange": {
-          "end": 158,
-          "start": 152,
-        },
         "reference": {
           "line": 7,
           "path": "test.tsx",
         },
       },
       {
-        "argumentRange": {
-          "end": 253,
-          "start": 204,
-        },
         "description": "Menu item label",
-        "descriptionRange": {
-          "end": 252,
-          "start": 235,
-        },
         "id": "jvo0vs",
-        "idRange": undefined,
         "message": "Save",
-        "messageRange": {
-          "end": 220,
-          "start": 214,
-        },
         "reference": {
           "line": 8,
           "path": "test.tsx",
@@ -180,19 +134,9 @@ it('does not add a fallback message in production', async () => {
       "map": undefined,
       "messages": [
         {
-          "argumentRange": {
-            "end": 114,
-            "start": 108,
-          },
           "description": null,
-          "descriptionRange": undefined,
           "id": "-YJVTi",
-          "idRange": undefined,
           "message": "Hey!",
-          "messageRange": {
-            "end": 114,
-            "start": 108,
-          },
           "reference": {
             "line": 5,
             "path": "test.tsx",
