@@ -14,17 +14,6 @@ it('updates the cookie correctly', async ({page}) => {
   assertLocaleCookieValue(page, 'de', {path: '/base/path'});
   await page.getByRole('button', {name: 'Go to nested page'}).click();
   await expect(page).toHaveURL('/base/path/de/verschachtelt');
-});
-
-// Skipped on Next.js 16.3 canary due to a separate upstream bug: when a
-// client-side navigation is redirected by the proxy (`/base/path/en` ->
-// `/base/path`, correct `location` header is sent by the server), the router
-// reconciles the address bar to `/` without re-adding the `basePath`. This is
-// unrelated to the locale cookie handling verified in this commit.
-it.skip('updates the cookie correctly when switching back to the default locale', async ({
-  page
-}) => {
-  await page.goto('/base/path/de/verschachtelt');
   await page.getByRole('link', {name: 'Start'}).click();
   await page.getByRole('link', {name: 'Zu Englisch wechseln'}).click();
 

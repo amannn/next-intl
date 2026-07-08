@@ -44,8 +44,7 @@ beforeEach(() => {
     prefetch: vi.fn(),
     back: vi.fn(),
     forward: vi.fn(),
-    refresh: vi.fn(),
-    bfcacheId: 'test'
+    refresh: vi.fn()
   };
   vi.mocked(useNextRouter).mockImplementation(() => router);
 });
