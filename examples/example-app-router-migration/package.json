@@ -9,7 +9,7 @@
     "start": "next start"
   },
   "dependencies": {
-    "next": "^16.2.2",
+    "next": "16.3.0-canary.78",
     "next-intl": "^4.0.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3"
@@ -19,7 +19,7 @@
     "@types/node": "^20.14.5",
     "@types/react": "^19.2.14",
     "eslint": "^9.38.0",
-    "eslint-config-next": "^16.2.2",
+    "eslint-config-next": "16.3.0-canary.78",
     "@eslint/eslintrc": "^3.1.0",
     "prettier": "^3.3.3",
     "typescript": "^6.0.0"
