@@ -619,6 +619,13 @@ describe('select', () => {
     ).toMatchInlineSnapshot(`"Dear Alex Smith"`);
   });
 
+  it('formats an empty branch', () => {
+    const compiled = compile('Hi{gender, select, female {, madam} other {}}');
+    expect(
+      formatMessage(compiled, 'en', {gender: 'unknown'})
+    ).toMatchInlineSnapshot(`"Hi"`);
+  });
+
   it('throws for a select without other', () => {
     expect(() => compile('{gender, select, female {She} male {He}}')).toThrow(
       'MISSING_OTHER_CLAUSE'
@@ -790,6 +797,23 @@ describe('cardinal plural (plural)', () => {
     );
     expect(formatMessage(compiled, 'pl', {n: 22})).toMatchInlineSnapshot(
       `"22 pliki"`
+    );
+  });
+
+  it('formats a branch that only contains the pound sign', () => {
+    const compiled = compile('{count, plural, one {one} other {#}}');
+    expect(formatMessage(compiled, 'en', {count: 5})).toMatchInlineSnapshot(
+      `"5"`
+    );
+  });
+
+  it('formats an empty branch', () => {
+    const compiled = compile('item{count, plural, one {} other {s}}');
+    expect(formatMessage(compiled, 'en', {count: 1})).toMatchInlineSnapshot(
+      `"item"`
+    );
+    expect(formatMessage(compiled, 'en', {count: 2})).toMatchInlineSnapshot(
+      `"items"`
     );
   });
 
