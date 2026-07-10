@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.13.2 (2026-07-10)
+
+### Bug Fixes
+
+* Correctly format plural/select branches that are only `#` or empty ([#2356](https://github.com/amannn/next-intl/issues/2356)) ([cc34d9a](https://github.com/amannn/next-intl/commit/cc34d9acd015937e462a5af93638af8fe5454ef7)) – by @spokodev
+
 ## 4.13.1 (2026-06-30)
 
 ### Bug Fixes
