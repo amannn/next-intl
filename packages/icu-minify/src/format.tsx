@@ -234,7 +234,8 @@ function formatSelect<RichTextElement>(
   const value = String(getValue(values, name));
   const branch: CompiledNode | undefined = options[value] ?? options.other;
 
-  if (process.env.NODE_ENV !== 'production' && !branch) {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (process.env.NODE_ENV !== 'production' && branch === undefined) {
     throw new Error(
       `No matching branch for select "${name}" with value "${value}"`
     );
@@ -274,7 +275,8 @@ function formatPlural<RichTextElement>(
     .select(value);
   const branch: CompiledNode | undefined = options[category] ?? options.other;
 
-  if (process.env.NODE_ENV !== 'production' && !branch) {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (process.env.NODE_ENV !== 'production' && branch === undefined) {
     throw new Error(
       `No matching branch for plural "${name}" with category "${category}"`
     );
