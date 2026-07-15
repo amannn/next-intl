@@ -18,18 +18,18 @@ function InlineMessages() {
 }
 ```
 
-This approach has significant advantages for agents:
+This approach has significant benefits for agents:
 
-- **No naming of keys**: Agents don't need to come up with key names, avoiding inconsistent naming conventions.
 - **Local reasoning**: Adding, updating, or removing messages only requires editing a single file—no need to read lengthy message catalogs into the context window.
+- **No naming of keys**: Agents don't need to come up with key names, avoiding inconsistent naming conventions.
 - **Always in sync**: Catalogs are updated automatically, therefore agents can't forget to add a message or leave dead ones behind.
 - **Refactoring-friendly**: Moving code across components doesn't require restructuring namespaces or keys.
 
-Learn more in the [introduction blog post](/blog/use-extracted).
+Learn more in the [introductory blog post](/blog/use-extracted).
 
 ## Usage with `useTranslations` [#use-translations]
 
-If you're using [`useTranslations`](/docs/usage/translations), it can be helpful to add instructions to an file like `CLAUDE.md` or `AGENTS.md` to ensure your agent follows your conventions:
+If you're using [`useTranslations`](/docs/usage/translations), it can be helpful to add instructions to a file like `CLAUDE.md` or `AGENTS.md` to ensure your agent follows your conventions:
 
 ```markdown filename="AGENTS.md"
 ## Internationalization
@@ -58,4 +58,4 @@ While agents can help with many aspects of internationalization, translating mes
 
 To address these issues, [eloqnt/studio](https://studio.eloqnt.dev) was created as a companion for `next-intl`. It's a CLI tool that analyzes your source code to enrich messages with usage context, applies per-locale styleguides, and verifies translations after they've been generated.
 
-If you're planning to collaborate with human translators, a translation management system like <PartnerContentLink href="https://crowdin.com/">Crowdin</PartnerContentLink> can be helpful as well.
+Is localization outgrowing your repo? By using a translation management system like <PartnerContentLink href="https://crowdin.com/">Crowdin</PartnerContentLink>, you can leverage review workflows, 3rd-party integrations, collaboration tooling and more.
