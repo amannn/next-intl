@@ -182,6 +182,11 @@ export default withNextra({
       permanent: true
     },
     {
+      source: '/docs/workflows/vscode-integration',
+      destination: '/docs/agents',
+      permanent: true
+    },
+    {
       source: '/docs/workflows/linting',
       destination:
         'https://learn.next-intl.dev/chapters/03-translations/07-literals',
