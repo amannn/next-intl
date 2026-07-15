@@ -2,31 +2,19 @@ import Callout from '@/components/Callout';
 
 # Linting messages
 
-To ensure quality and completeness of your messages, you can lint them with the [eloqnt CLI](https://studio.eloqnt.dev).
+To ensure quality and completeness of your messages, you can lint them with [`@eloqnt/cli`](https://studio.eloqnt.dev).
 
-**Usage:**
+This tool is purpose-built for `next-intl`, and uses AST-level analysis to catch common issues like missing translations, inconsistent ICU arguments, and more.
+
+## Getting started
+
+**Install `@eloqnt/cli`:**
 
 ```bash
-npm install -D @eloqnt/cli
-npx eloqnt lint
+npm install @eloqnt/cli --save-dev
 ```
 
-**Output:**
-
-```
-NewsArticle.title
-✖ Missing translation in de.json (missing-translation)
-```
-
-Based on static analysis of your messages and source code, `eloqnt lint` can detect issues like:
-
-1. **Missing translations**: A message in the source locale has no translation in a target locale
-2. **Inconsistent arguments**: A translation's ICU arguments don't match the source message
-3. **Superfluous keys**: A target locale defines a key that the source locale doesn't
-4. **Orphan messages**: A catalog message is never referenced in your source code
-5. **Undefined keys**: Your source code references a key that no catalog defines
-
-The CLI reads its configuration from `.eloqnt/config.ts`, closely mirroring what you might already know from [`createNextIntlPlugin`](/docs/usage/plugin):
+**Add `.eloqnt/config.ts`:**
 
 ```tsx filename=".eloqnt/config.ts"
 import {defineConfig} from '@eloqnt/cli';
@@ -42,10 +30,52 @@ export default defineConfig({
 });
 ```
 
-Both `.json` and `.po` catalogs are supported, including those generated via [`useExtracted`](/docs/usage/extraction).
+See [configuration](https://studio.eloqnt.dev/docs#config) in the `@eloqnt/cli` docs.
 
-<Callout>
+**Run the `lint` command:**
 
-Since `eloqnt lint` fails with a non-zero exit code when errors are found, it can be integrated into your continuous integration workflow—see the [eloqnt docs](https://studio.eloqnt.dev/docs) for details.
+```bash
+npx eloqnt lint
+```
 
-</Callout>
+**Example output:**
+
+```
+messages/de.json
+│
+│  "XOBPYD": "1.000 Teams sind bereits live"
+│            ─┬─────────────────────────────
+│             ╰─ Missing ICU argument: {count} (inconsistent-args)
+│
+│  "mCBO12": "Sign up today"
+│            ─┬─────────────
+│             ╰─ Missing translation in de.json (missing-translation)
+```
+
+## Formats
+
+Both `.json` and `.po` catalogs are supported out of the box, making this tool suitable both for use with [`useTranslations`](/docs/usage/translations) as well as [`useExtracted`](/docs/usage/extraction).
+
+If you're using a [custom format](/docs/usage/plugin#formats-custom) with `useExtracted`, you can configure this for `@eloqnt/cli` as well:
+
+```ts filename=".eloqnt/config.ts"
+import {defineConfig} from '@eloqnt/cli';
+
+export default defineConfig({
+  messages: {
+    format: {
+      codec: './StructuredJSONCodec.ts',
+      extension: '.json'
+    }
+    // ...
+  }
+});
+```
+
+See [custom formats](https://studio.eloqnt.dev/docs#guides-custom-formats) in the `@eloqnt/cli` docs.
+
+## GitHub Actions
+
+`eloqnt lint` can be integrated on continuous integration systems like GitHub Actions, while optionally also filling in missing translations.
+
+See [GitHub Actions](https://studio.eloqnt.dev/docs#guides-github-actions) in the `@eloqnt/cli` docs.

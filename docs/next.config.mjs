@@ -183,7 +183,7 @@ export default withNextra({
     },
     {
       source: '/docs/workflows/vscode-integration',
-      destination: '/docs/agents',
+      destination: '/docs/workflows/agents',
       permanent: true
     },
     {
