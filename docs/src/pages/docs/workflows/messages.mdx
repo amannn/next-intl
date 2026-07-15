@@ -1,34 +1,81 @@
 import Callout from '@/components/Callout';
-import Image from 'next/image';
 
-# Validating messages
+# Linting messages
 
-To ensure quality and completeness of your messages, you can use [i18n-check](https://github.com/lingualdev/i18n-check).
+To ensure quality and completeness of your messages, you can lint them with [`@eloqnt/cli`](https://studio.eloqnt.dev).
 
-This CLI helps you validate against issues like:
+This tool is purpose-built for `next-intl`, and uses AST-level analysis to catch common issues like missing translations, inconsistent ICU arguments, and more.
 
-1. Missing translations in target locales
-2. Inconsistent usage of ICU arguments across translations
+## Getting started
 
-**Usage:**
+**Install `@eloqnt/cli`:**
 
 ```bash
-npx @lingual/i18n-check@latest --source en --locales messages
+npm install @eloqnt/cli --save-dev
 ```
 
-**Output:**
+**Add `.eloqnt/config.ts`:**
+
+```tsx filename=".eloqnt/config.ts"
+import {defineConfig} from '@eloqnt/cli';
+
+export default defineConfig({
+  srcPath: './src',
+  messages: {
+    path: './messages',
+    locales: 'infer',
+    sourceLocale: 'en',
+    format: 'json'
+  }
+});
+```
+
+See [configuration](https://studio.eloqnt.dev/docs#config) in the `@eloqnt/cli` docs.
+
+**Run the `lint` command:**
+
+```bash
+npx eloqnt lint
+```
+
+**Example output:**
 
 ```
-Found missing keys!
-┌────────────────────┬───────────────────────────────┐
-│ file               │ key                           │
-├────────────────────┼───────────────────────────────┤
-│  messages/de.json  │  NewsArticle.title            │
-└────────────────────┴───────────────────────────────┘
+messages/de.json
+│
+│  "XOBPYD": "1.000 Teams sind bereits live"
+│            ─┬─────────────────────────────
+│             ╰─ Missing ICU argument: {count} (inconsistent-args)
+│
+│  "mCBO12": "Sign up today"
+│            ─┬─────────────
+│             ╰─ Missing translation in de.json (missing-translation)
 ```
 
-<Callout>
+## Formats
 
-You can also use the [`--unused`](https://github.com/lingualdev/i18n-check#--unused--u) flag to detect keys that are defined in your messages, but are not referenced anywhere in your codebase (currently experimental).
+Both `.json` and `.po` catalogs are supported out of the box, making this tool suitable both for use with [`useTranslations`](/docs/usage/translations) as well as [`useExtracted`](/docs/usage/extraction).
 
-</Callout>
+If you're using a [custom format](/docs/usage/plugin#formats-custom) with `useExtracted`, you can configure this for `@eloqnt/cli` as well:
+
+```ts filename=".eloqnt/config.ts"
+import {defineConfig} from '@eloqnt/cli';
+
+export default defineConfig({
+  messages: {
+    format: {
+      codec: './StructuredJSONCodec.ts',
+      extension: '.json'
+    }
+    // ...
+  }
+});
+```
+
+See [custom formats](https://studio.eloqnt.dev/docs#guides-custom-formats) in the `@eloqnt/cli` docs.
+
+## GitHub Actions
+
+`eloqnt lint` can be integrated on continuous integration systems like GitHub Actions, while optionally also filling in missing translations.
+
+See [GitHub Actions](https://studio.eloqnt.dev/docs#guides-github-actions) in the `@eloqnt/cli` docs.

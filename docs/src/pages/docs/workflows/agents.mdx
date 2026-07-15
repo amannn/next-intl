@@ -1,0 +1,60 @@
+import PartnerContentLink from '@/components/PartnerContentLink';
+
+# AI agents
+
+AI agents like Claude Code, Codex and Cursor are increasingly writing code in our apps—including user-facing labels. This page covers how you can set up your project so that agents produce well-internationalized code, and how translations fit into an agentic workflow.
+
+## Usage with `useExtracted` [#use-extracted]
+
+[`useExtracted`](/docs/usage/extraction) was purpose-built for agents (as well as humans): Messages are written inline, right where they're used, while `next-intl` takes care of extracting them to your message catalogs.
+
+```tsx
+import {useExtracted} from 'next-intl';
+
+function InlineMessages() {
+  const t = useExtracted();
+  return <h1>{t('Look ma, no keys!')}</h1>;
+}
+```
+
+This approach has significant benefits for agents:
+
+- **Local reasoning**: Adding, updating, or removing messages only requires editing a single file—no need to read lengthy message catalogs into the context window.
+- **No naming of keys**: Agents don't need to come up with key names, avoiding inconsistent naming conventions.
+- **Always in sync**: Catalogs are updated automatically, therefore agents can't forget to add a message or leave dead ones behind.
+- **Refactoring-friendly**: Moving code across components doesn't require restructuring namespaces or keys.
+
+Learn more in the [introductory blog post](/blog/use-extracted).
+
+## Usage with `useTranslations` [#use-translations]
+
+If you're using [`useTranslations`](/docs/usage/translations), it can be helpful to add instructions to a file like `CLAUDE.md` or `AGENTS.md` to ensure your agent follows your conventions:
+
+```markdown filename="AGENTS.md"
+## Internationalization
+
+- All user-facing strings are rendered with `useTranslations` from `next-intl`,
+  never hardcoded in components.
+- Each message referenced by `useTranslations` should match an entry in `messages/en.json`,
+  other locales are handled by translators.
+- Use descriptive, yet short, key names like `title` and `description` instead of repeating
+  the current source string.
+- Use ICU arguments instead of string concatenation to give translators the flexibility
+  to change the order of words within a sentence.
+- ...
+```
+
+Make sure to adapt these instructions to the conventions of your project.
+
+## Translating messages [#translating-messages]
+
+While agents can help with many aspects of internationalization, translating message catalogs is a task where they typically don't perform particularly well:
+
+1. **Missing context**: A catalog entry alone doesn't tell where and how a message is used in your app, oftentimes leading to translations that miss the intent.
+2. **Consistency**: Terminology tends to drift across a catalog and between sessions, especially as your app grows over time.
+3. **Language nuances**: Generic agents may guess at aspects like plural rules for target languages, leading to subtle errors that are easy to miss.
+4. **Context pollution**: Editing catalogs for many locales fills up the context window with content that's mostly irrelevant for the agent's main task.
+
+To address these issues, [eloqnt/studio](https://studio.eloqnt.dev) was created as a companion for `next-intl`. It's a CLI tool that analyzes your source code to enrich messages with usage context, applies per-locale styleguides, and verifies translations after they've been generated.
+
+Is localization outgrowing your repo? By using a translation management system like <PartnerContentLink href="https://crowdin.com/">Crowdin</PartnerContentLink>, you can leverage review workflows, 3rd-party integrations, collaboration tooling and more.
