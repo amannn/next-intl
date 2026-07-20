@@ -4,3 +4,4 @@ packages:
   - 'e2e/*'
   - 'docs'
   - 'tools'
+  - 'playground'
