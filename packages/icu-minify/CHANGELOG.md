@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.13.3 (2026-07-21)
+
+### Bug Fixes
+
+* Next.js 16.3 compatibility preparation (only update locale cookie for document requests and not prefetches) ([#2355](https://github.com/amannn/next-intl/issues/2355)) ([0555ace](https://github.com/amannn/next-intl/commit/0555aceebb2efddcdbef1062130daf1d0c146164)) – by @amannn
+
 ## 4.13.2 (2026-07-10)
 
 ### Bug Fixes
