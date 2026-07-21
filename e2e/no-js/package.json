@@ -1,0 +1,36 @@
+{
+  "name": "e2e-no-js",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "lint": "eslint src tests && prettier . --check",
+    "build": "next build",
+    "start": "next start",
+    "test": "playwright test"
+  },
+  "dependencies": {
+    "next": "^16.2.2",
+    "next-intl": "workspace:*",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.51.1",
+    "@types/react": "^19.2.3",
+    "@types/react-dom": "^19.2.3",
+    "e2e-utils": "workspace:*",
+    "eslint": "^9.38.0",
+    "eslint-config-next": "^16.2.2",
+    "prettier": "^3.3.3",
+    "typescript": "^5.5.3"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "bracketSpacing": false,
+    "trailingComma": "none"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

@@ -2174,6 +2174,27 @@ describe('prefix-based routing', () => {
       });
     });
 
+    it('updates a cookie for a document request', () => {
+      const response = middleware(
+        createMockRequest('/de', 'en', 'http://localhost:3000', 'en', {
+          'sec-fetch-dest': 'document'
+        })
+      );
+      expect(response.cookies.get('NEXT_LOCALE')).toEqual({
+        name: 'NEXT_LOCALE',
+        value: 'de'
+      });
+    });
+
+    it('does not update a cookie for a background request of the client-side router (e.g. a prefetch or a cache revalidation)', () => {
+      const response = middleware(
+        createMockRequest('/de', 'en', 'http://localhost:3000', 'en', {
+          'sec-fetch-dest': 'empty'
+        })
+      );
+      expect(response.cookies.get('NEXT_LOCALE')).toBeUndefined();
+    });
+
     it('retains request headers for the default locale', () => {
       middleware(
         createMockRequest('/', 'en', 'http://localhost:3000', undefined, {

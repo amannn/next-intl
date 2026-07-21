@@ -1,0 +1,11 @@
+{
+  "IndexPage": {
+    "title": "Home",
+    "about": "Go to about page",
+    "switchLocale": "Switch to German"
+  },
+  "AboutPage": {
+    "title": "About",
+    "index": "Go to home page"
+  }
+}
