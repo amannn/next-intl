@@ -1,0 +1,26 @@
+{
+  "name": "e2e-bun-precompile-app",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "next build",
+    "dev": "next dev",
+    "start": "next start",
+    "test": "node ./test.mjs"
+  },
+  "dependencies": {
+    "e2e-bun-precompile-config": "workspace:*",
+    "next": "^16.0.10",
+    "next-intl": "workspace:*",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.3",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "^5.5.3"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

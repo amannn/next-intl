@@ -1,0 +1,12 @@
+{
+  "name": "e2e-bun-precompile-config",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./plugin": "./plugin.js"
+  },
+  "peerDependencies": {
+    "next": "^16.0.0",
+    "next-intl": "workspace:*"
+  }
+}

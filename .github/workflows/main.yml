@@ -22,6 +22,8 @@ jobs:
         with:
           node-version: 22.x
           cache: 'pnpm'
+      # Used by the `e2e-bun-precompile-app` regression test (see its `test.mjs`)
+      - uses: oven-sh/setup-bun@v2
       - run: pnpm install
 
       # Next.js caching

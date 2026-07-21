@@ -114,6 +114,43 @@ importers:
         specifier: ^6.0.0
         version: 6.0.2
 
+  e2e/bun-precompile-app:
+    dependencies:
+      e2e-bun-precompile-config:
+        specifier: workspace:*
+        version: link:../bun-precompile-config
+      next:
+        specifier: ^16.0.10
+        version: 16.2.2(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      next-intl:
+        specifier: workspace:*
+        version: link:../../packages/next-intl
+      react:
+        specifier: ^19.2.3
+        version: 19.2.3
+      react-dom:
+        specifier: ^19.2.3
+        version: 19.2.3(react@19.2.3)
+    devDependencies:
+      '@types/react':
+        specifier: ^19.2.3
+        version: 19.2.14
+      '@types/react-dom':
+        specifier: ^19.2.3
+        version: 19.2.3(@types/react@19.2.14)
+      typescript:
+        specifier: ^5.5.3
+        version: 5.9.3
+
+  e2e/bun-precompile-config:
+    dependencies:
+      next:
+        specifier: ^16.0.0
+        version: 16.2.2(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      next-intl:
+        specifier: workspace:*
+        version: link:../../packages/next-intl
+
   e2e/extracted-json:
     dependencies:
       e2e-utils:
