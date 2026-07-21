@@ -1,0 +1,11 @@
+{
+  "IndexPage": {
+    "title": "Startseite",
+    "about": "Zur Über-uns-Seite",
+    "switchLocale": "Zu Englisch wechseln"
+  },
+  "AboutPage": {
+    "title": "Über uns",
+    "index": "Zur Startseite"
+  }
+}
