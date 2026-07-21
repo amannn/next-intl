@@ -33,6 +33,24 @@ function normalizeTurbopackAliasPath(pathname: string) {
   return pathname.replace(/\\/g, '/');
 }
 
+const FORMAT_ONLY_SPECIFIER = 'use-intl/format-message/format-only';
+
+function resolveFormatOnlyModule() {
+  try {
+    return require.resolve(FORMAT_ONLY_SPECIFIER);
+  } catch {
+    // `require.resolve` relies on `import.meta.url` (via `createRequire`), which
+    // can be unavailable when `next.config` is bundled before being evaluated
+    // (e.g. when running `bun --bun next dev`, especially in a monorepo where
+    // the plugin is invoked through a wrapper package). In that case the
+    // resolution base is empty and `require.resolve` throws. We then fall back
+    // to the bare specifier, which the app's bundler can resolve from its own
+    // context.
+    // https://github.com/amannn/next-intl/discussions/2209#discussioncomment-17687273
+    return undefined;
+  }
+}
+
 function resolveI18nPath(providedPath?: string, cwd?: string) {
   function resolvePath(pathname: string) {
     const parts = [];
@@ -170,22 +188,25 @@ export default function getNextConfig(
 
     // Add alias for precompiled message formatting
     if (pluginConfig.experimental?.messages?.precompile) {
-      // Workaround for https://github.com/vercel/next.js/issues/88540
-      let formatOnlyPath = path.relative(
-        process.cwd(),
-        require.resolve('use-intl/format-message/format-only')
-      );
+      const formatOnlyModule = resolveFormatOnlyModule();
 
-      // Turbopack seems to require this, otherwise `use-intl/format-message` is
-      // still bundled (despite the code correctly calling into `format-only`).
-      // Note that in this monorepo this is not necessary, because we'll end
-      // up with a path like `../…` — but for actual consumers this is required.
-      if (!formatOnlyPath.startsWith('.')) {
-        formatOnlyPath = `./${formatOnlyPath}`;
+      if (formatOnlyModule) {
+        // Workaround for https://github.com/vercel/next.js/issues/88540
+        let formatOnlyPath = path.relative(process.cwd(), formatOnlyModule);
+
+        // Turbopack seems to require this, otherwise `use-intl/format-message` is
+        // still bundled (despite the code correctly calling into `format-only`).
+        // Note that in this monorepo this is not necessary, because we'll end
+        // up with a path like `../…` — but for actual consumers this is required.
+        if (!formatOnlyPath.startsWith('.')) {
+          formatOnlyPath = `./${formatOnlyPath}`;
+        }
+
+        resolveAlias['use-intl/format-message'] =
+          normalizeTurbopackAliasPath(formatOnlyPath);
+      } else {
+        resolveAlias['use-intl/format-message'] = FORMAT_ONLY_SPECIFIER;
       }
-
-      resolveAlias['use-intl/format-message'] =
-        normalizeTurbopackAliasPath(formatOnlyPath);
     }
 
     // Add loaders
@@ -275,10 +296,12 @@ export default function getNextConfig(
       if (pluginConfig.experimental?.messages?.precompile) {
         // Use require.resolve to get the actual file path, since
         // bundlers don't properly resolve package subpath exports
-        // when used as alias targets
+        // when used as alias targets. When resolution fails (e.g. the config
+        // was bundled and `import.meta.url` is unavailable), we fall back to
+        // the bare specifier, which the bundler can resolve from its context.
         (config.resolve.alias as Record<string, string>)[
           'use-intl/format-message'
-        ] = require.resolve('use-intl/format-message/format-only');
+        ] = resolveFormatOnlyModule() ?? FORMAT_ONLY_SPECIFIER;
       }
 
       // Add loader for extractor
