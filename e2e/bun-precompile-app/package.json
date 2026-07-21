@@ -16,8 +16,11 @@
     "react-dom": "^19.2.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.51.1",
+    "@types/node": "^20.14.5",
     "@types/react": "^19.2.3",
     "@types/react-dom": "^19.2.3",
+    "e2e-utils": "workspace:*",
     "typescript": "^5.5.3"
   },
   "engines": {

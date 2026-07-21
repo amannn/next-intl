@@ -17,7 +17,6 @@ import {hasStableTurboConfig, isNextJs16OrHigher} from './nextFlags.js';
 import type {PluginConfig} from './types.js';
 import {throwError} from './utils.js';
 
-const require = createRequire(import.meta.url);
 function withExtensions(localPath: string) {
   return [
     `${localPath}.ts`,
@@ -33,22 +32,51 @@ function normalizeTurbopackAliasPath(pathname: string) {
   return pathname.replace(/\\/g, '/');
 }
 
-const FORMAT_ONLY_SPECIFIER = 'use-intl/format-message/format-only';
-
+/**
+ * Returns the absolute path of the `format-only` build, since bundlers don't
+ * properly resolve package subpath exports when used as alias targets
+ * (see https://github.com/vercel/next.js/issues/88540).
+ *
+ * When running `bun --bun next dev` while the plugin is invoked through a
+ * wrapper package (e.g. in a monorepo), `next.config` is bundled before being
+ * evaluated. In that environment, `require.resolve` has no valid resolution
+ * base and throws — even when `createRequire` receives an explicit path. In
+ * that case we recover via Bun's native resolver, either from the app
+ * directory or via `next-intl` (in case a strict `node_modules` layout is
+ * used, e.g. with pnpm or Bun's isolated linker).
+ * https://github.com/amannn/next-intl/discussions/2209#discussioncomment-17687273
+ */
 function resolveFormatOnlyModule() {
+  const specifier = 'use-intl/format-message/format-only';
+
   try {
-    return require.resolve(FORMAT_ONLY_SPECIFIER);
+    return createRequire(import.meta.url).resolve(specifier);
   } catch {
-    // `require.resolve` relies on `import.meta.url` (via `createRequire`), which
-    // can be unavailable when `next.config` is bundled before being evaluated
-    // (e.g. when running `bun --bun next dev`, especially in a monorepo where
-    // the plugin is invoked through a wrapper package). In that case the
-    // resolution base is empty and `require.resolve` throws. We then fall back
-    // to the bare specifier, which the app's bundler can resolve from its own
-    // context.
-    // https://github.com/amannn/next-intl/discussions/2209#discussioncomment-17687273
-    return undefined;
+    // Continue below
   }
+
+  const bun = (
+    globalThis as {
+      Bun?: {resolveSync(id: string, parent: string): string};
+    }
+  ).Bun;
+  if (bun) {
+    const parents = [
+      () => process.cwd(),
+      () => path.dirname(bun.resolveSync('next-intl/plugin', process.cwd()))
+    ];
+    for (const getParent of parents) {
+      try {
+        return bun.resolveSync(specifier, getParent());
+      } catch {
+        // Try the next parent
+      }
+    }
+  }
+
+  // As a last resort, let the app's bundler resolve the
+  // bare specifier from its own context
+  return specifier;
 }
 
 function resolveI18nPath(providedPath?: string, cwd?: string) {
@@ -188,11 +216,10 @@ export default function getNextConfig(
 
     // Add alias for precompiled message formatting
     if (pluginConfig.experimental?.messages?.precompile) {
-      const formatOnlyModule = resolveFormatOnlyModule();
+      let formatOnlyPath = resolveFormatOnlyModule();
 
-      if (formatOnlyModule) {
-        // Workaround for https://github.com/vercel/next.js/issues/88540
-        let formatOnlyPath = path.relative(process.cwd(), formatOnlyModule);
+      if (path.isAbsolute(formatOnlyPath)) {
+        formatOnlyPath = path.relative(process.cwd(), formatOnlyPath);
 
         // Turbopack seems to require this, otherwise `use-intl/format-message` is
         // still bundled (despite the code correctly calling into `format-only`).
@@ -202,11 +229,10 @@ export default function getNextConfig(
           formatOnlyPath = `./${formatOnlyPath}`;
         }
 
-        resolveAlias['use-intl/format-message'] =
-          normalizeTurbopackAliasPath(formatOnlyPath);
-      } else {
-        resolveAlias['use-intl/format-message'] = FORMAT_ONLY_SPECIFIER;
+        formatOnlyPath = normalizeTurbopackAliasPath(formatOnlyPath);
       }
+
+      resolveAlias['use-intl/format-message'] = formatOnlyPath;
     }
 
     // Add loaders
@@ -294,14 +320,9 @@ export default function getNextConfig(
 
       // Add alias for precompiled message formatting
       if (pluginConfig.experimental?.messages?.precompile) {
-        // Use require.resolve to get the actual file path, since
-        // bundlers don't properly resolve package subpath exports
-        // when used as alias targets. When resolution fails (e.g. the config
-        // was bundled and `import.meta.url` is unavailable), we fall back to
-        // the bare specifier, which the bundler can resolve from its context.
         (config.resolve.alias as Record<string, string>)[
           'use-intl/format-message'
-        ] = resolveFormatOnlyModule() ?? FORMAT_ONLY_SPECIFIER;
+        ] = resolveFormatOnlyModule();
       }
 
       // Add loader for extractor
