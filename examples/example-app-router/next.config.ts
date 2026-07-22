@@ -7,10 +7,6 @@ const withNextIntl = createNextIntlPlugin({
   }
 });
 
-const config: NextConfig = {
-  experimental: {
-    rootParams: true
-  }
-};
+const config: NextConfig = {};
 
 export default withNextIntl(config);
