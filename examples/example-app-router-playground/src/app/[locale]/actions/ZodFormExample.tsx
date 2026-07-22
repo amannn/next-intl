@@ -1,4 +1,4 @@
-import {useTranslations} from 'next-intl';
+import {Locale, useLocale, useTranslations} from 'next-intl';
 import {getTranslations} from 'next-intl/server';
 import {z} from 'zod';
 import ZodForm from './ZodForm';
@@ -22,13 +22,14 @@ export type FormResult =
     };
 
 async function submitAction(
+  locale: Locale,
   prev: unknown,
   data: FormData
 ): Promise<FormResult> {
   'use server';
 
   const values = Object.fromEntries(data.entries());
-  const t = await getTranslations('ZodFormExample');
+  const t = await getTranslations({namespace: 'ZodFormExample', locale});
 
   const result = FormSchema.safeParse(values, {
     error(issue) {
@@ -52,11 +53,12 @@ async function submitAction(
 
 export default function ZodFormExample() {
   const t = useTranslations('ZodFormExample');
+  const locale = useLocale();
 
   return (
     <section>
       <h2>Zod form</h2>
-      <ZodForm action={submitAction}>
+      <ZodForm action={submitAction.bind(null, locale)}>
         <input name="task" placeholder={t('task')} type="text" />
       </ZodForm>
     </section>
