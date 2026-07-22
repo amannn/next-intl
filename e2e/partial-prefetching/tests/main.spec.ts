@@ -38,3 +38,12 @@ it('supports navigation and locale switching', async ({page}) => {
   );
   expect(isSpa).toBe(true);
 });
+
+it('supports a link in a Suspense fallback on a dynamic route', async ({
+  page
+}) => {
+  await page.goto('/link.test/example');
+  await expect(
+    page.getByRole('heading', {name: 'Dynamic page: example'})
+  ).toBeVisible();
+});
