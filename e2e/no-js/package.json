@@ -10,7 +10,7 @@
     "test": "playwright test"
   },
   "dependencies": {
-    "next": "^16.2.2",
+    "next": "16.3.0-canary.93",
     "next-intl": "workspace:*",
     "react": "^19.2.3",
     "react-dom": "^19.2.3"
@@ -21,7 +21,7 @@
     "@types/react-dom": "^19.2.3",
     "e2e-utils": "workspace:*",
     "eslint": "^9.38.0",
-    "eslint-config-next": "^16.2.2",
+    "eslint-config-next": "16.3.0-canary.93",
     "prettier": "^3.3.3",
     "typescript": "^5.5.3"
   },

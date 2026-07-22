@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "clsx": "^2.1.1",
-    "next": "^16.2.2",
+    "next": "16.3.0-canary.93",
     "next-intl": "^4.0.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
@@ -29,7 +29,7 @@
     "@types/react": "^19.2.14",
     "autoprefixer": "^10.4.19",
     "eslint": "^9.38.0",
-    "eslint-config-next": "^16.2.2",
+    "eslint-config-next": "16.3.0-canary.93",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "postcss": "^8.5.3",
