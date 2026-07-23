@@ -4,6 +4,30 @@ on:
   push:
     branches:
       - main
+  # Manual recovery for a release whose npm publish failed partway through.
+  #
+  # The push-triggered release below bumps versions, commits, tags and creates
+  # the GitHub release, and only THEN publishes each package to npm. If npm fails
+  # mid-publish (e.g. a transient `504 Gateway Timeout`), some packages end up
+  # live at the new version while others are left behind — but the version bump
+  # and tag are already pushed.
+  #
+  # Do NOT re-run the failed release job in that case: it would run `lerna
+  # publish` again and bump a brand-new version. Instead, dispatch this workflow
+  # with `ref` set to the release tag that failed to fully publish (e.g.
+  # `v4.13.4`). It runs `lerna publish from-package`, which publishes only the
+  # packages whose version is missing from the registry and skips the rest — it
+  # never bumps versions or creates tags.
+  #
+  # This lives in the same file as the automatic release on purpose: npm Trusted
+  # Publishing is bound to a specific workflow filename, so recovery must run
+  # from `release.yml` to be authorized to publish (a separate workflow file
+  # produces an unrecognized OIDC identity and npm rejects the publish).
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Release tag/commit to publish from (e.g. v4.13.4)'
+        required: true
 
 jobs:
   main:
@@ -13,6 +37,10 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          # On push this is empty and checkout uses the triggering commit; on
+          # manual recovery it checks out the given release tag.
+          ref: ${{ github.event.inputs.ref }}
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
@@ -24,8 +52,15 @@ jobs:
       - run: |
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+      # Automatic release: bump versions, tag and publish on a fix/feat commit.
       - run: pnpm run publish
-        if: "${{startsWith(github.event.head_commit.message, 'fix: ') || startsWith(github.event.head_commit.message, 'feat: ') || startsWith(github.event.head_commit.message, 'feat!: ')}}"
+        if: "${{github.event_name == 'push' && (startsWith(github.event.head_commit.message, 'fix: ') || startsWith(github.event.head_commit.message, 'feat: ') || startsWith(github.event.head_commit.message, 'feat!: '))}}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # No NODE_AUTH_TOKEN since we use Trusted Publishers
+      # Manual recovery: publish only the packages missing from the registry.
+      - run: pnpm exec lerna publish from-package --yes
+        if: "${{github.event_name == 'workflow_dispatch'}}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # No NODE_AUTH_TOKEN since we use Trusted Publishers
