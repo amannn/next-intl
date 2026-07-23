@@ -39,11 +39,9 @@ it('supports navigation and locale switching', async ({page}) => {
   expect(isSpa).toBe(true);
 });
 
-it('supports a link in a Suspense fallback on a dynamic route', async ({
-  page
-}) => {
-  await page.goto('/link.test/example');
-  await expect(
-    page.getByRole('heading', {name: 'Dynamic page: example'})
-  ).toBeVisible();
+it('supports a link in the shell of a dynamic route', async ({page}) => {
+  await page.goto('/dynamic/example');
+  await expect(page.getByRole('heading', {name: 'Dynamic page'})).toBeVisible();
+  await page.getByRole('link', {name: 'Go to home page'}).click();
+  await expect(page.getByRole('heading', {name: 'Home'})).toBeVisible();
 });
