@@ -21,15 +21,32 @@ type Props = NextLinkProps & {
   localeCookie: InitializedLocaleCookieConfig;
 };
 
-function BaseLink(
-  {href, locale, localeCookie, onClick, prefetch, ...rest}: Props,
-  ref: Ref<HTMLAnchorElement>
-) {
-  const curLocale = useLocale();
-  const isChangingLocale = locale != null && locale !== curLocale;
+type LocaleChangingLinkProps = NextLinkProps & {
+  curLocale: Locale;
+  linkRef: Ref<HTMLAnchorElement>;
+  locale: Locale;
+  localeCookie: InitializedLocaleCookieConfig;
+};
 
+// Somehow the types for `next/link` don't work as expected
+// when `moduleResolution: "nodenext"` is used.
+const Link = NextLink as unknown as (props: NextLinkProps) => ReactNode;
+
+// Links that change the locale are handled in a separate component,
+// since reading the pathname (necessary for syncing the locale cookie)
+// requires a Suspense boundary when Cache Components are used. Due to
+// this split, regular links are not subject to this requirement.
+function LocaleChangingLink({
+  curLocale,
+  linkRef,
+  locale,
+  localeCookie,
+  onClick,
+  prefetch,
+  ...rest
+}: LocaleChangingLinkProps) {
   // The types aren't entirely correct here. Outside of Next.js
-  // `useParams` can be called, but the return type is `null`.
+  // `usePathname` can be called, but the return type is `null`.
   const pathname = usePathname() as ReturnType<typeof usePathname> | null;
 
   function onLinkClick(event: MouseEvent<HTMLAnchorElement>) {
@@ -40,29 +57,43 @@ function BaseLink(
     if (onClick) onClick(event);
   }
 
-  if (isChangingLocale) {
-    if (prefetch && process.env.NODE_ENV !== 'production') {
-      console.error(
-        'The `prefetch` prop is currently not supported when using the `locale` prop on `Link` to switch the locale.`'
-      );
-    }
-    prefetch = false;
+  if (prefetch && process.env.NODE_ENV !== 'production') {
+    console.error(
+      'The `prefetch` prop is currently not supported when using the `locale` prop on `Link` to switch the locale.`'
+    );
   }
-
-  // Somehow the types for `next/link` don't work as expected
-  // when `moduleResolution: "nodenext"` is used.
-  const Link = NextLink as unknown as (props: NextLinkProps) => ReactNode;
 
   return (
     <Link
-      ref={ref}
-      href={href}
-      hrefLang={isChangingLocale ? locale : undefined}
+      ref={linkRef}
+      hrefLang={locale}
       onClick={onLinkClick}
-      prefetch={prefetch}
+      prefetch={false}
       {...rest}
     />
   );
+}
+
+function BaseLink(
+  {locale, localeCookie, ...rest}: Props,
+  ref: Ref<HTMLAnchorElement>
+) {
+  const curLocale = useLocale();
+  const isChangingLocale = locale != null && locale !== curLocale;
+
+  if (isChangingLocale) {
+    return (
+      <LocaleChangingLink
+        curLocale={curLocale}
+        linkRef={ref}
+        locale={locale}
+        localeCookie={localeCookie}
+        {...rest}
+      />
+    );
+  }
+
+  return <Link ref={ref} {...rest} />;
 }
 
 export default forwardRef(BaseLink);

@@ -1,11 +1,10 @@
-import {getTranslations, setRequestLocale} from 'next-intl/server';
+import {getLocale, getTranslations} from 'next-intl/server';
 import {Suspense} from 'react';
 import LocaleCookieValue from '@/components/LocaleCookieValue';
 import {Link} from '@/i18n/navigation';
 
-export default async function IndexPage({params}: PageProps<'/[locale]'>) {
-  const {locale} = await params;
-  setRequestLocale(locale);
+export default async function IndexPage() {
+  const locale = await getLocale();
   const t = await getTranslations('IndexPage');
 
   return (
