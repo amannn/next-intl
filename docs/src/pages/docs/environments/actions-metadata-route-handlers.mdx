@@ -22,22 +22,14 @@ To internationalize metadata like the page title, you can use functionality from
 ```tsx filename="layout.tsx"
 import {getTranslations} from 'next-intl/server';
 
-export async function generateMetadata({params}) {
-  const {locale} = await params;
-  const t = await getTranslations({locale, namespace: 'Metadata'});
+export async function generateMetadata() {
+  const t = await getTranslations('Metadata');
 
   return {
     title: t('title')
   };
 }
 ```
-
-<Callout>
-  By passing an explicit `locale` to the awaitable functions from `next-intl`,
-  you can make the metadata handler eligible for [static
-  rendering](/docs/routing/setup#static-rendering) if you're using [locale-based
-  routing](/docs/routing).
-</Callout>
 
 ### Server Actions
 
@@ -46,10 +38,10 @@ export async function generateMetadata({params}) {
 ```tsx
 import {getTranslations} from 'next-intl/server';
 
-async function loginAction(data: FormData) {
+async function loginAction(locale: string, data: FormData) {
   'use server';
 
-  const t = await getTranslations('LoginForm');
+  const t = await getTranslations({namespace: 'LoginForm', locale});
   const areCredentialsValid = /* ... */;
   if (!areCredentialsValid) {
     return {error: t('invalidCredentials')};
@@ -57,7 +49,9 @@ async function loginAction(data: FormData) {
 }
 ```
 
-Note that when you're displaying messages generated in Server Actions to the user, you should consider the case if the user can switch the locale while the message is displayed to ensure that the UI is localized consistently. If you're using [a `[locale]` segment](/docs/routing) as part of your routing strategy then this is handled automatically. If you're not, you might want to clear the message manually, e.g. by [resetting the state](https://react.dev/learn/preserving-and-resetting-state#resetting-a-form-with-a-key) of the respective component via `key={locale}`.
+Note that when you're displaying messages generated in Server Actions to the user, you should consider the case if the user can switch the locale while the message is displayed to ensure that the UI is localized consistently.
+
+If you're using [a `[locale]` segment](/docs/routing) as part of your routing strategy then this is handled automatically. If you're not, you might want to clear the message manually, e.g. by [resetting the state](https://react.dev/learn/preserving-and-resetting-state#resetting-a-form-with-a-key) of the respective component via `key={locale}`.
 
 <Details id="server-actions-zod">
 <summary>When using Zod for validation, how can I localize error messages?</summary>
@@ -76,10 +70,10 @@ const loginFormSchema = z.object({
 
 // ...
 
-async function loginAction(data: FormData) {
+async function loginAction(locale: string, data: FormData) {
   'use server';
 
-  const t = await getTranslations('LoginForm');
+  const t = await getTranslations({namespace: 'LoginForm', locale});
   const values = Object.fromEntries(data);
 
   const result = loginFormSchema.safeParse(values, {
