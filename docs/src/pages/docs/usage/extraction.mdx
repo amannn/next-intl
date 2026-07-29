@@ -346,6 +346,81 @@ async function AsyncExample() {
 
 Note that `useExtracted` can be called in components, but also in hooks—which may come in handy if you want to share extracted labels.
 
+<Details id="enum-values">
+<summary>How can I translate enum-like values?</summary>
+
+Since messages need to be statically analyzable, a lookup like `t(status)` is not supported. Instead, you can map each value to an inline message in a place where `t` is in scope.
+
+On the server, an async function can retrieve `t` via `getExtracted`:
+
+```tsx
+import {getExtracted} from 'next-intl/server';
+
+type OrderStatus = 'pending' | 'shipped' | 'delivered';
+
+async function getOrderStatusLabels(): Promise<Record<OrderStatus, string>> {
+  const t = await getExtracted();
+
+  return {
+    pending: t('Pending'),
+    shipped: t('Shipped'),
+    delivered: t('Delivered')
+  };
+}
+```
+
+The result is a plain object of strings, therefore it can also be passed to a Client Component:
+
+```tsx
+export default async function OrdersPage() {
+  const statusLabels = await getOrderStatusLabels();
+  return <OrderList statusLabels={statusLabels} />;
+}
+```
+
+If the labels are only needed on the client side, you can use a hook instead. Note that the hook can return a function that receives the value to translate:
+
+```tsx
+import {useExtracted} from 'next-intl';
+
+function useOrderStatusLabel() {
+  const t = useExtracted();
+
+  return function getOrderStatusLabel(status: OrderStatus) {
+    switch (status) {
+      case 'pending':
+        return t('Pending');
+      case 'shipped':
+        return t('Shipped');
+      case 'delivered':
+        return t('Delivered');
+    }
+  };
+}
+```
+
+```tsx
+function OrderStatus({status}: {status: OrderStatus}) {
+  const getOrderStatusLabel = useOrderStatusLabel();
+  return <span>{getOrderStatusLabel(status)}</span>;
+}
+```
+
+Since a string is returned, the label can be used anywhere—not only in JSX, but also for e.g. `aria-label`, sorting or a toast message.
+
+Alternatively, if you prefer a single message, you can use [`select`](/docs/usage/translations#selecting-enum-based-values).
+
+</Details>
+
+<Details id="zod">
+<summary>How can I localize validation errors from Zod?</summary>
+
+[Zod](https://zod.dev/) schemas are typically defined at module scope, where `t` is not available. The recommended approach is to keep your schema locale-agnostic and to turn the structured errors it produces into messages in a place where `t` is in scope—either via a per-parse error map, or via a shared async helper.
+
+See [When using Zod for validation, how can I localize error messages?](/docs/environments/actions-metadata-route-handlers#server-actions-zod) for examples of both approaches—they apply to `useExtracted` in the same way, by using `getExtracted` in place of `getTranslations`.
+
+</Details>
+
 ## Monorepos and external packages [#monorepos-external-packages]
 
 Whenever your app pulls in external modules that call `useExtracted`, whether it's a sibling package in your monorepo or a reusable library installed in `node_modules`, there are two typical setups you can choose from.
