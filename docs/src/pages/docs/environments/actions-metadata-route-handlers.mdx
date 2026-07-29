@@ -98,9 +98,9 @@ async function loginAction(data: FormData) {
 }
 ```
 
-This approach keeps the schema locale-agnostic and allows you to tailor the wording to each field—which is often necessary, e.g. in languages where the phrasing depends on the grammatical gender of the field name.
+This approach keeps the schema locale-agnostic and allows you to tailor the wording to each field.
 
-If you'd instead like to share error messages across multiple schemas, you can move the mapping into a reusable helper. Note that Zod calls the error map synchronously, therefore the helper awaits the translations and returns the error map:
+If you'd instead like to share error messages across multiple schemas, you can move the mapping into a reusable helper:
 
 ```tsx filename="getValidationErrorMap.ts"
 import {getTranslations} from 'next-intl/server';
@@ -133,14 +133,6 @@ async function loginAction(data: FormData) {
   // ...
 }
 ```
-
-<Callout>
-  Note that both approaches also work with
-  [`useExtracted`](/docs/usage/extraction) by using `getExtracted` in place of
-  `getTranslations`. Since `t` is retrieved and called within the same function
-  body in either case, the messages remain [statically
-  analyzable](/docs/usage/extraction#static-analysis).
-</Callout>
 
 </Details>
 

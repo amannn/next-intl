@@ -415,9 +415,11 @@ Alternatively, if you prefer a single message, you can use [`select`](/docs/usag
 <Details id="zod">
 <summary>How can I localize validation errors from Zod?</summary>
 
-[Zod](https://zod.dev/) schemas are typically defined at module scope, where `t` is not available. The recommended approach is to keep your schema locale-agnostic and to turn the structured errors it produces into messages in a place where `t` is in scope—either via a per-parse error map, or via a shared async helper.
+[Zod](https://zod.dev/) schemas are typically defined at module scope, where `t` is not available.
 
-See [When using Zod for validation, how can I localize error messages?](/docs/environments/actions-metadata-route-handlers#server-actions-zod) for examples of both approaches—they apply to `useExtracted` in the same way, by using `getExtracted` in place of `getTranslations`.
+The recommended approach is to keep your schema locale-agnostic and to turn the structured errors it produces into messages in a place where `t` is in scope—either via a per-parse error map, or via a shared async helper.
+
+See: [When using Zod for validation, how can I localize error messages?](/docs/environments/actions-metadata-route-handlers#server-actions-zod)
 
 </Details>
 
