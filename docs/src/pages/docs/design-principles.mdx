@@ -73,11 +73,49 @@ These are typically used to manage translations and to [collaborate with transla
 
 `next-intl` integrates well with these services as it uses ICU message syntax for defining text labels, which is a widely supported standard. The recommended way to store messages is in JSON files that are structured by locale since this is a popular format that can be imported into a TMS. While it's recommended to have at least the messages for the default locale available locally (e.g. for [type-safe messages](/docs/workflows/typescript#messages)), you can also load messages dynamically, e.g. from a CDN that your TMS provides.
 
+Since messages are stored in plain files in your repository, connecting a TMS is mostly a matter of describing where they live. For example, with Crowdin, a minimal configuration maps source messages to their translations:
+
+```yml filename="crowdin.yml"
+files:
+  - source: /messages/en.json
+    translation: /messages/%locale%.json
+```
+
+Based on such a mapping, source messages can be uploaded for translation, and completed translations synced back to your repository—either manually, via a CLI, or through an [automated Git integration](/docs/workflows/localization-management#example-workflow-with-the-github-integration).
+
 **Content Management Systems (CMS)**
 
 If your app uses content from a CMS, you can use this alongside `next-intl`. For instance, you might want to manage content like blog posts or marketing copy in a CMS, while managing UI labels in `next-intl`.
 
-A CMS typically provides a way to define content for multiple languages, and to fetch this content via a REST API. By using the negotiated app locale that is returned from `next-intl` via [`getLocale`](/docs/environments/server-client-components#async-components) and passing it to requests to your CMS API, you can retrieve content for the user's preferred language.
+CMSs that support localization typically model localized content in one of two ways:
+
+1. **Field-level localization**: Localized fields hold one value per locale (e.g. as objects or arrays that are keyed by locale). All language variants live in a single document, which works well when documents share the same structure across locales.
+2. **Document-level localization**: A separate document exists per locale, with the variants being linked via references. This allows structure and slugs to diverge between locales.
+
+Regardless of the modeling pattern, the integration with `next-intl` remains the same: The negotiated app locale that is returned via [`getLocale`](/docs/environments/server-client-components#async-components) is passed along with content queries. For example, with a CMS like <PartnerContentLink name="design-principles-cms" href="https://www.sanity.io/">Sanity</PartnerContentLink> that treats localization as part of the content schema, a query can select the matching language variant directly:
+
+```tsx filename="app/[locale]/posts/[slug]/page.tsx"
+import {getLocale} from 'next-intl/server';
+import {client} from '@/sanity/client';
+
+export default async function PostPage({params}) {
+  const {slug} = await params;
+  const locale = await getLocale();
+
+  // Select the language variant that matches the
+  // user's locale from a field-level localized entry
+  const post = await client.fetch(
+    `*[_type == "post" && slug.current == $slug][0]{
+      "title": title[_key == $locale][0].value
+    }`,
+    {slug, locale}
+  );
+
+  // ...
+}
+```
+
+Since localization is defined in the schema, editors and translators work on content in its regular structure—instead of on an exported list of text labels that lacks context.
 
 **Backend data**
 
