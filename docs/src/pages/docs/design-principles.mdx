@@ -94,7 +94,7 @@ Content management systems typically model localized content in two ways:
 
 Regardless of the modeling pattern, the integration with `next-intl` remains the same: The negotiated app locale is passed along with content queries.
 
-For example, with a CMS like <PartnerContentLink name="design-principles-cms" href="https://www.sanity.io/">Sanity</PartnerContentLink> that treats localization as part of the content schema, a locale field can be declared once and added to localized document types:
+For example, with a CMS like [Sanity](https://www.sanity.io/) that treats localization as part of the content schema, a locale field can be declared once and added to localized document types:
 
 ```ts filename="LocaleField.ts"
 import {defineField} from 'sanity';
@@ -112,7 +112,7 @@ export default defineField({
 });
 ```
 
-Based on this schema, a <PartnerContentLink name="design-principles-cms" href="https://www.sanity.io/docs/groq">GROQ</PartnerContentLink> query can select the language variant that matches the user's locale:
+Based on this schema, a [GROQ](https://www.sanity.io/docs/groq) query can select the language variant that matches the user's locale:
 
 ```tsx filename="app/[locale]/posts/[slug]/page.tsx"
 import {createClient} from 'next-sanity';
