@@ -87,10 +87,10 @@ Based on such a mapping, source messages can be uploaded for translation, and co
 
 If your app uses content from a CMS, you can use this alongside `next-intl`. For instance, you might want to manage content like blog posts or marketing copy in a CMS, while managing UI labels in `next-intl`.
 
-Content management systems that support localization typically model localized content in one of two ways:
+Content management systems typically model localized content in two ways:
 
 1. **Field-level localization**: Localized fields hold one value per locale on the same entity (typically as objects or arrays that are keyed by locale).
-2. **Document-level localization**: A separate document exists per locale, with the variants being linked via references. This allows structure and slugs to diverge between locales.
+2. **Document-level localization**: A separate document exists per locale, with the variants being linked via references.
 
 Regardless of the modeling pattern, the integration with `next-intl` remains the same: The negotiated app locale is passed along with content queries.
 
@@ -112,7 +112,7 @@ export default defineField({
 });
 ```
 
-Based on this schema, a query can select the language variant that matches the user's locale:
+Based on this schema, a <PartnerContentLink name="design-principles-cms" href="https://www.sanity.io/docs/groq">GROQ</PartnerContentLink> query can select the language variant that matches the user's locale:
 
 ```tsx filename="app/[locale]/posts/[slug]/page.tsx"
 import {createClient} from 'next-sanity';
