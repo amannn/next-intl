@@ -87,12 +87,12 @@ Based on such a mapping, source messages can be uploaded for translation, and co
 
 If your app uses content from a CMS, you can use this alongside `next-intl`. For instance, you might want to manage content like blog posts or marketing copy in a CMS, while managing UI labels in `next-intl`.
 
-CMSs that support localization typically model localized content in one of two ways:
+Content management systems that support localization typically model localized content in one of two ways:
 
-1. **Field-level localization**: Localized fields hold one value per locale (e.g. as objects or arrays that are keyed by locale). All language variants live in a single document, which works well when documents share the same structure across locales.
+1. **Field-level localization**: Localized fields hold one value per locale on the same entity (typically as objects or arrays that are keyed by locale).
 2. **Document-level localization**: A separate document exists per locale, with the variants being linked via references. This allows structure and slugs to diverge between locales.
 
-Regardless of the modeling pattern, the integration with `next-intl` remains the same: The negotiated app locale that is returned via [`getLocale`](/docs/environments/server-client-components#async-components) is passed along with content queries. For example, with a CMS like <PartnerContentLink name="design-principles-cms" href="https://www.sanity.io/">Sanity</PartnerContentLink> that treats localization as part of the content schema, a query can select the matching language variant directly:
+Regardless of the modeling pattern, the integration with `next-intl` remains the same: The negotiated app locale is passed along with content queries. For example, with a CMS like <PartnerContentLink name="design-principles-cms" href="https://www.sanity.io/">Sanity</PartnerContentLink> that treats localization as part of the content schema, a query can select the matching language variant directly:
 
 ```tsx filename="app/[locale]/posts/[slug]/page.tsx"
 import {getLocale} from 'next-intl/server';
