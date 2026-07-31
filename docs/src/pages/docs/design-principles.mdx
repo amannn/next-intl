@@ -92,21 +92,23 @@ Content management systems that support localization typically model localized c
 1. **Field-level localization**: Localized fields hold one value per locale on the same entity (typically as objects or arrays that are keyed by locale).
 2. **Document-level localization**: A separate document exists per locale, with the variants being linked via references. This allows structure and slugs to diverge between locales.
 
-Regardless of the modeling pattern, the integration with `next-intl` remains the same: The negotiated app locale is passed along with content queries. For example, with a CMS like <PartnerContentLink name="design-principles-cms" href="https://www.sanity.io/">Sanity</PartnerContentLink> that treats localization as part of the content schema, localized fields can be declared directly on a document type—in this case holding one value per locale:
+Regardless of the modeling pattern, the integration with `next-intl` remains the same: The negotiated app locale is passed along with content queries.
 
-```ts filename="sanity/schemaTypes/post.ts"
-import {defineField, defineType} from 'sanity';
+For example, with a CMS like <PartnerContentLink name="design-principles-cms" href="https://www.sanity.io/">Sanity</PartnerContentLink> that treats localization as part of the content schema, a locale field can be declared once and added to localized document types:
 
-export const post = defineType({
-  name: 'post',
-  type: 'document',
-  fields: [
-    defineField({name: 'slug', type: 'slug'}),
+```ts filename="LocaleField.ts"
+import {defineField} from 'sanity';
 
-    // Holds one title per locale, as provided by the
-    // internationalized array plugin
-    defineField({name: 'title', type: 'internationalizedArrayString'})
-  ]
+export default defineField({
+  name: 'locale',
+  type: 'string',
+  initialValue: 'en',
+  options: {
+    list: [
+      {title: 'English', value: 'en'},
+      {title: 'German', value: 'de'}
+    ]
+  }
 });
 ```
 
@@ -117,7 +119,7 @@ import {createClient} from 'next-sanity';
 import {getLocale} from 'next-intl/server';
 
 const client = createClient({
-  projectId: 'yourProjectId',
+  projectId: '<yourProjectId>',
   dataset: 'production'
 });
 
@@ -127,9 +129,7 @@ export default async function PostPage({params}) {
 
   // Select the language variant that matches the user's locale
   const post = await client.fetch(
-    `*[_type == "post" && slug.current == $slug][0]{
-      "title": title[_key == $locale][0].value
-    }`,
+    `*[_type == "post" && slug.current == $slug && locale == $locale][0]`,
     {slug, locale}
   );
 
