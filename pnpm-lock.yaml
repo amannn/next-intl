@@ -620,8 +620,8 @@ importers:
         specifier: ^3.3.3
         version: 3.8.0
       sharp:
-        specifier: ^0.33.4
-        version: 0.33.5
+        specifier: ^0.35.3
+        version: 0.35.3(@types/node@20.19.29)
       storybook:
         specifier: ^8.6.4
         version: 8.6.15(prettier@3.8.0)
@@ -1926,9 +1926,6 @@ packages:
 
   '@emnapi/runtime@1.11.2':
     resolution: {integrity: sha512-kyOl3X0DuTiT1h2ft8r2fYO8JYtU9a9Xis/zBSiGArNaagCOWx90N1k2wxp18czFDH+OgcWGb5ZP/XMt3dcyPA==}
-
-  '@emnapi/runtime@1.8.1':
-    resolution: {integrity: sha512-mehfKSMWjjNol8659Z8KxEMrdSJDDot5SXMq00dM8BN4o+CLNXQ0xH2V7EchNHV4RmbZLmmPdEaXZc5H2FXmDg==}
 
   '@emnapi/wasi-threads@1.1.0':
     resolution: {integrity: sha512-WI0DdZ8xFSbgMjR1sFsKABJ/C5OnRrjT06JXbZKexJGrDuPTzZdDYfFlsgcCXCyf+suG5QU2e/y1Wo2V/OapLQ==}
@@ -12223,7 +12220,7 @@ snapshots:
       cjs-module-lexer: 1.4.3
       fflate: 0.8.2
       lru-cache: 10.4.3
-      semver: 7.7.3
+      semver: 7.8.5
       typescript: 5.6.1-rc
       validate-npm-package-name: 5.0.1
 
@@ -13130,7 +13127,7 @@ snapshots:
     dependencies:
       '@simple-libs/child-process-utils': 1.0.1
       '@simple-libs/stream-utils': 1.1.0
-      semver: 7.7.3
+      semver: 7.8.5
     optionalDependencies:
       conventional-commits-filter: 5.0.0
       conventional-commits-parser: 6.2.1
@@ -13196,11 +13193,6 @@ snapshots:
     optional: true
 
   '@emnapi/runtime@1.11.2':
-    dependencies:
-      tslib: 2.8.1
-    optional: true
-
-  '@emnapi/runtime@1.8.1':
     dependencies:
       tslib: 2.8.1
     optional: true
@@ -13560,8 +13552,7 @@ snapshots:
       '@iconify/types': 2.0.0
       mlly: 1.8.0
 
-  '@img/colour@1.1.0':
-    optional: true
+  '@img/colour@1.1.0': {}
 
   '@img/sharp-darwin-arm64@0.33.5':
     optionalDependencies:
@@ -13714,7 +13705,7 @@ snapshots:
 
   '@img/sharp-wasm32@0.33.5':
     dependencies:
-      '@emnapi/runtime': 1.8.1
+      '@emnapi/runtime': 1.11.2
     optional: true
 
   '@img/sharp-wasm32@0.35.3':
@@ -14293,7 +14284,7 @@ snapshots:
       npm-package-arg: 13.0.2
       p-map: 7.0.4
       p-queue: 9.1.0
-      semver: 7.7.3
+      semver: 7.8.5
       slash: 5.1.0
       tinyglobby: 0.2.15
       tinyrainbow: 3.0.3
@@ -14391,7 +14382,7 @@ snapshots:
       p-pipe: 4.0.0
       p-reduce: 3.0.0
       pify: 6.1.0
-      semver: 7.7.3
+      semver: 7.8.5
       slash: 5.1.0
       tinyrainbow: 3.0.3
       uuid: 13.0.0
@@ -14738,7 +14729,7 @@ snapshots:
       proggy: 4.0.0
       promise-all-reject-late: 1.0.1
       promise-call-limit: 3.0.2
-      semver: 7.7.3
+      semver: 7.8.5
       ssri: 13.0.0
       treeverse: 3.0.0
       walk-up-path: 4.0.0
@@ -14747,7 +14738,7 @@ snapshots:
 
   '@npmcli/fs@5.0.0':
     dependencies:
-      semver: 7.7.3
+      semver: 7.8.5
 
   '@npmcli/git@7.0.1':
     dependencies:
@@ -14757,7 +14748,7 @@ snapshots:
       npm-pick-manifest: 11.0.3
       proc-log: 6.1.0
       promise-retry: 2.0.1
-      semver: 7.7.3
+      semver: 7.8.5
       which: 6.0.0
 
   '@npmcli/installed-package-contents@4.0.0':
@@ -14778,7 +14769,7 @@ snapshots:
       json-parse-even-better-errors: 5.0.0
       pacote: 21.0.4
       proc-log: 6.1.0
-      semver: 7.7.3
+      semver: 7.8.5
     transitivePeerDependencies:
       - supports-color
 
@@ -14793,7 +14784,7 @@ snapshots:
       hosted-git-info: 9.0.2
       json-parse-even-better-errors: 5.0.0
       proc-log: 6.1.0
-      semver: 7.7.3
+      semver: 7.8.5
       validate-npm-package-license: 3.0.4
 
   '@npmcli/promise-spawn@9.0.1':
@@ -15669,7 +15660,7 @@ snapshots:
       magic-string: 0.30.21
       path-browserify: 1.0.1
       process: 0.11.10
-      semver: 7.7.3
+      semver: 7.8.5
       storybook: 8.6.15(prettier@3.8.0)
       style-loader: 3.3.4(webpack@5.104.1(esbuild@0.25.1))
       terser-webpack-plugin: 5.3.16(esbuild@0.25.1)(webpack@5.104.1(esbuild@0.25.1))
@@ -15709,7 +15700,7 @@ snapshots:
       jsdoc-type-pratt-parser: 4.8.0
       process: 0.11.10
       recast: 0.23.11
-      semver: 7.7.3
+      semver: 7.8.5
       util: 0.12.5
       ws: 8.19.0
     optionalDependencies:
@@ -15809,7 +15800,7 @@ snapshots:
       react-docgen: 7.1.1
       react-dom: 19.2.3(react@19.2.3)
       resolve: 1.22.11
-      semver: 7.7.3
+      semver: 7.8.5
       storybook: 8.6.15(prettier@3.8.0)
       tsconfig-paths: 4.2.0
       webpack: 5.104.1(esbuild@0.25.1)
@@ -16849,7 +16840,7 @@ snapshots:
       fast-glob: 3.3.3
       is-glob: 4.0.3
       minimatch: 9.0.5
-      semver: 7.7.3
+      semver: 7.8.5
       ts-api-utils: 2.1.0(typescript@5.9.3)
       typescript: 5.9.3
     transitivePeerDependencies:
@@ -16865,7 +16856,7 @@ snapshots:
       fast-glob: 3.3.3
       is-glob: 4.0.3
       minimatch: 9.0.5
-      semver: 7.7.3
+      semver: 7.8.5
       ts-api-utils: 2.1.0(typescript@6.0.2)
       typescript: 6.0.2
     transitivePeerDependencies:
@@ -18129,11 +18120,13 @@ snapshots:
     dependencies:
       color-name: 1.1.4
       simple-swizzle: 0.2.4
+    optional: true
 
   color@4.2.3:
     dependencies:
       color-convert: 2.0.1
       color-string: 1.9.1
+    optional: true
 
   colorette@2.0.20: {}
 
@@ -18227,7 +18220,7 @@ snapshots:
       conventional-commits-filter: 5.0.0
       handlebars: 4.7.8
       meow: 13.2.0
-      semver: 7.7.3
+      semver: 7.8.5
 
   conventional-changelog@7.1.1(conventional-commits-filter@5.0.0):
     dependencies:
@@ -20323,7 +20316,7 @@ snapshots:
       minimatch: 3.1.2
       node-abort-controller: 3.1.1
       schema-utils: 3.3.0
-      semver: 7.7.3
+      semver: 7.8.5
       tapable: 2.3.3
       typescript: 6.0.2
       webpack: 5.104.1(esbuild@0.25.1)
@@ -21016,7 +21009,8 @@ snapshots:
 
   is-arrayish@0.2.1: {}
 
-  is-arrayish@0.3.4: {}
+  is-arrayish@0.3.4:
+    optional: true
 
   is-async-function@2.0.0:
     dependencies:
@@ -21041,7 +21035,7 @@ snapshots:
 
   is-bun-module@1.2.1:
     dependencies:
-      semver: 7.7.3
+      semver: 7.8.5
 
   is-callable@1.2.7: {}
 
@@ -21224,7 +21218,7 @@ snapshots:
       '@babel/parser': 7.21.9
       '@istanbuljs/schema': 0.1.3
       istanbul-lib-coverage: 3.2.2
-      semver: 7.7.3
+      semver: 7.8.5
     transitivePeerDependencies:
       - supports-color
 
@@ -21851,7 +21845,7 @@ snapshots:
       jest-util: 29.7.0
       natural-compare: 1.4.0
       pretty-format: 29.7.0
-      semver: 7.7.3
+      semver: 7.8.5
     transitivePeerDependencies:
       - supports-color
 
@@ -22192,7 +22186,7 @@ snapshots:
       npm-package-arg: 13.0.2
       npm-registry-fetch: 19.1.1
       proc-log: 6.1.0
-      semver: 7.7.3
+      semver: 7.8.5
       sigstore: 4.0.0
       ssri: 13.0.0
     transitivePeerDependencies:
@@ -22336,7 +22330,7 @@ snapshots:
 
   make-dir@4.0.0:
     dependencies:
-      semver: 7.7.3
+      semver: 7.8.5
 
   make-fetch-happen@15.0.3:
     dependencies:
@@ -23415,7 +23409,7 @@ snapshots:
       make-fetch-happen: 15.0.3
       nopt: 9.0.0
       proc-log: 6.1.0
-      semver: 7.7.3
+      semver: 7.8.5
       tar: 7.5.2
       tinyglobby: 0.2.15
       which: 6.0.0
@@ -23469,13 +23463,13 @@ snapshots:
   normalize-package-data@6.0.2:
     dependencies:
       hosted-git-info: 7.0.2
-      semver: 7.7.3
+      semver: 7.8.5
       validate-npm-package-license: 3.0.4
 
   normalize-package-data@7.0.1:
     dependencies:
       hosted-git-info: 8.1.0
-      semver: 7.7.3
+      semver: 7.8.5
       validate-npm-package-license: 3.0.4
 
   normalize-path@3.0.0: {}
@@ -23490,7 +23484,7 @@ snapshots:
 
   npm-install-checks@8.0.0:
     dependencies:
-      semver: 7.7.3
+      semver: 7.8.5
 
   npm-normalize-package-bin@2.0.0: {}
 
@@ -23500,7 +23494,7 @@ snapshots:
     dependencies:
       hosted-git-info: 9.0.2
       proc-log: 6.1.0
-      semver: 7.7.3
+      semver: 7.8.5
       validate-npm-package-name: 7.0.0
 
   npm-packlist@10.0.3:
@@ -23520,7 +23514,7 @@ snapshots:
       npm-install-checks: 8.0.0
       npm-normalize-package-bin: 5.0.0
       npm-package-arg: 13.0.2
-      semver: 7.7.3
+      semver: 7.8.5
 
   npm-registry-fetch@19.1.1:
     dependencies:
@@ -24005,7 +23999,7 @@ snapshots:
       cosmiconfig: 9.0.0(typescript@6.0.2)
       jiti: 1.21.7
       postcss: 8.5.6
-      semver: 7.7.3
+      semver: 7.8.5
     optionalDependencies:
       webpack: 5.104.1(esbuild@0.25.1)
     transitivePeerDependencies:
@@ -24888,8 +24882,7 @@ snapshots:
 
   semver@7.7.3: {}
 
-  semver@7.8.5:
-    optional: true
+  semver@7.8.5: {}
 
   send@0.19.2:
     dependencies:
@@ -24981,7 +24974,7 @@ snapshots:
     dependencies:
       color: 4.2.3
       detect-libc: 2.1.2
-      semver: 7.7.3
+      semver: 7.8.5
     optionalDependencies:
       '@img/sharp-darwin-arm64': 0.33.5
       '@img/sharp-darwin-x64': 0.33.5
@@ -25002,6 +24995,7 @@ snapshots:
       '@img/sharp-wasm32': 0.33.5
       '@img/sharp-win32-ia32': 0.33.5
       '@img/sharp-win32-x64': 0.33.5
+    optional: true
 
   sharp@0.35.3(@types/node@20.19.29):
     dependencies:
@@ -25035,7 +25029,6 @@ snapshots:
       '@img/sharp-win32-ia32': 0.35.3
       '@img/sharp-win32-x64': 0.35.3
       '@types/node': 20.19.29
-    optional: true
 
   sharp@0.35.3(@types/node@25.0.8):
     dependencies:
@@ -25139,6 +25132,7 @@ snapshots:
   simple-swizzle@0.2.4:
     dependencies:
       is-arrayish: 0.3.4
+    optional: true
 
   sirv@2.0.4:
     dependencies:
