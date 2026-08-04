@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.13.4 (2026-07-23)
+
+### Bug Fixes
+
+* Avoid `usePathname()` reads for non-locale-switching links, avoiding unnecessary `<Suspense>` wrappers with partial prefetching ([#2362](https://github.com/amannn/next-intl/issues/2362)) ([82de47f](https://github.com/amannn/next-intl/commit/82de47fb87adddb1f75dae6ac3321f9b95f62269)) – by @ceolinwill
+
 ## 4.13.3 (2026-07-21)
 
 ### Bug Fixes

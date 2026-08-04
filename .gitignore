@@ -9,3 +9,4 @@ dist/
 tsconfig.tsbuildinfo
 .turbo
 .swc
+.pnpm-store
