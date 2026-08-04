@@ -134,17 +134,7 @@ export default getRequestConfig(async ({locale}) => {
 
 The `locale` argument that is passed to `getRequestConfig` can be used for edge cases where you need to override the current locale.
 
-**Note:** `next/root-params` is currently experimental and needs to be enabled in your Next.js config:
-
-```tsx filename="next.config.tsx"
-const nextConfig = {
-  experimental: {
-    rootParams: true
-  }
-};
-
-// ...
-```
+**Note:** `next/root-params` is available by default in Next.js 16.3 and later. In earlier versions, it needs to be enabled via `experimental.rootParams` in your Next.js config.
 
 ### `src/app/[locale]/layout.tsx` [#layout]
 
