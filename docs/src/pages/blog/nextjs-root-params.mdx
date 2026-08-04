@@ -21,7 +21,7 @@ import {locale} from 'next/root-params';
 async function Component() {
   // The ability to read params deeply in
   // Server Components ... finally!
-  const locale = await locale();
+  const curLocale = await locale();
 }
 ```
 
