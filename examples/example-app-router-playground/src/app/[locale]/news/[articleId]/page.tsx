@@ -1,12 +1,14 @@
 import {Metadata} from 'next';
-import {Locale, useTranslations} from 'next-intl';
+import {useTranslations} from 'next-intl';
+import {getLocale} from 'next-intl/server';
 import {use} from 'react';
 import {getPathname} from '@/i18n/navigation';
 
 export async function generateMetadata({
   params
 }: PageProps<'/[locale]/news/[articleId]'>): Promise<Metadata> {
-  const {locale, articleId} = await params;
+  const {articleId} = await params;
+  const locale = await getLocale();
 
   return {
     alternates: {
@@ -15,7 +17,7 @@ export async function generateMetadata({
           pathname: '/news/[articleId]',
           params: {articleId}
         },
-        locale: locale as Locale
+        locale
       })
     }
   };

@@ -18,7 +18,10 @@ const nextConfig = {
   trailingSlash: process.env.NEXT_PUBLIC_USE_CASE === 'trailing-slash',
   basePath:
     process.env.NEXT_PUBLIC_USE_CASE === 'base-path' ? '/base/path' : undefined,
-  pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx']
+  pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
+  experimental: {
+    rootParams: true
+  }
 };
 
 export default withNextIntl(withMdx(withBundleAnalyzer(nextConfig)));

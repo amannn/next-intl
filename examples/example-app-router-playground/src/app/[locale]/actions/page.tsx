@@ -1,12 +1,13 @@
 import {pick} from 'lodash';
-import {NextIntlClientProvider, useMessages} from 'next-intl';
+import {NextIntlClientProvider, useLocale, useMessages} from 'next-intl';
 import List from './List';
-import ListItem from './ListItem';
 import ListItemAsync from './ListItemAsync';
 import ListItemClient from './ListItemClient';
 import ZodFormExample from './ZodFormExample';
 
 export default function ServerActions() {
+  const locale = useLocale();
+
   return (
     <>
       <ZodFormExample />
@@ -14,15 +15,7 @@ export default function ServerActions() {
         getNextItem={async (curLength: number) => {
           'use server';
           const id = curLength + 1;
-          return <ListItem id={id} />;
-        }}
-        title="Shared Server Components"
-      />
-      <List
-        getNextItem={async (curLength: number) => {
-          'use server';
-          const id = curLength + 1;
-          return <ListItemAsync id={id} />;
+          return <ListItemAsync locale={locale} id={id} />;
         }}
         title="Async Server Components"
       />
