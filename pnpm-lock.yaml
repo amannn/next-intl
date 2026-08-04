@@ -120,8 +120,8 @@ importers:
         specifier: workspace:*
         version: link:../utils
       next:
-        specifier: 16.3.0-canary.93
-        version: 16.3.0-canary.93(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@25.0.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        specifier: ^16.3.0
+        version: 16.3.0(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@25.0.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       next-intl:
         specifier: workspace:*
         version: link:../../packages/next-intl
@@ -151,8 +151,8 @@ importers:
         specifier: ^9.38.0
         version: 9.39.2(jiti@2.6.1)
       eslint-config-next:
-        specifier: 16.3.0-canary.93
-        version: 16.3.0-canary.93(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3)
+        specifier: ^16.3.0
+        version: 16.3.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3)
       prettier:
         specifier: ^3.3.3
         version: 3.8.0
@@ -169,8 +169,8 @@ importers:
         specifier: workspace:*
         version: link:../shared-ui
       next:
-        specifier: 16.3.0-canary.93
-        version: 16.3.0-canary.93(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@25.0.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        specifier: ^16.3.0
+        version: 16.3.0(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@25.0.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       next-intl:
         specifier: workspace:*
         version: link:../../packages/next-intl
@@ -197,8 +197,8 @@ importers:
         specifier: ^9.38.0
         version: 9.39.2(jiti@2.6.1)
       eslint-config-next:
-        specifier: 16.3.0-canary.93
-        version: 16.3.0-canary.93(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3)
+        specifier: ^16.3.0
+        version: 16.3.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3)
       postcss:
         specifier: ^8.5.3
         version: 8.5.6
@@ -215,8 +215,8 @@ importers:
         specifier: workspace:*
         version: link:../utils
       next:
-        specifier: 16.3.0-canary.93
-        version: 16.3.0-canary.93(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@25.0.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        specifier: ^16.3.0
+        version: 16.3.0(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@25.0.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       next-intl:
         specifier: workspace:*
         version: link:../../packages/next-intl
@@ -246,8 +246,8 @@ importers:
         specifier: ^9.38.0
         version: 9.39.2(jiti@2.6.1)
       eslint-config-next:
-        specifier: 16.3.0-canary.93
-        version: 16.3.0-canary.93(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3)
+        specifier: ^16.3.0
+        version: 16.3.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3)
       prettier:
         specifier: ^3.3.3
         version: 3.8.0
@@ -258,8 +258,8 @@ importers:
   e2e/no-js:
     dependencies:
       next:
-        specifier: 16.3.0-canary.93
-        version: 16.3.0-canary.93(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@25.0.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        specifier: ^16.3.0
+        version: 16.3.0(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@25.0.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       next-intl:
         specifier: workspace:*
         version: link:../../packages/next-intl
@@ -286,8 +286,8 @@ importers:
         specifier: ^9.38.0
         version: 9.39.2(jiti@2.6.1)
       eslint-config-next:
-        specifier: 16.3.0-canary.93
-        version: 16.3.0-canary.93(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3)
+        specifier: ^16.3.0
+        version: 16.3.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3)
       prettier:
         specifier: ^3.3.3
         version: 3.8.0
@@ -298,8 +298,8 @@ importers:
   e2e/partial-prefetching:
     dependencies:
       next:
-        specifier: 16.3.0-canary.93
-        version: 16.3.0-canary.93(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@25.0.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        specifier: ^16.3.0
+        version: 16.3.0(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@25.0.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       next-intl:
         specifier: workspace:*
         version: link:../../packages/next-intl
@@ -326,8 +326,8 @@ importers:
         specifier: ^9.38.0
         version: 9.39.2(jiti@2.6.1)
       eslint-config-next:
-        specifier: 16.3.0-canary.93
-        version: 16.3.0-canary.93(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3)
+        specifier: ^16.3.0
+        version: 16.3.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3)
       prettier:
         specifier: ^3.3.3
         version: 3.8.0
@@ -351,8 +351,8 @@ importers:
         specifier: ^9.38.0
         version: 9.39.2(jiti@2.6.1)
       eslint-config-next:
-        specifier: 16.3.0-canary.93
-        version: 16.3.0-canary.93(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3)
+        specifier: ^16.3.0
+        version: 16.3.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3)
       next-intl:
         specifier: workspace:*
         version: link:../../packages/next-intl
@@ -379,8 +379,8 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
       next:
-        specifier: 16.3.0-canary.93
-        version: 16.3.0-canary.93(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@20.19.29)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        specifier: ^16.3.0
+        version: 16.3.0(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@20.19.29)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       next-intl:
         specifier: ^4.0.0
         version: link:../../packages/next-intl
@@ -425,8 +425,8 @@ importers:
         specifier: ^9.38.0
         version: 9.39.2(jiti@2.6.1)
       eslint-config-next:
-        specifier: 16.3.0-canary.93
-        version: 16.3.0-canary.93(eslint@9.39.2(jiti@2.6.1))(typescript@6.0.2)
+        specifier: ^16.3.0
+        version: 16.3.0(eslint@9.39.2(jiti@2.6.1))(typescript@6.0.2)
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@20.19.29)
@@ -446,8 +446,8 @@ importers:
   examples/example-app-router-extracted:
     dependencies:
       next:
-        specifier: 16.3.0-canary.93
-        version: 16.3.0-canary.93(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@25.0.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        specifier: ^16.3.0
+        version: 16.3.0(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@25.0.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       next-intl:
         specifier: ^4.0.0
         version: link:../../packages/next-intl
@@ -474,8 +474,8 @@ importers:
         specifier: ^9.38.0
         version: 9.39.2(jiti@2.6.1)
       eslint-config-next:
-        specifier: 16.3.0-canary.93
-        version: 16.3.0-canary.93(eslint@9.39.2(jiti@2.6.1))(typescript@6.0.2)
+        specifier: ^16.3.0
+        version: 16.3.0(eslint@9.39.2(jiti@2.6.1))(typescript@6.0.2)
       prettier:
         specifier: ^3.3.3
         version: 3.8.0
@@ -489,8 +489,8 @@ importers:
   examples/example-app-router-migration:
     dependencies:
       next:
-        specifier: 16.3.0-canary.93
-        version: 16.3.0-canary.93(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@20.19.29)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        specifier: ^16.3.0
+        version: 16.3.0(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@20.19.29)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       next-intl:
         specifier: ^4.0.0
         version: link:../../packages/next-intl
@@ -517,8 +517,8 @@ importers:
         specifier: ^9.38.0
         version: 9.39.2(jiti@2.6.1)
       eslint-config-next:
-        specifier: 16.3.0-canary.93
-        version: 16.3.0-canary.93(eslint@9.39.2(jiti@2.6.1))(typescript@6.0.2)
+        specifier: ^16.3.0
+        version: 16.3.0(eslint@9.39.2(jiti@2.6.1))(typescript@6.0.2)
       prettier:
         specifier: ^3.3.3
         version: 3.8.0
@@ -538,8 +538,8 @@ importers:
         specifier: 2.1.3
         version: 2.1.3
       next:
-        specifier: 16.3.0-canary.93
-        version: 16.3.0-canary.93(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@20.19.29)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        specifier: ^16.3.0
+        version: 16.3.0(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@20.19.29)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       next-intl:
         specifier: ^4.0.0
         version: link:../../packages/next-intl
@@ -576,7 +576,7 @@ importers:
         version: 1.57.0
       '@storybook/nextjs':
         specifier: ^8.6.4
-        version: 8.6.15(@types/webpack@5.28.5(esbuild@0.25.1))(esbuild@0.25.1)(next@16.3.0-canary.93(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@20.19.29)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sockjs-client@1.6.1)(storybook@8.6.15(prettier@3.8.0))(type-fest@4.41.0)(typescript@6.0.2)(webpack-dev-server@5.2.3(webpack@5.104.1(esbuild@0.25.1)))(webpack-hot-middleware@2.26.1)(webpack@5.104.1(esbuild@0.25.1))
+        version: 8.6.15(@types/webpack@5.28.5(esbuild@0.25.1))(esbuild@0.25.1)(next@16.3.0(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@20.19.29)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sockjs-client@1.6.1)(storybook@8.6.15(prettier@3.8.0))(type-fest@4.41.0)(typescript@6.0.2)(webpack-dev-server@5.2.3(webpack@5.104.1(esbuild@0.25.1)))(webpack-hot-middleware@2.26.1)(webpack@5.104.1(esbuild@0.25.1))
       '@storybook/react':
         specifier: ^8.6.4
         version: 8.6.15(@storybook/test@8.6.15(storybook@8.6.15(prettier@3.8.0)))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(storybook@8.6.15(prettier@3.8.0))(typescript@6.0.2)
@@ -608,8 +608,8 @@ importers:
         specifier: ^9.38.0
         version: 9.39.2(jiti@2.6.1)
       eslint-config-next:
-        specifier: 16.3.0-canary.93
-        version: 16.3.0-canary.93(eslint@9.39.2(jiti@2.6.1))(typescript@6.0.2)
+        specifier: ^16.3.0
+        version: 16.3.0(eslint@9.39.2(jiti@2.6.1))(typescript@6.0.2)
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@20.19.29)
@@ -635,8 +635,8 @@ importers:
   examples/example-app-router-without-i18n-routing:
     dependencies:
       next:
-        specifier: 16.3.0-canary.93
-        version: 16.3.0-canary.93(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@25.0.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        specifier: ^16.3.0
+        version: 16.3.0(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@25.0.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       next-intl:
         specifier: ^4.0.0
         version: link:../../packages/next-intl
@@ -660,8 +660,8 @@ importers:
         specifier: ^9.38.0
         version: 9.39.2(jiti@2.6.1)
       eslint-config-next:
-        specifier: 16.3.0-canary.93
-        version: 16.3.0-canary.93(eslint@9.39.2(jiti@2.6.1))(typescript@6.0.2)
+        specifier: ^16.3.0
+        version: 16.3.0(eslint@9.39.2(jiti@2.6.1))(typescript@6.0.2)
       prettier:
         specifier: ^3.3.3
         version: 3.8.0
@@ -675,8 +675,8 @@ importers:
         specifier: ^4.1.0
         version: 4.1.0
       next:
-        specifier: 16.3.0-canary.93
-        version: 16.3.0-canary.93(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@20.19.29)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        specifier: ^16.3.0
+        version: 16.3.0(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@20.19.29)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       next-intl:
         specifier: ^4.0.0
         version: link:../../packages/next-intl
@@ -703,8 +703,8 @@ importers:
         specifier: ^9.38.0
         version: 9.39.2(jiti@2.6.1)
       eslint-config-next:
-        specifier: 16.3.0-canary.93
-        version: 16.3.0-canary.93(eslint@9.39.2(jiti@2.6.1))(typescript@6.0.2)
+        specifier: ^16.3.0
+        version: 16.3.0(eslint@9.39.2(jiti@2.6.1))(typescript@6.0.2)
       prettier:
         specifier: ^3.3.3
         version: 3.8.0
@@ -872,8 +872,8 @@ importers:
         specifier: 0.0.0-experimental-8e3b87c-20240822
         version: 0.0.0-experimental-8e3b87c-20240822(eslint@9.11.1(jiti@2.6.1))
       next:
-        specifier: 16.3.0-canary.93
-        version: 16.3.0-canary.93(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@20.19.29)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        specifier: ^16.3.0
+        version: 16.3.0(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@20.19.29)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       path-to-regexp:
         specifier: ^6.2.2
         version: 6.3.0
@@ -3128,11 +3128,11 @@ packages:
   '@next/env@14.2.35':
     resolution: {integrity: sha512-DuhvCtj4t9Gwrx80dmz2F4t/zKQ4ktN8WrMwOuVzkJfBilwAwGr6v16M5eI8yCuZ63H9TTuEU09Iu2HqkzFPVQ==}
 
-  '@next/env@16.3.0-canary.93':
-    resolution: {integrity: sha512-I52rsHw/Wohe7xMvn0DLabCZvz7Rdxl9KhaTJ4yxnQdp+7pfWkMl8jW8y2u56ekLl3JiqqbXWttTigHr8L0MfA==}
+  '@next/env@16.3.0':
+    resolution: {integrity: sha512-o9r1S0BNiNreHP9Vs+Qnqd9kviDkJh8xIACY7UFZSmiGbbQRzPBBosvHzAU4TULHOIuOj/18RSsyz2qrREmIFw==}
 
-  '@next/eslint-plugin-next@16.3.0-canary.93':
-    resolution: {integrity: sha512-xwehixF5gm49b+cR+64TZ/flqzvXj/RUcI4sOZ9oPFiYgwgC7pjMWGlQny0GEpFPrKaXO2lVCXwZFliLWYYFtA==}
+  '@next/eslint-plugin-next@16.3.0':
+    resolution: {integrity: sha512-OqgJ8PN0d04KcPhDX/PTY5tJUJZxlbrt7O7FBsm4XE0XW2JDrKnDXsc9uo9WUimJGPoo2j+JRGhyXApC//mvbw==}
 
   '@next/mdx@16.2.2':
     resolution: {integrity: sha512-2CbRTXE6sJ7zDAaKXknb5FrrPs46iJeMPzuoBXsAOV/XVnxABGD4mSDusn0VuCoII/KjUZ+zsuo2VFbchYQXng==}
@@ -3169,8 +3169,8 @@ packages:
     cpu: [arm64]
     os: [darwin]
 
-  '@next/swc-darwin-arm64@16.3.0-canary.93':
-    resolution: {integrity: sha512-ORECTQLYh2TclBVFrPZ1ZjCBrwa4cTHSxNh5FiHUdLpd2UjVpLdcvfTMwUAzAr+pc1QaSmkNropFvWP0oFYZbA==}
+  '@next/swc-darwin-arm64@16.3.0':
+    resolution: {integrity: sha512-55hpqq18bEVAlxedlTt3tFqZmKg2nUXT1kn1G/BGEy0R13h3LwtwHPVzzjG6P4LLeOHE32PFDQUVaJEWvBEZBw==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [darwin]
@@ -3187,8 +3187,8 @@ packages:
     cpu: [x64]
     os: [darwin]
 
-  '@next/swc-darwin-x64@16.3.0-canary.93':
-    resolution: {integrity: sha512-tNk4M50v4REb8rIyQt/mTY3KwzWcT3lrOY6s5AFy039rtL2rmKv7oPeZ/z7u6wiQ7H20KwGoWGt8IAYCmxT66Q==}
+  '@next/swc-darwin-x64@16.3.0':
+    resolution: {integrity: sha512-SOi96kSaF5T+0wW4koiM1bWzSPwjzTesC1p3df+FjdOi5LIQkBK/blxh7HdoKnNuI4PURF1OO7TZqtfnbWDSgw==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [darwin]
@@ -3217,8 +3217,8 @@ packages:
     cpu: [arm64]
     os: [linux]
 
-  '@next/swc-linux-arm64-gnu@16.3.0-canary.93':
-    resolution: {integrity: sha512-JdqFSeBgEw3fitfbxCdo2iZos+Q6xmE6OAuekWTsm6WkERziCKpuTRVrzGuG76WAAokHXwUwEq8RGTEi1e3POA==}
+  '@next/swc-linux-arm64-gnu@16.3.0':
+    resolution: {integrity: sha512-P0gZAoPMF4dyTRzhmkV4PrqVzSOB6t4mC1oI3c4dqijJ+OVEVx5clIXAKR4/uQpsqw2KKM/0D5tVumcR2r5blg==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
@@ -3235,8 +3235,8 @@ packages:
     cpu: [arm64]
     os: [linux]
 
-  '@next/swc-linux-arm64-musl@16.3.0-canary.93':
-    resolution: {integrity: sha512-g35bXY4O3+/Tcvzk67gcOkfChTWGqaa+9mEsbjdnt+ktSHdBUHe1vkXDHkS1hgOi1gRqLSjp1CSTi/6C0Qdqbg==}
+  '@next/swc-linux-arm64-musl@16.3.0':
+    resolution: {integrity: sha512-tXXGKJw0m37O0eKJARVTX/TheKPhz0QFVtVVZXmOig+9YKLQOSP6hvf2pxv5DO7CLEJyTHx3Pg043CDQkv1G4Q==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
@@ -3253,8 +3253,8 @@ packages:
     cpu: [x64]
     os: [linux]
 
-  '@next/swc-linux-x64-gnu@16.3.0-canary.93':
-    resolution: {integrity: sha512-FuSJT27jzaHXtQbBkeArYas7etsZ02nxtUiRWDsbNZ88sPkq9YAEZJYWcjCYct4MiqPFF8alOAD4hsUSJmyPFQ==}
+  '@next/swc-linux-x64-gnu@16.3.0':
+    resolution: {integrity: sha512-pjGxK5EY7yWml78ALejFkWmgHsU7wbFQrISiugpH6FbUJhgEvw3xFZ/EBAtLl7QtL0WdQKiG9eWJ3mOKGTukHw==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
@@ -3271,8 +3271,8 @@ packages:
     cpu: [x64]
     os: [linux]
 
-  '@next/swc-linux-x64-musl@16.3.0-canary.93':
-    resolution: {integrity: sha512-LV6UG8wTdkee0i9bGULa4ebkL9RxyJOUfWsdbvK76Z+uRX9gzIz5TdVJo1D5GYyNpPqmj8cTwTMPLlmdWO+YeA==}
+  '@next/swc-linux-x64-musl@16.3.0':
+    resolution: {integrity: sha512-sjo++Xx+lomlPs3HRsHWhVDyGG6ms1kGW5EtHLERdII8AyG1i+f6aq68xHREO6AEMlhjTNEWBSmfJfqm9orf7g==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
@@ -3289,8 +3289,8 @@ packages:
     cpu: [arm64]
     os: [win32]
 
-  '@next/swc-win32-arm64-msvc@16.3.0-canary.93':
-    resolution: {integrity: sha512-rEXZV9BV+yGfQ3Ns89G+hWXDBrYmpJGgH4Z1IRK8ox+YH/2G9VhtNJlNyPickSkbXaEnOkaaIRFcaZ5AqXv+eg==}
+  '@next/swc-win32-arm64-msvc@16.3.0':
+    resolution: {integrity: sha512-C5JSgiO54wURdaxdEUIXqkz04uMqC9UmPX1gtDrV/5Tf1UowdWYI8uA5hfFbPolTlp0q4KZ60xlHePNibf0VIw==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [win32]
@@ -3319,8 +3319,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@next/swc-win32-x64-msvc@16.3.0-canary.93':
-    resolution: {integrity: sha512-tkWdQXm7TIBhSUGPvopz4+8AavrBl+E82XC8Y34vw0A8nTKXpXjMOyZHFA7MVlbgGx+6CV1UxGQsQFa0RDbRXA==}
+  '@next/swc-win32-x64-msvc@16.3.0':
+    resolution: {integrity: sha512-fDOggsweNb5SSw0ZKVk6U+gxSyGFFlIBY/LBc1r8GUj4u/6t6oArL+Pmkg0MBnsgR+KkdsURilVH4F3GXUGepA==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [win32]
@@ -6843,8 +6843,8 @@ packages:
     peerDependencies:
       eslint: ^9.0.0
 
-  eslint-config-next@16.3.0-canary.93:
-    resolution: {integrity: sha512-0CQES/F1SfOSrpN6wfP14gY10TO2HqnuRKLkD/ckeQso1NpuqcYdoheBbBoDavgTrmOkg67VE6ey8MGIe2pvhw==}
+  eslint-config-next@16.3.0:
+    resolution: {integrity: sha512-lPrf1kHsMJEZqO0uXkNB400c5MGrhrTk3BNX7P0ol4gt61+iUlQfjy9TyIOEA9eOXrf+5+mYbT/JsY8+zqUByQ==}
     peerDependencies:
       eslint: '>=9.0.0'
       typescript: '>=3.3.1'
@@ -9140,6 +9140,11 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
+  nanoid@3.3.17:
+    resolution: {integrity: sha512-xQLf0A3HOMlgHq0n247/LRuAOYmB7dXJ/DvAxGvsSBij45XtBSmQycu+F8ODbHwns/XyFZagyL1+J0Offw1E0g==}
+    engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
+    hasBin: true
+
   nanoid@5.1.6:
     resolution: {integrity: sha512-c7+7RQ+dMB5dPwwCp4ee1/iV/q2P6aK1mTZcfr1BTuVlyW9hJYiMPybJCcnBlQtuSmTIWNeazm/zqNoZSSElBg==}
     engines: {node: ^18 || >=20}
@@ -9230,8 +9235,8 @@ packages:
       sass:
         optional: true
 
-  next@16.3.0-canary.93:
-    resolution: {integrity: sha512-2MYu2CrC4hHZpeLa6CY9t0NtpWJU5rcSa2yAzVzmRRqsN2EslJVr0HVm0et8Ib3CAF1OxU0+mZR4LtaPwRfa3A==}
+  next@16.3.0:
+    resolution: {integrity: sha512-NEdGOzH+08eTXMUp9UYkA99Nhi5N6Thrhc1jgFOQgfgnGK/dA2hRwBpXep+exdFQrnwlRf/3Wixyp8lLBUpE2A==}
     engines: {node: '>=20.9.0'}
     hasBin: true
     peerDependencies:
@@ -9851,6 +9856,10 @@ packages:
 
   postcss@8.5.10:
     resolution: {integrity: sha512-pMMHxBOZKFU6HgAZ4eyGnwXF/EvPGGqUr0MnZ5+99485wwW41kW91A4LOGxSHhgugZmSChL5AlElNdwlNgcnLQ==}
+    engines: {node: ^10 || ^12 || >=14}
+
+  postcss@8.5.23:
+    resolution: {integrity: sha512-g50586zr4bZmwFiTlflMu8E0bDTb5I5gertgwAKmsdUlTQIhZtunzUlD1WSzwcVWPoAVpsrA6vlfCD7oXvRwgg==}
     engines: {node: ^10 || ^12 || >=14}
 
   postcss@8.5.6:
@@ -14548,7 +14557,7 @@ snapshots:
   '@napi-rs/wasm-runtime@0.2.12':
     dependencies:
       '@emnapi/core': 1.8.1
-      '@emnapi/runtime': 1.8.1
+      '@emnapi/runtime': 1.11.2
       '@tybys/wasm-util': 0.10.1
     optional: true
 
@@ -14565,9 +14574,9 @@ snapshots:
 
   '@next/env@14.2.35': {}
 
-  '@next/env@16.3.0-canary.93': {}
+  '@next/env@16.3.0': {}
 
-  '@next/eslint-plugin-next@16.3.0-canary.93(eslint@9.39.2(jiti@2.6.1))':
+  '@next/eslint-plugin-next@16.3.0(eslint@9.39.2(jiti@2.6.1))':
     dependencies:
       '@eslint-community/eslint-utils': 4.9.1(eslint@9.39.2(jiti@2.6.1))
       fast-glob: 3.3.1
@@ -14593,7 +14602,7 @@ snapshots:
   '@next/swc-darwin-arm64@14.2.33':
     optional: true
 
-  '@next/swc-darwin-arm64@16.3.0-canary.93':
+  '@next/swc-darwin-arm64@16.3.0':
     optional: true
 
   '@next/swc-darwin-x64@12.3.4':
@@ -14602,7 +14611,7 @@ snapshots:
   '@next/swc-darwin-x64@14.2.33':
     optional: true
 
-  '@next/swc-darwin-x64@16.3.0-canary.93':
+  '@next/swc-darwin-x64@16.3.0':
     optional: true
 
   '@next/swc-freebsd-x64@12.3.4':
@@ -14617,7 +14626,7 @@ snapshots:
   '@next/swc-linux-arm64-gnu@14.2.33':
     optional: true
 
-  '@next/swc-linux-arm64-gnu@16.3.0-canary.93':
+  '@next/swc-linux-arm64-gnu@16.3.0':
     optional: true
 
   '@next/swc-linux-arm64-musl@12.3.4':
@@ -14626,7 +14635,7 @@ snapshots:
   '@next/swc-linux-arm64-musl@14.2.33':
     optional: true
 
-  '@next/swc-linux-arm64-musl@16.3.0-canary.93':
+  '@next/swc-linux-arm64-musl@16.3.0':
     optional: true
 
   '@next/swc-linux-x64-gnu@12.3.4':
@@ -14635,7 +14644,7 @@ snapshots:
   '@next/swc-linux-x64-gnu@14.2.33':
     optional: true
 
-  '@next/swc-linux-x64-gnu@16.3.0-canary.93':
+  '@next/swc-linux-x64-gnu@16.3.0':
     optional: true
 
   '@next/swc-linux-x64-musl@12.3.4':
@@ -14644,7 +14653,7 @@ snapshots:
   '@next/swc-linux-x64-musl@14.2.33':
     optional: true
 
-  '@next/swc-linux-x64-musl@16.3.0-canary.93':
+  '@next/swc-linux-x64-musl@16.3.0':
     optional: true
 
   '@next/swc-win32-arm64-msvc@12.3.4':
@@ -14653,7 +14662,7 @@ snapshots:
   '@next/swc-win32-arm64-msvc@14.2.33':
     optional: true
 
-  '@next/swc-win32-arm64-msvc@16.3.0-canary.93':
+  '@next/swc-win32-arm64-msvc@16.3.0':
     optional: true
 
   '@next/swc-win32-ia32-msvc@12.3.4':
@@ -14668,7 +14677,7 @@ snapshots:
   '@next/swc-win32-x64-msvc@14.2.33':
     optional: true
 
-  '@next/swc-win32-x64-msvc@16.3.0-canary.93':
+  '@next/swc-win32-x64-msvc@16.3.0':
     optional: true
 
   '@noble/hashes@1.4.0':
@@ -15723,7 +15732,7 @@ snapshots:
     dependencies:
       storybook: 8.6.15(prettier@3.8.0)
 
-  '@storybook/nextjs@8.6.15(@types/webpack@5.28.5(esbuild@0.25.1))(esbuild@0.25.1)(next@16.3.0-canary.93(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@20.19.29)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sockjs-client@1.6.1)(storybook@8.6.15(prettier@3.8.0))(type-fest@4.41.0)(typescript@6.0.2)(webpack-dev-server@5.2.3(webpack@5.104.1(esbuild@0.25.1)))(webpack-hot-middleware@2.26.1)(webpack@5.104.1(esbuild@0.25.1))':
+  '@storybook/nextjs@8.6.15(@types/webpack@5.28.5(esbuild@0.25.1))(esbuild@0.25.1)(next@16.3.0(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@20.19.29)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sockjs-client@1.6.1)(storybook@8.6.15(prettier@3.8.0))(type-fest@4.41.0)(typescript@6.0.2)(webpack-dev-server@5.2.3(webpack@5.104.1(esbuild@0.25.1)))(webpack-hot-middleware@2.26.1)(webpack@5.104.1(esbuild@0.25.1))':
     dependencies:
       '@babel/core': 7.28.6
       '@babel/plugin-syntax-bigint': 7.8.3(@babel/core@7.28.6)
@@ -15749,7 +15758,7 @@ snapshots:
       find-up: 5.0.0
       image-size: 1.2.1
       loader-utils: 3.3.1
-      next: 16.3.0-canary.93(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@20.19.29)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      next: 16.3.0(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@20.19.29)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       node-polyfill-webpack-plugin: 2.0.1(webpack@5.104.1(esbuild@0.25.1))
       pnp-webpack-plugin: 1.7.0(typescript@6.0.2)
       postcss: 8.5.6
@@ -16870,7 +16879,7 @@ snapshots:
       '@typescript-eslint/visitor-keys': 8.53.0
       debug: 4.4.3
       minimatch: 9.0.5
-      semver: 7.7.3
+      semver: 7.8.5
       tinyglobby: 0.2.15
       ts-api-utils: 2.4.0(typescript@6.0.2)
       typescript: 6.0.2
@@ -19221,9 +19230,9 @@ snapshots:
       - typescript
       - vitest
 
-  eslint-config-next@16.3.0-canary.93(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3):
+  eslint-config-next@16.3.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3):
     dependencies:
-      '@next/eslint-plugin-next': 16.3.0-canary.93(eslint@9.39.2(jiti@2.6.1))
+      '@next/eslint-plugin-next': 16.3.0(eslint@9.39.2(jiti@2.6.1))
       eslint: 9.39.2(jiti@2.6.1)
       eslint-import-resolver-node: 0.3.9
       eslint-import-resolver-typescript: 3.6.3(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.32.0)(eslint@9.39.2(jiti@2.6.1))
@@ -19241,9 +19250,9 @@ snapshots:
       - eslint-plugin-import-x
       - supports-color
 
-  eslint-config-next@16.3.0-canary.93(eslint@9.39.2(jiti@2.6.1))(typescript@6.0.2):
+  eslint-config-next@16.3.0(eslint@9.39.2(jiti@2.6.1))(typescript@6.0.2):
     dependencies:
-      '@next/eslint-plugin-next': 16.3.0-canary.93(eslint@9.39.2(jiti@2.6.1))
+      '@next/eslint-plugin-next': 16.3.0(eslint@9.39.2(jiti@2.6.1))
       eslint: 9.39.2(jiti@2.6.1)
       eslint-import-resolver-node: 0.3.9
       eslint-import-resolver-typescript: 3.6.3(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.32.0)(eslint@9.39.2(jiti@2.6.1))
@@ -21867,7 +21876,7 @@ snapshots:
       jest-message-util: 30.2.0
       jest-util: 30.2.0
       pretty-format: 30.2.0
-      semver: 7.7.3
+      semver: 7.8.5
       synckit: 0.11.12
     transitivePeerDependencies:
       - supports-color
@@ -23151,6 +23160,8 @@ snapshots:
 
   nanoid@3.3.11: {}
 
+  nanoid@3.3.17: {}
+
   nanoid@5.1.6: {}
 
   nanospinner@1.2.2:
@@ -23258,25 +23269,25 @@ snapshots:
       - '@babel/core'
       - babel-plugin-macros
 
-  next@16.3.0-canary.93(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@20.19.29)(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
+  next@16.3.0(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@20.19.29)(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
     dependencies:
-      '@next/env': 16.3.0-canary.93
+      '@next/env': 16.3.0
       '@swc/helpers': 0.5.15
       baseline-browser-mapping: 2.10.13
       caniuse-lite: 1.0.30001764
-      postcss: 8.5.10
+      postcss: 8.5.23
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
       styled-jsx: 5.1.6(@babel/core@7.28.6)(react@19.2.3)
     optionalDependencies:
-      '@next/swc-darwin-arm64': 16.3.0-canary.93
-      '@next/swc-darwin-x64': 16.3.0-canary.93
-      '@next/swc-linux-arm64-gnu': 16.3.0-canary.93
-      '@next/swc-linux-arm64-musl': 16.3.0-canary.93
-      '@next/swc-linux-x64-gnu': 16.3.0-canary.93
-      '@next/swc-linux-x64-musl': 16.3.0-canary.93
-      '@next/swc-win32-arm64-msvc': 16.3.0-canary.93
-      '@next/swc-win32-x64-msvc': 16.3.0-canary.93
+      '@next/swc-darwin-arm64': 16.3.0
+      '@next/swc-darwin-x64': 16.3.0
+      '@next/swc-linux-arm64-gnu': 16.3.0
+      '@next/swc-linux-arm64-musl': 16.3.0
+      '@next/swc-linux-x64-gnu': 16.3.0
+      '@next/swc-linux-x64-musl': 16.3.0
+      '@next/swc-win32-arm64-msvc': 16.3.0
+      '@next/swc-win32-x64-msvc': 16.3.0
       '@opentelemetry/api': 1.9.0
       '@playwright/test': 1.57.0
       sharp: 0.35.3(@types/node@20.19.29)
@@ -23285,25 +23296,25 @@ snapshots:
       - '@types/node'
       - babel-plugin-macros
 
-  next@16.3.0-canary.93(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@25.0.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
+  next@16.3.0(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@25.0.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
     dependencies:
-      '@next/env': 16.3.0-canary.93
+      '@next/env': 16.3.0
       '@swc/helpers': 0.5.15
       baseline-browser-mapping: 2.10.13
       caniuse-lite: 1.0.30001764
-      postcss: 8.5.10
+      postcss: 8.5.23
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
       styled-jsx: 5.1.6(@babel/core@7.28.6)(react@19.2.3)
     optionalDependencies:
-      '@next/swc-darwin-arm64': 16.3.0-canary.93
-      '@next/swc-darwin-x64': 16.3.0-canary.93
-      '@next/swc-linux-arm64-gnu': 16.3.0-canary.93
-      '@next/swc-linux-arm64-musl': 16.3.0-canary.93
-      '@next/swc-linux-x64-gnu': 16.3.0-canary.93
-      '@next/swc-linux-x64-musl': 16.3.0-canary.93
-      '@next/swc-win32-arm64-msvc': 16.3.0-canary.93
-      '@next/swc-win32-x64-msvc': 16.3.0-canary.93
+      '@next/swc-darwin-arm64': 16.3.0
+      '@next/swc-darwin-x64': 16.3.0
+      '@next/swc-linux-arm64-gnu': 16.3.0
+      '@next/swc-linux-arm64-musl': 16.3.0
+      '@next/swc-linux-x64-gnu': 16.3.0
+      '@next/swc-linux-x64-musl': 16.3.0
+      '@next/swc-win32-arm64-msvc': 16.3.0
+      '@next/swc-win32-x64-msvc': 16.3.0
       '@opentelemetry/api': 1.9.0
       '@playwright/test': 1.57.0
       sharp: 0.35.3(@types/node@25.0.8)
@@ -24053,6 +24064,12 @@ snapshots:
   postcss@8.5.10:
     dependencies:
       nanoid: 3.3.11
+      picocolors: 1.1.1
+      source-map-js: 1.2.1
+
+  postcss@8.5.23:
+    dependencies:
+      nanoid: 3.3.17
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
