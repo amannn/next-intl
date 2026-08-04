@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.13.5 (2026-08-04)
+
+### Bug Fixes
+
+* Deprecate `setRequestLocale` and add blog post on `next/root-params` ([#1632](https://github.com/amannn/next-intl/issues/1632)) ([1446d0d](https://github.com/amannn/next-intl/commit/1446d0d21534958644a1c81af0a0854544f21900)) – by @amannn
+
 ## 4.13.4 (2026-07-23)
 
 ### Bug Fixes
