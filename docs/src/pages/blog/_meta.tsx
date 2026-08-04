@@ -3,7 +3,7 @@ export default {
     title: 'Overview'
   },
   'nextjs-root-params': {
-    title: 'Using next/root-params in Next.js 16.2',
+    title: 'Using next/root-params in Next.js 16.3',
     display: 'hidden'
   },
   'use-extracted': {
