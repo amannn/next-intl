@@ -19,6 +19,8 @@ export default function Footer() {
           <FooterSeparator />
           <FooterLink href="https://learn.next-intl.dev">Learn</FooterLink>
           <FooterSeparator />
+          <FooterLink href="https://studio.eloqnt.dev">Studio</FooterLink>
+          <FooterSeparator />
           <FooterLink href="/examples">Examples</FooterLink>
           <FooterSeparator />
           <FooterLink href="/blog">Blog</FooterLink>
