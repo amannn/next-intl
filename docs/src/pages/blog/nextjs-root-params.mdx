@@ -9,7 +9,7 @@ import Details from '@/components/Details';
 
 # Using `next/root-params` in Next.js 16.3
 
-<small>Mar 18, 2026 · by Jan Amann</small>
+<small>Aug 4, 2026 · by Jan Amann</small>
 
 Next.js v16.3 was just released and comes with a new feature: `next/root-params`.
 
@@ -32,7 +32,7 @@ While the library previously relied on workarounds to provide a locale to Server
 Practically, for users of `next-intl` this means:
 
 1. Being able to support static rendering of apps with locale-based routing without `setRequestLocale`
-2. Improved integration with Next.js cache mechanisms like [`cacheComponents`](https://nextjs.org/docs/app/api-reference/config/next-config-js/cacheComponents)
+2. Improved integration with Next.js cache mechanisms like `cacheComponents`
 
 But first, let's have a look at how this API works in practice.
 
@@ -134,7 +134,7 @@ In an internationalized app, this can for example be useful to implement a count
 
 ## Static rendering
 
-In case we know all possible values for the `[locale]` segment ahead of time, we can provide them to Next.js by using the [`generateStaticParams`](https://nextjs.org/docs/app/api-reference/functions/generate-static-params) function to enable static rendering:
+In case we know the values for the `[locale]` segment ahead of time, we can provide them to Next.js by using the [`generateStaticParams`](https://nextjs.org/docs/app/api-reference/functions/generate-static-params) function to enable static rendering:
 
 ```tsx filename="src/app/[locale]/layout.tsx"
 const locales = ['en', 'de'];
@@ -147,7 +147,7 @@ export function generateStaticParams() {
 // ...
 ```
 
-Note that [`dynamicParams = false`](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config/dynamicParams) doesn't work with Cache Components, therefore if you want to treat your `locales` array as exhaustive, you might be better off adding runtime validation for the `[locale]` segment and call `notFound()` to guard against unknown locales.
+Note that [`dynamicParams = false`](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config/dynamicParams) doesn't work with Cache Components, therefore if you want to treat your `locales` array as exhaustive, you might be better off adding runtime validation for the `[locale]` segment and call `notFound()` to guard against unknown locales (see below).
 
 ## Leveraging `next/root-params` in `next-intl`
 
