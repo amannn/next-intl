@@ -13,13 +13,13 @@ Depending on if you handle internationalization in [Server- or Client Components
 
 ### `i18n/request.ts` & `getRequestConfig` [#i18n-request]
 
-`i18n/request.ts` can be used to provide configuration for **server-only** code, i.e. Server Components, Server Actions & friends. The configuration is provided via the `getRequestConfig` function and provides a `requestLocale` parameter in case you're using [locale-based routing](/docs/routing).
+`i18n/request.ts` can be used to provide configuration for **server-only** code, i.e. Server Components, Server Actions & friends. The configuration is provided via the `getRequestConfig` function and optionally provides a `locale` parameter in case you're overriding the `locale` at call sites.
 
 ```tsx filename="i18n/request.ts"
 import {getRequestConfig} from 'next-intl/server';
 import {routing} from '@/i18n/routing';
 
-export default getRequestConfig(async ({requestLocale}) => {
+export default getRequestConfig(async ({locale}) => {
   // ...
 
   return {
@@ -33,6 +33,23 @@ export default getRequestConfig(async ({requestLocale}) => {
 The configuration object is created once for each request by internally using React's [`cache`](https://react.dev/reference/react/cache). The first component to use internationalization will call the function defined with `getRequestConfig`.
 
 Since this function is executed during the Server Components render pass, you can call functions like [`cookies()`](https://nextjs.org/docs/app/api-reference/functions/cookies) and [`headers()`](https://nextjs.org/docs/app/api-reference/functions/headers) to return configuration that is request-specific.
+
+<Details id="server-request-locale">
+<summary>What is the `requestLocale` parameter?</summary>
+
+Before Next.js introduced `next/root-params`, the `requestLocale` parameter was used to read the `[locale]` segment from the middleware, optionally allowing to override it from [`setRequestLocale`](/docs/routing/setup#with-setrequestlocale-legacy).
+
+This is considered legacy and is no longer recommended.
+
+If you're still using `setRequestLocale`, the parameter typically corresponds to the `[locale]` segment that was matched by the middleware.
+
+However, there are three special cases to consider:
+
+1. **Overrides**: When an explicit `locale` is passed to [awaitable functions](/docs/environments/actions-metadata-route-handlers) like `getTranslations({locale: 'en'})`, then this value will be used instead of the segment.
+1. **`undefined`**: The value can be `undefined` when a page outside of the `[locale]` segment renders (e.g. a language selection page at `app/page.tsx`).
+1. **Invalid values**: Since the `[locale]` segment effectively acts like a catch-all for unknown routes (e.g. `/unknown.txt`), invalid values should be replaced with a valid locale. In addition to this, you might want to call `notFound()` in the [root layout](/docs/routing/setup#layout) to abort the render in this case.
+
+</Details>
 
 ### `NextIntlClientProvider`
 
@@ -141,27 +158,6 @@ The `locale` represents an identifier that contains the language and formatting 
 <Tabs items={['i18n/request.ts', 'Provider']}>
 <Tabs.Tab>
 
-Depending on if you're using [locale-based routing](/docs/routing), you can read the locale from the `requestLocale` parameter or provide a value on your own:
-
-**With locale-based routing:**
-
-```tsx filename="i18n/request.ts"
-export default getRequestConfig(async ({requestLocale}) => {
-  // Typically corresponds to the `[locale]` segment
-  const requested = await requestLocale;
-  const locale = hasLocale(routing.locales, requested)
-    ? requested
-    : routing.defaultLocale;
-
-  return {
-    locale
-    // ...
-  };
-});
-```
-
-**Without locale-based routing:**
-
 ```tsx filename="i18n/request.ts"
 export default getRequestConfig(async () => {
   // Provide a static locale, fetch a user setting,
@@ -174,17 +170,6 @@ export default getRequestConfig(async () => {
   };
 });
 ```
-
-<Details id="server-request-locale">
-<summary>Which values can the `requestLocale` parameter hold?</summary>
-
-While the `requestLocale` parameter typically corresponds to the `[locale]` segment that was matched by the middleware, there are three special cases to consider:
-
-1. **Overrides**: When an explicit `locale` is passed to [awaitable functions](/docs/environments/actions-metadata-route-handlers) like `getTranslations({locale: 'en'})`, then this value will be used instead of the segment.
-1. **`undefined`**: The value can be `undefined` when a page outside of the `[locale]` segment renders (e.g. a language selection page at `app/page.tsx`).
-1. **Invalid values**: Since the `[locale]` segment effectively acts like a catch-all for unknown routes (e.g. `/unknown.txt`), invalid values should be replaced with a valid locale. In addition to this, you might want to call `notFound()` in the [root layout](/docs/routing/setup#layout) to abort the render in this case.
-
-</Details>
 
 </Tabs.Tab>
 <Tabs.Tab>

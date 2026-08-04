@@ -13,6 +13,9 @@ export function getCachedRequestLocale() {
   return getCache().locale;
 }
 
+/**
+ * @deprecated Please migrate to [`next/root-params`](https://next-intl.dev/blog/nextjs-root-params).
+ */
 export function setCachedRequestLocale(locale: Locale) {
   getCache().locale = locale;
 }
