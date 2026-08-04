@@ -44,7 +44,7 @@
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "prettier": "^3.3.3",
-    "sharp": "^0.33.4",
+    "sharp": "^0.35.3",
     "storybook": "^8.6.4",
     "storybook-next-intl": "^1.2.6",
     "typescript": "^6.0.0"
