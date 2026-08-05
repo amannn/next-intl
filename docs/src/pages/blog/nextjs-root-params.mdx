@@ -186,7 +186,7 @@ That's it—with a single change to `i18n/request.ts` you can start using `next/
 
 ---
 
-**One caveat though**: `next/root-params` currently doesn't work in Route Handlers or Server Actions.
+**One caveat though**: `next/root-params` currently doesn't work in Route Handlers or Server Actions. Next.js [plans to add support](https://nextjs.org/blog/next-16-3#root-params) for these in a future release.
 
 You can work around that though by passing an explicit `locale` param at call sites, e.g. via [`bind`](https://nextjs.org/docs/app/guides/forms#passing-additional-arguments):
 
@@ -291,7 +291,7 @@ export async function generateMetadata(
 
 The cases where you still require a locale override are:
 
-1. When you're using functions from `next-intl` in **Route Handlers** or **Server Actions** (these are not supported by `next/root-params`)
+1. When you're using functions from `next-intl` in **Route Handlers** or **Server Actions**, which `next/root-params` doesn't support yet
 2. If your UI renders messages from **multiple locales** in parallel (uncommon)
 
 ### Static rendering
