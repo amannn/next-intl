@@ -188,7 +188,7 @@ That's it—with a single change to `i18n/request.ts` you can start using `next/
 
 **One caveat though**: `next/root-params` currently doesn't work in Route Handlers or Server Actions.
 
-You can work around that though by passing an explicit `locale` param at relevant call sites:
+You can work around that though by passing an explicit `locale` param at relevant call sites, e.g.&nbsp;via&nbsp;[`bind`](https://nextjs.org/docs/app/guides/forms#passing-additional-arguments):
 
 ```tsx {3}
 async function action(locale: string) {
