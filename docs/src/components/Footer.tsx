@@ -17,16 +17,19 @@ export default function Footer() {
         <div>
           <FooterLink href="/docs">Docs</FooterLink>
           <FooterSeparator />
-          <FooterLink href="https://learn.next-intl.dev">Learn</FooterLink>
+          <FooterLink href="/examples">Examples</FooterLink>
           <FooterSeparator />
-          <FooterLink className="relative" href="https://studio.eloqnt.dev">
-            Studio
+          <FooterLink
+            className="relative"
+            href="https://studio.eloqnt.dev/docs"
+          >
+            CLI
             <span className="absolute -right-2 top-0.5 rotate-6 rounded-sm bg-blue-500 px-1 text-[8px] font-semibold uppercase tracking-wider text-white group-[.navbar-home]:bg-blue-300 group-[.navbar-home]:text-blue-900 dark:bg-blue-300 dark:text-blue-900">
               Beta
             </span>
           </FooterLink>
           <FooterSeparator />
-          <FooterLink href="/examples">Examples</FooterLink>
+          <FooterLink href="https://learn.next-intl.dev">Learn</FooterLink>
           <FooterSeparator />
           <FooterLink href="/blog">Blog</FooterLink>
           <FooterSeparator />
