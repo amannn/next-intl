@@ -9,14 +9,13 @@ export default {
     title: 'Docs',
     type: 'page'
   },
-  learn: {
-    title: 'Learn',
+  examples: {
+    title: 'Examples',
     type: 'page',
     theme: {
       sidebar: false,
       toc: false
-    },
-    href: 'https://learn.next-intl.dev'
+    }
   },
   cli: {
     title: 'CLI',
@@ -32,13 +31,14 @@ export default {
     },
     href: 'https://studio.eloqnt.dev/docs'
   },
-  examples: {
-    title: 'Examples',
+  learn: {
+    title: 'Learn',
     type: 'page',
     theme: {
       sidebar: false,
       toc: false
-    }
+    },
+    href: 'https://learn.next-intl.dev'
   },
   blog: {
     title: 'Blog',
