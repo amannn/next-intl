@@ -18,8 +18,8 @@ export default {
     },
     href: 'https://learn.next-intl.dev'
   },
-  studio: {
-    title: 'Studio',
+  cli: {
+    title: 'CLI',
     type: 'page',
     titleChildren: (
       <span className="absolute -right-4 -top-3 rotate-6 rounded-sm bg-blue-500 px-1 py-[1px] text-[10px] font-semibold uppercase tracking-wider text-white group-[.navbar-home]:bg-blue-300 group-[.navbar-home]:text-blue-900 dark:bg-blue-300 dark:text-blue-900">
@@ -30,7 +30,7 @@ export default {
       sidebar: false,
       toc: false
     },
-    href: 'https://studio.eloqnt.dev'
+    href: 'https://studio.eloqnt.dev/docs'
   },
   examples: {
     title: 'Examples',
