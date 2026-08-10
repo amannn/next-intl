@@ -28,6 +28,7 @@ export type GetRequestConfigParams = {
    *    catch-all for unknown routes (e.g. `/unknown.txt`), invalid values should
    *    be replaced with a valid locale.
    *
+   * @deprecated Please migrate to [`next/root-params`](https://next-intl.dev/blog/nextjs-root-params).
    * @see https://next-intl.dev/docs/usage/configuration#i18n-request
    */
   requestLocale: Promise<string | undefined>;
