@@ -37,9 +37,9 @@ Since this function is executed during the Server Components render pass, you ca
 <Details id="server-request-locale">
 <summary>What is the `requestLocale` parameter?</summary>
 
-Before Next.js introduced `next/root-params`, the `requestLocale` parameter was used to read the `[locale]` segment from the middleware, optionally allowing to override it from [`setRequestLocale`](/docs/routing/setup#with-setrequestlocale-legacy).
+Before Next.js introduced [`next/root-params`](/blog/nextjs-root-params), the `requestLocale` parameter was used to read the `[locale]` segment from the middleware, optionally allowing to override it from [`setRequestLocale`](/docs/routing/setup#with-setrequestlocale-legacy).
 
-This parameter is deprecated—please migrate to [`next/root-params`](/blog/nextjs-root-params).
+This is considered legacy and is no longer recommended.
 
 If you're still using `setRequestLocale`, the parameter typically corresponds to the `[locale]` segment that was matched by the middleware.
 
