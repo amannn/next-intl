@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.13.6 (2026-08-10)
+
+### Bug Fixes
+
+* Deprecate `requestLocale` param of `getRequestConfig` ([#2380](https://github.com/amannn/next-intl/issues/2380)) ([ae770af](https://github.com/amannn/next-intl/commit/ae770af84983fdd2ed8f9a3d9acca5a7275b2b0f)) – by @amannn
+
 ## 4.13.5 (2026-08-04)
 
 ### Bug Fixes
