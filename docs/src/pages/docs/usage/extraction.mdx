@@ -316,25 +316,17 @@ function Example({name}) {
 }
 ```
 
-The same applies to async components using `getExtracted`:
+Despite not being needed for performance reasons, `Promise.all` is also supported:
 
 ```tsx
-import {getExtracted, getTranslations} from 'next-intl/server';
+import {getExtracted} from 'next-intl/server';
+import {getPost} from '@/lib';
 
 async function AsyncExample() {
-  // ✅ Awaiting the hook is supported
-  const t = await getExtracted();
-
   // ✅ Destructuring from `Promise.all` is supported
-  const [nav, dash] = await Promise.all([
-    getTranslations('Navigation'),
-    getExtracted('Dashboard')
-  ]);
+  const [t, post] = await Promise.all([getExtracted(), getPost()]);
 
-  // Note: `getExtracted` is cached internally and even
-  // the first invocation typically takes less than 1ms.
-  // Therefore, there's no performance need to parallelize
-  // it—but it works if you prefer this pattern.
+  // ...
 }
 ```
 
