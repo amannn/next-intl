@@ -1,0 +1,30 @@
+[
+  {
+    "description": null,
+    "id": "0KGiQf",
+    "message": "Hello there!",
+    "ranges": {
+      "argument": {
+        "end": 265,
+        "start": 251
+      },
+      "message": {
+        "end": 265,
+        "start": 251
+      }
+    },
+    "reference": {
+      "line": 10,
+      "path": "input.js"
+    },
+    "type": "extracted"
+  },
+  {
+    "id": "Navigation.title",
+    "reference": {
+      "line": 11,
+      "path": "input.js"
+    },
+    "type": "translation"
+  }
+]

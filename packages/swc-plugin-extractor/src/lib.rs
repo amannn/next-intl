@@ -466,6 +466,37 @@ impl TransformVisitor {
             );
         }
     }
+
+    /// If `call` invokes a tracked next-intl hook, registers `name` as a
+    /// translator binding and rewrites `useExtracted` / `getExtracted`
+    /// callees to the real (aliased) hook.
+    fn bind_translator(&mut self, name: Id, call: &mut CallExpr) {
+        let binding = match &call.callee {
+            Callee::Expr(box Expr::Ident(callee)) => self
+                .hook_local_names
+                .get(&callee.to_id())
+                .copied()
+                .map(|hook| (hook, callee.ctxt)),
+            _ => None,
+        };
+
+        let Some((hook, ctxt)) = binding else {
+            return;
+        };
+
+        let kind = match hook {
+            Hook::Extracted(extracted_hook) => {
+                // Rewrite the callee to the real (aliased) hook.
+                call.callee =
+                    Callee::Expr(Ident::new(extracted_hook.local_name(), DUMMY_SP, ctxt).into());
+                TranslatorKind::Extracted
+            }
+            Hook::Translation => TranslatorKind::Translation,
+        };
+        let namespace = namespace_of_call(call);
+        self.translator_map
+            .insert(name, Translator { kind, namespace });
+    }
 }
 
 impl VisitMut for TransformVisitor {
@@ -529,44 +560,64 @@ impl VisitMut for TransformVisitor {
     }
 
     fn visit_mut_var_declarator(&mut self, node: &mut VarDeclarator) {
-        if let Some(name) = node.name.as_ident() {
-            if let Some(init) = &mut node.init {
-                // Unwrap `await getX(...)` and direct `useX(...)` initializers.
-                let call = match &mut **init {
-                    Expr::Call(call) => Some(call),
-                    Expr::Await(AwaitExpr {
-                        arg: box Expr::Call(call),
-                        ..
-                    }) => Some(call),
-                    _ => None,
-                };
-
-                if let Some(call) = call {
-                    let binding = match &call.callee {
-                        Callee::Expr(box Expr::Ident(callee)) => self
-                            .hook_local_names
-                            .get(&callee.to_id())
-                            .copied()
-                            .map(|hook| (hook, callee.ctxt)),
+        let VarDeclarator { name, init, .. } = node;
+        if let Some(init) = init {
+            match name {
+                Pat::Ident(name) => {
+                    // Unwrap `await getX(...)` and direct `useX(...)` initializers.
+                    let call = match &mut **init {
+                        Expr::Call(call) => Some(call),
+                        Expr::Await(AwaitExpr {
+                            arg: box Expr::Call(call),
+                            ..
+                        }) => Some(call),
                         _ => None,
                     };
 
-                    if let Some((hook, ctxt)) = binding {
-                        let kind = match hook {
-                            Hook::Extracted(extracted_hook) => {
-                                // Rewrite the callee to the real (aliased) hook.
-                                call.callee = Callee::Expr(
-                                    Ident::new(extracted_hook.local_name(), DUMMY_SP, ctxt).into(),
-                                );
-                                TranslatorKind::Extracted
-                            }
-                            Hook::Translation => TranslatorKind::Translation,
-                        };
-                        let namespace = namespace_of_call(call);
-                        self.translator_map
-                            .insert(name.to_id(), Translator { kind, namespace });
+                    if let Some(call) = call {
+                        self.bind_translator(name.to_id(), call);
                     }
                 }
+                // `const [t, u] = await Promise.all([getX(), getY()])` —
+                // bindings map to array elements by position.
+                Pat::Array(array_pat) => {
+                    if let Expr::Await(AwaitExpr {
+                        arg: box Expr::Call(call),
+                        ..
+                    }) = &mut **init
+                    {
+                        if is_promise_all(&call.callee) {
+                            if let Some(ExprOrSpread {
+                                spread: None,
+                                expr: box Expr::Array(array_lit),
+                            }) = call.args.first_mut()
+                            {
+                                // A spread element breaks the positional mapping
+                                // between pattern and array; skip the whole call.
+                                let has_spread = array_lit
+                                    .elems
+                                    .iter()
+                                    .flatten()
+                                    .any(|elem| elem.spread.is_some());
+                                if !has_spread {
+                                    for (pat_elem, array_elem) in
+                                        array_pat.elems.iter().zip(array_lit.elems.iter_mut())
+                                    {
+                                        let (Some(Pat::Ident(name)), Some(array_elem)) =
+                                            (pat_elem, array_elem)
+                                        else {
+                                            continue;
+                                        };
+                                        if let Expr::Call(elem_call) = &mut *array_elem.expr {
+                                            self.bind_translator(name.to_id(), elem_call);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                _ => {}
             }
         }
 
@@ -585,6 +636,19 @@ fn warn_dynamic_expression(expr: &Expr) {
             )
             .emit();
     })
+}
+
+/// Whether the callee references `Promise.all`. Matched by name; a local
+/// binding that shadows the `Promise` global is not detected.
+fn is_promise_all(callee: &Callee) -> bool {
+    matches!(
+        callee,
+        Callee::Expr(box Expr::Member(MemberExpr {
+            obj: box Expr::Ident(obj),
+            prop: MemberProp::Ident(prop),
+            ..
+        })) if obj.sym == "Promise" && prop.sym == "all"
+    )
 }
 
 /// The namespace passed to a `useTranslations('ns')` / `getTranslations({namespace})` call.
