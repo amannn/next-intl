@@ -204,7 +204,7 @@ export default function getNextConfig(
         condition: {
           // We don't filter for `path` here to allow transformation
           // of `useExtracted` calls in external packages (e.g. monorepos)
-          content: /(useExtracted|getExtracted)/
+          content: /(useExtracted|getExtracted|defineMessage|\bmsg\b)/
         }
       });
     }

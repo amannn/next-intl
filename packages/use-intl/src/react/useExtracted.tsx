@@ -4,6 +4,7 @@ import type {
   RichTagsFunction
 } from '../core/TranslationValues.js';
 import type {TranslateArgs} from '../core/createTranslator.js';
+import type {ExtractedMessage} from '../core/msg.js';
 import useTranslations from './useTranslations.js';
 
 type TranslateArgsObject<
@@ -76,6 +77,10 @@ export default function useExtracted(namespace?: string) {
   }
 
   function translateFn<Message extends string>(
+    message: ExtractedMessage<Message>,
+    ...[values, formats]: TranslateArgs<Message>
+  ): string;
+  function translateFn<Message extends string>(
     /** Inline ICU message in the source locale. */
     message: Message,
     ...[values, formats]: TranslateArgs<Message>
@@ -98,6 +103,10 @@ export default function useExtracted(namespace?: string) {
     // @ts-expect-error -- Passing `undefined` as an ID is secretly allowed here
     t.rich(...getArgs(...params))) as {
     <Message extends string>(
+      message: ExtractedMessage<Message>,
+      ...[values, formats]: TranslateArgs<Message, RichTagsFunction>
+    ): ReactNode;
+    <Message extends string>(
       message: Message,
       ...[values, formats]: TranslateArgs<Message, RichTagsFunction>
     ): ReactNode;
@@ -116,6 +125,10 @@ export default function useExtracted(namespace?: string) {
     // @ts-expect-error -- Passing `undefined` as an ID is secretly allowed here
     t.markup(...getArgs(...params))) as {
     <Message extends string>(
+      message: ExtractedMessage<Message>,
+      ...[values, formats]: TranslateArgs<Message, MarkupTagsFunction>
+    ): string;
+    <Message extends string>(
       message: Message,
       ...[values, formats]: TranslateArgs<Message, MarkupTagsFunction>
     ): string;
@@ -132,7 +145,7 @@ export default function useExtracted(namespace?: string) {
 
   translateFn.has = function translateHasFn<Message extends string>(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    message: Message
+    message: Message | ExtractedMessage<Message>
   ): boolean {
     // Not really something better we can do here
     return true;

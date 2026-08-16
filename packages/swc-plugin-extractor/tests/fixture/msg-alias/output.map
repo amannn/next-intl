@@ -1,0 +1,1 @@
+{"version":3,"sources":["input.js"],"sourcesContent":["import { msg as defineLabel } from \"next-intl\";\n\nconst label = defineLabel(\"Pending\");\n"],"names":[],"mappings":"AAAA,SAAS,OAAO,WAAW,QAAQ,YAAY;AAE/C,MAAM,QAAQ"}

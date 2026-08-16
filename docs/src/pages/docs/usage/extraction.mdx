@@ -282,14 +282,64 @@ AI-based translation can be automated with tools like [eloqnt/studio](https://st
 
 </Callout>
 
+## Defining messages outside of components [#msg]
+
+If you need to _define_ a message in one module and _resolve_ it later—enum-like label maps, Zod schemas, or any other data that travels as a string—use `msg` (also exported as `defineMessage`):
+
+```tsx
+import {msg, useExtracted} from 'next-intl';
+
+const pending = msg('Pending');
+const greeting = msg('Hello {name}!');
+
+const STATUS_LABELS = {
+  pending,
+  shipped: msg('Shipped'),
+  delivered: msg('Delivered')
+} as const;
+
+function Status({
+  status,
+  name
+}: {
+  status: keyof typeof STATUS_LABELS;
+  name: string;
+}) {
+  const t = useExtracted();
+  return (
+    <>
+      {t(STATUS_LABELS[status])}
+      {t(greeting, {name})}
+    </>
+  );
+}
+```
+
+`msg` is a compile-time marker, not a formatter. After compilation it becomes a catalog key; values are supplied only when you call `t`, `t.rich` or `t.markup`. Do not interpolate or display the return value of `msg` without passing it through `t`—after compilation that value is a hashed key.
+
+The object form supports the same metadata as inline `t` calls, plus an optional namespace:
+
+```tsx
+const required = msg({
+  message: 'This field is required',
+  description: 'Shown under empty form fields',
+  namespace: 'validation'
+});
+```
+
+Namespaced `msg` keys must be resolved with root `useExtracted()` / `getExtracted()` (no namespace argument), so the dotted catalog path is not prefixed twice.
+
+Messages defined with `msg` are attributed to the file that calls it. Prefer colocating those calls with the feature that uses them—a shared barrel of every message in the app will keep all of them in every route that imports the file.
+
 ## Static analysis [#static-analysis]
 
 Message extraction relies on [static analysis](https://en.wikipedia.org/wiki/Static_program_analysis).
 
 In practice, this means:
 
-1. `t` must receive a literal string as its message argument
+1. Inline `t` calls must receive a literal string (or `{message, …}` object) as the message argument
 2. `t` must be called in the same function body where it was retrieved from `useExtracted` or `getExtracted`
+3. `msg` / `defineMessage` may be called at module scope; `t` can later receive that descriptor as an identifier or member expression (`t(pending)`, `t(STATUS_LABELS[status])`)
 
 **Valid usage:**
 
@@ -324,7 +374,7 @@ import {useExtracted} from 'next-intl';
 function Example({key}) {
   const t = useExtracted();
 
-  // ❌ `key` is only known at runtime
+  // ❌ Arbitrary runtime keys are not extracted (use `msg` for deferred labels)
   t(key);
 
   // ❌ Passing `t` to another function
@@ -349,9 +399,28 @@ Note that `useExtracted` can be called in components, but also in hooks—which 
 <Details id="enum-values">
 <summary>How can I translate enum-like values?</summary>
 
-Since messages need to be statically analyzable, a lookup like `t(status)` is not supported. Instead, you can map each value to an inline message in a place where `t` is in scope.
+A lookup like `t(status)` is not extracted. Define each label with [`msg`](#msg) and resolve the descriptor where `t` is in scope:
 
-On the server, an async function can retrieve `t` via `getExtracted`:
+```tsx
+import {msg, useExtracted, type ExtractedMessage} from 'next-intl';
+
+type OrderStatus = 'pending' | 'shipped' | 'delivered';
+
+const ORDER_STATUS_LABELS: Record<OrderStatus, ExtractedMessage> = {
+  pending: msg('Pending'),
+  shipped: msg('Shipped'),
+  delivered: msg('Delivered')
+};
+
+function OrderStatusLabel({status}: {status: OrderStatus}) {
+  const t = useExtracted();
+  return t(ORDER_STATUS_LABELS[status]);
+}
+```
+
+The result is a string, so it can also be used for `aria-label`, sorting or a toast.
+
+Alternatively, map each value to an inline message in a place where `t` is in scope. On the server, an async function can retrieve `t` via `getExtracted`:
 
 ```tsx
 import {getExtracted} from 'next-intl/server';
@@ -415,9 +484,29 @@ Alternatively, if you prefer a single message, you can use [`select`](/docs/usag
 <Details id="zod">
 <summary>How can I localize validation errors from Zod?</summary>
 
-[Zod](https://zod.dev/) schemas are typically defined at module scope, where `t` is not available.
+[Zod](https://zod.dev/) schemas are typically defined at module scope. For field-specific wording, define each message with [`msg`](#msg) and resolve it later in a shared error component:
 
-The recommended approach is to keep your schema locale-agnostic and to turn the structured errors it produces into messages in a place where `t` is in scope—either via a per-parse error map, or via a shared async helper.
+```tsx
+import {msg, useExtracted} from 'next-intl';
+import {z} from 'zod';
+
+const emailInvalid = msg('Please enter a valid email address');
+const passwordMin = msg(
+  'Password must be at least {length, plural, one {# character} other {# characters}} long'
+);
+
+const signInSchema = z.object({
+  email: z.email(emailInvalid),
+  password: z.string().min(8, passwordMin)
+});
+
+function FieldError({message, length}: {message: string; length?: number}) {
+  const t = useExtracted();
+  return t.has(message) ? t(message, {length}) : message;
+}
+```
+
+You can also keep the schema locale-agnostic and map structured `issue.code` values to messages where `t` is in scope.
 
 See: [When using Zod for validation, how can I localize error messages?](/docs/environments/actions-metadata-route-handlers#server-actions-zod)
 

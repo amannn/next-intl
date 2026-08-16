@@ -56,7 +56,22 @@ If you're using [a `[locale]` segment](/docs/routing) as part of your routing st
 <Details id="server-actions-zod">
 <summary>When using Zod for validation, how can I localize error messages?</summary>
 
-[Zod](https://zod.dev/) allows you to provide [contextual error maps](https://zod.dev/ERROR_HANDLING?id=contextual-error-map) that can be used to customize error messages per parse invocation. Since the locale is specific to a particular request, this mechanism comes in handy to turn structured errors from `zod` into localized messages:
+When using [`useExtracted`](/docs/usage/extraction), field-specific messages can be defined with [`msg`](/docs/usage/extraction#msg) at schema-construction time and resolved later in the UI:
+
+```tsx
+import {msg} from 'next-intl';
+import {z} from 'zod';
+
+const emailInvalid = msg('Please enter a valid email address');
+const passwordRequired = msg('Please enter your password');
+
+const loginFormSchema = z.object({
+  email: z.email(emailInvalid),
+  password: z.string().min(1, passwordRequired)
+});
+```
+
+[Zod](https://zod.dev/) also allows [contextual error maps](https://zod.dev/ERROR_HANDLING?id=contextual-error-map) that customize messages per parse invocation. Since the locale is specific to a particular request, this mechanism comes in handy to turn structured errors from `zod` into localized messages:
 
 ```tsx
 import {getTranslations} from 'next-intl/server';

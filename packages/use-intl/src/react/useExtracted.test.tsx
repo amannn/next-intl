@@ -1,6 +1,7 @@
 import {render, screen} from '@testing-library/react';
 import type {ComponentProps, ReactNode} from 'react';
 import {describe, expect, it, vi} from 'vitest';
+import msg from '../core/msg.js';
 import IntlProvider from './IntlProvider.js';
 import useExtracted from './useExtracted.js';
 
@@ -27,6 +28,22 @@ it('accepts plain messages', () => {
   );
   expect(onError).not.toHaveBeenCalled();
   screen.getByText('Hello');
+});
+
+it('resolves a message defined with msg()', () => {
+  const onError = vi.fn();
+  const greeting = msg('Hello {name}!');
+  function Component() {
+    const t = useExtracted();
+    return t(greeting, {name: 'Jane'});
+  }
+  render(
+    <MockProvider onError={onError}>
+      <Component />
+    </MockProvider>
+  );
+  expect(onError).not.toHaveBeenCalled();
+  screen.getByText('Hello Jane!');
 });
 
 it('accepts ICU arguments', () => {

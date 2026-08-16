@@ -56,6 +56,20 @@ describe('json format', {timeout: 20_000}, () => {
     );
   }
 
+  it('extracts messages defined with msg() outside of components', async () => {
+    filesystem.project.src['labels.ts'] = `
+    import {msg} from 'next-intl';
+    export const pending = msg('Pending');
+    `;
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+
+    expect(JSON.parse(filesystem.project.messages!['en.json'])).toEqual({
+      eKEL_g: 'Pending'
+    });
+  });
+
   it('creates the messages directory and source catalog when they do not exist initially', async () => {
     filesystem.project.messages = undefined;
     filesystem.project.src['Greeting.tsx'] = `

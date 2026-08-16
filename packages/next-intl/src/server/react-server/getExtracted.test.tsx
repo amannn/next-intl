@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
+import {msg} from 'use-intl/core';
 import {describe, it} from 'vitest';
 import getExtracted from './getExtracted.js';
 
@@ -10,6 +11,17 @@ describe('type tests', () => {
 
       // @ts-expect-error -- Invalid type
       t(123);
+    };
+  });
+
+  it('accepts a message defined with msg()', () => {
+    async () => {
+      const t = await getExtracted();
+      const greeting = msg('Hello {name}!');
+      t(greeting, {name: 'World'});
+
+      // @ts-expect-error -- Missing values
+      t(greeting);
     };
   });
 
