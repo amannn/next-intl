@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## Unreleased
+
+### Features
+
+* Split extracted catalogs by namespace (`extract.split: 'namespace'`)
+
 ## 4.13.6 (2026-08-10)
 
 ### Bug Fixes

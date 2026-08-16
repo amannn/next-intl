@@ -1,7 +1,7 @@
 import fs from 'fs';
 import fsPromises from 'fs/promises';
 import path from 'path';
-import type {ExtractorConfig, Locale} from '../types.js';
+import type {CatalogSplit, ExtractorConfig, Locale} from '../types.js';
 
 type LocaleChangeCallback = (params: {
   added: Array<Locale>;
@@ -13,6 +13,7 @@ type CatalogLocalesParams = {
   sourceLocale: Locale;
   extension: string;
   locales: ExtractorConfig['extract']['locales'];
+  split?: CatalogSplit;
 };
 
 export default class CatalogLocales {
@@ -20,6 +21,7 @@ export default class CatalogLocales {
   private extension: string;
   private sourceLocale: Locale;
   private locales: ExtractorConfig['extract']['locales'];
+  private split?: CatalogSplit;
   private watcher?: fs.FSWatcher;
   private targetLocales?: Array<Locale>;
   private onChangeCallbacks: Set<LocaleChangeCallback> = new Set();
@@ -29,6 +31,7 @@ export default class CatalogLocales {
     this.sourceLocale = params.sourceLocale;
     this.extension = params.extension;
     this.locales = params.locales;
+    this.split = params.split;
   }
 
   public async getTargetLocales(): Promise<Array<Locale>> {
@@ -46,13 +49,47 @@ export default class CatalogLocales {
     return this.targetLocales;
   }
 
+  private addLocaleFromFileName(fileName: string, locales: Set<Locale>): void {
+    if (!fileName.endsWith(this.extension)) {
+      return;
+    }
+    const locale = path.basename(fileName, this.extension);
+    if (locale.length > 0) {
+      locales.add(locale);
+    }
+  }
+
   private async readTargetLocales(): Promise<Array<Locale>> {
     try {
-      const files = await fsPromises.readdir(this.messagesDir);
-      return files
-        .filter((file) => file.endsWith(this.extension))
-        .map((file) => path.basename(file, this.extension))
-        .filter((locale) => locale !== this.sourceLocale);
+      const locales = new Set<Locale>();
+      const entries = await fsPromises.readdir(this.messagesDir, {
+        withFileTypes: true
+      });
+
+      for (const entry of entries) {
+        if (entry.isFile()) {
+          this.addLocaleFromFileName(entry.name, locales);
+          continue;
+        }
+
+        if (this.split !== 'namespace' || !entry.isDirectory()) {
+          continue;
+        }
+
+        const nestedEntries = await fsPromises.readdir(
+          path.join(this.messagesDir, entry.name),
+          {withFileTypes: true}
+        );
+        for (const nestedEntry of nestedEntries) {
+          if (nestedEntry.isFile()) {
+            this.addLocaleFromFileName(nestedEntry.name, locales);
+          }
+        }
+      }
+
+      return Array.from(locales).filter(
+        (locale) => locale !== this.sourceLocale
+      );
     } catch {
       return [];
     }
@@ -73,6 +110,16 @@ export default class CatalogLocales {
     }
   }
 
+  private isCatalogFileName(filename: string): boolean {
+    if (!filename.endsWith(this.extension)) {
+      return false;
+    }
+    if (this.split === 'namespace') {
+      return true;
+    }
+    return !filename.includes(path.sep);
+  }
+
   private async startWatcher(): Promise<void> {
     if (this.watcher) {
       return;
@@ -82,14 +129,9 @@ export default class CatalogLocales {
 
     this.watcher = fs.watch(
       this.messagesDir,
-      {persistent: false, recursive: false},
+      {persistent: false, recursive: this.split === 'namespace'},
       (event, filename) => {
-        const isCatalogFile =
-          filename != null &&
-          filename.endsWith(this.extension) &&
-          !filename.includes(path.sep);
-
-        if (isCatalogFile) {
+        if (filename != null && this.isCatalogFileName(filename)) {
           void this.onChange();
         }
       }

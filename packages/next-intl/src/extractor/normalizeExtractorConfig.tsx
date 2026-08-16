@@ -31,6 +31,7 @@ export default function normalizeExtractorConfig(
 
   let extractPath: string | undefined;
   let sourceLocale: string | undefined;
+  let split: ExtractorConfig['extract']['split'];
 
   if (extract !== undefined && extract !== true) {
     if (extract.sourceLocale) {
@@ -42,6 +43,10 @@ export default function normalizeExtractorConfig(
 
     if (extract.path) {
       extractPath = stripTrailingSlash(extract.path);
+    }
+
+    if (extract.split === 'namespace') {
+      split = 'namespace';
     }
   }
 
@@ -84,7 +89,8 @@ export default function normalizeExtractorConfig(
       locales,
       path: extractPath,
       sourceLocale,
-      srcPath
+      srcPath,
+      split
     },
     messages: {
       format: input.messages.format,

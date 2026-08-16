@@ -1,5 +1,9 @@
 import {describe, expect, it, vi} from 'vitest';
-import {getSortedMessages, setNestedProperty} from './utils.js';
+import {
+  getCatalogNamespace,
+  getSortedMessages,
+  setNestedProperty
+} from './utils.js';
 
 describe('getSortedMessages', () => {
   it('sorts by reference path', () => {
@@ -95,6 +99,22 @@ describe('getSortedMessages', () => {
     );
 
     warnSpy.mockRestore();
+  });
+});
+
+describe('getCatalogNamespace', () => {
+  it('returns the first id segment', () => {
+    expect(getCatalogNamespace('login.saas-login.form.x')).toBe('login');
+    expect(getCatalogNamespace('ui.OpKKos')).toBe('ui');
+  });
+
+  it('returns undefined for unnamespaced or unsafe ids', () => {
+    expect(getCatalogNamespace('OpKKos')).toBeUndefined();
+    expect(getCatalogNamespace('.leading')).toBeUndefined();
+    expect(getCatalogNamespace('..hidden.x')).toBeUndefined();
+    expect(getCatalogNamespace('foo/bar.x')).toBeUndefined();
+    expect(getCatalogNamespace('foo\\bar.x')).toBeUndefined();
+    expect(getCatalogNamespace('__proto__.x')).toBeUndefined();
   });
 });
 

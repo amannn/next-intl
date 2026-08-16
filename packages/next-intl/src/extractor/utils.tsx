@@ -24,6 +24,31 @@ export function isForbiddenObjectKey(key: string): boolean {
   return FORBIDDEN_OBJECT_KEYS.has(key);
 }
 
+/**
+ * First id segment used as a catalog directory when `extract.split` is
+ * `'namespace'`. Returns `undefined` for unnamespaced or unsafe ids so they
+ * stay in the root `{locale}` file.
+ */
+export function getCatalogNamespace(id: string): string | undefined {
+  const separatorIndex = id.indexOf('.');
+  if (separatorIndex <= 0) {
+    return undefined;
+  }
+
+  const namespace = id.slice(0, separatorIndex);
+  if (
+    namespace === '.' ||
+    namespace === '..' ||
+    namespace.includes('/') ||
+    namespace.includes('\\') ||
+    isForbiddenObjectKey(namespace)
+  ) {
+    return undefined;
+  }
+
+  return namespace;
+}
+
 export function hasLocalesToExtract(
   config: Pick<ExtractorConfig, 'extract'>
 ): boolean {

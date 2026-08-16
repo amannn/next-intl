@@ -5,6 +5,9 @@ import type {MessagesFormat} from './format/types.js';
 // don't require a match here.
 export type Locale = string;
 
+/** Partitions extracted catalogs into `{namespace}/{locale}{ext}` files. */
+export type CatalogSplit = 'namespace';
+
 export type ExtractorMessageReference = {
   path: string;
   line?: number;
@@ -64,6 +67,12 @@ export type ExtractorConfigInput = {
     | {
         /** Defaults to `messages.path` when it is a single path. */
         path?: string;
+        /**
+         * Write namespaced messages to `{namespace}/{locale}` files instead of
+         * a single catalog per locale. Unnamespaced messages stay in the root
+         * `{locale}` file.
+         */
+        split?: CatalogSplit;
         /** @deprecated Prefer `messages.sourceLocale`. */
         sourceLocale?: string;
       };
@@ -76,6 +85,7 @@ export type ExtractorConfig = {
     path: string;
     sourceLocale: string;
     srcPath: string | Array<string>;
+    split?: CatalogSplit;
   };
   messages: {
     format: MessagesFormat;

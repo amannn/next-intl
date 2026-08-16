@@ -1884,6 +1884,268 @@ describe('`srcPath` filtering', () => {
   });
 });
 
+describe('split by namespace', {timeout: 20_000}, () => {
+  function createSplitCompiler(format: 'json' | 'po') {
+    return new ExtractionCompiler(
+      {
+        extract: {
+          locales: 'infer',
+          path: './messages',
+          sourceLocale: 'en',
+          srcPath: './src',
+          split: 'namespace'
+        },
+        messages: {
+          format,
+          path: ['./messages']
+        }
+      },
+      {
+        isDevelopment: true,
+        projectRoot: '/project',
+        saveDebounceMs: 0
+      }
+    );
+  }
+
+  it('writes namespaced messages to a namespace directory for json', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      const tUi = useExtracted('ui');
+      return <div>{t('Hey!')}{tUi('Hello!')}</div>;
+    }
+    `;
+
+    using compiler = createSplitCompiler('json');
+    await compiler.extractAll();
+
+    expect(JSON.parse(getNestedValue(filesystem, 'messages/en.json'))).toEqual({
+      '-YJVTi': 'Hey!'
+    });
+    expect(
+      JSON.parse(getNestedValue(filesystem, 'messages/ui/en.json'))
+    ).toEqual({
+      ui: {
+        OpKKos: 'Hello!'
+      }
+    });
+  });
+
+  it('writes namespaced messages to a namespace directory for po', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      const tUi = useExtracted('ui');
+      return <div>{t('Hey!')}{tUi('Hello!')}</div>;
+    }
+    `;
+
+    using compiler = createSplitCompiler('po');
+    await compiler.extractAll();
+
+    const root = getNestedValue(filesystem, 'messages/en.po') as string;
+    expect(root).toContain('msgid "-YJVTi"');
+    expect(root).toContain('msgstr "Hey!"');
+    expect(root).not.toContain('msgctxt "ui"');
+
+    const namespaced = getNestedValue(
+      filesystem,
+      'messages/ui/en.po'
+    ) as string;
+    expect(namespaced).toMatch(
+      /msgctxt "ui"\s+msgid "OpKKos"\s+msgstr "Hello!"/
+    );
+  });
+
+  it('preserves target-locale translations when splitting', async () => {
+    filesystem.project.messages = {
+      'en.po': '',
+      'de.po': `
+#: src/Greeting.tsx
+msgid "-YJVTi"
+msgstr "Hallo!"
+
+#: src/Greeting.tsx
+msgctxt "ui"
+msgid "OpKKos"
+msgstr "Hallo Welt!"
+`
+    };
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      const tUi = useExtracted('ui');
+      return <div>{t('Hey!')}{tUi('Hello!')}</div>;
+    }
+    `;
+
+    using compiler = createSplitCompiler('po');
+    await compiler.extractAll();
+
+    const rootDe = getNestedValue(filesystem, 'messages/de.po') as string;
+    expect(rootDe).toContain('msgid "-YJVTi"');
+    expect(rootDe).toContain('msgstr "Hallo!"');
+    expect(rootDe).not.toContain('msgctxt "ui"');
+
+    const uiDe = getNestedValue(filesystem, 'messages/ui/de.po') as string;
+    expect(uiDe).toMatch(
+      /msgctxt "ui"\s+msgid "OpKKos"\s+msgstr "Hallo Welt!"/
+    );
+  });
+
+  it('migrates a monolithic catalog into namespace files', async () => {
+    filesystem.project.messages = {
+      'en.po': `
+#: src/Greeting.tsx
+msgid "-YJVTi"
+msgstr "Hey!"
+
+#: src/Greeting.tsx
+msgctxt "ui"
+msgid "OpKKos"
+msgstr "Hello!"
+`,
+      'de.po': `
+#: src/Greeting.tsx
+msgid "-YJVTi"
+msgstr "Hallo!"
+
+#: src/Greeting.tsx
+msgctxt "ui"
+msgid "OpKKos"
+msgstr "Hallo Welt!"
+`
+    };
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      const tUi = useExtracted('ui');
+      return <div>{t('Hey!')}{tUi('Hello!')}</div>;
+    }
+    `;
+
+    using compiler = createSplitCompiler('po');
+    await compiler.extractAll();
+
+    const rootEn = getNestedValue(filesystem, 'messages/en.po') as string;
+    expect(rootEn).toContain('msgid "-YJVTi"');
+    expect(rootEn).not.toContain('msgctxt "ui"');
+
+    const uiEn = getNestedValue(filesystem, 'messages/ui/en.po') as string;
+    expect(uiEn).toMatch(/msgctxt "ui"\s+msgid "OpKKos"\s+msgstr "Hello!"/);
+
+    const rootDe = getNestedValue(filesystem, 'messages/de.po') as string;
+    expect(rootDe).toContain('msgstr "Hallo!"');
+    expect(rootDe).not.toContain('msgctxt "ui"');
+
+    const uiDe = getNestedValue(filesystem, 'messages/ui/de.po') as string;
+    expect(uiDe).toContain('msgstr "Hallo Welt!"');
+  });
+
+  it('deletes stale namespace catalogs when the namespace disappears', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted('ui');
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+
+    using compiler = createSplitCompiler('po');
+    await compiler.extractAll();
+    expect(getNestedValue(filesystem, 'messages/ui/en.po')).toEqual(
+      expect.stringContaining('msgctxt "ui"')
+    );
+
+    await simulateSourceFileUpdate(
+      '/project/src/Greeting.tsx',
+      `
+      import {useExtracted} from 'next-intl';
+      function Greeting() {
+        const t = useExtracted();
+        return <div>{t('Hey!')}</div>;
+      }
+      `
+    );
+    await vi.waitFor(() => {
+      expect(getNestedValue(filesystem, 'messages/ui/en.po')).toBeUndefined();
+    });
+
+    const root = getNestedValue(filesystem, 'messages/en.po') as string;
+    expect(root).toContain('msgid "-YJVTi"');
+    expect(root).not.toContain('msgctxt "ui"');
+  });
+
+  it('infers target locales from nested namespace catalogs', async () => {
+    setNestedValue(
+      filesystem,
+      'messages/ui/fr.po',
+      `
+#: src/Greeting.tsx
+msgctxt "ui"
+msgid "OpKKos"
+msgstr "Bonjour!"
+`
+    );
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted('ui');
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+
+    using compiler = createSplitCompiler('po');
+    await compiler.extractAll();
+
+    const uiFr = getNestedValue(filesystem, 'messages/ui/fr.po') as string;
+    expect(uiFr).toMatch(/msgctxt "ui"\s+msgid "OpKKos"\s+msgstr "Bonjour!"/);
+    expect(getNestedValue(filesystem, 'messages/fr.po')).toEqual(
+      expect.stringContaining('Language: fr')
+    );
+  });
+
+  it('keeps a single catalog per locale when split is not configured', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted('ui');
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+
+    using compiler = new ExtractionCompiler(
+      {
+        extract: {
+          locales: 'infer',
+          path: './messages',
+          sourceLocale: 'en',
+          srcPath: './src'
+        },
+        messages: {
+          format: 'po',
+          path: ['./messages']
+        }
+      },
+      {
+        isDevelopment: true,
+        projectRoot: '/project',
+        saveDebounceMs: 0
+      }
+    );
+    await compiler.extractAll();
+
+    const root = getNestedValue(filesystem, 'messages/en.po') as string;
+    expect(root).toMatch(/msgctxt "ui"\s+msgid "OpKKos"\s+msgstr "Hello!"/);
+    expect(getNestedValue(filesystem, 'messages/ui/en.po')).toBeUndefined();
+  });
+});
+
 describe('custom format', () => {
   it('supports a structured json custom format with codecs', async () => {
     filesystem.project.messages = {
@@ -2159,6 +2421,26 @@ function getNestedValue(obj: any, pathname: string): any {
   }
 
   return undefined;
+}
+
+function deleteNestedValue(obj: any, pathname: string): void {
+  let pathParts: Array<string>;
+
+  if (pathname.startsWith('/')) {
+    pathParts = pathname.replace(/^\//, '').split('/');
+  } else {
+    pathParts = ['project', ...pathname.split('/')];
+  }
+
+  let current = obj;
+  for (let i = 0; i < pathParts.length - 1; i++) {
+    current = current?.[pathParts[i]];
+    if (!current || typeof current !== 'object') {
+      return;
+    }
+  }
+
+  delete current[pathParts[pathParts.length - 1]];
 }
 
 function setNestedValue(obj: any, pathname: string, value: string): void {
@@ -2539,6 +2821,25 @@ vi.mock('fs/promises', () => ({
     writeFile: vi.fn(async (filePath: string, content: string) => {
       setNestedValue(filesystem, filePath, content);
       fileTimestamps.set(filePath, new Date());
+    }),
+    unlink: vi.fn(async (filePath: string) => {
+      const content = getNestedValue(filesystem, filePath);
+      if (typeof content !== 'string') {
+        throw createENOENTError(filePath);
+      }
+      deleteNestedValue(filesystem, filePath);
+      fileTimestamps.delete(filePath);
+    }),
+    rmdir: vi.fn(async (dirPath: string) => {
+      const contents = getDirectoryContents(filesystem, dirPath);
+      if (contents.length > 0) {
+        const error = new Error(
+          `ENOTEMPTY: directory not empty, rmdir '${dirPath}'`
+        ) as NodeJS.ErrnoException;
+        error.code = 'ENOTEMPTY';
+        throw error;
+      }
+      deleteNestedValue(filesystem, dirPath);
     }),
     stat: vi.fn(async (filePath: string) => {
       const content = getNestedValue(filesystem, filePath);
