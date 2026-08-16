@@ -136,7 +136,8 @@ export default class CatalogManager implements Disposable {
       this.persister = new CatalogPersister({
         messagesPath: this.config.extract.path,
         codec: await this.getCodec(),
-        extension: getFormatExtension(this.config.messages.format)
+        extension: getFormatExtension(this.config.messages.format),
+        split: this.config.extract.split
       });
       return this.persister;
     }
@@ -151,7 +152,8 @@ export default class CatalogManager implements Disposable {
         messagesDir,
         extension: getFormatExtension(this.config.messages.format),
         locales: this.config.extract.locales,
-        sourceLocale: this.config.extract.sourceLocale
+        sourceLocale: this.config.extract.sourceLocale,
+        split: this.config.extract.split
       });
       return this.catalogLocales;
     }

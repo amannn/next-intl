@@ -117,6 +117,20 @@ It's only required to configure this property when [`messages.path`](#messages-p
 
 See also: [Monorepos and external packages](/docs/usage/extraction#monorepos-external-packages).
 
+#### `extract.split` [#extract-split]
+
+When using [`useExtracted`](/docs/usage/extraction), you can write namespaced messages to separate catalog files:
+
+```tsx
+extract: {
+  split: 'namespace'
+},
+```
+
+With this setting, `useExtracted('ui')` writes to `messages/ui/en.po` (or `.json`) instead of a single `messages/en.po`. Messages without a namespace stay in the root `{locale}` file.
+
+See [namespaces](/docs/usage/extraction#namespaces) for the on-disk layout and how to load the files at runtime.
+
 ### `messages` [#messages]
 
 This defines where messages for locales are stored and how they're loaded.

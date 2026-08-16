@@ -189,7 +189,7 @@ If you want to use an explicit ID instead of the auto-generated one, you can opt
 
 This can be useful when you have a label that is used in multiple places, but should have different translations in other languages. This is an escape hatch that should rarely be necessary.
 
-### Namespaces
+### Namespaces [#namespaces]
 
 If you want to organize your messages under a specific namespace, you can pass it to `useExtracted`:
 
@@ -221,6 +221,37 @@ Namespaces are useful in situations like:
 2. **Splitting:** If you want to pass only certain messages to the client side, this can help to group them accordingly (e.g. `<NextIntlClientProvider messages={messages.client}>`).
 
 It's a good idea to not overuse namespaces, as they can make moving messages between components more difficult if this involves refactoring the namespace.
+
+#### Split catalogs by namespace [#split-catalogs]
+
+By default, all namespaces are written to a single catalog per locale (e.g. `messages/en.po`). For large apps you can opt into one file per namespace with [`extract.split`](/docs/usage/plugin#extract-split):
+
+```tsx
+extract: {
+  split: 'namespace'
+},
+```
+
+This uses the first segment of each message id as the directory name:
+
+```
+messages/
+  en.po              // Unnamespaced messages
+  de.po
+  design-system/en.po
+  design-system/de.po
+```
+
+The files still contain full message ids (`msgctxt "design-system"` in `.po`, or a nested `"design-system"` object in JSON). Load and merge them in `getRequestConfig`:
+
+```tsx
+const messages = {
+  ...(await import(`../../messages/${locale}.po`)).default,
+  ...(await import(`../../messages/design-system/${locale}.po`)).default
+};
+```
+
+Shallow merging is enough because each file owns a distinct top-level key. After you enable `split`, the next extraction rewrites an existing monolith: namespaced entries move into `{namespace}/{locale}` files and translations are preserved.
 
 ### `await getExtracted()` [#get-extracted]
 
