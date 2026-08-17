@@ -13,6 +13,10 @@ publish = false
 [lib]
 crate-type = ["cdylib", "rlib"]
 
+# Note: The compiled Wasm plugin can only be loaded by a compatible
+# `swc_plugin_runner` (see https://swc.rs/docs/plugin/selecting-swc-core).
+# When bumping `swc_core` here, the `@swc/core` range in
+# `packages/next-intl/package.json` needs to be updated in the same change.
 [dependencies]
 base64 = "0.22"
 rustc-hash = "2.1.0"
