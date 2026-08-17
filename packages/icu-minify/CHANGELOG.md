@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.13.7 (2026-08-17)
+
+### Bug Fixes
+
+* Pin `@swc/core` to a range that is compatible with the extractor plugin ([#2389](https://github.com/amannn/next-intl/issues/2389)) ([a37d8aa](https://github.com/amannn/next-intl/commit/a37d8aaec094620cc1f8c345023db833eeebbbed)) – by @amannn
+
 ## 4.13.6 (2026-08-10)
 
 ### Bug Fixes
