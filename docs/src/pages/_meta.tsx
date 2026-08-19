@@ -29,7 +29,7 @@ export default {
       sidebar: false,
       toc: false
     },
-    href: 'https://studio.eloqnt.dev/docs'
+    href: 'https://cli.eloqnt.dev/docs'
   },
   learn: {
     title: 'Learn',
