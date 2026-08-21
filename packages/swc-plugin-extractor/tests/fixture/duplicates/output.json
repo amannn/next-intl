@@ -1,20 +1,42 @@
 [
   {
+    "description": null,
     "id": "OpKKos",
     "message": "Hello!",
-    "description": null,
+    "ranges": {
+      "argument": {
+        "end": 106,
+        "start": 98
+      },
+      "message": {
+        "end": 106,
+        "start": 98
+      }
+    },
     "reference": {
-      "path": "input.js",
-      "line": 5
-    }
+      "line": 5,
+      "path": "input.js"
+    },
+    "type": "extracted"
   },
   {
+    "description": null,
     "id": "OpKKos",
     "message": "Hello!",
-    "description": null,
+    "ranges": {
+      "argument": {
+        "end": 167,
+        "start": 159
+      },
+      "message": {
+        "end": 167,
+        "start": 159
+      }
+    },
     "reference": {
-      "path": "input.js",
-      "line": 10
-    }
+      "line": 10,
+      "path": "input.js"
+    },
+    "type": "extracted"
   }
 ]

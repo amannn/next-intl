@@ -1,11 +1,22 @@
 [
   {
+    "description": null,
     "id": "OpKKos",
     "message": "Hello!",
-    "description": null,
+    "ranges": {
+      "argument": {
+        "end": 120,
+        "start": 112
+      },
+      "message": {
+        "end": 120,
+        "start": 112
+      }
+    },
     "reference": {
-      "path": "input.js",
-      "line": 5
-    }
+      "line": 5,
+      "path": "input.js"
+    },
+    "type": "extracted"
   }
 ]

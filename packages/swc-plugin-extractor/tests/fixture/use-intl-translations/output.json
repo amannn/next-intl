@@ -1,0 +1,18 @@
+[
+  {
+    "id": "Namespace.title",
+    "reference": {
+      "line": 8,
+      "path": "input.js"
+    },
+    "type": "translation"
+  },
+  {
+    "id": "global",
+    "reference": {
+      "line": 9,
+      "path": "input.js"
+    },
+    "type": "translation"
+  }
+]

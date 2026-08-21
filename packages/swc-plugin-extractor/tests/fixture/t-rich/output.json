@@ -1,11 +1,22 @@
 [
   {
+    "description": null,
     "id": "C-nN8a",
     "message": "Hello <b>Alice</b>!",
-    "description": null,
+    "ranges": {
+      "argument": {
+        "end": 122,
+        "start": 101
+      },
+      "message": {
+        "end": 122,
+        "start": 101
+      }
+    },
     "reference": {
-      "path": "input.js",
-      "line": 5
-    }
+      "line": 5,
+      "path": "input.js"
+    },
+    "type": "extracted"
   }
 ]

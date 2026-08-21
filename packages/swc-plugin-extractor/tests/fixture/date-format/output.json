@@ -1,11 +1,22 @@
 [
   {
+    "description": null,
     "id": "5n-ZPU",
     "message": "{date, date, short}!",
-    "description": null,
+    "ranges": {
+      "argument": {
+        "end": 118,
+        "start": 96
+      },
+      "message": {
+        "end": 118,
+        "start": 96
+      }
+    },
     "reference": {
-      "path": "input.js",
-      "line": 5
-    }
+      "line": 5,
+      "path": "input.js"
+    },
+    "type": "extracted"
   }
 ]

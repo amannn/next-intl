@@ -71,6 +71,49 @@ it('extracts same message used multiple times in one file as separate source mes
   `);
 });
 
+it('supports destructuring from `Promise.all`', async () => {
+  const result = await process(
+    `import {getExtracted, getTranslations} from 'next-intl/server';
+
+    async function Component() {
+      const [t, nav] = await Promise.all([
+        getExtracted(),
+        getTranslations('Navigation')
+      ]);
+      t('Hello!');
+      nav('title');
+    }
+  `
+  );
+
+  expect(result.code).toMatchInlineSnapshot(`
+    "import { getTranslations as getTranslations$1, getTranslations } from 'next-intl/server';
+    async function Component() {
+        const [t, nav] = await Promise.all([
+            getTranslations$1(),
+            getTranslations('Navigation')
+        ]);
+        t("OpKKos", void 0, void 0, "Hello!");
+        nav('title');
+    }
+    "
+  `);
+
+  expect(result.messages).toMatchInlineSnapshot(`
+    [
+      {
+        "description": null,
+        "id": "OpKKos",
+        "message": "Hello!",
+        "reference": {
+          "line": 8,
+          "path": "test.tsx",
+        },
+      },
+    ]
+  `);
+});
+
 it('keeps descriptions on separate source message uses', async () => {
   const result = await process(
     `import {useExtracted} from 'next-intl';

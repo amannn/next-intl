@@ -23,18 +23,18 @@ rustc-hash = "2.1.0"
 serde = "1.0.203"
 serde_json = "1.0.117"
 sha2 = "0.10"
-swc_atoms = "9.0.0"
-swc_common = { version = "17.0.0", features = ["concurrent"] }
-swc_core = { version = "47.0.3", features = ["ecma_plugin_transform"] }
-swc_ecma_ast = "18.0.0"
-swc_ecma_utils = "24.0.0"
-swc_ecma_visit = "18.0.0"
-swc_plugin_macro = "1.1.0"
+swc_atoms = "10.0.0"
+swc_common = { version = "26.0.0", features = ["concurrent"] }
+swc_core = { version = "77.0.0", features = ["ecma_plugin_transform"] }
+swc_ecma_ast = "29.0.0"
+swc_ecma_utils = "35.0.0"
+swc_ecma_visit = "29.0.0"
+swc_plugin_macro = "2.0.0"
 
 [dev-dependencies]
-swc_core = { version = "47.0.3", features = ["ecma_parser"] }
-swc_ecma_transforms_testing = "33.0.0"
-testing = "18.0.0"
+swc_core = { version = "77.0.0", features = ["ecma_parser"] }
+swc_ecma_transforms_testing = "53.0.0"
+testing = "27.0.0"
 
 [profile.release]
 codegen-units = 1
