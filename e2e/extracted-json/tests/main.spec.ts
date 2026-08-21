@@ -264,6 +264,54 @@ export default function Greeting() {
   expect((en['ui'] as Record<string, unknown>)['OpKKos']).toBe('Hello!');
 });
 
+it('extracts messages defined with msg() outside of components', async ({
+  page
+}) => {
+  await using _ = await withTempFileApp(
+    'src/labels.ts',
+    `import {msg} from 'next-intl';
+
+export const pending = msg('Pending status');
+export const passwordMin = msg('Password must be at least {length} characters');
+`
+  );
+
+  await using __ = await withTempEditApp(
+    'src/app/page.tsx',
+    `import {useExtracted} from 'next-intl';
+import {pending, passwordMin} from '@/labels';
+import Greeting from '@/components/Greeting';
+import Footer from '@/components/Footer';
+
+export default function Page() {
+  const t = useExtracted();
+  return (
+    <div>
+      <h1>{t('Hello')}</h1>
+      <p>{t(pending)}</p>
+      <p>{t(passwordMin, {length: 8})}</p>
+      <Greeting />
+      <Footer />
+    </div>
+  );
+}
+`
+  );
+
+  await page.goto('/');
+  await expect(page.getByText('Pending status')).toBeVisible();
+  await expect(
+    page.getByText('Password must be at least 8 characters')
+  ).toBeVisible();
+  const en = await expectCatalogPredicate('en.json', (json) =>
+    JSON.stringify(json).includes('Pending status')
+  );
+  expect(JSON.stringify(en)).toContain('Pending status');
+  expect(JSON.stringify(en)).toContain(
+    'Password must be at least {length} characters'
+  );
+});
+
 it('handles parse errors', async ({page}) => {
   await using _ = await withTempFileApp(
     'src/components/Invalid.tsx',

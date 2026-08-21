@@ -1,0 +1,1 @@
+{"version":3,"sources":["input.js"],"sourcesContent":["import { msg } from \"next-intl\";\n\nconst pending = msg(\"Pending\");\n"],"names":[],"mappings":"AAAA,SAAS,GAAG,QAAQ,YAAY;AAEhC,MAAM,UAAU"}

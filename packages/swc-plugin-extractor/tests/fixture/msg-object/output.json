@@ -1,0 +1,29 @@
+[
+  {
+    "id": "jvo0vs",
+    "message": "Save",
+    "description": "Form submit button",
+    "reference": {
+      "path": "input.js",
+      "line": 3
+    }
+  },
+  {
+    "id": "status.pending",
+    "message": "Pending",
+    "description": null,
+    "reference": {
+      "path": "input.js",
+      "line": 8
+    }
+  },
+  {
+    "id": "validation.Seanpx",
+    "message": "Required",
+    "description": null,
+    "reference": {
+      "path": "input.js",
+      "line": 13
+    }
+  }
+]

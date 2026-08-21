@@ -215,10 +215,63 @@ export default function Invalid() {
     );
   });
 
-  it('throws when using a variable reference', async () => {
-    await expect(async () => {
-      await process(
-        `
+  it('allows resolving a msg() descriptor via an identifier', async () => {
+    const result = await process(
+      `
+    import {msg, useExtracted} from 'next-intl';
+
+    const pending = msg('Pending');
+
+    function Component() {
+      const t = useExtracted();
+      t(pending);
+    }
+    `
+    );
+
+    expect(result.messages).toMatchInlineSnapshot(`
+      [
+        {
+          "description": null,
+          "id": "eKEL_g",
+          "message": "Pending",
+          "reference": {
+            "line": 4,
+            "path": "test.tsx",
+          },
+        },
+      ]
+    `);
+    expect(result.code).toContain('t(pending)');
+    expect(result.code).toContain('"eKEL_g"');
+  });
+
+  it('extracts messages from a file that only uses msg()', async () => {
+    const result = await process(
+      `
+    import {msg} from 'next-intl';
+
+    export const pending = msg('Pending');
+    `
+    );
+
+    expect(result.messages).toEqual([
+      {
+        description: null,
+        id: 'eKEL_g',
+        message: 'Pending',
+        reference: {
+          line: 4,
+          path: 'test.tsx'
+        }
+      }
+    ]);
+    expect(result.code).toContain('export const pending = "eKEL_g"');
+  });
+
+  it('does not treat a plain identifier as an inline message', async () => {
+    const result = await process(
+      `
     import {useExtracted} from 'next-intl';
 
     function Component() {
@@ -227,10 +280,10 @@ export default function Invalid() {
       t(message);
     }
     `
-      );
-    }).rejects.toThrow(
-      'Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
     );
+
+    expect(result.messages).toEqual([]);
+    expect(result.code).toContain('t(message)');
   });
 
   it('throws when using a function call', async () => {

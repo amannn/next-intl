@@ -3,7 +3,7 @@
 
 mod key_generator;
 
-use rustc_hash::FxHashMap;
+use rustc_hash::{FxHashMap, FxHashSet};
 use serde::{Deserialize, Serialize};
 use swc_atoms::Wtf8Atom;
 use swc_common::{errors::HANDLER, Spanned, DUMMY_SP};
@@ -56,6 +56,8 @@ pub struct TransformVisitor {
 
     hook_local_names: FxHashMap<Id, HookType>,
 
+    msg_local_names: FxHashSet<Id>,
+
     translator_map: FxHashMap<Id, TranslatorInfo>,
 
     /// Each statically extracted source-code usage in discovery order.
@@ -73,6 +75,7 @@ impl TransformVisitor {
             file_path,
             source_map,
             hook_local_names: Default::default(),
+            msg_local_names: Default::default(),
             translator_map: Default::default(),
             results: Default::default(),
         }
@@ -85,6 +88,107 @@ impl TransformVisitor {
     fn define_translator(&mut self, name: Id, namespace: Option<Wtf8Atom>) {
         self.translator_map
             .insert(name, TranslatorInfo { namespace });
+    }
+
+    fn is_msg_call(&self, call: &CallExpr) -> bool {
+        match &call.callee {
+            Callee::Expr(box Expr::Ident(ident)) => self.msg_local_names.contains(&ident.to_id()),
+            _ => false,
+        }
+    }
+
+    fn is_pass_through_message_arg(&self, expr: &Expr) -> bool {
+        match expr {
+            Expr::Ident(_) | Expr::Member(_) | Expr::OptChain(_) => true,
+            Expr::Call(call) => self.is_msg_call(call),
+            Expr::Paren(paren) => self.is_pass_through_message_arg(&paren.expr),
+            Expr::TsAs(ts_as) => self.is_pass_through_message_arg(&ts_as.expr),
+            Expr::TsTypeAssertion(assertion) => self.is_pass_through_message_arg(&assertion.expr),
+            Expr::TsConstAssertion(assertion) => self.is_pass_through_message_arg(&assertion.expr),
+            Expr::TsNonNull(non_null) => self.is_pass_through_message_arg(&non_null.expr),
+            Expr::TsSatisfies(satisfies) => self.is_pass_through_message_arg(&satisfies.expr),
+            _ => false,
+        }
+    }
+
+    fn extract_msg(&mut self, call: &CallExpr) -> Option<Wtf8Atom> {
+        let arg0 = call.args.first()?;
+
+        let mut message_text = None;
+        let mut explicit_id = None;
+        let mut description = None;
+        let mut namespace = None;
+
+        match &*arg0.expr {
+            Expr::Object(ObjectLit { props, .. }) => {
+                for prop in props {
+                    if let PropOrSpread::Prop(box Prop::KeyValue(KeyValueProp {
+                        key: PropName::Ident(key),
+                        value,
+                        ..
+                    })) = prop
+                    {
+                        if key.sym == "id" {
+                            if let Some(static_id) = extract_static_string(value) {
+                                explicit_id = Some(static_id);
+                            } else {
+                                warn_dynamic_expression(value);
+                            }
+                        } else if key.sym == "message" {
+                            if let Some(static_message) = extract_static_string(value) {
+                                message_text = Some(static_message);
+                            } else {
+                                warn_dynamic_expression(value);
+                            }
+                        } else if key.sym == "description" {
+                            if let Some(static_description) = extract_static_string(value) {
+                                description = Some(static_description);
+                            } else {
+                                warn_dynamic_expression(value);
+                            }
+                        } else if key.sym == "namespace" {
+                            if let Some(static_namespace) = extract_static_string(value) {
+                                namespace = Some(static_namespace);
+                            } else {
+                                warn_dynamic_expression(value);
+                            }
+                        }
+                    }
+                }
+            }
+            _ => {
+                if let Some(static_string) = extract_static_string(&arg0.expr) {
+                    message_text = Some(static_string);
+                } else {
+                    warn_dynamic_expression(&arg0.expr);
+                }
+            }
+        }
+
+        let message_text = message_text?;
+        let call_key = explicit_id
+            .unwrap_or_else(|| key_generator::KeyGenerator::generate(&message_text).into());
+        let full_key = namespace.map_or(call_key.clone(), |namespace| {
+            [&*namespace.to_string_lossy(), &*call_key.to_string_lossy()]
+                .join(NAMESPACE_SEPARATOR)
+                .into()
+        });
+        let line = self
+            .source_map
+            .as_ref()
+            .map_or(0, |sm| sm.lookup_char_pos(call.span.lo).line);
+
+        self.results.push(SourceMessage {
+            id: full_key.clone(),
+            message: message_text,
+            description,
+            reference: Reference {
+                path: self.file_path.clone(),
+                line,
+            },
+        });
+
+        Some(full_key)
     }
 }
 
@@ -140,6 +244,23 @@ impl HookType {
 }
 
 impl VisitMut for TransformVisitor {
+    fn visit_mut_expr(&mut self, expr: &mut Expr) {
+        if let Expr::Call(call) = expr {
+            if self.is_msg_call(call) {
+                if let Some(full_key) = self.extract_msg(call) {
+                    *expr = Expr::Lit(Lit::Str(Str {
+                        span: call.span,
+                        value: full_key,
+                        raw: None,
+                    }));
+                    return;
+                }
+            }
+        }
+
+        expr.visit_mut_children_with(self);
+    }
+
     fn visit_mut_call_expr(&mut self, call: &mut CallExpr) {
         let mut is_translator_call = false;
         let mut namespace = None;
@@ -171,6 +292,9 @@ impl VisitMut for TransformVisitor {
 
         if is_translator_call {
             let arg0 = call.args.first();
+            let is_pass_through = arg0
+                .map(|arg| self.is_pass_through_message_arg(&arg.expr))
+                .unwrap_or(false);
 
             let mut message_text = None;
             let mut explicit_id = None;
@@ -179,53 +303,57 @@ impl VisitMut for TransformVisitor {
             let mut formats_node = None;
 
             if let Some(arg0) = arg0 {
-                match &*arg0.expr {
-                    // Handle object syntax: t({id: 'key', message: 'text'})
-                    Expr::Object(ObjectLit { props, .. }) => {
-                        for prop in props {
-                            if let PropOrSpread::Prop(box Prop::KeyValue(KeyValueProp {
-                                key: PropName::Ident(key),
-                                value,
-                                ..
-                            })) = prop
-                            {
-                                if key.sym == "id" {
-                                    let static_id = extract_static_string(value);
-                                    if let Some(static_id) = static_id {
-                                        explicit_id = Some(static_id);
+                if is_pass_through {
+                    // Descriptor from `msg()` — already extracted at the definition site.
+                } else {
+                    match &*arg0.expr {
+                        // Handle object syntax: t({id: 'key', message: 'text'})
+                        Expr::Object(ObjectLit { props, .. }) => {
+                            for prop in props {
+                                if let PropOrSpread::Prop(box Prop::KeyValue(KeyValueProp {
+                                    key: PropName::Ident(key),
+                                    value,
+                                    ..
+                                })) = prop
+                                {
+                                    if key.sym == "id" {
+                                        let static_id = extract_static_string(value);
+                                        if let Some(static_id) = static_id {
+                                            explicit_id = Some(static_id);
+                                        }
+                                    } else if key.sym == "message" {
+                                        let static_message = extract_static_string(value);
+                                        if let Some(static_message) = static_message {
+                                            message_text = Some(static_message);
+                                        } else {
+                                            warn_dynamic_expression(value);
+                                        }
+                                    } else if key.sym == "description" {
+                                        let static_description = extract_static_string(value);
+                                        if let Some(static_description) = static_description {
+                                            description = Some(static_description);
+                                        } else {
+                                            warn_dynamic_expression(value);
+                                        }
+                                    } else if key.sym == "values" {
+                                        values_node = Some(value.clone());
+                                    } else if key.sym == "formats" {
+                                        formats_node = Some(value.clone());
                                     }
-                                } else if key.sym == "message" {
-                                    let static_message = extract_static_string(value);
-                                    if let Some(static_message) = static_message {
-                                        message_text = Some(static_message);
-                                    } else {
-                                        warn_dynamic_expression(value);
-                                    }
-                                } else if key.sym == "description" {
-                                    let static_description = extract_static_string(value);
-                                    if let Some(static_description) = static_description {
-                                        description = Some(static_description);
-                                    } else {
-                                        warn_dynamic_expression(value);
-                                    }
-                                } else if key.sym == "values" {
-                                    values_node = Some(value.clone());
-                                } else if key.sym == "formats" {
-                                    formats_node = Some(value.clone());
                                 }
                             }
                         }
-                    }
 
-                    // Handle string syntax: t('text') or t(`text`)
-                    _ => {
-                        let static_string = extract_static_string(&arg0.expr);
-                        if let Some(static_string) = static_string {
-                            message_text = Some(static_string);
-                        } else {
-                            // Dynamic expression (Identifier, CallExpression, BinaryExpression,
-                            // etc.)
-                            warn_dynamic_expression(&arg0.expr);
+                        // Handle string syntax: t('text') or t(`text`)
+                        _ => {
+                            let static_string = extract_static_string(&arg0.expr);
+                            if let Some(static_string) = static_string {
+                                message_text = Some(static_string);
+                            } else {
+                                // Dynamic expression (Identifier, CallExpression, BinaryExpression,
+                                // etc.)
+                                warn_dynamic_expression(&arg0.expr);
+                            }
                         }
                     }
                 }
@@ -347,7 +475,7 @@ impl VisitMut for TransformVisitor {
         for import in module.body.iter_mut() {
             if let ModuleItem::ModuleDecl(ModuleDecl::Import(import)) = import {
                 match import.src.value.as_bytes() {
-                    b"next-intl" => {
+                    b"next-intl" | b"use-intl" | b"use-intl/core" => {
                         for specifier in &mut import.specifiers {
                             if let ImportSpecifier::Named(named_spec) = specifier {
                                 let orig_name = named_spec
@@ -360,7 +488,13 @@ impl VisitMut for TransformVisitor {
                                     .unwrap_or_else(|| named_spec.local.sym.clone())
                                     .clone();
 
-                                if orig_name == HookType::UseTranslation.extracted_name() {
+                                if orig_name == "msg" || orig_name == "defineMessage" {
+                                    self.msg_local_names.insert(named_spec.local.to_id());
+                                }
+
+                                if orig_name == HookType::UseTranslation.extracted_name()
+                                    && import.src.value.as_bytes() == b"next-intl"
+                                {
                                     self.hook_local_names
                                         .insert(named_spec.local.to_id(), HookType::UseTranslation);
 

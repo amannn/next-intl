@@ -1,0 +1,29 @@
+[
+  {
+    "id": "eKEL_g",
+    "message": "Pending",
+    "description": null,
+    "reference": {
+      "path": "input.js",
+      "line": 3
+    }
+  },
+  {
+    "id": "wafoOY",
+    "message": "Hello {name}!",
+    "description": null,
+    "reference": {
+      "path": "input.js",
+      "line": 4
+    }
+  },
+  {
+    "id": "OtIOMb",
+    "message": "Shipped",
+    "description": null,
+    "reference": {
+      "path": "input.js",
+      "line": 8
+    }
+  }
+]

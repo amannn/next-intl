@@ -42,7 +42,12 @@ export default class MessageExtractor {
     // Shortcut parsing if hook is not used. The Turbopack integration already
     // pre-filters this, but for webpack this feature doesn't exist, so we need
     // to do it here.
-    if (!source.includes('useExtracted') && !source.includes('getExtracted')) {
+    if (
+      !source.includes('useExtracted') &&
+      !source.includes('getExtracted') &&
+      !source.includes('defineMessage') &&
+      !source.includes('msg(')
+    ) {
       return {messages: [], code: source};
     }
 

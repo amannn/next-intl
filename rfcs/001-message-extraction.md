@@ -505,19 +505,11 @@ If we did allow this, it would still come with tradeoffs like having to extract 
 
 ### Macro for defining messages
 
-Other solutions allow defining messages outside of components, e.g.:
+A tagged-template `msg\`Hello ${name}\`` that captures values at definition time was rejected: it loses ICU type-safety and cannot express Zod-style messages whose values only exist at render time.
 
-```tsx
-// Define a message …
-const message = msg`Hello {name}`;
+`msg()` / `defineMessage()` as a function that compiles to a branded catalog key is supported. Messages are attributed to the defining file (`reference.path`). A future per-route split ([next-intl#1](https://github.com/amannn/next-intl/issues/1)) includes every `msg()` from modules in that route's graph (file-level de-opt). Formatting still happens at `t()` / `getExtracted()` time, so translations do not go stale.
 
-// … and use it later
-t(message, {name: 'John'});
-```
-
-The issue with this pattern is that we can't statically analyze which module graphs use which messages (related to [next-intl#1](https://github.com/amannn/next-intl/issues/1)).
-
-Additionally, we already restrict calls to `t` to be in components to avoid [stale translations](https://next-intl.dev/blog/translations-outside-of-react-components), so potentially it could simplify the mental model to also not allow the definition of messages outside of components.
+See: [Defining messages outside of components](https://next-intl.dev/docs/usage/extraction#msg)
 
 Related: [Statically analyzable](#statically-analyzable)
 

@@ -1,0 +1,11 @@
+[
+  {
+    "id": "NhX4DJ",
+    "message": "Hello",
+    "description": null,
+    "reference": {
+      "path": "input.js",
+      "line": 5
+    }
+  }
+]
