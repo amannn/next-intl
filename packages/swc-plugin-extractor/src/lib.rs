@@ -522,7 +522,7 @@ impl VisitMut for TransformVisitor {
                 continue;
             };
             let extracted_hook = match import.src.value.as_bytes() {
-                b"next-intl" => ExtractedHook::Client,
+                b"next-intl" | b"use-intl" | b"use-intl/react" => ExtractedHook::Client,
                 b"next-intl/server" => ExtractedHook::Server,
                 _ => continue,
             };

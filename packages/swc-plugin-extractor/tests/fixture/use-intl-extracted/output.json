@@ -1,0 +1,22 @@
+[
+  {
+    "description": null,
+    "id": "-YJVTi",
+    "message": "Hey!",
+    "ranges": {
+      "argument": {
+        "end": 101,
+        "start": 95
+      },
+      "message": {
+        "end": 101,
+        "start": 95
+      }
+    },
+    "reference": {
+      "line": 5,
+      "path": "input.js"
+    },
+    "type": "extracted"
+  }
+]

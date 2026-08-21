@@ -1,0 +1,1 @@
+{"version":3,"sources":["input.js"],"sourcesContent":["import {useExtracted} from 'use-intl';\n\nfunction Component() {\n  const t = useExtracted();\n  t('Hey!');\n}\n"],"names":[],"mappings":"AAAA,SAAQ,oCAAY,QAAO,WAAW;AAEtC,SAAS;IACP,MAAM,IAAI;IACV,EAAE;AACJ"}
