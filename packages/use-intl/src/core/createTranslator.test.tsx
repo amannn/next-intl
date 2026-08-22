@@ -228,6 +228,75 @@ describe('type safety', () => {
     });
   });
 
+  describe('keys, union messages type', () => {
+    type MessagesEn = {meta: {title: 'title'; description: 'description'}};
+    type MessagesEs = {meta: {title: 'title-es'}};
+    type MessagesUnion = MessagesEn | MessagesEs;
+
+    it('allows keys present in all union members', () => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        const t = createTranslator<MessagesUnion>({
+          locale: 'en',
+          messages: {meta: {title: 'title', description: 'description'}}
+        });
+        t('meta.title');
+
+        const tMeta = createTranslator<MessagesUnion, 'meta'>({
+          locale: 'en',
+          namespace: 'meta',
+          messages: {meta: {title: 'title', description: 'description'}}
+        });
+        tMeta('title');
+      };
+    });
+
+    it('requires params from all union members when a key has different args', () => {
+      type MessagesWithParamsEn = {title: 'Hello {name}'};
+      type MessagesWithParamsEs = {title: 'Hola {count, number}'};
+      type MessagesWithParamsUnion =
+        | MessagesWithParamsEn
+        | MessagesWithParamsEs;
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        const t = createTranslator<MessagesWithParamsUnion>({
+          locale: 'en',
+          messages: {title: 'Hello {name}'}
+        });
+
+        // Providing all params from all union members is valid
+        t('title', {name: 'John', count: 5});
+
+        // Providing only some params is an error
+        // @ts-expect-error
+        t('title', {name: 'John'});
+        // @ts-expect-error
+        t('title', {count: 5});
+      };
+    });
+
+    it('disallows keys missing in some union members', () => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        const t = createTranslator<MessagesUnion>({
+          locale: 'en',
+          messages: {meta: {title: 'title', description: 'description'}}
+        });
+        // @ts-expect-error
+        t('meta.description');
+
+        const tMeta = createTranslator<MessagesUnion, 'meta'>({
+          locale: 'en',
+          namespace: 'meta',
+          messages: {meta: {title: 'title', description: 'description'}}
+        });
+        // @ts-expect-error
+        tMeta('description');
+      };
+    });
+  });
+
   describe('params, strictly-typed', () => {
     function translateMessage<const T extends string>(msg: T) {
       return createTranslator({
