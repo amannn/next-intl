@@ -118,6 +118,9 @@ export default function getNextConfig(
           format: messages.format,
           ...(messages.precompile !== undefined && {
             precompile: messages.precompile
+          }),
+          ...(messages.sourceLocale !== undefined && {
+            sourceLocale: messages.sourceLocale
           })
         }
       } satisfies CatalogLoaderConfig as TurbopackLoaderOptions

@@ -87,5 +87,6 @@ export type CatalogLoaderConfig = {
   messages: {
     format: MessagesFormat;
     precompile?: boolean;
+    sourceLocale?: Locale;
   };
 };

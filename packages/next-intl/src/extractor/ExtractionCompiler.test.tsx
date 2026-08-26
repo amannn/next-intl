@@ -772,13 +772,9 @@ describe('po format', {timeout: 20_000}, () => {
           "msgid ""
       msgstr ""
       "Language: en\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
 
       #: src/component-b.tsx
-      msgid "OpKKos"
+      msgid "Hello!"
       msgstr "Hello!"
       ",
         ],
@@ -787,13 +783,9 @@ describe('po format', {timeout: 20_000}, () => {
           "msgid ""
       msgstr ""
       "Language: de\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
 
       #: src/component-b.tsx
-      msgid "OpKKos"
+      msgid "Hello!"
       msgstr ""
       ",
         ],
@@ -836,13 +828,9 @@ describe('po format', {timeout: 20_000}, () => {
           "msgid ""
       msgstr ""
       "Language: en\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
 
       #: src/component-b.tsx
-      msgid "OpKKos"
+      msgid "Hello!"
       msgstr "Hello!"
       ",
         ],
@@ -851,13 +839,9 @@ describe('po format', {timeout: 20_000}, () => {
           "msgid ""
       msgstr ""
       "Language: de\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
 
       #: src/component-b.tsx
-      msgid "OpKKos"
+      msgid "Hello!"
       msgstr ""
       ",
         ],
@@ -893,15 +877,17 @@ describe('po format', {timeout: 20_000}, () => {
       "Language: en\\n"
       "Content-Type: text/plain; charset=utf-8\\n"
       "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
+      "X-Generator: @eloqnt/format-po\\n"
+      "X-Message-Key: msgctxt\\n"
 
       #: src/app/page.tsx
-      msgid "NhX4DJ"
+      msgctxt "NhX4DJ"
+      msgid "Hello"
       msgstr "Hello"
 
       #: src/components/Header.tsx
-      msgid "PwaN2o"
+      msgctxt "PwaN2o"
+      msgid "Welcome"
       msgstr "Welcome"
       ",
       ]
@@ -918,15 +904,25 @@ describe('po format', {timeout: 20_000}, () => {
     `;
     filesystem.project.messages = {
       'en.po': `
+      msgid ""
+      msgstr ""
+      "X-Message-Key: msgctxt\\n"
+
       #: src/Greeting.tsx
       #, fuzzy
-      msgid "-YJVTi"
+      msgctxt "-YJVTi"
+      msgid "Hey!"
       msgstr "Hey!"
       `,
       'de.po': `
+      msgid ""
+      msgstr ""
+      "X-Message-Key: msgctxt\\n"
+
       #: src/Greeting.tsx
       #, c-format
-      msgid "-YJVTi"
+      msgctxt "-YJVTi"
+      msgid "Hey!"
       msgstr "Hallo!"
       `
     };
@@ -944,12 +940,13 @@ describe('po format', {timeout: 20_000}, () => {
       "Language: en\\n"
       "Content-Type: text/plain; charset=utf-8\\n"
       "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
+      "X-Generator: @eloqnt/format-po\\n"
+      "X-Message-Key: msgctxt\\n"
 
       #: src/Greeting.tsx
       #, fuzzy
-      msgid "-YJVTi"
+      msgctxt "-YJVTi"
+      msgid "Hey!"
       msgstr "Hey!"
       ",
         ],
@@ -960,12 +957,13 @@ describe('po format', {timeout: 20_000}, () => {
       "Language: de\\n"
       "Content-Type: text/plain; charset=utf-8\\n"
       "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
+      "X-Generator: @eloqnt/format-po\\n"
+      "X-Message-Key: msgctxt\\n"
 
       #: src/Greeting.tsx
       #, c-format
-      msgid "-YJVTi"
+      msgctxt "-YJVTi"
+      msgid "Hey!"
       msgstr "Hallo!"
       ",
         ],
@@ -994,20 +992,23 @@ describe('po format', {timeout: 20_000}, () => {
       "Language: en\\n"
       "Content-Type: text/plain; charset=utf-8\\n"
       "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
+      "X-Generator: @eloqnt/format-po\\n"
+      "X-Message-Key: msgctxt\\n"
 
       #: src/a.tsx
-      msgid "PmvAXH"
+      msgctxt "PmvAXH"
+      msgid "Message A"
       msgstr "Message A"
 
       #: src/b.tsx
       #: src/d.tsx
-      msgid "5bb321"
+      msgctxt "5bb321"
+      msgid "Message B"
       msgstr "Message B"
 
       #: src/c.tsx
-      msgid "c3UbA2"
+      msgctxt "c3UbA2"
+      msgid "Message C"
       msgstr "Message C"
       ",
       ]
@@ -1076,15 +1077,25 @@ describe('po format', {timeout: 20_000}, () => {
     `;
     filesystem.project.messages = {
       'en.po': `
+      msgid ""
+      msgstr ""
+      "X-Message-Key: msgctxt\\n"
+
       #: src/Greeting.tsx
       #, fuzzy, c-format
-      msgid "-YJVTi"
+      msgctxt "-YJVTi"
+      msgid "Hey!"
       msgstr "Hey!"
       `,
       'de.po': `
+      msgid ""
+      msgstr ""
+      "X-Message-Key: msgctxt\\n"
+
       #: src/Greeting.tsx
       #, fuzzy, no-wrap
-      msgid "-YJVTi"
+      msgctxt "-YJVTi"
+      msgid "Hey!"
       msgstr "Hallo!"
       `
     };
@@ -1100,10 +1111,12 @@ describe('po format', {timeout: 20_000}, () => {
       `msgid ""
 msgstr ""
 "Language: en\\n"
+"X-Message-Key: msgctxt\\n"
 
 #: src/Greeting.tsx
 #, c-format
-msgid "-YJVTi"
+msgctxt "-YJVTi"
+msgid "Hey!"
 msgstr "Hey!"
 `
     );
@@ -1133,16 +1146,18 @@ msgstr "Hey!"
       "Language: en\\n"
       "Content-Type: text/plain; charset=utf-8\\n"
       "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
+      "X-Generator: @eloqnt/format-po\\n"
+      "X-Message-Key: msgctxt\\n"
 
       #: src/Greeting.tsx
       #, c-format
-      msgid "-YJVTi"
+      msgctxt "-YJVTi"
+      msgid "Hey!"
       msgstr "Hey!"
 
       #: src/Greeting.tsx
-      msgid "jqdzk6"
+      msgctxt "jqdzk6"
+      msgid "World"
       msgstr "World"
       ",
       ]
@@ -1154,13 +1169,16 @@ msgstr "Hey!"
       `msgid ""
 msgstr ""
 "Language: en\\n"
+"X-Message-Key: msgctxt\\n"
 
 #: src/Greeting.tsx
-msgid "-YJVTi"
+msgctxt "-YJVTi"
+msgid "Hey!"
 msgstr "Hey!"
 
 #: src/Greeting.tsx
-msgid "sJM+Xd"
+msgctxt "sJM+Xd"
+msgid "World"
 msgstr "World"
 `
     );
@@ -1190,19 +1208,22 @@ msgstr "World"
       "Language: en\\n"
       "Content-Type: text/plain; charset=utf-8\\n"
       "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
+      "X-Generator: @eloqnt/format-po\\n"
+      "X-Message-Key: msgctxt\\n"
 
       #: src/Greeting.tsx
-      msgid "-YJVTi"
+      msgctxt "-YJVTi"
+      msgid "Hey!"
       msgstr "Hey!"
 
       #: src/Greeting.tsx
-      msgid "jqdzk6"
+      msgctxt "jqdzk6"
+      msgid "World"
       msgstr "World"
 
       #: src/Greeting.tsx
-      msgid "ODGmph"
+      msgctxt "ODGmph"
+      msgid "!"
       msgstr "!"
       ",
       ]
@@ -1253,26 +1274,22 @@ msgstr ""
         "msgid ""
       msgstr ""
       "Language: de\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
 
       #: src/Greeting.tsx
       #, no-wrap
-      msgid "-YJVTi"
+      msgid "Hey!"
       msgstr "Hallo!"
 
       #: src/Greeting.tsx
-      msgid "jqdzk6"
+      msgid "World"
       msgstr ""
 
       #: src/Greeting.tsx
-      msgid "ODGmph"
+      msgid "!"
       msgstr ""
 
       #: src/Greeting.tsx
-      msgid "pE58D7"
+      msgid "Extra"
       msgstr ""
       ",
       ]
@@ -1326,29 +1343,25 @@ msgstr ""
         "msgid ""
       msgstr ""
       "Language: de\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
 
       #: src/Greeting.tsx
-      msgid "-YJVTi"
+      msgid "Hey!"
       msgstr "Hallo!"
 
       #: src/Greeting.tsx
-      msgid "jqdzk6"
+      msgid "World"
       msgstr ""
 
       #: src/Greeting.tsx
-      msgid "ODGmph"
+      msgid "!"
       msgstr ""
 
       #: src/Greeting.tsx
-      msgid "pE58D7"
+      msgid "Extra"
       msgstr ""
 
       #: src/Greeting.tsx
-      msgid "I5NMJ8"
+      msgid "More"
       msgstr ""
       ",
       ]
@@ -1418,14 +1431,10 @@ msgstr ""
           "msgid ""
       msgstr ""
       "Language: en\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
 
       #: src/Greeting.tsx
       #, c-format
-      msgid "OpKKos"
+      msgid "Hello!"
       msgstr "Hello!"
       ",
         ],
@@ -1434,14 +1443,10 @@ msgstr ""
           "msgid ""
       msgstr ""
       "Language: de\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
 
       #: src/Greeting.tsx
       #, fuzzy
-      msgid "OpKKos"
+      msgid "Hello!"
       msgstr "Hallo!"
       ",
         ],
@@ -1450,18 +1455,14 @@ msgstr ""
           "msgid ""
       msgstr ""
       "Language: en\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
 
       #: src/Greeting.tsx
       #, c-format
-      msgid "OpKKos"
+      msgid "Hello!"
       msgstr "Hello!"
 
       #: src/Greeting.tsx
-      msgid "nm_7yQ"
+      msgid "Hi!"
       msgstr "Hi!"
       ",
         ],
@@ -1470,18 +1471,14 @@ msgstr ""
           "msgid ""
       msgstr ""
       "Language: de\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
 
       #: src/Greeting.tsx
       #, fuzzy
-      msgid "OpKKos"
+      msgid "Hello!"
       msgstr "Hallo!"
 
       #: src/Greeting.tsx
-      msgid "nm_7yQ"
+      msgid "Hi!"
       msgstr ""
       ",
         ],
@@ -1699,10 +1696,6 @@ msgstr "Hallo!"`
           "msgid ""
         msgstr ""
         "Language: en\\n"
-        "Content-Type: text/plain; charset=utf-8\\n"
-        "Content-Transfer-Encoding: 8bit\\n"
-        "X-Generator: next-intl\\n"
-        "X-Crowdin-SourceKey: msgstr\\n"
         ",
         ]
       `);
@@ -1766,13 +1759,9 @@ msgstr "Hallo!"`
           "msgid ""
         msgstr ""
         "Language: en\\n"
-        "Content-Type: text/plain; charset=utf-8\\n"
-        "Content-Transfer-Encoding: 8bit\\n"
-        "X-Generator: next-intl\\n"
-        "X-Crowdin-SourceKey: msgstr\\n"
 
         #: src/new/Button.tsx
-        msgid "cfI2fq"
+        msgid "Click me updated"
         msgstr "Click me updated"
         ",
         ]
@@ -1952,131 +1941,6 @@ describe('custom format', () => {
           "message": "Submit"
         }
       }
-      ",
-        ],
-      ]
-    `);
-  });
-
-  it('supports a custom PO format that uses source messages as msgid', async () => {
-    filesystem.project.src['Greeting.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    function Greeting() {
-      const t = useExtracted();
-      return <div>{t('Hello!')}</div>;
-    }
-    `;
-    filesystem.project.messages = {
-      'en.po': `
-      #: src/Greeting.tsx
-      msgctxt "OpKKos"
-      msgid "Hello!"
-      msgstr "Hello!"
-      `,
-      'de.po': `
-      #: src/Greeting.tsx
-      msgctxt "OpKKos"
-      msgid "Hello!"
-      msgstr "Hallo!"
-      `
-    };
-
-    using compiler = new ExtractionCompiler(
-      {
-        extract: {
-          locales: 'infer',
-          path: './messages',
-          sourceLocale: 'en',
-          srcPath: './src'
-        },
-        messages: {
-          format: {
-            codec: path.resolve(
-              __dirname,
-              'format/codecs/fixtures/POCodecSourceMessageKey.tsx'
-            ),
-            extension: '.po'
-          },
-          path: ['./messages']
-        }
-      },
-      {
-        isDevelopment: true,
-        projectRoot: '/project',
-        saveDebounceMs: 0
-      }
-    );
-
-    filesystem.project.src['Greeting.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    function Greeting() {
-      const t = useExtracted();
-      return <div>{t('Hello!')}</div>;
-    }
-    function Error() {
-      const t = useExtracted('misc');
-      return (
-        <div>
-          {t('The code you entered is incorrect. Please try again or contact support@example.com.')}
-          {t("Checking if you're logged in.")}
-        </div>
-      );
-    }
-    `;
-
-    await compiler.extractAll();
-
-    await waitForWriteFileCalls(2);
-    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
-      [
-        [
-          "messages/en.po",
-          "msgid ""
-      msgstr ""
-      "Language: en\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-
-      #: src/Greeting.tsx
-      msgctxt "OpKKos"
-      msgid "Hello!"
-      msgstr "Hello!"
-
-      #: src/Greeting.tsx
-      msgctxt "misc.l6ZjWT"
-      msgid "The code you entered is incorrect. Please try again or contact support@example.com."
-      msgstr "The code you entered is incorrect. Please try again or contact support@example.com."
-
-      #: src/Greeting.tsx
-      msgctxt "misc.Fp6Fab"
-      msgid "Checking if you're logged in."
-      msgstr "Checking if you're logged in."
-      ",
-        ],
-        [
-          "messages/de.po",
-          "msgid ""
-      msgstr ""
-      "Language: de\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-
-      #: src/Greeting.tsx
-      msgctxt "OpKKos"
-      msgid "Hello!"
-      msgstr "Hallo!"
-
-      #: src/Greeting.tsx
-      msgctxt "misc.l6ZjWT"
-      msgid "The code you entered is incorrect. Please try again or contact support@example.com."
-      msgstr ""
-
-      #: src/Greeting.tsx
-      msgctxt "misc.Fp6Fab"
-      msgid "Checking if you're logged in."
-      msgstr ""
       ",
         ],
       ]

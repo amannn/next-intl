@@ -2,6 +2,12 @@ import type {ExtractorMessage, Locale} from '../types.js';
 
 type ExtractorCodecContext = {
   locale: Locale;
+  /**
+   * The configured source locale, when known. Lets a codec apply
+   * source-catalog conventions on decode, e.g. gettext's empty `msgstr` for
+   * source-locale entries.
+   */
+  sourceLocale?: Locale;
 };
 
 export default interface ExtractorCodec {

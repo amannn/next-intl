@@ -225,25 +225,19 @@ Translations can be AI-generated with tools like [eloqnt/studio](https://studio.
 
 ##### PO format [#formats-po]
 
-When using this option, your messages will look like this:
+The PO format is provided by [`@eloqnt/format-po`](https://cli.eloqnt.dev/docs/formats/po) and follows the gettext convention of storing the source text in `msgid`, while the message key is stored in `msgctxt`:
 
 ```po
 #. Advance to the next slide
 #: src/components/Carousel.tsx
-msgid "carousel.next"
-msgstr "Right"
+msgctxt "5VpL9Z"
+msgid "Right"
+msgstr "Rechts"
 ```
 
-… or in case of [`useExtracted`](/docs/usage/extraction), with an auto-generated key:
+This keeps catalogs readable in diffs, PO editors and translation platforms, while [`useExtracted`](/docs/usage/extraction) continues to look up messages by their auto-generated key. Besides the message key and the label itself, this format also supports optional descriptions and file references for modules that consume this message.
 
-```po
-#. Advance to the next slide
-#: src/components/Carousel.tsx
-msgid "5VpL9Z"
-msgstr "Right"
-```
-
-Besides the message key and the label itself, this format also supports optional descriptions and file references for modules that consume this message.
+Catalogs identify their layout via a header and are written back in the layout they were read in, so files created by earlier versions of next-intl keep working unchanged.
 
 **Note:** The default PO format emits path-only references (no line numbers) to avoid noisy diffs. If you'd like to store line numbers as well, you can create a [custom format](#formats-custom) that emits this format.
 
@@ -289,7 +283,9 @@ const withNextIntl = createNextIntlPlugin({
 });
 ```
 
-See also the built-in [`codecs`](https://github.com/amannn/next-intl/tree/main/packages/next-intl/src/extractor/format/codecs) for inspiration, as well as the supplied types and JSDoc reference.
+Alternatively, a codec can be referenced by the name of an installed package, e.g. `codec: '@eloqnt/format-po'`.
+
+See also the built-in codecs [`@eloqnt/format-po`](https://cli.eloqnt.dev/docs/formats/po) and `@eloqnt/format-json` for inspiration, as well as the supplied types and JSDoc reference.
 
 <Callout>
 
