@@ -142,7 +142,7 @@ export default function Greeting() {
   });
   const entry = getPoEntry(content, '-YJVTi');
   expect(entry).toMatch(/#\. Shown on home screen/);
-  expect(entry).toMatch(/msgid "\-YJVTi"/);
+  expect(entry).toMatch(/msgctxt "\-YJVTi"/);
 });
 
 it('combines references from multiple files', async ({page}) => {
@@ -181,12 +181,12 @@ export default function Greeting() {
   );
 
   await page.goto('/');
-  const content = await expectCatalog('en.po', (content) => {
-    const entry = getPoEntry(content, 'OpKKos');
-    return entry != null && entry.includes('msgctxt "ui"');
-  });
-  const entry = getPoEntry(content, 'OpKKos');
-  expect(entry).toMatch(/msgctxt "ui"\s+msgid "OpKKos"\s+msgstr "Hello!"/);
+  const content = await expectCatalog(
+    'en.po',
+    (content) => getPoEntry(content, 'ui.OpKKos') != null
+  );
+  const entry = getPoEntry(content, 'ui.OpKKos');
+  expect(entry).toMatch(/msgctxt "ui\.OpKKos"\s+msgid "Hello!"\s+msgstr "Hello!"/);
 });
 
 it('removes references when a message is dropped from a single file', async ({
@@ -446,10 +446,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\\n"
 "X-Generator: some-po-editor\\n"
 "X-Something-Else: test\\n"
+"X-Message-Key: msgctxt\\n"
 "Language: en\\n"
 
 #: src/components/Greeting.tsx
-msgid "-YJVTi"
+msgctxt "-YJVTi"
+msgid "Hey!"
 msgstr "Hey!"
 `
   );
