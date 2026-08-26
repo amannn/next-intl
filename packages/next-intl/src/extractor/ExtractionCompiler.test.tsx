@@ -555,10 +555,11 @@ describe('po format', {timeout: 20_000}, () => {
       "Content-Type: text/plain; charset=utf-8\\n"
       "Content-Transfer-Encoding: 8bit\\n"
       "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
+      "X-Message-Key: msgctxt\\n"
 
       #: src/component-a.tsx
-      msgid "OpKKos"
+      msgctxt "OpKKos"
+      msgid "Hello!"
       msgstr "Hello!"
       `,
       'de.po': `
@@ -568,10 +569,11 @@ describe('po format', {timeout: 20_000}, () => {
       "Content-Type: text/plain; charset=utf-8\\n"
       "Content-Transfer-Encoding: 8bit\\n"
       "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
+      "X-Message-Key: msgctxt\\n"
 
       #: src/component-a.tsx
-      msgid "OpKKos"
+      msgctxt "OpKKos"
+      msgid "Hello!"
       msgstr "Hallo!"
       `
     };
@@ -616,10 +618,11 @@ describe('po format', {timeout: 20_000}, () => {
       "Content-Type: text/plain; charset=utf-8\\n"
       "Content-Transfer-Encoding: 8bit\\n"
       "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
+      "X-Message-Key: msgctxt\\n"
 
       #: src/component-b.tsx
-      msgid "4xqPlJ"
+      msgctxt "4xqPlJ"
+      msgid "Howdy!"
       msgstr "Howdy!"
       ",
         ],
@@ -631,10 +634,11 @@ describe('po format', {timeout: 20_000}, () => {
       "Content-Type: text/plain; charset=utf-8\\n"
       "Content-Transfer-Encoding: 8bit\\n"
       "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
+      "X-Message-Key: msgctxt\\n"
 
       #: src/component-b.tsx
-      msgid "4xqPlJ"
+      msgctxt "4xqPlJ"
+      msgid "Howdy!"
       msgstr ""
       ",
         ],
@@ -651,10 +655,11 @@ describe('po format', {timeout: 20_000}, () => {
       "Content-Type: text/plain; charset=utf-8\\n"
       "Content-Transfer-Encoding: 8bit\\n"
       "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
+      "X-Message-Key: msgctxt\\n"
 
       #: src/component-a.tsx
-      msgid "OpKKos"
+      msgctxt "OpKKos"
+      msgid "Hello!"
       msgstr "Hello!"
       `,
       'de.po': `
@@ -664,10 +669,11 @@ describe('po format', {timeout: 20_000}, () => {
       "Content-Type: text/plain; charset=utf-8\\n"
       "Content-Transfer-Encoding: 8bit\\n"
       "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
+      "X-Message-Key: msgctxt\\n"
 
       #: src/component-a.tsx
-      msgid "OpKKos"
+      msgctxt "OpKKos"
+      msgid "Hello!"
       msgstr "Hallo!"
       `
     };
@@ -711,10 +717,11 @@ describe('po format', {timeout: 20_000}, () => {
       "Content-Type: text/plain; charset=utf-8\\n"
       "Content-Transfer-Encoding: 8bit\\n"
       "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
+      "X-Message-Key: msgctxt\\n"
 
       #: src/component-b.tsx
-      msgid "OpKKos"
+      msgctxt "OpKKos"
+      msgid "Hello!"
       msgstr "Hello!"
       ",
         ],
@@ -726,10 +733,11 @@ describe('po format', {timeout: 20_000}, () => {
       "Content-Type: text/plain; charset=utf-8\\n"
       "Content-Transfer-Encoding: 8bit\\n"
       "X-Generator: next-intl\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
+      "X-Message-Key: msgctxt\\n"
 
       #: src/component-b.tsx
-      msgid "OpKKos"
+      msgctxt "OpKKos"
+      msgid "Hello!"
       msgstr "Hallo!"
       ",
         ],
@@ -1380,13 +1388,15 @@ msgstr ""
       'en.po': `
       #: src/Greeting.tsx
       #, c-format
-      msgid "OpKKos"
+      msgctxt "OpKKos"
+      msgid "Hello!"
       msgstr "Hello!"
       `,
       'de.po': `
       #: src/Greeting.tsx
       #, fuzzy
-      msgid "OpKKos"
+      msgctxt "OpKKos"
+      msgid "Hello!"
       msgstr "Hallo!"
       `
     };
@@ -1433,7 +1443,6 @@ msgstr ""
       "Language: en\\n"
 
       #: src/Greeting.tsx
-      #, c-format
       msgid "Hello!"
       msgstr "Hello!"
       ",
@@ -1445,9 +1454,8 @@ msgstr ""
       "Language: de\\n"
 
       #: src/Greeting.tsx
-      #, fuzzy
       msgid "Hello!"
-      msgstr "Hallo!"
+      msgstr ""
       ",
         ],
         [
@@ -1457,7 +1465,6 @@ msgstr ""
       "Language: en\\n"
 
       #: src/Greeting.tsx
-      #, c-format
       msgid "Hello!"
       msgstr "Hello!"
 
@@ -1473,9 +1480,8 @@ msgstr ""
       "Language: de\\n"
 
       #: src/Greeting.tsx
-      #, fuzzy
       msgid "Hello!"
-      msgstr "Hallo!"
+      msgstr ""
 
       #: src/Greeting.tsx
       msgid "Hi!"
@@ -1497,12 +1503,14 @@ msgstr ""
     filesystem.project.messages = {
       'en.po': `
       #: src/Greeting.tsx
-      msgid "OpKKos"
+      msgctxt "OpKKos"
+      msgid "Hello!"
       msgstr "Hello!"
       `,
       'de.po': `
       #: src/Greeting.tsx
-      msgid "OpKKos"
+      msgctxt "OpKKos"
+      msgid "Hello!"
       msgstr "Hallo!"
       `
     };
@@ -1543,7 +1551,8 @@ msgstr ""
     filesystem.project.messages = {
       'en.po': `
       #: src/Greeting.tsx
-      msgid "OpKKos"
+      msgctxt "OpKKos"
+      msgid "Hello!"
       msgstr "Hello!"
       `
     };
@@ -1567,7 +1576,8 @@ msgstr ""
     filesystem.project.messages = {
       'en.po': `
       #: src/Greeting.tsx
-      msgid "OpKKos"
+      msgctxt "OpKKos"
+      msgid "Hello!"
       msgstr "Hello!"
       `,
       // Simulates a truncated file read during concurrent write
@@ -1871,9 +1881,157 @@ describe('`srcPath` filtering', () => {
       ]
     `);
   });
+  it('rejects a catalog in the previous key-based layout', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.po': `
+      msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Greeting.tsx
+      msgid "OpKKos"
+      msgstr "Hello!"
+      `
+    };
+
+    using compiler = new ExtractionCompiler(
+      {
+        extract: {
+          locales: 'infer',
+          path: './messages',
+          sourceLocale: 'en',
+          srcPath: './src'
+        },
+        messages: {
+          format: 'po',
+          path: ['./messages']
+        }
+      },
+      {
+        isDevelopment: false,
+        projectRoot: '/project',
+        saveDebounceMs: 0
+      }
+    );
+    await expect(compiler.extractAll()).rejects.toThrowError(
+      /previous PO layout/
+    );
+  });
 });
 
 describe('custom format', () => {
+  it('keeps the previous key-based PO layout via the legacy codec', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hello!')} {t('World')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.po': `
+      msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Greeting.tsx
+      msgid "OpKKos"
+      msgstr "Hello!"
+      `,
+      'de.po': `
+      msgid ""
+      msgstr ""
+      "Language: de\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Greeting.tsx
+      msgid "OpKKos"
+      msgstr "Hallo!"
+      `
+    };
+
+    using compiler = new ExtractionCompiler(
+      {
+        extract: {
+          locales: 'infer',
+          path: './messages',
+          sourceLocale: 'en',
+          srcPath: './src'
+        },
+        messages: {
+          format: {
+            codec: path.resolve(
+              __dirname,
+              'format/codecs/fixtures/POCodecLegacy.tsx'
+            ),
+            extension: '.po'
+          },
+          path: ['./messages']
+        }
+      },
+      {
+        isDevelopment: true,
+        projectRoot: '/project',
+        saveDebounceMs: 0
+      }
+    );
+
+    await compiler.extractAll();
+    await waitForWriteFileCalls(2);
+
+    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.po",
+          "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: @eloqnt/format-po\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Greeting.tsx
+      msgid "OpKKos"
+      msgstr "Hello!"
+
+      #: src/Greeting.tsx
+      msgid "jqdzk6"
+      msgstr "World"
+      ",
+        ],
+        [
+          "messages/de.po",
+          "msgid ""
+      msgstr ""
+      "Language: de\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: @eloqnt/format-po\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Greeting.tsx
+      msgid "OpKKos"
+      msgstr "Hallo!"
+
+      #: src/Greeting.tsx
+      msgid "jqdzk6"
+      msgstr ""
+      ",
+        ],
+      ]
+    `);
+  });
+
   it('supports a structured json custom format with codecs', async () => {
     filesystem.project.messages = {
       'en.json': JSON.stringify(

@@ -7,7 +7,7 @@ import type {BuiltInMessagesFormat, MessagesFormat} from './types.js';
 
 const formats = {
   json: {codec: () => import('@eloqnt/format-json'), extension: '.json'},
-  po: {codec: () => import('@eloqnt/format-po'), extension: '.po'}
+  po: {codec: () => import('./codecs/BuiltInPoCodec.js'), extension: '.po'}
 } satisfies Record<
   string,
   {
