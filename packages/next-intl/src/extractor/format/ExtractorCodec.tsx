@@ -1,5 +1,12 @@
-import type {SeparateFileCodec} from '@eloqnt/config';
+import type {defineCodec as sharedDefineCodec} from '@eloqnt/config';
 import type {Locale} from '../types.js';
+
+// Derived from `@eloqnt/config`, so next-intl and eloqnt pass identical
+// options to codecs.
+type SeparateFileCodec = Extract<
+  ReturnType<ReturnType<typeof sharedDefineCodec>>,
+  {decode: unknown}
+>;
 
 export default interface ExtractorCodec extends SeparateFileCodec {
   /**

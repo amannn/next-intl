@@ -1,4 +1,4 @@
-import type {Message, MessageReference} from '@eloqnt/config';
+import type {defineCodec} from '@eloqnt/config';
 import type {MessagesFormat} from './format/types.js';
 
 // Is likely the same as the `Locale` type in `use-intl`,
@@ -6,7 +6,12 @@ import type {MessagesFormat} from './format/types.js';
 // don't require a match here.
 export type Locale = string;
 
-export type ExtractorMessageReference = MessageReference;
+type SharedSeparateFileCodec = Extract<
+  ReturnType<ReturnType<typeof defineCodec>>,
+  {decode: unknown}
+>;
+
+export type ExtractorMessageReference = ExtractorMessage['references'][number];
 
 /** A single statically extracted source-code usage before any aggregation. */
 export type SourceExtractedMessage = {
@@ -17,7 +22,9 @@ export type SourceExtractedMessage = {
 };
 
 /** An aggregated message that can be read from or written to a catalog. */
-export type ExtractorMessage = Message;
+export type ExtractorMessage = ReturnType<
+  SharedSeparateFileCodec['decode']
+>[number];
 
 /**
  * External extractor configuration (Next.js plugin, `extractMessages`).
