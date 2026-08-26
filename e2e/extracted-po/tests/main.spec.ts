@@ -186,7 +186,9 @@ export default function Greeting() {
     (content) => getPoEntry(content, 'ui.OpKKos') != null
   );
   const entry = getPoEntry(content, 'ui.OpKKos');
-  expect(entry).toMatch(/msgctxt "ui\.OpKKos"\s+msgid "Hello!"\s+msgstr "Hello!"/);
+  expect(entry).toMatch(
+    /msgctxt "ui\.OpKKos"\s+msgid "Hello!"\s+msgstr "Hello!"/
+  );
 });
 
 it('removes references when a message is dropped from a single file', async ({
