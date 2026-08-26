@@ -1,6 +1,6 @@
+import {defineCodec} from '@eloqnt/config';
 import createPoCodec from '@eloqnt/format-po';
 import POParser from 'po-parser';
-import {defineCodec} from '../../ExtractorCodec.js';
 
 // Writes the PO layout of earlier next-intl versions (message key in
 // `msgid`, `X-Crowdin-SourceKey` header). Reading is delegated to
