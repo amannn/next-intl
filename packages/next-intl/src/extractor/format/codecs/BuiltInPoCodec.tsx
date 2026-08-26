@@ -26,10 +26,6 @@ export default defineCodec(() => {
     decode(content, context) {
       assertMigrated(content);
       return codec.decode(content, context);
-    },
-    toJSONString(content, context) {
-      assertMigrated(content);
-      return codec.toJSONString(content, context);
     }
   };
 });
