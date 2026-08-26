@@ -65,7 +65,6 @@ export function warnAboutMissingReferences(
 ): void {
   const warnedIds = new Set<string>();
   for (const message of messages) {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (message.references[0] == null && !warnedIds.has(message.id)) {
       warnedIds.add(message.id);
       warn(`Missing file reference for extracted message: ${message.id}`);
