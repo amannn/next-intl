@@ -2,17 +2,11 @@ import createPoCodec from '@eloqnt/format-po';
 import POParser from 'po-parser';
 import {defineCodec} from '../../ExtractorCodec.js';
 
-/**
- * Writes the PO layout of earlier next-intl versions: the message key in
- * `msgid`, the text in `msgstr`, and the `X-Crowdin-SourceKey` header that
- * tells Crowdin where the source text lives. Reading is delegated to
- * `@eloqnt/format-po`, which understands this layout natively. One deliberate
- * difference to the old built-in codec: namespaced keys stay whole in `msgid`
- * instead of being split into `msgctxt` — both spellings decode identically.
- *
- * Referenced from the docs as the opt-out for projects that want to keep the
- * previous layout.
- */
+// Writes the PO layout of earlier next-intl versions (message key in
+// `msgid`, `X-Crowdin-SourceKey` header). Reading is delegated to
+// `@eloqnt/format-po`, which handles that layout natively. Namespaced keys
+// stay whole in `msgid` instead of being split into `msgctxt` — both
+// spellings decode identically.
 export default defineCodec(() => {
   const codec = createPoCodec();
 

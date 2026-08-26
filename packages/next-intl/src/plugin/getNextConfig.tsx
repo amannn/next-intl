@@ -110,7 +110,13 @@ export default function getNextConfig(
   }
 
   function getCatalogLoaderConfig() {
-    const messages = pluginConfig.experimental!.messages!;
+    const experimental = pluginConfig.experimental!;
+    const messages = experimental.messages!;
+    // Normalization enforces a source locale before extraction runs.
+    const sourceLocale = (messages.sourceLocale ??
+      (typeof experimental.extract === 'object'
+        ? experimental.extract.sourceLocale
+        : undefined))!;
     return {
       loader: 'next-intl/extractor/catalogLoader',
       options: {
@@ -119,9 +125,7 @@ export default function getNextConfig(
           ...(messages.precompile !== undefined && {
             precompile: messages.precompile
           }),
-          ...(messages.sourceLocale !== undefined && {
-            sourceLocale: messages.sourceLocale
-          })
+          sourceLocale
         }
       } satisfies CatalogLoaderConfig as TurbopackLoaderOptions
     };

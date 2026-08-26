@@ -241,16 +241,6 @@ Catalogs identify their layout via a header and are written back in the layout t
 
 **Note:** The default PO format emits path-only references (no line numbers) to avoid noisy diffs. If you'd like to store line numbers as well, you can create a [custom format](#formats-custom) that emits this format.
 
-##### Migrating PO catalogs [#formats-po-migration]
-
-Earlier versions of next-intl stored the message key in `msgid` and the source text in `msgstr`. Catalogs in that layout are detected via their `X-Crowdin-SourceKey` header and rejected with an error, so a project can't continue with mixed layouts by accident.
-
-To migrate your catalogs, you can use an agent with the following prompt:
-
-> In this project, convert every `.po` messages catalog from the layout where `msgid` holds a message key and `msgstr` holds the text to the gettext-style layout. For each entry in each catalog: set `msgctxt` to the full key (if the file's entries have a `msgctxt` namespace, join it with the `msgid` using a dot), set `msgid` to the entry's source text (look it up by key in the source-locale catalog's `msgstr`; in the source-locale catalog itself it's the entry's own `msgstr`), and keep `msgstr` as it is. In the header block of each file, remove the `"X-Crowdin-SourceKey: msgstr\n"` line and add `"X-Message-Key: msgctxt\n"`. Preserve entry order, comments, references and flags. Verify afterwards by running a build: extraction must not modify the converted files further.
-
-If you'd like to keep the previous layout instead, you can use a [custom format](#formats-custom) based on [`POCodecLegacy`](https://github.com/amannn/next-intl/blob/main/packages/next-intl/src/extractor/format/codecs/fixtures/POCodecLegacy.tsx) (note that it requires `po-parser` as a dependency in your project).
-
 <Callout>
 
 Translations can be AI-generated with tools like [eloqnt/studio](https://studio.eloqnt.dev).

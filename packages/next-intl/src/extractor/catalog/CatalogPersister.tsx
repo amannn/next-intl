@@ -8,13 +8,13 @@ export default class CatalogPersister {
   private messagesPath: string;
   private codec: ExtractorCodec;
   private extension: string;
-  private sourceLocale?: Locale;
+  private sourceLocale: Locale;
 
   public constructor(params: {
     messagesPath: string;
     codec: ExtractorCodec;
     extension: string;
-    sourceLocale?: Locale;
+    sourceLocale: Locale;
   }) {
     this.messagesPath = params.messagesPath;
     this.codec = params.codec;
@@ -95,12 +95,8 @@ export default class CatalogPersister {
   }
 }
 
-/**
- * Arrays can occur in message files, but the runtime only supports strings.
- * The codecs read them fine (an array element decodes with a numeric path
- * segment), so the constraint is enforced here where the runtime's rules
- * apply.
- */
+// The codecs read arrays fine (numeric path segments), but the runtime only
+// supports strings — enforced here where the runtime's rules apply.
 function assertNoArrayMessages(messages: Array<ExtractorMessage>): void {
   for (const message of messages) {
     const segments = message.segments;

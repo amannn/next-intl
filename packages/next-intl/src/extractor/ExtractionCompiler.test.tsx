@@ -390,6 +390,42 @@ describe('json format', {timeout: 20_000}, () => {
   });
 });
 
+it('rejects a catalog that contains an array', async () => {
+  filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+  filesystem.project.messages = {
+    'en.json': '{"items": ["One", "Two"]}'
+  };
+
+  using compiler = new ExtractionCompiler(
+    {
+      extract: {
+        locales: 'infer',
+        path: './messages',
+        sourceLocale: 'en',
+        srcPath: './src'
+      },
+      messages: {
+        format: 'json',
+        path: ['./messages']
+      }
+    },
+    {
+      isDevelopment: false,
+      projectRoot: '/project',
+      saveDebounceMs: 0
+    }
+  );
+  await expect(compiler.extractAll()).rejects.toThrowError(
+    /resolved to an array/
+  );
+});
+
 describe('po format', {timeout: 20_000}, () => {
   function createCompiler() {
     return new ExtractionCompiler(
