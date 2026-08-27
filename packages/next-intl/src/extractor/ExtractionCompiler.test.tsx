@@ -816,8 +816,13 @@ describe('po format', {timeout: 20_000}, () => {
           "msgid ""
       msgstr ""
       "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: @eloqnt/format-po\\n"
+      "X-Message-Key: msgctxt\\n"
 
       #: src/component-b.tsx
+      msgctxt "OpKKos"
       msgid "Hello!"
       msgstr "Hello!"
       ",
@@ -827,8 +832,13 @@ describe('po format', {timeout: 20_000}, () => {
           "msgid ""
       msgstr ""
       "Language: de\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: @eloqnt/format-po\\n"
+      "X-Message-Key: msgctxt\\n"
 
       #: src/component-b.tsx
+      msgctxt "OpKKos"
       msgid "Hello!"
       msgstr ""
       ",
@@ -872,8 +882,13 @@ describe('po format', {timeout: 20_000}, () => {
           "msgid ""
       msgstr ""
       "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: @eloqnt/format-po\\n"
+      "X-Message-Key: msgctxt\\n"
 
       #: src/component-b.tsx
+      msgctxt "OpKKos"
       msgid "Hello!"
       msgstr "Hello!"
       ",
@@ -883,8 +898,13 @@ describe('po format', {timeout: 20_000}, () => {
           "msgid ""
       msgstr ""
       "Language: de\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: @eloqnt/format-po\\n"
+      "X-Message-Key: msgctxt\\n"
 
       #: src/component-b.tsx
+      msgctxt "OpKKos"
       msgid "Hello!"
       msgstr ""
       ",
