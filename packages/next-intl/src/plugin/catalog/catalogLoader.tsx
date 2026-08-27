@@ -69,10 +69,7 @@ export default function catalogLoader(
       const locale = path.basename(this.resourcePath, extension);
       const decoded = codec.decode(source, {
         locale,
-        // A source locale is only enforced when extraction is enabled, therefore
-        // this can be absent when catalogs are merely loaded. Codecs compare
-        // this to `locale`, hence an empty string matches no catalog.
-        sourceLocale: options.messages.sourceLocale ?? ''
+        sourceLocale: options.messages.sourceLocale
       });
 
       let messages: Record<string, unknown>;

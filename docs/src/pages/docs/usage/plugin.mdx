@@ -127,6 +127,8 @@ const withNextIntl = createNextIntlPlugin({
     messages: {
       path: './messages',
       format: 'json',
+      locales: 'infer',
+      sourceLocale: 'en',
 
       // Optional
       precompile: true
@@ -192,6 +194,8 @@ Your primary locale, which might be used to define messages in source code when 
 // Source messages will be extracted here
 sourceLocale: 'en',
 ```
+
+Note that this is also relevant when messages are only loaded, since your [`messages.format`](#messages-format) may store source messages differently from translations (e.g. an empty `msgstr` in PO).
 
 #### `messages.format` [#messages-format]
 
