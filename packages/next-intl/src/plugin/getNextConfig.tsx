@@ -33,6 +33,29 @@ function normalizeTurbopackAliasPath(pathname: string) {
   return pathname.replace(/\\/g, '/');
 }
 
+/**
+ * Turbopack validates loader options by comparing them to their JSON round-trip
+ * (`isDeepStrictEqual(options, JSON.parse(JSON.stringify(options)))`). Since
+ * `JSON.stringify` drops keys with an `undefined` value, such a key would always
+ * fail that check, therefore they're removed here.
+ * https://github.com/amannn/next-intl/issues/2394
+ */
+function pruneUndefined<Value>(value: Value): Value {
+  if (Array.isArray(value)) {
+    return value.map(pruneUndefined) as Value;
+  }
+
+  if (value !== null && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value)
+        .filter(([, entry]) => entry !== undefined)
+        .map(([key, entry]) => [key, pruneUndefined(entry)])
+    ) as Value;
+  }
+
+  return value;
+}
+
 function resolveI18nPath(providedPath?: string, cwd?: string) {
   function resolvePath(pathname: string) {
     const parts = [];
@@ -105,29 +128,35 @@ export default function getNextConfig(
   function getExtractMessagesLoaderConfig(config: ExtractorConfig) {
     return {
       loader: 'next-intl/extractor/extractionLoader',
-      options: config satisfies ExtractorConfig as TurbopackLoaderOptions
+      options: pruneUndefined(
+        config satisfies ExtractorConfig
+      ) as TurbopackLoaderOptions
     };
   }
 
   function getCatalogLoaderConfig() {
     const experimental = pluginConfig.experimental!;
     const messages = experimental.messages!;
-    // Normalization enforces a source locale before extraction runs.
-    const sourceLocale = (messages.sourceLocale ??
+    // A source locale is only enforced when extraction is enabled, therefore
+    // this can be absent when catalogs are merely loaded.
+    const sourceLocale =
+      messages.sourceLocale ??
       (typeof experimental.extract === 'object'
         ? experimental.extract.sourceLocale
-        : undefined))!;
+        : undefined);
     return {
       loader: 'next-intl/extractor/catalogLoader',
-      options: {
+      options: pruneUndefined({
         messages: {
           format: messages.format,
           ...(messages.precompile !== undefined && {
             precompile: messages.precompile
           }),
-          sourceLocale
+          ...(sourceLocale !== undefined && {
+            sourceLocale
+          })
         }
-      } satisfies CatalogLoaderConfig as TurbopackLoaderOptions
+      } satisfies CatalogLoaderConfig) as TurbopackLoaderOptions
     };
   }
 
