@@ -1299,18 +1299,22 @@ msgstr "World"
       `msgid ""
 msgstr ""
 "Language: de\\n"
+"X-Message-Key: msgctxt\\n"
 
 #: src/Greeting.tsx
 #, no-wrap
-msgid "-YJVTi"
+msgctxt "-YJVTi"
+msgid "Hey!"
 msgstr "Hallo!"
 
 #: src/Greeting.tsx
-msgid "sJM+Xd"
+msgctxt "jqdzk6"
+msgid "World"
 msgstr ""
 
 #: src/Greeting.tsx
-msgid "eCfPKC"
+msgctxt "ODGmph"
+msgid "!"
 msgstr ""
 `
     );
@@ -1338,21 +1342,29 @@ msgstr ""
         "msgid ""
       msgstr ""
       "Language: de\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: @eloqnt/format-po\\n"
+      "X-Message-Key: msgctxt\\n"
 
       #: src/Greeting.tsx
       #, no-wrap
+      msgctxt "-YJVTi"
       msgid "Hey!"
       msgstr "Hallo!"
 
       #: src/Greeting.tsx
+      msgctxt "jqdzk6"
       msgid "World"
       msgstr ""
 
       #: src/Greeting.tsx
+      msgctxt "ODGmph"
       msgid "!"
       msgstr ""
 
       #: src/Greeting.tsx
+      msgctxt "pE58D7"
       msgid "Extra"
       msgstr ""
       ",
@@ -1365,21 +1377,26 @@ msgstr ""
       `msgid ""
 msgstr ""
 "Language: de\\n"
+"X-Message-Key: msgctxt\\n"
 
 #: src/Greeting.tsx
-msgid "-YJVTi"
+msgctxt "-YJVTi"
+msgid "Hey!"
 msgstr "Hallo!"
 
 #: src/Greeting.tsx
-msgid "+tjj/T"
+msgctxt "jqdzk6"
+msgid "World"
 msgstr ""
 
 #: src/Greeting.tsx
-msgid "eCfPKC"
+msgctxt "ODGmph"
+msgid "!"
 msgstr ""
 
 #: src/Greeting.tsx
-msgid "sJM+Xd"
+msgctxt "pE58D7"
+msgid "Extra"
 msgstr ""
 `
     );
@@ -1407,24 +1424,33 @@ msgstr ""
         "msgid ""
       msgstr ""
       "Language: de\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: @eloqnt/format-po\\n"
+      "X-Message-Key: msgctxt\\n"
 
       #: src/Greeting.tsx
+      msgctxt "-YJVTi"
       msgid "Hey!"
       msgstr "Hallo!"
 
       #: src/Greeting.tsx
+      msgctxt "jqdzk6"
       msgid "World"
       msgstr ""
 
       #: src/Greeting.tsx
+      msgctxt "ODGmph"
       msgid "!"
       msgstr ""
 
       #: src/Greeting.tsx
+      msgctxt "pE58D7"
       msgid "Extra"
       msgstr ""
 
       #: src/Greeting.tsx
+      msgctxt "I5NMJ8"
       msgid "More"
       msgstr ""
       ",
@@ -1667,13 +1693,23 @@ msgstr ""
     }
     `;
     filesystem.project.messages = {
-      'en.po': `
+      'en.po': `msgid ""
+msgstr ""
+"Language: en\\n"
+"X-Message-Key: msgctxt\\n"
+
 #: src/Greeting.tsx
-msgid "OpKKos"
+msgctxt "OpKKos"
+msgid "Hello!"
 msgstr "Hello!"`,
-      'de.po': `
+      'de.po': `msgid ""
+msgstr ""
+"Language: de\\n"
+"X-Message-Key: msgctxt\\n"
+
 #: src/Greeting.tsx
-msgid "OpKKos"
+msgctxt "OpKKos"
+msgid "Hello!"
 msgstr "Hallo!"`
     };
 
