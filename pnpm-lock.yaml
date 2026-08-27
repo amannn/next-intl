@@ -817,8 +817,8 @@ importers:
         specifier: ^0.0.2
         version: 0.0.2
       '@eloqnt/format-po':
-        specifier: ^0.0.2
-        version: 0.0.2
+        specifier: ^0.0.3
+        version: 0.0.3
       '@formatjs/intl-localematcher':
         specifier: ^0.8.1
         version: 0.8.1
@@ -1936,8 +1936,8 @@ packages:
   '@eloqnt/format-json@0.0.2':
     resolution: {integrity: sha512-qTI/dg+e4ceN02enNpITw2uP0UuIgYJo3BZMLmq3GmjzB75mKzo9MumzPhAAl9ZJmzrzxMHOc/sVoYizPk/+0A==}
 
-  '@eloqnt/format-po@0.0.2':
-    resolution: {integrity: sha512-wtcLJV33SyOQWxennNZnEJG/fxB7C3PiF1IYQpb07qUI3FnxcdQOadrrzJzMgMaEOhwsLWphWI5xmN5D9Eb+0Q==}
+  '@eloqnt/format-po@0.0.3':
+    resolution: {integrity: sha512-4r36qEd7KJFV+IMKUv5czNXbGVys8ahxlQKWoUDV20eGl4Oxr+YZ2O5IEQU09S+d7FvPJ1USnyc/wtCLNCo1Ng==}
 
   '@emnapi/core@1.8.1':
     resolution: {integrity: sha512-AvT9QFpxK0Zd8J0jopedNm+w/2fIzvtPKPjqyw9jwvBaReTTqPBk9Hixaz7KbjimP+QNz605/XnjFcDAL2pqBg==}
@@ -13226,7 +13226,7 @@ snapshots:
     dependencies:
       '@eloqnt/config': 0.0.2
 
-  '@eloqnt/format-po@0.0.2':
+  '@eloqnt/format-po@0.0.3':
     dependencies:
       '@eloqnt/config': 0.0.2
       po-parser: 2.2.0
