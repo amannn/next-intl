@@ -11,7 +11,7 @@ import type {
   ExtractorConfig,
   ExtractorMessage,
   Locale,
-  SourceMessage
+  SourceExtractedMessage
 } from '../types.js';
 import {
   compareReferences,
@@ -43,17 +43,17 @@ export default class CatalogManager implements Disposable {
    */
   private sourceMessagesByFile: Map<
     /* File path */ string,
-    Map</* ID */ string, Array<SourceMessage>>
+    Map</* ID */ string, Array<SourceExtractedMessage>>
   > = new Map();
 
   /**
    * Reverse index for rebuilding aggregated messages without scanning all files.
-   * Contains the same `SourceMessage` arrays as `sourceMessagesByFile` and is
+   * Contains the same `SourceExtractedMessage` arrays as `sourceMessagesByFile` and is
    * kept in sync with it.
    */
   private sourceMessagesById: Map<
     /* ID */ string,
-    Map</* File path */ string, Array<SourceMessage>>
+    Map</* File path */ string, Array<SourceExtractedMessage>>
   > = new Map();
 
   /**
@@ -136,7 +136,8 @@ export default class CatalogManager implements Disposable {
       this.persister = new CatalogPersister({
         messagesPath: this.config.extract.path,
         codec: await this.getCodec(),
-        extension: getFormatExtension(this.config.messages.format)
+        extension: getFormatExtension(this.config.messages.format),
+        sourceLocale: this.config.extract.sourceLocale
       });
       return this.persister;
     }
@@ -308,8 +309,8 @@ export default class CatalogManager implements Disposable {
 
   private async extractFile(
     absoluteFilePath: string
-  ): Promise<Array<SourceMessage> | undefined> {
-    let messages: Array<SourceMessage> = [];
+  ): Promise<Array<SourceExtractedMessage> | undefined> {
+    let messages: Array<SourceExtractedMessage> = [];
     try {
       const content = await fs.readFile(absoluteFilePath, 'utf8');
       let extraction: Awaited<ReturnType<typeof this.extractor.extract>>;
@@ -330,7 +331,7 @@ export default class CatalogManager implements Disposable {
 
   private applyFileMessages(
     absoluteFilePath: string,
-    messages: Array<SourceMessage>
+    messages: Array<SourceExtractedMessage>
   ): boolean {
     const prevFileMessages = this.sourceMessagesByFile.get(absoluteFilePath);
     const nextFileMessages = this.groupSourceMessagesById(messages);
@@ -378,9 +379,9 @@ export default class CatalogManager implements Disposable {
   }
 
   private groupSourceMessagesById(
-    messages: Array<SourceMessage>
-  ): Map<string, Array<SourceMessage>> {
-    const result = new Map<string, Array<SourceMessage>>();
+    messages: Array<SourceExtractedMessage>
+  ): Map<string, Array<SourceExtractedMessage>> {
+    const result = new Map<string, Array<SourceExtractedMessage>>();
     for (const message of messages) {
       const messagesById = result.get(message.id);
       if (messagesById) {
@@ -429,7 +430,7 @@ export default class CatalogManager implements Disposable {
   }
 
   private mergeDescriptions(
-    messages: Array<SourceMessage>
+    messages: Array<SourceExtractedMessage>
   ): ExtractorMessage['description'] {
     const sortedByReference = messages.toSorted((a, b) =>
       compareReferences(a.reference, b.reference)
@@ -447,8 +448,8 @@ export default class CatalogManager implements Disposable {
   }
 
   private haveMessagesChangedForFile(
-    beforeMessages: Map<string, Array<SourceMessage>> | undefined,
-    afterMessages: Map<string, Array<SourceMessage>>
+    beforeMessages: Map<string, Array<SourceExtractedMessage>> | undefined,
+    afterMessages: Map<string, Array<SourceExtractedMessage>>
   ): boolean {
     // If one exists and the other doesn't, there's a change
     if (!beforeMessages) {
@@ -481,8 +482,8 @@ export default class CatalogManager implements Disposable {
   }
 
   private areSourceMessageArraysEqual(
-    messages1: Array<SourceMessage>,
-    messages2: Array<SourceMessage>
+    messages1: Array<SourceExtractedMessage>,
+    messages2: Array<SourceExtractedMessage>
   ): boolean {
     return (
       messages1.length === messages2.length &&
@@ -493,8 +494,8 @@ export default class CatalogManager implements Disposable {
   }
 
   private areSourceMessagesEqual(
-    msg1: SourceMessage,
-    msg2: SourceMessage
+    msg1: SourceExtractedMessage,
+    msg2: SourceExtractedMessage
   ): boolean {
     return (
       msg1.id === msg2.id &&

@@ -2,10 +2,10 @@ import fs from 'fs/promises';
 import path from 'path';
 import {expect} from '@playwright/test';
 
-export function getPoEntry(poContent: string, msgid: string): string | null {
+export function getPoEntry(poContent: string, id: string): string | null {
   const blocks = poContent.split(/\n\n+/);
-  const escaped = msgid.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const block = blocks.find((b) => new RegExp(`msgid "${escaped}"`).test(b));
+  const escaped = id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const block = blocks.find((b) => new RegExp(`msgctxt "${escaped}"`).test(b));
   return block ? block.trim() : null;
 }
 

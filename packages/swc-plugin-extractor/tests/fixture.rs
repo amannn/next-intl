@@ -1,6 +1,6 @@
 use std::cell::RefCell;
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::rc::Rc;
 
 use serde_json::Value;
@@ -105,20 +105,34 @@ fn test(input: PathBuf) {
         program.visit_mut_with(&mut visitor);
 
         // Use results directly from visitor - it calculates line numbers correctly with SourceMap
-        let actual_results = visitor.get_results();
-        let actual_json: Value = serde_json::to_value(&actual_results).unwrap();
-
-        let expected_json_str = fs::read_to_string(&output_json)
-            .unwrap_or_else(|_| panic!("Expected output.json not found at {:?}", output_json));
-        let expected_json: Value = serde_json::from_str(&expected_json_str)
-            .unwrap_or_else(|_| panic!("Failed to parse expected JSON at {:?}", output_json));
-
-        if actual_json != expected_json {
-            panic!(
-                "JSON output mismatch.\nExpected:\n{}\nActual:\n{}",
-                serde_json::to_string_pretty(&expected_json).unwrap(),
-                serde_json::to_string_pretty(&actual_json).unwrap()
-            );
-        }
+        let update = std::env::var("UPDATE").as_deref() == Ok("1");
+        let actual_results = serde_json::to_value(visitor.get_results()).unwrap();
+        assert_json(&output_json, &actual_results, update);
     });
+}
+
+/// Compares `actual` against the JSON at `path`, or rewrites it with `UPDATE=1`.
+fn assert_json(path: &Path, actual: &Value, update: bool) {
+    if update {
+        fs::write(
+            path,
+            format!("{}\n", serde_json::to_string_pretty(actual).unwrap()),
+        )
+        .unwrap();
+        return;
+    }
+
+    let expected: Value = serde_json::from_str(
+        &fs::read_to_string(path).unwrap_or_else(|_| panic!("Expected {:?} not found", path)),
+    )
+    .unwrap_or_else(|_| panic!("Failed to parse {:?}", path));
+
+    if actual != &expected {
+        panic!(
+            "JSON mismatch at {:?}.\nExpected:\n{}\nActual:\n{}",
+            path,
+            serde_json::to_string_pretty(&expected).unwrap(),
+            serde_json::to_string_pretty(actual).unwrap()
+        );
+    }
 }

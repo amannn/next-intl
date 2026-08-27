@@ -2,20 +2,24 @@ import fs from 'fs/promises';
 import fsPath from 'path';
 import type ExtractorCodec from '../format/ExtractorCodec.js';
 import type {ExtractorMessage, Locale} from '../types.js';
+import {warnAboutMissingReferences} from '../utils.js';
 
 export default class CatalogPersister {
   private messagesPath: string;
   private codec: ExtractorCodec;
   private extension: string;
+  private sourceLocale: Locale;
 
   public constructor(params: {
     messagesPath: string;
     codec: ExtractorCodec;
     extension: string;
+    sourceLocale: Locale;
   }) {
     this.messagesPath = params.messagesPath;
     this.codec = params.codec;
     this.extension = params.extension;
+    this.sourceLocale = params.sourceLocale;
   }
 
   private getFileName(locale: Locale): string {
@@ -46,7 +50,12 @@ export default class CatalogPersister {
       );
     }
     try {
-      return this.codec.decode(content, {locale});
+      const messages = this.codec.decode(content, {
+        locale,
+        sourceLocale: this.sourceLocale
+      });
+      assertNoArrayMessages(messages);
+      return messages;
     } catch (error) {
       throw new Error(
         `Error while decoding ${this.getFileName(locale)}:\n> ${error}`,
@@ -63,6 +72,7 @@ export default class CatalogPersister {
     }
   ): Promise<void> {
     const filePath = this.getFilePath(context.locale);
+    warnAboutMissingReferences(messages);
     const content = this.codec.encode(messages, context);
 
     try {
@@ -82,5 +92,22 @@ export default class CatalogPersister {
     } catch {
       return undefined;
     }
+  }
+}
+
+// The codecs read arrays fine (numeric path segments), but the runtime only
+// supports strings — enforced here where the runtime's rules apply.
+function assertNoArrayMessages(messages: Array<ExtractorMessage>): void {
+  for (const message of messages) {
+    const segments = message.segments;
+    if (!Array.isArray(segments)) continue;
+    const firstIndex = segments.findIndex(
+      (segment) => typeof segment === 'number'
+    );
+    if (firstIndex === -1) continue;
+    const arrayPath = segments.slice(0, firstIndex).join('.');
+    throw new Error(
+      `Message at \`${arrayPath}\` resolved to an array, but only strings are supported. See https://next-intl.dev/docs/usage/translations#arrays-of-messages`
+    );
   }
 }

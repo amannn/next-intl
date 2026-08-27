@@ -1,11 +1,26 @@
 [
   {
+    "description": null,
     "id": "greeting",
     "message": "Hello!",
-    "description": null,
+    "ranges": {
+      "argument": {
+        "end": 156,
+        "start": 96
+      },
+      "id": {
+        "end": 111,
+        "start": 101
+      },
+      "message": {
+        "end": 130,
+        "start": 122
+      }
+    },
     "reference": {
-      "path": "input.js",
-      "line": 5
-    }
+      "line": 5,
+      "path": "input.js"
+    },
+    "type": "extracted"
   }
 ]

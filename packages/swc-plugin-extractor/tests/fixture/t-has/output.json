@@ -3,27 +3,60 @@
     "description": null,
     "id": "j0tI96",
     "message": "Hello here!",
+    "ranges": {
+      "argument": {
+        "end": 117,
+        "start": 104
+      },
+      "message": {
+        "end": 117,
+        "start": 104
+      }
+    },
     "reference": {
       "line": 5,
       "path": "input.js"
-    }
+    },
+    "type": "extracted"
   },
   {
     "description": null,
     "id": "j0tI96",
     "message": "Hello here!",
+    "ranges": {
+      "argument": {
+        "end": 148,
+        "start": 135
+      },
+      "message": {
+        "end": 148,
+        "start": 135
+      }
+    },
     "reference": {
       "line": 6,
       "path": "input.js"
-    }
+    },
+    "type": "extracted"
   },
   {
     "description": null,
     "id": "0KGiQf",
     "message": "Hello there!",
+    "ranges": {
+      "argument": {
+        "end": 189,
+        "start": 175
+      },
+      "message": {
+        "end": 189,
+        "start": 175
+      }
+    },
     "reference": {
       "line": 8,
       "path": "input.js"
-    }
+    },
+    "type": "extracted"
   }
 ]

@@ -1,43 +1,20 @@
-import type {ExtractorMessage, Locale} from '../types.js';
+import type {defineCodec as sharedDefineCodec} from '@eloqnt/config';
+import type {Locale} from '../types.js';
 
-type ExtractorCodecContext = {
-  locale: Locale;
-};
+// Derived from `@eloqnt/config`, so next-intl and eloqnt pass identical
+// options to codecs.
+type SeparateFileCodec = Extract<
+  ReturnType<ReturnType<typeof sharedDefineCodec>>,
+  {decode: unknown}
+>;
 
-export default interface ExtractorCodec {
+export default interface ExtractorCodec extends SeparateFileCodec {
   /**
-   * Decode the content of a file into a list of extracted messages. This is used
-   * to load existing messages from disk.
+   * @deprecated No longer used. Catalogs are loaded into your application via
+   * `decode`, so you can remove `toJSONString` from your codec. Providing it
+   * logs a deprecation warning and has no effect.
    */
-  decode(
-    content: string,
-    context: ExtractorCodecContext
-  ): Array<ExtractorMessage>;
-
-  /**
-   * Encode a list of extracted messages into a string that can be written as
-   * file content to the disk.
-   */
-  encode(
-    messages: Array<ExtractorMessage>,
-    context: ExtractorCodecContext & {
-      sourceMessagesById: Map</* ID */ string, ExtractorMessage>;
-    }
-  ): string;
-
-  /**
-   * Turns the content of a file into a JSON string that represents extracted
-   * messages. The returned value will be passed to `JSON.parse`.
-   *
-   * @return E.g. `[{"id":"-YJVTi","message":"Hey!"}]`
-   *
-   * This is used when loading messages into your application, typically via a
-   * dynamic import (e.g. `import(`../messages/${locale}.json`)`).
-   *
-   * If your file content is JSON and should be used as-is, you can set this to
-   * an identity function.
-   */
-  toJSONString(content: string, context: ExtractorCodecContext): string;
+  toJSONString?(content: string, context: {locale: Locale}): string;
 }
 
 export function defineCodec(factory: () => ExtractorCodec) {

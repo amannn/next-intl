@@ -1,11 +1,13 @@
+import {createRequire} from 'module';
 import path from 'path';
+import {pathToFileURL} from 'url';
 import {throwError} from '../../plugin/utils.js';
 import type ExtractorCodec from './ExtractorCodec.js';
 import type {BuiltInMessagesFormat, MessagesFormat} from './types.js';
 
 const formats = {
-  json: {codec: () => import('./codecs/JSONCodec.js'), extension: '.json'},
-  po: {codec: () => import('./codecs/POCodec.js'), extension: '.po'}
+  json: {codec: () => import('@eloqnt/format-json'), extension: '.json'},
+  po: {codec: () => import('./codecs/BuiltInPoCodec.js'), extension: '.po'}
 } satisfies Record<
   string,
   {
@@ -38,13 +40,29 @@ export async function resolveCodec(
     const factory = (await formats[format].codec()).default;
     return factory();
   } else {
-    const resolvedPath = path.isAbsolute(format.codec)
-      ? format.codec
-      : path.resolve(projectRoot, format.codec);
+    // A codec that starts with `.` or a filesystem root is a file path;
+    // everything else reads as a package specifier, mirroring how imports
+    // distinguish the two. Packages resolve from the project's dependencies.
+    const isPath =
+      format.codec.startsWith('.') || path.isAbsolute(format.codec);
+    let resolvedPath;
+    if (isPath) {
+      resolvedPath = path.resolve(projectRoot, format.codec);
+    } else {
+      try {
+        resolvedPath = createRequire(path.join(projectRoot, 'noop.js')).resolve(
+          format.codec
+        );
+      } catch (error) {
+        throwError(
+          `Could not resolve the codec package "${format.codec}". Is it installed?\n${error}`
+        );
+      }
+    }
 
     let module;
     try {
-      module = await import(resolvedPath);
+      module = await import(pathToFileURL(resolvedPath).href);
     } catch (error) {
       throwError(`Could not load codec from "${resolvedPath}".\n${error}`);
     }
