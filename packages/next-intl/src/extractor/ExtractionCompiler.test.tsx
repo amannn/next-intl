@@ -1973,6 +1973,49 @@ describe('`srcPath` filtering', () => {
       ]
     `);
   });
+  it('rejects a catalog without a layout header', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.po': `msgid ""
+msgstr ""
+"Language: en\\n"
+
+#: src/Greeting.tsx
+msgid "Hello!"
+msgstr ""
+`
+    };
+
+    using compiler = new ExtractionCompiler(
+      {
+        extract: {
+          locales: 'infer',
+          path: './messages',
+          sourceLocale: 'en',
+          srcPath: './src'
+        },
+        messages: {
+          format: 'po',
+          path: ['./messages']
+        }
+      },
+      {
+        isDevelopment: false,
+        projectRoot: '/project',
+        saveDebounceMs: 0
+      }
+    );
+    await expect(compiler.extractAll()).rejects.toThrowError(
+      /no layout header/
+    );
+  });
+
   it('rejects a catalog in the previous key-based layout', async () => {
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
