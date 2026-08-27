@@ -6,7 +6,10 @@ import type ExtractorCodec from './ExtractorCodec.js';
 import type {BuiltInMessagesFormat, MessagesFormat} from './types.js';
 
 const formats = {
-  json: {codec: () => import('@eloqnt/format-json'), extension: '.json'},
+  json: {
+    codec: () => import('./codecs/BuiltInJsonCodec.js'),
+    extension: '.json'
+  },
   po: {codec: () => import('./codecs/BuiltInPoCodec.js'), extension: '.po'}
 } satisfies Record<
   string,

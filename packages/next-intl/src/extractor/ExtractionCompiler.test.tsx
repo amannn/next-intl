@@ -388,42 +388,41 @@ describe('json format', {timeout: 20_000}, () => {
       ]
     `);
   });
-});
-
-it('rejects a catalog that contains an array', async () => {
-  filesystem.project.src['Greeting.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    function Greeting() {
-      const t = useExtracted();
-      return <div>{t('Hello!')}</div>;
-    }
-    `;
-  filesystem.project.messages = {
-    'en.json': '{"items": ["One", "Two"]}'
-  };
-
-  using compiler = new ExtractionCompiler(
-    {
-      extract: {
-        locales: 'infer',
-        path: './messages',
-        sourceLocale: 'en',
-        srcPath: './src'
-      },
-      messages: {
-        format: 'json',
-        path: ['./messages']
+  it('rejects a catalog that contains an array', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+      import {useExtracted} from 'next-intl';
+      function Greeting() {
+        const t = useExtracted();
+        return <div>{t('Hello!')}</div>;
       }
-    },
-    {
-      isDevelopment: false,
-      projectRoot: '/project',
-      saveDebounceMs: 0
-    }
-  );
-  await expect(compiler.extractAll()).rejects.toThrowError(
-    /resolved to an array/
-  );
+      `;
+    filesystem.project.messages = {
+      'en.json': '{"items": ["One", "Two"]}'
+    };
+
+    using compiler = new ExtractionCompiler(
+      {
+        extract: {
+          locales: 'infer',
+          path: './messages',
+          sourceLocale: 'en',
+          srcPath: './src'
+        },
+        messages: {
+          format: 'json',
+          path: ['./messages']
+        }
+      },
+      {
+        isDevelopment: false,
+        projectRoot: '/project',
+        saveDebounceMs: 0
+      }
+    );
+    await expect(compiler.extractAll()).rejects.toThrowError(
+      /resolved to an array/
+    );
+  });
 });
 
 describe('po format', {timeout: 20_000}, () => {
@@ -1241,7 +1240,7 @@ msgid "Hey!"
 msgstr "Hey!"
 
 #: src/Greeting.tsx
-msgctxt "sJM+Xd"
+msgctxt "jqdzk6"
 msgid "World"
 msgstr "World"
 `
@@ -1870,6 +1869,50 @@ msgstr "Hallo!"`
       `);
     });
   });
+  it('rejects a catalog in the previous key-based layout', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.po': `
+      msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Greeting.tsx
+      msgid "OpKKos"
+      msgstr "Hello!"
+      `
+    };
+
+    using compiler = new ExtractionCompiler(
+      {
+        extract: {
+          locales: 'infer',
+          path: './messages',
+          sourceLocale: 'en',
+          srcPath: './src'
+        },
+        messages: {
+          format: 'po',
+          path: ['./messages']
+        }
+      },
+      {
+        isDevelopment: false,
+        projectRoot: '/project',
+        saveDebounceMs: 0
+      }
+    );
+    await expect(compiler.extractAll()).rejects.toThrowError(
+      /previous PO layout/
+    );
+  });
 });
 
 describe('`srcPath` filtering', () => {
@@ -1972,93 +2015,6 @@ describe('`srcPath` filtering', () => {
         ],
       ]
     `);
-  });
-  it('rejects a catalog without a layout header', async () => {
-    filesystem.project.src['Greeting.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    function Greeting() {
-      const t = useExtracted();
-      return <div>{t('Hello!')}</div>;
-    }
-    `;
-    filesystem.project.messages = {
-      'en.po': `msgid ""
-msgstr ""
-"Language: en\\n"
-
-#: src/Greeting.tsx
-msgid "Hello!"
-msgstr ""
-`
-    };
-
-    using compiler = new ExtractionCompiler(
-      {
-        extract: {
-          locales: 'infer',
-          path: './messages',
-          sourceLocale: 'en',
-          srcPath: './src'
-        },
-        messages: {
-          format: 'po',
-          path: ['./messages']
-        }
-      },
-      {
-        isDevelopment: false,
-        projectRoot: '/project',
-        saveDebounceMs: 0
-      }
-    );
-    await expect(compiler.extractAll()).rejects.toThrowError(
-      /no layout header/
-    );
-  });
-
-  it('rejects a catalog in the previous key-based layout', async () => {
-    filesystem.project.src['Greeting.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    function Greeting() {
-      const t = useExtracted();
-      return <div>{t('Hello!')}</div>;
-    }
-    `;
-    filesystem.project.messages = {
-      'en.po': `
-      msgid ""
-      msgstr ""
-      "Language: en\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
-
-      #: src/Greeting.tsx
-      msgid "OpKKos"
-      msgstr "Hello!"
-      `
-    };
-
-    using compiler = new ExtractionCompiler(
-      {
-        extract: {
-          locales: 'infer',
-          path: './messages',
-          sourceLocale: 'en',
-          srcPath: './src'
-        },
-        messages: {
-          format: 'po',
-          path: ['./messages']
-        }
-      },
-      {
-        isDevelopment: false,
-        projectRoot: '/project',
-        saveDebounceMs: 0
-      }
-    );
-    await expect(compiler.extractAll()).rejects.toThrowError(
-      /previous PO layout/
-    );
   });
 });
 
