@@ -814,8 +814,8 @@ importers:
         specifier: ^0.0.2
         version: 0.0.2
       '@eloqnt/format-json':
-        specifier: ^0.0.2
-        version: 0.0.2
+        specifier: ^0.0.3
+        version: 0.0.3
       '@eloqnt/format-po':
         specifier: ^0.0.3
         version: 0.0.3
@@ -1933,8 +1933,8 @@ packages:
   '@eloqnt/config@0.0.2':
     resolution: {integrity: sha512-xz86UU1TJQPSzb0XJ3PkoyDlv3wdIiHfuu2wD/8m9ponHx0uSasYRDj4S+dpwQkIQaPYibN1oRr5HBll2GQkog==}
 
-  '@eloqnt/format-json@0.0.2':
-    resolution: {integrity: sha512-qTI/dg+e4ceN02enNpITw2uP0UuIgYJo3BZMLmq3GmjzB75mKzo9MumzPhAAl9ZJmzrzxMHOc/sVoYizPk/+0A==}
+  '@eloqnt/format-json@0.0.3':
+    resolution: {integrity: sha512-zgDUVryBYQyM0WZGAoVr+FXjrzRjKkBGJran0E3i5LBcvTycl9ScFVhkF7aRBg8mHrU9xxvclUtSDIYg2mRTQg==}
 
   '@eloqnt/format-po@0.0.3':
     resolution: {integrity: sha512-4r36qEd7KJFV+IMKUv5czNXbGVys8ahxlQKWoUDV20eGl4Oxr+YZ2O5IEQU09S+d7FvPJ1USnyc/wtCLNCo1Ng==}
@@ -13222,7 +13222,7 @@ snapshots:
 
   '@eloqnt/config@0.0.2': {}
 
-  '@eloqnt/format-json@0.0.2':
+  '@eloqnt/format-json@0.0.3':
     dependencies:
       '@eloqnt/config': 0.0.2
 
