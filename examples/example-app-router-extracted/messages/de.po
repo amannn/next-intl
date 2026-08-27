@@ -4,21 +4,25 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: next-intl\n"
-"X-Crowdin-SourceKey: msgstr\n"
+"X-Message-Key: msgctxt\n"
 
 #: src/app/Counter.tsx
-msgid "jm1lmy"
+msgctxt "jm1lmy"
+msgid "Count: {count, number}"
 msgstr "Anzahl: {count, number}"
 
 #: src/app/Counter.tsx
-msgid "tQLRmz"
+msgctxt "tQLRmz"
+msgid "Increment"
 msgstr "Erhöhen"
 
 #. Default meta title if not overridden by pages
 #: src/app/layout.tsx
-msgid "lNLCAE"
+msgctxt "lNLCAE"
+msgid "next-intl example"
 msgstr "next-intl Beispiel"
 
 #: src/app/page.tsx
-msgid "vlslj0"
+msgctxt "vlslj0"
+msgid "Hey {name}!"
 msgstr "Hallo {name}!"

@@ -810,6 +810,15 @@ importers:
 
   packages/next-intl:
     dependencies:
+      '@eloqnt/config':
+        specifier: ^0.0.2
+        version: 0.0.2
+      '@eloqnt/format-json':
+        specifier: ^0.0.3
+        version: 0.0.3
+      '@eloqnt/format-po':
+        specifier: ^0.0.3
+        version: 0.0.3
       '@formatjs/intl-localematcher':
         specifier: ^0.8.1
         version: 0.8.1
@@ -828,9 +837,6 @@ importers:
       next-intl-swc-plugin-extractor:
         specifier: workspace:*
         version: link:../swc-plugin-extractor
-      po-parser:
-        specifier: ^2.1.1
-        version: 2.1.1
       use-intl:
         specifier: workspace:^
         version: link:../use-intl
@@ -877,6 +883,9 @@ importers:
       path-to-regexp:
         specifier: ^6.2.2
         version: 6.3.0
+      po-parser:
+        specifier: ^2.2.0
+        version: 2.2.0
       prettier:
         specifier: ^3.3.3
         version: 3.8.0
@@ -1920,6 +1929,15 @@ packages:
   '@edge-runtime/vm@5.0.0':
     resolution: {integrity: sha512-NKBGBSIKUG584qrS1tyxVpX/AKJKQw5HgjYEnPLC0QsTw79JrGn+qUr8CXFb955Iy7GUdiiUv1rJ6JBGvaKb6w==}
     engines: {node: '>=18'}
+
+  '@eloqnt/config@0.0.2':
+    resolution: {integrity: sha512-xz86UU1TJQPSzb0XJ3PkoyDlv3wdIiHfuu2wD/8m9ponHx0uSasYRDj4S+dpwQkIQaPYibN1oRr5HBll2GQkog==}
+
+  '@eloqnt/format-json@0.0.3':
+    resolution: {integrity: sha512-zgDUVryBYQyM0WZGAoVr+FXjrzRjKkBGJran0E3i5LBcvTycl9ScFVhkF7aRBg8mHrU9xxvclUtSDIYg2mRTQg==}
+
+  '@eloqnt/format-po@0.0.3':
+    resolution: {integrity: sha512-4r36qEd7KJFV+IMKUv5czNXbGVys8ahxlQKWoUDV20eGl4Oxr+YZ2O5IEQU09S+d7FvPJ1USnyc/wtCLNCo1Ng==}
 
   '@emnapi/core@1.8.1':
     resolution: {integrity: sha512-AvT9QFpxK0Zd8J0jopedNm+w/2fIzvtPKPjqyw9jwvBaReTTqPBk9Hixaz7KbjimP+QNz605/XnjFcDAL2pqBg==}
@@ -9762,8 +9780,8 @@ packages:
     resolution: {integrity: sha512-2Rb3vm+EXble/sMXNSu6eoBx8e79gKqhNq9F5ZWW6ERNCTE/Q0wQNne5541tE5vKjfM8hpNCYL+LGc1YTfI0dg==}
     engines: {node: '>=6'}
 
-  po-parser@2.1.1:
-    resolution: {integrity: sha512-ECF4zHLbUItpUgE3OTtLKlPjeBN+fKEczj2zYjDfCGOzicNs0GK3Vg2IoAYwx7LH/XYw43fZQP6xnZ4TkNxSLQ==}
+  po-parser@2.2.0:
+    resolution: {integrity: sha512-NdTrKgh0oO7+y+RFX8KKhOB438x/j94UGXEFzl/7pHH0JjWSn42iJ9tgmPksIO6n1JKDHmNDcejPJfKspljB9g==}
 
   points-on-curve@0.2.0:
     resolution: {integrity: sha512-0mYKnYYe9ZcqMCWhUjItv/oHjvgEsfKvnUTg8sAtnHr3GVy7rGkXCb6d5cSyqrWqL4k81b9CPg3urd+T7aop3A==}
@@ -13201,6 +13219,17 @@ snapshots:
   '@edge-runtime/vm@5.0.0':
     dependencies:
       '@edge-runtime/primitives': 6.0.0
+
+  '@eloqnt/config@0.0.2': {}
+
+  '@eloqnt/format-json@0.0.3':
+    dependencies:
+      '@eloqnt/config': 0.0.2
+
+  '@eloqnt/format-po@0.0.3':
+    dependencies:
+      '@eloqnt/config': 0.0.2
+      po-parser: 2.2.0
 
   '@emnapi/core@1.8.1':
     dependencies:
@@ -23991,7 +24020,7 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  po-parser@2.1.1: {}
+  po-parser@2.2.0: {}
 
   points-on-curve@0.2.0: {}
 

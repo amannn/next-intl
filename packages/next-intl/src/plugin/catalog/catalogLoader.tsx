@@ -67,7 +67,10 @@ export default function catalogLoader(
       warnIfToJSONStringProvided(codec);
 
       const locale = path.basename(this.resourcePath, extension);
-      const decoded = codec.decode(source, {locale});
+      const decoded = codec.decode(source, {
+        locale,
+        sourceLocale: options.messages.sourceLocale
+      });
 
       let messages: Record<string, unknown>;
       if (options.messages.precompile) {

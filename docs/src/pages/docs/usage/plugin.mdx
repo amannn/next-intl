@@ -230,8 +230,9 @@ When using this option, your messages will look like this:
 ```po
 #. Advance to the next slide
 #: src/components/Carousel.tsx
-msgid "carousel.next"
-msgstr "Right"
+msgctxt "carousel.next"
+msgid "Right"
+msgstr "Rechts"
 ```
 
 … or in case of [`useExtracted`](/docs/usage/extraction), with an auto-generated key:
@@ -239,11 +240,12 @@ msgstr "Right"
 ```po
 #. Advance to the next slide
 #: src/components/Carousel.tsx
-msgid "5VpL9Z"
-msgstr "Right"
+msgctxt "5VpL9Z"
+msgid "Right"
+msgstr "Rechts"
 ```
 
-Besides the message key and the label itself, this format also supports optional descriptions and file references for modules that consume this message.
+In either case, the key is stored in `msgctxt` while the original source string is available in `msgid`. Additionally, this format also supports optional descriptions and file references for modules that consume this message.
 
 **Note:** The default PO format emits path-only references (no line numbers) to avoid noisy diffs. If you'd like to store line numbers as well, you can create a [custom format](#formats-custom) that emits this format.
 
@@ -289,7 +291,9 @@ const withNextIntl = createNextIntlPlugin({
 });
 ```
 
-See also the built-in [`codecs`](https://github.com/amannn/next-intl/tree/main/packages/next-intl/src/extractor/format/codecs) for inspiration, as well as the supplied types and JSDoc reference.
+Alternatively, a codec can be referenced by the name of an installed package (e.g. `codec: '@eloqnt/format-po'`).
+
+See also the built-in codecs [`@eloqnt/format-po`](https://cli.eloqnt.dev/docs/formats/po) and [`@eloqnt/format-json`](https://cli.eloqnt.dev/docs/formats/json) for inspiration, as well as the supplied types and JSDoc reference.
 
 <Callout>
 

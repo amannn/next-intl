@@ -1,3 +1,4 @@
+import type {defineCodec} from '@eloqnt/config';
 import type {MessagesFormat} from './format/types.js';
 
 // Is likely the same as the `Locale` type in `use-intl`,
@@ -5,10 +6,12 @@ import type {MessagesFormat} from './format/types.js';
 // don't require a match here.
 export type Locale = string;
 
-export type ExtractorMessageReference = {
-  path: string;
-  line?: number;
-};
+type SharedSeparateFileCodec = Extract<
+  ReturnType<ReturnType<typeof defineCodec>>,
+  {decode: unknown}
+>;
+
+export type ExtractorMessageReference = ExtractorMessage['references'][number];
 
 /** A single statically extracted source-code usage before any aggregation. */
 export type SourceExtractedMessage = {
@@ -19,22 +22,9 @@ export type SourceExtractedMessage = {
 };
 
 /** An aggregated message that can be read from or written to a catalog. */
-export type ExtractorMessage = {
-  id: string;
-  message: string;
-  /**
-   * All unique descriptions attached to messages (e.g. multiple `#.` lines in PO).
-   * Ordered by source reference (path, then line).
-   */
-  description: Array<string>;
-  /**
-   * Source locations for this message (e.g. `#:` lines in PO). Ordered by path, then line.
-   * Empty when the catalog format does not store references or none are known.
-   */
-  references: Array<ExtractorMessageReference>;
-  /** Allows for additional properties like .po flags to be read and later written. */
-  [key: string]: unknown;
-};
+export type ExtractorMessage = ReturnType<
+  SharedSeparateFileCodec['decode']
+>[number];
 
 /**
  * External extractor configuration (Next.js plugin, `extractMessages`).
@@ -87,5 +77,6 @@ export type CatalogLoaderConfig = {
   messages: {
     format: MessagesFormat;
     precompile?: boolean;
+    sourceLocale: Locale;
   };
 };
