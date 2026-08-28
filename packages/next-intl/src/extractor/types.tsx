@@ -77,7 +77,6 @@ export type CatalogLoaderConfig = {
   messages: {
     format: MessagesFormat;
     precompile?: boolean;
-    /** Absent if catalogs are loaded without extraction being enabled. */
-    sourceLocale?: Locale;
+    sourceLocale: Locale;
   };
 };

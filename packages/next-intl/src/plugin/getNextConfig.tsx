@@ -137,24 +137,18 @@ export default function getNextConfig(
   function getCatalogLoaderConfig() {
     const experimental = pluginConfig.experimental!;
     const messages = experimental.messages!;
-    // A source locale is only enforced when extraction is enabled, therefore
-    // this can be absent when catalogs are merely loaded.
-    const sourceLocale =
-      messages.sourceLocale ??
+    // Normalization enforces a source locale before extraction runs.
+    const sourceLocale = (messages.sourceLocale ??
       (typeof experimental.extract === 'object'
         ? experimental.extract.sourceLocale
-        : undefined);
+        : undefined))!;
     return {
       loader: 'next-intl/extractor/catalogLoader',
       options: pruneUndefined({
         messages: {
           format: messages.format,
-          ...(messages.precompile !== undefined && {
-            precompile: messages.precompile
-          }),
-          ...(sourceLocale !== undefined && {
-            sourceLocale
-          })
+          precompile: messages.precompile,
+          sourceLocale
         }
       } satisfies CatalogLoaderConfig) as TurbopackLoaderOptions
     };
