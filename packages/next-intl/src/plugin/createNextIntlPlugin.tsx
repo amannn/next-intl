@@ -5,7 +5,7 @@ import createMessagesDeclaration from './declaration/index.js';
 import initExtractionCompiler from './extractor/initExtractionCompiler.js';
 import getNextConfig from './getNextConfig.js';
 import type {PluginConfig} from './types.js';
-import {throwError, warn} from './utils.js';
+import {warn} from './utils.js';
 
 function initPlugin(
   pluginConfig: PluginConfig,
@@ -39,10 +39,6 @@ function initPlugin(
       messages: experimental.messages,
       srcPath: experimental.srcPath
     });
-  } else if (experimental?.messages && !experimental.messages.sourceLocale) {
-    // Codecs receive a source locale when decoding catalogs, therefore
-    // this is required even if messages are only loaded, not extracted.
-    throwError('`messages.sourceLocale` is required when loading messages.');
   }
 
   if (!skipWatchers) {
