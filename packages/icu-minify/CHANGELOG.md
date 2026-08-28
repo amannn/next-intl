@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.14.1 (2026-08-28)
+
+### Bug Fixes
+
+* Unbreak `experimental.messages` without a `messages.sourceLocale` ([#2395](https://github.com/amannn/next-intl/issues/2395)) ([67fca94](https://github.com/amannn/next-intl/commit/67fca941e943e8fa273fbc8a7f362354f6804d35)) – by @amannn
+
 ## 4.14.0 (2026-08-27)
 
 ### Features
