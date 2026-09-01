@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.14.2 (2026-09-01)
+
+### Bug Fixes
+
+* Allow `@eloqnt/*` patches to resolve by moving to `^0.1.0` ranges ([#2398](https://github.com/amannn/next-intl/issues/2398)) ([4d18120](https://github.com/amannn/next-intl/commit/4d18120bf3c14ad2beda836659c6854a03c4f368)) – by @amannn
+
 ## 4.14.1 (2026-08-28)
 
 ### Bug Fixes
