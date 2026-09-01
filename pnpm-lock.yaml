@@ -811,14 +811,14 @@ importers:
   packages/next-intl:
     dependencies:
       '@eloqnt/config':
-        specifier: ^0.0.2
-        version: 0.0.2
+        specifier: ^0.1.0
+        version: 0.1.0
       '@eloqnt/format-json':
-        specifier: ^0.0.3
-        version: 0.0.3
+        specifier: ^0.1.0
+        version: 0.1.0
       '@eloqnt/format-po':
-        specifier: ^0.0.3
-        version: 0.0.3
+        specifier: ^0.1.0
+        version: 0.1.0
       '@formatjs/intl-localematcher':
         specifier: ^0.8.1
         version: 0.8.1
@@ -1930,14 +1930,14 @@ packages:
     resolution: {integrity: sha512-NKBGBSIKUG584qrS1tyxVpX/AKJKQw5HgjYEnPLC0QsTw79JrGn+qUr8CXFb955Iy7GUdiiUv1rJ6JBGvaKb6w==}
     engines: {node: '>=18'}
 
-  '@eloqnt/config@0.0.2':
-    resolution: {integrity: sha512-xz86UU1TJQPSzb0XJ3PkoyDlv3wdIiHfuu2wD/8m9ponHx0uSasYRDj4S+dpwQkIQaPYibN1oRr5HBll2GQkog==}
+  '@eloqnt/config@0.1.0':
+    resolution: {integrity: sha512-SLR6ZSHxu6XdZtmOz3xRmC3gsY/sCzqtLMD1gxbW2I3XXPBbupwL5RZbkLU/NcZm74AKZrIUPfz3CtEJfxUKqQ==}
 
-  '@eloqnt/format-json@0.0.3':
-    resolution: {integrity: sha512-zgDUVryBYQyM0WZGAoVr+FXjrzRjKkBGJran0E3i5LBcvTycl9ScFVhkF7aRBg8mHrU9xxvclUtSDIYg2mRTQg==}
+  '@eloqnt/format-json@0.1.0':
+    resolution: {integrity: sha512-4Pkb+HyzgWNJXoU48aJhUyNZSjZvMGooPCNG1ZFmBm55xTiNNPQCNXH66Ob6sXS6RvbWZrRpCf+Uo/Jz9K9g+A==}
 
-  '@eloqnt/format-po@0.0.3':
-    resolution: {integrity: sha512-4r36qEd7KJFV+IMKUv5czNXbGVys8ahxlQKWoUDV20eGl4Oxr+YZ2O5IEQU09S+d7FvPJ1USnyc/wtCLNCo1Ng==}
+  '@eloqnt/format-po@0.1.0':
+    resolution: {integrity: sha512-odgtuICWs67GdkNqY51/d2vaIukuOdlGalKASUGkI5c4cyWOmv/WIVyk5gZyn3xr614RzwWp57s9WB40lRLlBw==}
 
   '@emnapi/core@1.8.1':
     resolution: {integrity: sha512-AvT9QFpxK0Zd8J0jopedNm+w/2fIzvtPKPjqyw9jwvBaReTTqPBk9Hixaz7KbjimP+QNz605/XnjFcDAL2pqBg==}
@@ -7025,6 +7025,7 @@ packages:
   eslint@9.11.1:
     resolution: {integrity: sha512-MobhYKIoAO1s1e4VUrgx1l1Sk2JBR/Gqjjgw8+mfgoLE2xwsHur4gdfTxyTgShrhvdVFTaJSgMiQBl1jv/AWxg==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
     peerDependencies:
       jiti: '*'
@@ -7035,6 +7036,7 @@ packages:
   eslint@9.39.2:
     resolution: {integrity: sha512-LEyamqS7W5HB3ujJyvi0HQK/dtVINZvd5mAAp9eT5S/ujByGjiZLCzPcHVzuXbpJDJF/cxwHlfceVUDZ2lnSTw==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
     peerDependencies:
       jiti: '*'
@@ -13220,15 +13222,15 @@ snapshots:
     dependencies:
       '@edge-runtime/primitives': 6.0.0
 
-  '@eloqnt/config@0.0.2': {}
+  '@eloqnt/config@0.1.0': {}
 
-  '@eloqnt/format-json@0.0.3':
+  '@eloqnt/format-json@0.1.0':
     dependencies:
-      '@eloqnt/config': 0.0.2
+      '@eloqnt/config': 0.1.0
 
-  '@eloqnt/format-po@0.0.3':
+  '@eloqnt/format-po@0.1.0':
     dependencies:
-      '@eloqnt/config': 0.0.2
+      '@eloqnt/config': 0.1.0
       po-parser: 2.2.0
 
   '@emnapi/core@1.8.1':
