@@ -124,9 +124,9 @@
     "next.js"
   ],
   "dependencies": {
-    "@eloqnt/config": "^0.0.2",
-    "@eloqnt/format-json": "^0.0.3",
-    "@eloqnt/format-po": "^0.0.3",
+    "@eloqnt/config": "^0.1.0",
+    "@eloqnt/format-json": "^0.1.0",
+    "@eloqnt/format-po": "^0.1.0",
     "@formatjs/intl-localematcher": "^0.8.1",
     "@parcel/watcher": "^2.4.1",
     "@swc/core": "~1.16.0",
