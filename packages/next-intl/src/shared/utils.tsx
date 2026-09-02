@@ -201,5 +201,5 @@ export function isPromise<Value>(
   value: Value | Promise<Value>
 ): value is Promise<Value> {
   // https://github.com/amannn/next-intl/issues/1711
-  return typeof (value as any).then === 'function';
+  return Promise.resolve(value as any) === value;
 }
