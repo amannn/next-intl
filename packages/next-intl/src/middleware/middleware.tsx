@@ -46,13 +46,35 @@ export default function createMiddleware<
 
   return function middleware(request: NextRequest) {
     let unsafeExternalPathname: string;
+    let extractedLocale: string;
+
+    try {
+      extractedLocale = decodeURIComponent(request.nextUrl.pathname.split("/")[1] as string);
+    } catch {
+      extractedLocale = request.nextUrl.pathname.split("/")[1] as string;
+    }
     try {
       // Resolve potential foreign symbols (e.g. /ja/%E7%B4%84 → /ja/約))
       unsafeExternalPathname = decodeURI(request.nextUrl.pathname);
     } catch {
-      // In case an invalid pathname is encountered, forward
-      // it to Next.js which in turn responds with a 400
-      return NextResponse.next();
+      // In case an invalid pathname is encountered, return a custom error message with detailed info alongside a 400 Status.
+
+      return new NextResponse(
+        `
+        <div style='display: flex; flex-direction: column; gap: 1rem;'>
+          <h1 style='font-size: 2.25rem; color: oklch(50.5% 0.213 27.518);'>Invalid locale</h1>
+          <p>Unsupported character detected; "${extractedLocale}" is not a valid locale, as it contains non URL-safe characters.</p>
+          <small style='font-family: "Lucida Console", "Courier New", monospace;'>This error was thrown by next-intl</small>
+        </div>
+          `,
+        {
+          status: 400,
+          headers: { 
+            'content-type': 'text/html; charset=utf-8',
+            'content-language': 'en'
+          }
+        }
+      );
     }
 
     // Sanitize malicious URIs to prevent open redirect attacks due to
