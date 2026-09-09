@@ -62,10 +62,12 @@ export default function UserProfile({user}) {
 
 ## Lint your messages
 
-As an app grows, messages may drift from your source code. A companion tool, [`eloqnt/cli`](https://cli.eloqnt.dev/docs), catches this by analyzing your source code and messages statically.
+As an app grows, messages may drift from your source code.
+
+A companion tool, [`eloqnt/cli`](https://cli.eloqnt.dev/docs), catches this by analyzing your source code and messages statically.
 
 ```console
-$ npx eloqnt lint
+$ eloqnt lint
 
 messages/de.json
 │
@@ -79,7 +81,7 @@ messages/de.json
 → Run `eloqnt translate` to fill in 1 missing translation
 ```
 
-It works with both `useTranslations` and `useExtracted`, and can optionally fill in missing translations with `eloqnt translate`, using your source code as context. See [Linting messages](https://next-intl.dev/docs/workflows/messages).
+It works with both `useTranslations` and `useExtracted`, and can optionally fill in missing translations with `eloqnt translate`, using your source code as context (see [Linting messages](https://next-intl.dev/docs/workflows/messages)).
 
 ---
 
