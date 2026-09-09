@@ -24,6 +24,8 @@ Internationalization (i18n) is an essential part of the user experience, therefo
 - 🚀 **Next.js-native and performance-obsessed**: App Router, Server Components, static rendering—pick the right tool for the right job, next-intl works everywhere.
 - 🌍 **Internationalized routing**: Provide unique pathnames per language and optionally localize pathnames for search engine optimization.
 
+[→ Read the docs](https://next-intl.dev)
+
 ## What does it look like?
 
 ```jsx
@@ -60,31 +62,26 @@ export default function UserProfile({user}) {
 
 ## Lint your messages
 
-As an app grows, messages drift: a key gets renamed but its translations keep the old name, an argument changes in `en.json` only, a new page ships before it's translated. A companion tool, [`eloqnt/cli`](https://cli.eloqnt.dev), catches this by analyzing your source code and messages statically. It runs locally and needs no account.
+As an app grows, messages may drift from your source code. A companion tool, [`eloqnt/cli`](https://cli.eloqnt.dev/docs), catches this by analyzing your source code and messages statically.
 
 ```console
 $ npx eloqnt lint
 
 messages/de.json
 │
-│  "UserProfile.title": "Profil von {name}"
-│                                   ─┬────
-│                                    ╰─ Inconsistent ICU arguments: missing {firstName}, not in source {name} (inconsistent-args)
-│
 │  "UserProfile.membership": "Member since {memberSince, date, short}"
 │  ─┬──────────────────────
 │   ╰─ Missing translation for de (missing-translation)
 
-✗ 1 error
 ! 1 warning
 
 → Rule details: https://cli.eloqnt.dev/docs/lint-rules/<rule>
 → Run `eloqnt translate` to fill in 1 missing translation
 ```
 
-It works with both `useTranslations` and `useExtracted`, fits into CI, and can optionally fill in missing translations with `eloqnt translate`, using your source code as context. See [Linting messages](https://next-intl.dev/docs/workflows/messages).
+It works with both `useTranslations` and `useExtracted`, and can optionally fill in missing translations with `eloqnt translate`, using your source code as context. See [Linting messages](https://next-intl.dev/docs/workflows/messages).
 
-### [→ Read the docs](https://next-intl.dev)
+---
 
 <div align="center">
   <a href="https://next-intl.dev/redirect?href=https://crowdin.com" target="_blank">
