@@ -24,6 +24,8 @@ Internationalization (i18n) is an essential part of the user experience, therefo
 - 🚀 **Next.js-native and performance-obsessed**: App Router, Server Components, static rendering—pick the right tool for the right job, next-intl works everywhere.
 - 🌍 **Internationalized routing**: Provide unique pathnames per language and optionally localize pathnames for search engine optimization.
 
+[→ Read the docs](https://next-intl.dev)
+
 ## What does it look like?
 
 ```jsx
@@ -58,7 +60,35 @@ export default function UserProfile({user}) {
 }
 ```
 
-### [→ Read the docs](https://next-intl.dev)
+## Lint your messages
+
+As an app grows, messages may drift and become inconsistent.
+
+A companion tool, [`eloqnt/cli`](https://cli.eloqnt.dev/docs), catches this by analyzing your source code and messages statically:
+
+```console
+$ eloqnt lint
+
+messages/de.json
+│
+│  "UserProfile.title": "Dein Profil"
+│                        ─┬──────────
+│                         ╰─ Inconsistent ICU arguments: missing {firstName} (inconsistent-args)
+│
+│  "UserProfile.membership": "Member since {memberSince, date, short}"
+│  ─┬──────────────────────
+│   ╰─ Missing translation for de (missing-translation)
+
+✗ 1 error
+! 1 warning
+
+→ Rule details: https://cli.eloqnt.dev/docs/lint-rules/<rule>
+→ Run `eloqnt translate` to fill in 1 missing translation
+```
+
+It can optionally also fill in missing translations with [`eloqnt translate`](https://cli.eloqnt.dev/docs/cli/translate), using your source code as context.
+
+---
 
 <div align="center">
   <a href="https://next-intl.dev/redirect?href=https://crowdin.com" target="_blank">
