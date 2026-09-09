@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "lint": "eslint src && prettier src --check",
+    "lint": "eslint src && prettier src --check && eloqnt lint",
     "test": "pnpm run test:playwright && pnpm run test:jest",
     "test:playwright": "playwright test",
     "test:jest": "jest",
@@ -19,6 +19,7 @@
     "tailwindcss": "^3.4.4"
   },
   "devDependencies": {
+    "@eloqnt/cli": "^0.6.29",
     "@eslint/eslintrc": "^3.1.0",
     "@jest/globals": "^29.7.0",
     "@playwright/test": "^1.51.1",
