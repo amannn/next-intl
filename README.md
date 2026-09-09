@@ -58,6 +58,32 @@ export default function UserProfile({user}) {
 }
 ```
 
+## Lint your messages
+
+As an app grows, messages drift: a key gets renamed but its translations keep the old name, an argument changes in `en.json` only, a new page ships before it's translated. A companion tool, [`eloqnt/cli`](https://cli.eloqnt.dev), catches this by analyzing your source code and messages statically. It runs locally and needs no account.
+
+```console
+$ npx eloqnt lint
+
+messages/de.json
+│
+│  "UserProfile.title": "Profil von {name}"
+│                                   ─┬────
+│                                    ╰─ Inconsistent ICU arguments: missing {firstName}, not in source {name} (inconsistent-args)
+│
+│  "UserProfile.membership": "Member since {memberSince, date, short}"
+│  ─┬──────────────────────
+│   ╰─ Missing translation for de (missing-translation)
+
+✗ 1 error
+! 1 warning
+
+→ Rule details: https://cli.eloqnt.dev/docs/lint-rules/<rule>
+→ Run `eloqnt translate` to fill in 1 missing translation
+```
+
+It works with both `useTranslations` and `useExtracted`, fits into CI, and can optionally fill in missing translations with `eloqnt translate`, using your source code as context. See [Linting messages](https://next-intl.dev/docs/workflows/messages).
+
 ### [→ Read the docs](https://next-intl.dev)
 
 <div align="center">
