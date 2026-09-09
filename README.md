@@ -71,10 +71,15 @@ $ eloqnt lint
 
 messages/de.json
 │
+│  "UserProfile.title": "Dein Profil"
+│                        ─┬──────────
+│                         ╰─ Inconsistent ICU arguments: missing {firstName} (inconsistent-args)
+│
 │  "UserProfile.membership": "Member since {memberSince, date, short}"
 │  ─┬──────────────────────
 │   ╰─ Missing translation for de (missing-translation)
 
+✗ 1 error
 ! 1 warning
 
 → Rule details: https://cli.eloqnt.dev/docs/lint-rules/<rule>
