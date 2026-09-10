@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.14.3 (2026-09-10)
+
+### Bug Fixes
+
+* Keep `$` patterns in route param values literally ([#2406](https://github.com/amannn/next-intl/issues/2406)) ([a97b35e](https://github.com/amannn/next-intl/commit/a97b35e97c4d14248b06d34de6a29c27c400067b)) – by @soroush5
+
 ## 4.14.2 (2026-09-01)
 
 ### Bug Fixes
