@@ -110,11 +110,10 @@ export default function createMiddleware<
           : getBestMatchingDomain(domain, locale, domainsConfig);
         if (targetDomain) {
           redirectDomain = targetDomain.domain;
-          const redirectDomainMode =
-            targetDomain.localePrefix || resolvedRouting.localePrefix.mode;
           if (
             targetDomain.defaultLocale === locale &&
-            redirectDomainMode === 'as-needed'
+            (targetDomain.localePrefix || resolvedRouting.localePrefix.mode) ===
+              'as-needed'
           ) {
             urlObj.pathname = getNormalizedPathname(
               urlObj.pathname,
