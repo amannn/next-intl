@@ -2537,6 +2537,29 @@ describe('domain-based routing', () => {
       );
     });
 
+    it('redirects to the unprefixed pathname when crossing to a domain where the locale is the unprefixed default locale', () => {
+      const m = createMiddleware({
+        defaultLocale: 'en',
+        locales: ['en', 'nl', 'de'],
+        localePrefix: {mode: 'as-needed', prefixes: {nl: '/nl'}},
+        domains: [
+          {
+            defaultLocale: 'en',
+            domain: 'eu.example.com',
+            locales: ['en', 'nl']
+          },
+          {defaultLocale: 'de', domain: 'de.example.com', locales: ['de']}
+        ]
+      });
+      m(createMockRequest('/de/about', 'de', 'http://eu.example.com'));
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
+      expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+        'http://de.example.com/about'
+      );
+    });
+
     it('returns alternate links', () => {
       const response = middleware(createMockRequest('/'));
       expect(response.headers.get('link')).toBe(
@@ -2728,7 +2751,7 @@ describe('domain-based routing', () => {
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-          'http://fr.example.com/fr/about'
+          'http://fr.example.com/about'
         );
       });
 
@@ -2739,7 +2762,7 @@ describe('domain-based routing', () => {
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-          'http://fr.example.com/fr/about'
+          'http://fr.example.com/about'
         );
       });
 
@@ -2748,7 +2771,7 @@ describe('domain-based routing', () => {
           createMockRequest('/en/about', 'en', 'http://fr.example.com')
         );
         expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-          'http://en.example.com/en/about'
+          'http://en.example.com/about'
         );
       });
 

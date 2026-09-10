@@ -104,19 +104,16 @@ export default function createMiddleware<
 
       urlObj.pathname = normalizeTrailingSlash(urlObj.pathname);
 
-      if (domainsConfig.length > 0 && !redirectDomain && domain) {
-        const bestMatchingDomain = getBestMatchingDomain(
-          domain,
-          locale,
-          domainsConfig
-        );
-        if (bestMatchingDomain) {
-          redirectDomain = bestMatchingDomain.domain;
+      if (domainsConfig.length > 0 && domain) {
+        const targetDomain = redirectDomain
+          ? domainsConfig.find((cur) => cur.domain === redirectDomain)
+          : getBestMatchingDomain(domain, locale, domainsConfig);
+        if (targetDomain) {
+          redirectDomain = targetDomain.domain;
           const redirectDomainMode =
-            bestMatchingDomain.localePrefix ||
-            resolvedRouting.localePrefix.mode;
+            targetDomain.localePrefix || resolvedRouting.localePrefix.mode;
           if (
-            bestMatchingDomain.defaultLocale === locale &&
+            targetDomain.defaultLocale === locale &&
             redirectDomainMode === 'as-needed'
           ) {
             urlObj.pathname = getNormalizedPathname(
