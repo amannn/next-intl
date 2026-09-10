@@ -126,6 +126,38 @@ describe('compileLocalizedPathname', () => {
       ].join('\n')
     );
   });
+
+  it('keeps `$` patterns in param values literally', () => {
+    expect(
+      compileLocalizedPathname<Locales, '/about/[param]'>({
+        locale: 'en',
+        pathname: '/about/[param]',
+        params: {param: 'a$&b'},
+        pathnames
+      })
+    ).toBe('/about/a$&b');
+
+    expect(
+      compileLocalizedPathname<Locales, '/about/[param]'>({
+        locale: 'en',
+        pathname: '/about/[param]',
+        params: {param: "$'`$1"},
+        pathnames
+      })
+      // Note: `` ` `` is percent-encoded by URL normalization
+    ).toBe("/about/$'%60$1");
+  });
+
+  it('keeps `$` patterns in catch-all param values literally', () => {
+    expect(
+      compileLocalizedPathname<Locales, '/test/[...params]'>({
+        locale: 'en',
+        pathname: '/test/[...params]',
+        params: {params: ['a$&b', 'c']},
+        pathnames
+      })
+    ).toBe('/test/a$&b/c');
+  });
 });
 
 describe('getBasePath', () => {

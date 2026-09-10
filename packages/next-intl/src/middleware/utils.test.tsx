@@ -177,6 +177,15 @@ describe('formatPathname', () => {
       '/users/23/42'
     );
   });
+
+  it('keeps `$` patterns in parameter values literally', () => {
+    expect(formatPathnameTemplate('/users/[userId]', {userId: 'a$&b'})).toBe(
+      '/users/a$&b'
+    );
+    expect(formatPathnameTemplate('/users/[userId]', {userId: "$'`$1"})).toBe(
+      "/users/$'`$1"
+    );
+  });
 });
 
 describe('getInternalTemplate', () => {
