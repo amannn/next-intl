@@ -136,39 +136,31 @@ export function compileLocalizedPathname<AppLocales extends Locales, Pathname>({
       // syntax (see https://github.com/amannn/next-intl/issues/2407).
       // A replacer function is used so that `$` patterns in values
       // are kept literally.
-      const unresolvedParams: Array<string> = [];
+      let missing = 0;
       compiled = template.replace(
-        /\[\[(\.\.\.[^\]]+)\]\]|\[(\.\.\.[^\]]+)\]|\[([^\]]+)\]/g,
+        /\[\[\.\.\.([^\]]+)\]\]|\[\.\.\.([^\]]+)\]|\[([^\]]+)\]/g,
         (match, optionalCatchAllParam, catchAllParam, param) => {
-          const isCatchAll = optionalCatchAllParam !== undefined;
-          const isRequiredCatchAll = !isCatchAll && catchAllParam !== undefined;
-          const key = (optionalCatchAllParam ?? catchAllParam ?? param).replace(
-            /^\.\.\./,
-            ''
-          );
+          const key = optionalCatchAllParam ?? catchAllParam ?? param;
 
           if (params && Object.prototype.hasOwnProperty.call(params, key)) {
             const paramValue = (params as Record<string, unknown>)[key];
             if (Array.isArray(paramValue)) {
               return paramValue.map((v) => String(v)).join('/');
-            } else if (!isCatchAll && !isRequiredCatchAll) {
+            } else if (param !== undefined) {
               return String(paramValue);
             }
           }
 
-          if (isCatchAll) {
+          if (optionalCatchAllParam !== undefined) {
             // Unresolved optional catch-all segments are removed
             return '';
           }
 
-          unresolvedParams.push(key);
+          missing++;
           return match;
         }
       );
-      if (
-        process.env.NODE_ENV !== 'production' &&
-        unresolvedParams.length > 0
-      ) {
+      if (process.env.NODE_ENV !== 'production' && missing > 0) {
         // Next.js throws anyway, therefore better provide a more helpful error message
         throw new Error(
           `Insufficient params provided for localized pathname.\nTemplate: ${template}\nParams: ${JSON.stringify(

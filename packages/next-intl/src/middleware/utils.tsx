@@ -251,7 +251,7 @@ export function formatPathnameTemplate(template: string, params?: object) {
   // A replacer function is used so that `$` patterns in values
   // are kept literally.
   return template.replace(/\[([^\][]+)\]/g, (match, key) =>
-    Object.prototype.hasOwnProperty.call(params, key)
+    params && Object.hasOwn(params, key)
       ? String((params as Record<string, unknown>)[key])
       : match
   );
