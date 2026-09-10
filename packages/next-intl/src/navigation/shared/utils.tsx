@@ -130,27 +130,45 @@ export function compileLocalizedPathname<AppLocales extends Locales, Pathname>({
     let compiled: string;
     if (pathnameConfig) {
       const template = getLocalizedTemplate(pathnameConfig, locale, value);
-      compiled = template;
 
-      if (params) {
-        Object.entries(params).forEach(([key, paramValue]) => {
-          let regexp: string, replacer: string;
+      // Substitute all placeholders in a single pass so that values
+      // containing `[` or `]` are never re-interpreted as template
+      // syntax (see https://github.com/amannn/next-intl/issues/2407).
+      // A replacer function is used so that `$` patterns in values
+      // are kept literally.
+      const unresolvedParams: Array<string> = [];
+      compiled = template.replace(
+        /\[\[(\.\.\.[^\]]+)\]\]|\[(\.\.\.[^\]]+)\]|\[([^\]]+)\]/g,
+        (match, optionalCatchAllParam, catchAllParam, param) => {
+          const isCatchAll = optionalCatchAllParam !== undefined;
+          const isRequiredCatchAll = !isCatchAll && catchAllParam !== undefined;
+          const key = (optionalCatchAllParam ?? catchAllParam ?? param).replace(
+            /^\.\.\./,
+            ''
+          );
 
-          if (Array.isArray(paramValue)) {
-            regexp = `(\\[)?\\[...${key}\\](\\])?`;
-            replacer = paramValue.map((v) => String(v)).join('/');
-          } else {
-            regexp = `\\[${key}\\]`;
-            replacer = String(paramValue);
+          if (params && Object.prototype.hasOwnProperty.call(params, key)) {
+            const paramValue = (params as Record<string, unknown>)[key];
+            if (Array.isArray(paramValue)) {
+              return paramValue.map((v) => String(v)).join('/');
+            } else if (!isCatchAll && !isRequiredCatchAll) {
+              return String(paramValue);
+            }
           }
 
-          compiled = compiled.replace(new RegExp(regexp, 'g'), () => replacer);
-        });
-      }
+          if (isCatchAll) {
+            // Unresolved optional catch-all segments are removed
+            return '';
+          }
 
-      // Clean up optional catch-all segments that were not replaced
-      compiled = compiled.replace(/\[\[\.\.\..+\]\]/g, '');
-      if (process.env.NODE_ENV !== 'production' && compiled.includes('[')) {
+          unresolvedParams.push(key);
+          return match;
+        }
+      );
+      if (
+        process.env.NODE_ENV !== 'production' &&
+        unresolvedParams.length > 0
+      ) {
         // Next.js throws anyway, therefore better provide a more helpful error message
         throw new Error(
           `Insufficient params provided for localized pathname.\nTemplate: ${template}\nParams: ${JSON.stringify(

@@ -136,7 +136,37 @@ describe('compileLocalizedPathname', () => {
         pathnames
       })
     ).toBe('/about/a$&b');
+  });
 
+  // https://github.com/amannn/next-intl/issues/2407
+  it('keeps `[` and `]` in param values literally', () => {
+    expect(
+      compileLocalizedPathname<Locales, '/about/[param]'>({
+        locale: 'en',
+        pathname: '/about/[param]',
+        params: {param: 'a[b'},
+        pathnames
+      })
+    ).toBe('/about/a[b');
+    expect(
+      compileLocalizedPathname<Locales, '/about/[param]'>({
+        locale: 'en',
+        pathname: '/about/[param]',
+        params: {param: 'a]b'},
+        pathnames
+      })
+    ).toBe('/about/a]b');
+    expect(
+      compileLocalizedPathname<Locales, '/about/[param]'>({
+        locale: 'en',
+        pathname: '/about/[param]',
+        params: {param: '[[...x]]'},
+        pathnames
+      })
+    ).toBe('/about/[[...x]]');
+  });
+
+  it('keeps `$` patterns in param values literally (second pattern)', () => {
     expect(
       compileLocalizedPathname<Locales, '/about/[param]'>({
         locale: 'en',
@@ -157,6 +187,18 @@ describe('compileLocalizedPathname', () => {
         pathnames
       })
     ).toBe('/test/a$&b/c');
+  });
+
+  // https://github.com/amannn/next-intl/issues/2407
+  it('does not re-interpret param values as template placeholders', () => {
+    expect(
+      compileLocalizedPathname<Locales, '/test/[one]/[two]'>({
+        locale: 'en',
+        pathname: '/test/[one]/[two]',
+        params: {one: '[two]', two: '2'},
+        pathnames
+      })
+    ).toBe('/test/[two]/2');
   });
 });
 

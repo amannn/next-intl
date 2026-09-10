@@ -186,6 +186,21 @@ describe('formatPathname', () => {
       "/users/$'`$1"
     );
   });
+
+  // https://github.com/amannn/next-intl/issues/2407
+  it('keeps `[` and `]` in parameter values literally', () => {
+    expect(formatPathnameTemplate('/users/[userId]', {userId: 'a[b'})).toBe(
+      '/users/a[b'
+    );
+    expect(formatPathnameTemplate('/x/[a]/[b]', {a: '[b]', b: 'B'})).toBe(
+      '/x/[b]/B'
+    );
+  });
+
+  // https://github.com/amannn/next-intl/issues/2407
+  it('replaces a parameter that appears twice', () => {
+    expect(formatPathnameTemplate('/x/[a]/y/[a]', {a: '1'})).toBe('/x/1/y/1');
+  });
 });
 
 describe('getInternalTemplate', () => {

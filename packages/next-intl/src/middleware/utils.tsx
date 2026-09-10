@@ -245,12 +245,16 @@ export function formatPathnameTemplate(template: string, params?: object) {
   // we can replace the value with simple interpolation
   template = template.replace(/\[\[/g, '[').replace(/\]\]/g, ']');
 
-  let result = template;
-  Object.entries(params).forEach(([key, value]) => {
-    result = result.replace(`[${key}]`, () => value);
-  });
-
-  return result;
+  // Substitute all placeholders in a single pass so that values
+  // containing `[` or `]` are never re-interpreted as template
+  // syntax (see https://github.com/amannn/next-intl/issues/2407).
+  // A replacer function is used so that `$` patterns in values
+  // are kept literally.
+  return template.replace(/\[([^\][]+)\]/g, (match, key) =>
+    Object.prototype.hasOwnProperty.call(params, key)
+      ? String((params as Record<string, unknown>)[key])
+      : match
+  );
 }
 
 export function formatPathname(
