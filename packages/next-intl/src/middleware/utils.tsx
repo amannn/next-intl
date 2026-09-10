@@ -247,7 +247,7 @@ export function formatPathnameTemplate(template: string, params?: object) {
 
   let result = template;
   Object.entries(params).forEach(([key, value]) => {
-    result = result.replace(`[${key}]`, value);
+    result = result.replace(`[${key}]`, () => value);
   });
 
   return result;

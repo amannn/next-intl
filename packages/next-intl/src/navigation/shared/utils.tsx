@@ -144,7 +144,7 @@ export function compileLocalizedPathname<AppLocales extends Locales, Pathname>({
             replacer = String(paramValue);
           }
 
-          compiled = compiled.replace(new RegExp(regexp, 'g'), replacer);
+          compiled = compiled.replace(new RegExp(regexp, 'g'), () => replacer);
         });
       }
 
