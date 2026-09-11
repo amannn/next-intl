@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.14.4 (2026-09-11)
+
+### Bug Fixes
+
+* Improve base path detection for setting a cookie ([#2410](https://github.com/amannn/next-intl/issues/2410)) ([f04681d](https://github.com/amannn/next-intl/commit/f04681d2121d850649f5f4fae5232100d78c143f)) – by @soroush5
+
 ## 4.14.3 (2026-09-10)
 
 ### Bug Fixes
