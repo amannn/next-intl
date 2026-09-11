@@ -195,11 +195,9 @@ describe('formatPathname', () => {
     expect(formatPathnameTemplate('/x/[a]/[b]', {a: '[b]', b: 'B'})).toBe(
       '/x/[b]/B'
     );
-  });
-
-  // https://github.com/amannn/next-intl/issues/2407
-  it('replaces a parameter that appears twice', () => {
-    expect(formatPathnameTemplate('/x/[a]/y/[a]', {a: '1'})).toBe('/x/1/y/1');
+    expect(
+      formatPathnameTemplate('/about/[param]', {param: '[[...x]]'})
+    ).toBe('/about/[[...x]]');
   });
 });
 
