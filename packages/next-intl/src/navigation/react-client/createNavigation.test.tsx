@@ -313,6 +313,28 @@ describe("localePrefix: 'always', with `localeCookie`", () => {
   });
 });
 
+describe("localePrefix: 'always', with `localeCookie: false`", () => {
+  const {useRouter} = createNavigation({
+    locales,
+    defaultLocale,
+    localePrefix: 'always',
+    localeCookie: false
+  });
+
+  describe('useRouter', () => {
+    const invokeRouter = getInvokeRouter(useRouter);
+
+    it('navigates without reading the pathname', () => {
+      vi.mocked(useNextPathname).mockClear();
+
+      invokeRouter((router) => router.push('/about', {locale: 'de'}));
+
+      expect(useNextRouter().push).toHaveBeenCalledWith('/de/about');
+      expect(useNextPathname).not.toHaveBeenCalled();
+    });
+  });
+});
+
 describe("localePrefix: 'always', with `basePath`", () => {
   const {useRouter} = createNavigation({
     locales,

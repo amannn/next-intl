@@ -69,10 +69,17 @@ export default function createNavigation<
     );
   }
 
+  // Reading the pathname subscribes the caller to URL data, which blocks the
+  // App Shell of routes with dynamic params. It's only needed to sync the
+  // locale cookie, therefore the hook is picked once per navigation instance.
+  const usePathnameForCookie = config.localeCookie
+    ? useNextPathname
+    : () => null;
+
   function useRouter() {
     const router = useNextRouter();
     const curLocale = useLocale();
-    const nextPathname = useNextPathname();
+    const nextPathname = usePathnameForCookie();
 
     return useMemo(() => {
       function createHandler<
