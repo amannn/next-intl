@@ -256,7 +256,11 @@ export function getBasePath(
     // with a base path of `/dashboard`).
     return windowPathname.slice(0, -pathname.length);
   } else {
-    return windowPathname;
+    // Unexpected, since the window pathname should always end with
+    // the pathname. Assuming no base path is safer than returning
+    // the window pathname, as the latter would scope the locale
+    // cookie to the current page instead of the app root.
+    return '';
   }
 }
 

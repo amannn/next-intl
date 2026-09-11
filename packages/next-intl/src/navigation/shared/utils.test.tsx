@@ -177,8 +177,12 @@ describe('getBasePath', () => {
     expect(getBasePath('/about', '/base/about')).toBe('/base');
   });
 
-  it('only strips the trailing pathname when it also appears inside the base path', () => {
+  it('detects a base path that starts with the current pathname', () => {
     expect(getBasePath('/dash', '/dashboard/dash')).toBe('/dashboard');
     expect(getBasePath('/doc', '/docs/doc')).toBe('/docs');
+  });
+
+  it('assumes no base path when the pathname is not the trailing part', () => {
+    expect(getBasePath('/about', '/base/other')).toBe('');
   });
 });
