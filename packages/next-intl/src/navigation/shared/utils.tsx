@@ -250,8 +250,13 @@ export function getBasePath(
 ) {
   if (pathname === '/') {
     return windowPathname;
+  } else if (windowPathname.endsWith(pathname)) {
+    // Only strip the trailing occurrence: the pathname can also
+    // appear inside the base path itself (e.g. pathname `/dash`
+    // with a base path of `/dashboard`).
+    return windowPathname.slice(0, -pathname.length);
   } else {
-    return windowPathname.replace(pathname, '');
+    return windowPathname;
   }
 }
 

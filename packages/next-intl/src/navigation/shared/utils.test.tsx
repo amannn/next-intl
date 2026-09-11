@@ -176,4 +176,9 @@ describe('getBasePath', () => {
   it('detects a base path when using no locale prefix and the user is at a nested path', () => {
     expect(getBasePath('/about', '/base/about')).toBe('/base');
   });
+
+  it('only strips the trailing pathname when it also appears inside the base path', () => {
+    expect(getBasePath('/dash', '/dashboard/dash')).toBe('/dashboard');
+    expect(getBasePath('/doc', '/docs/doc')).toBe('/docs');
+  });
 });
