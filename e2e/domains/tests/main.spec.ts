@@ -33,19 +33,14 @@ it('redirects a locale that is served on another domain to that domain', async (
   expect(result.status).toBe(200);
   expect(result.body).toContain('>de<');
 
-  // … however, this currently takes two redirects instead of one. The
-  // cross-domain redirect carries over the `/de` prefix from the source
-  // domain, and only the subsequent request on the target domain removes it
-  // again. Note that the intermediate URL does not respond with a 404, as
-  // reported in https://github.com/amannn/next-intl/issues/2369.
+  // … however, the cross-domain redirect should normalize the prefix
+  // right away and reach the destination in a single redirect — like the
+  // same-domain case below. Currently this fails: the `/de` prefix is
+  // carried over to the target domain and only removed by a second
+  // redirect. See https://github.com/amannn/next-intl/issues/2369.
   expect(result.hops).toEqual([
     {
       url: `http://${EU_DOMAIN}/de`,
-      status: 307,
-      location: `http://${DE_DOMAIN}/de`
-    },
-    {
-      url: `http://${DE_DOMAIN}/de`,
       status: 307,
       location: `http://${DE_DOMAIN}/`
     },
@@ -63,14 +58,11 @@ it('takes the same extra redirect in the opposite direction', async () => {
   expect(result.status).toBe(200);
   expect(result.body).toContain('>en<');
 
+  // Same expectation as above: a single redirect to the unprefixed URL.
+  // Currently fails with the extra hop via `${EU_DOMAIN}/en`.
   expect(result.hops).toEqual([
     {
       url: `http://${DE_DOMAIN}/en`,
-      status: 307,
-      location: `http://${EU_DOMAIN}/en`
-    },
-    {
-      url: `http://${EU_DOMAIN}/en`,
       status: 307,
       location: `http://${EU_DOMAIN}/`
     },
@@ -85,15 +77,11 @@ it('redirects a nested pathname of a locale that is served on another domain', a
   expect(result.status).toBe(200);
   expect(result.body).toContain('>contact<');
 
-  // Same as above: an extra redirect, but no 404
+  // Same as above: the redirect should land on the unprefixed URL
+  // directly. Currently fails with the extra hop via `/de/contact`.
   expect(result.hops).toEqual([
     {
       url: `http://${EU_DOMAIN}/de/contact`,
-      status: 307,
-      location: `http://${DE_DOMAIN}/de/contact`
-    },
-    {
-      url: `http://${DE_DOMAIN}/de/contact`,
       status: 307,
       location: `http://${DE_DOMAIN}/contact`
     },
