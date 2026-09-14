@@ -317,7 +317,6 @@ describe("localePrefix: 'always', with `localeCookie`", () => {
       vi.mocked(useNextPathname).mockClear();
 
       invokeRouter((router) => router.push('/about', {locale: 'de'}));
-
       expect(useNextPathname).not.toHaveBeenCalled();
     });
   });

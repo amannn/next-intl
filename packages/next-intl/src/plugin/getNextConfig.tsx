@@ -349,7 +349,6 @@ export default function getNextConfig(
   }
 
   // Forward config
-  // (note that `undefined` values are not supported by Turbopack)
   const env: Record<string, string> = {};
   if (nextConfig?.trailingSlash) {
     env._next_intl_trailing_slash = 'true';
@@ -357,6 +356,7 @@ export default function getNextConfig(
   if (nextConfig?.basePath) {
     env._next_intl_base_path = nextConfig.basePath;
   }
+  // Note that `undefined` values are not supported by Turbopack
   if (Object.keys(env).length > 0) {
     nextIntlConfig.env = {...nextConfig?.env, ...env};
   }
