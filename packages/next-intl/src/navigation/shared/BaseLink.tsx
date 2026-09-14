@@ -1,7 +1,6 @@
 'use client';
 
 import NextLink, {type LinkProps} from 'next/link.js';
-import {usePathname} from 'next/navigation.js';
 import {
   type ComponentProps,
   type MouseEvent,
@@ -33,9 +32,7 @@ type LocaleChangingLinkProps = NextLinkProps & {
 const Link = NextLink as unknown as (props: NextLinkProps) => ReactNode;
 
 // Links that change the locale are handled in a separate component,
-// since reading the pathname (necessary for syncing the locale cookie)
-// requires a Suspense boundary when Cache Components are used. Due to
-// this split, regular links are not subject to this requirement.
+// since they require additional handling for syncing the locale cookie.
 function LocaleChangingLink({
   curLocale,
   linkRef,
@@ -45,15 +42,11 @@ function LocaleChangingLink({
   prefetch,
   ...rest
 }: LocaleChangingLinkProps) {
-  // The types aren't entirely correct here. Outside of Next.js
-  // `usePathname` can be called, but the return type is `null`.
-  const pathname = usePathname() as ReturnType<typeof usePathname> | null;
-
   function onLinkClick(event: MouseEvent<HTMLAnchorElement>) {
     // Even though we force a prefix when changing locales,
     // this could be a cache hit of the client-side router,
     // therefore we sync the cookie to ensure it's up to date.
-    syncLocaleCookie(localeCookie, pathname, curLocale, locale);
+    syncLocaleCookie(localeCookie, curLocale, locale);
     if (onClick) onClick(event);
   }
 

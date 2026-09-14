@@ -9,30 +9,19 @@ import {getBasePath} from './utils.js';
  */
 export default function syncLocaleCookie(
   localeCookie: InitializedLocaleCookieConfig,
-  pathname: string | null,
   locale: Locale,
   nextLocale?: Locale
 ) {
   const isSwitchingLocale = nextLocale !== locale && nextLocale != null;
 
-  if (
-    !localeCookie ||
-    !isSwitchingLocale ||
-    // Theoretical case, we always have a pathname in a real app,
-    // only not when running e.g. in a simulated test environment
-    !pathname
-  ) {
+  if (!localeCookie || !isSwitchingLocale) {
     return;
   }
-
-  const basePath = getBasePath(pathname);
-  const hasBasePath = basePath !== '';
-  const defaultPath = hasBasePath ? basePath : '/';
 
   const {name, ...rest} = localeCookie;
 
   if (!rest.path) {
-    rest.path = defaultPath;
+    rest.path = getBasePath() || '/';
   }
 
   let localeCookieString = `${name}=${nextLocale};`;

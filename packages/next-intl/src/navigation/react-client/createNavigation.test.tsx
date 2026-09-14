@@ -4,7 +4,7 @@ import {
   useRouter as useNextRouter
 } from 'next/navigation.js';
 import {type Locale, useLocale} from 'use-intl';
-import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import type {DomainsConfig, Pathnames} from '../../routing.js';
 import createNavigation from './createNavigation.js';
 
@@ -310,6 +310,15 @@ describe("localePrefix: 'always', with `localeCookie`", () => {
       );
       cookieSpy.mockRestore();
     });
+
+    it('does not read the pathname', () => {
+      // Reading URL data would require a `<Suspense>` boundary
+      // in the calling component when Cache Components are used
+      vi.mocked(useNextPathname).mockClear();
+
+      invokeRouter((router) => router.push('/about', {locale: 'de'}));
+      expect(useNextPathname).not.toHaveBeenCalled();
+    });
   });
 });
 
@@ -321,7 +330,12 @@ describe("localePrefix: 'always', with `basePath`", () => {
   });
 
   beforeEach(() => {
+    process.env._next_intl_base_path = '/base/path';
     mockLocation({pathname: '/base/path/en'}, '/base/path');
+  });
+
+  afterEach(() => {
+    delete process.env._next_intl_base_path;
   });
 
   describe('useRouter', () => {
@@ -827,7 +841,12 @@ describe("localePrefix: 'never', with `basePath`", () => {
   });
 
   beforeEach(() => {
+    process.env._next_intl_base_path = '/base/path';
     mockLocation({pathname: '/base/path/en'}, '/base/path');
+  });
+
+  afterEach(() => {
+    delete process.env._next_intl_base_path;
   });
 
   describe('useRouter', () => {

@@ -244,19 +244,11 @@ export function getRoute<AppLocales extends Locales>(
   return pathname as keyof Pathnames<AppLocales>;
 }
 
-export function getBasePath(
-  pathname: string,
-  windowPathname = window.location.pathname
-) {
-  if (pathname === '/') {
-    return windowPathname;
-  } else if (windowPathname.endsWith(pathname)) {
-    // Only strip the trailing occurrence: the pathname can also
-    // appear inside the base path itself (e.g. `/dashboard/dash`)
-    return windowPathname.slice(0, -pathname.length);
-  } else {
-    // Unexpected, since the window pathname should always end with
-    // the pathname. Assuming no base path is safe though.
+export function getBasePath() {
+  try {
+    // Provided via `env` setting in `next.config.js` via the plugin
+    return process.env._next_intl_base_path || '';
+  } catch {
     return '';
   }
 }

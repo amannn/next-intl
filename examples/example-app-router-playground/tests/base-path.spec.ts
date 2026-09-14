@@ -21,6 +21,14 @@ it('updates the cookie correctly', async ({page}) => {
   assertLocaleCookieValue(page, 'en', {path: '/base/path'});
 });
 
+it('updates the cookie correctly when using the router', async ({page}) => {
+  await page.goto('/base/path/client');
+  await page.getByRole('button', {name: 'Switch to de'}).click();
+
+  await expect(page).toHaveURL('/base/path/de/client');
+  await assertLocaleCookieValue(page, 'de', {path: '/base/path'});
+});
+
 it('omits a base path from usePathname', async ({page}) => {
   await page.goto('/base/path/client');
   await expect(page.getByTestId('UnlocalizedPathname')).toHaveText('/client');
