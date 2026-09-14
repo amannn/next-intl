@@ -349,11 +349,16 @@ export default function getNextConfig(
   }
 
   // Forward config
+  // (note that `undefined` values are not supported by Turbopack)
+  const env: Record<string, string> = {};
   if (nextConfig?.trailingSlash) {
-    nextIntlConfig.env = {
-      ...nextConfig.env,
-      _next_intl_trailing_slash: 'true'
-    };
+    env._next_intl_trailing_slash = 'true';
+  }
+  if (nextConfig?.basePath) {
+    env._next_intl_base_path = nextConfig.basePath;
+  }
+  if (Object.keys(env).length > 0) {
+    nextIntlConfig.env = {...nextConfig?.env, ...env};
   }
 
   return Object.assign({}, nextConfig, nextIntlConfig);

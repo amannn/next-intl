@@ -1,4 +1,4 @@
-import {describe, expect, it} from 'vitest';
+import {afterEach, describe, expect, it} from 'vitest';
 import {
   compileLocalizedPathname,
   getBasePath,
@@ -161,28 +161,16 @@ describe('compileLocalizedPathname', () => {
 });
 
 describe('getBasePath', () => {
-  it('detects a base path when using a locale prefix and the user is at the root', () => {
-    expect(getBasePath('/en', '/base/en')).toBe('/base');
+  afterEach(() => {
+    delete process.env._next_intl_base_path;
   });
 
-  it('detects a base path when using a locale prefix and the user is at a nested path', () => {
-    expect(getBasePath('/en/about', '/base/en/about')).toBe('/base');
+  it('returns a base path that was provided by the plugin', () => {
+    process.env._next_intl_base_path = '/base';
+    expect(getBasePath()).toBe('/base');
   });
 
-  it('detects a base path when using no locale prefix and the user is at the root', () => {
-    expect(getBasePath('/', '/base')).toBe('/base');
-  });
-
-  it('detects a base path when using no locale prefix and the user is at a nested path', () => {
-    expect(getBasePath('/about', '/base/about')).toBe('/base');
-  });
-
-  it('detects a base path that starts with the current pathname', () => {
-    expect(getBasePath('/dash', '/dashboard/dash')).toBe('/dashboard');
-    expect(getBasePath('/doc', '/docs/doc')).toBe('/docs');
-  });
-
-  it('assumes no base path when the pathname is not the trailing part', () => {
-    expect(getBasePath('/about', '/base/other')).toBe('');
+  it('returns an empty string when no base path is configured', () => {
+    expect(getBasePath()).toBe('');
   });
 });
