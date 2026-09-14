@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.14.5 (2026-09-14)
+
+### Bug Fixes
+
+* Avoid reading the pathname in `useRouter` and `Link` to work better with Cache Components ([#2415](https://github.com/amannn/next-intl/issues/2415)) ([ed97a92](https://github.com/amannn/next-intl/commit/ed97a92d1592baf1babea05b618dc4bb663c45c1)) – by @amannn
+
 ## 4.14.4 (2026-09-11)
 
 ### Bug Fixes
