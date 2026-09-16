@@ -43,6 +43,32 @@ export function prefixPathname(prefix: string, pathname: string) {
   return localizedHref;
 }
 
+export function replacePathnameParameters(template: string, params: object) {
+  const values = params as Record<string, unknown>;
+  let hasUnresolvedParams = false;
+  const pathname = template.replace(
+    /\[\[\.\.\.([^\]]+)\]\]|\[\.\.\.([^\]]+)\]|\[([^\]]+)\]/g,
+    (match, optionalCatchAll, catchAll, param) => {
+      const key = optionalCatchAll ?? catchAll ?? param;
+      let value = values[key];
+      if (value === undefined && (optionalCatchAll || catchAll)) {
+        value = values[`...${key}`];
+      }
+
+      if (value === undefined) {
+        if (optionalCatchAll) return '';
+
+        hasUnresolvedParams = true;
+        return match;
+      }
+
+      return Array.isArray(value) ? value.map(String).join('/') : String(value);
+    }
+  );
+
+  return {pathname, hasUnresolvedParams};
+}
+
 export function hasPathnamePrefixed(
   prefix: string | undefined,
   pathname: string

@@ -158,6 +158,35 @@ describe('compileLocalizedPathname', () => {
       })
     ).toBe('/test/a$&b/c');
   });
+
+  it('keeps brackets in param values literally', () => {
+    expect(
+      compileLocalizedPathname<Locales, '/about/[param]'>({
+        locale: 'en',
+        pathname: '/about/[param]',
+        params: {param: 'a[b'},
+        pathnames
+      })
+    ).toBe('/about/a[b');
+
+    expect(
+      compileLocalizedPathname<Locales, '/test/[one]/[two]'>({
+        locale: 'en',
+        pathname: '/test/[one]/[two]',
+        params: {one: '[two]', two: '2'},
+        pathnames
+      })
+    ).toBe('/test/[two]/2');
+
+    expect(
+      compileLocalizedPathname<Locales, '/about/[param]'>({
+        locale: 'en',
+        pathname: '/about/[param]',
+        params: {param: '[[...value]]'},
+        pathnames
+      })
+    ).toBe('/about/[[...value]]');
+  });
 });
 
 describe('getBasePath', () => {

@@ -186,6 +186,31 @@ describe('formatPathname', () => {
       "/users/$'`$1"
     );
   });
+
+  it('keeps brackets in parameter values literally', () => {
+    expect(
+      formatPathnameTemplate('/users/[userId]/posts/[postId]', {
+        userId: '[postId]',
+        postId: '42'
+      })
+    ).toBe('/users/[postId]/posts/42');
+  });
+
+  it('replaces duplicate parameter placeholders', () => {
+    expect(
+      formatPathnameTemplate('/users/[userId]/related/[userId]', {
+        userId: '23'
+      })
+    ).toBe('/users/23/related/23');
+  });
+
+  it('replaces catch-all parameter placeholders', () => {
+    expect(
+      formatPathnameTemplate('/categories/[[...categories]]', {
+        '...categories': 'clothing/t-shirts'
+      })
+    ).toBe('/categories/clothing/t-shirts');
+  });
 });
 
 describe('getInternalTemplate', () => {

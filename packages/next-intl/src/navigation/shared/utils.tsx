@@ -15,7 +15,8 @@ import {
   isLocalizableHref,
   matchesPathname,
   normalizeTrailingSlash,
-  prefixPathname
+  prefixPathname,
+  replacePathnameParameters
 } from '../../shared/utils.js';
 import type StrictParams from './StrictParams.js';
 
@@ -130,27 +131,10 @@ export function compileLocalizedPathname<AppLocales extends Locales, Pathname>({
     let compiled: string;
     if (pathnameConfig) {
       const template = getLocalizedTemplate(pathnameConfig, locale, value);
-      compiled = template;
+      const result = replacePathnameParameters(template, params ?? {});
+      compiled = result.pathname;
 
-      if (params) {
-        Object.entries(params).forEach(([key, paramValue]) => {
-          let regexp: string, replacer: string;
-
-          if (Array.isArray(paramValue)) {
-            regexp = `(\\[)?\\[...${key}\\](\\])?`;
-            replacer = paramValue.map((v) => String(v)).join('/');
-          } else {
-            regexp = `\\[${key}\\]`;
-            replacer = String(paramValue);
-          }
-
-          compiled = compiled.replace(new RegExp(regexp, 'g'), () => replacer);
-        });
-      }
-
-      // Clean up optional catch-all segments that were not replaced
-      compiled = compiled.replace(/\[\[\.\.\..+\]\]/g, '');
-      if (process.env.NODE_ENV !== 'production' && compiled.includes('[')) {
+      if (process.env.NODE_ENV !== 'production' && result.hasUnresolvedParams) {
         // Next.js throws anyway, therefore better provide a more helpful error message
         throw new Error(
           `Insufficient params provided for localized pathname.\nTemplate: ${template}\nParams: ${JSON.stringify(

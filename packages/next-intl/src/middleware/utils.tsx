@@ -14,6 +14,7 @@ import {
   matchesPathname,
   normalizeTrailingSlash,
   prefixPathname,
+  replacePathnameParameters,
   templateToRegex
 } from '../shared/utils.js';
 
@@ -240,17 +241,7 @@ export function getRouteParams(template: string, pathname: string) {
 
 export function formatPathnameTemplate(template: string, params?: object) {
   if (!params) return template;
-
-  // Simplify syntax for optional catchall ('[[...slug]]') so
-  // we can replace the value with simple interpolation
-  template = template.replace(/\[\[/g, '[').replace(/\]\]/g, ']');
-
-  let result = template;
-  Object.entries(params).forEach(([key, value]) => {
-    result = result.replace(`[${key}]`, () => value);
-  });
-
-  return result;
+  return replacePathnameParameters(template, params).pathname;
 }
 
 export function formatPathname(
