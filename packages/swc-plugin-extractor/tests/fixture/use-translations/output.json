@@ -5,6 +5,10 @@
       "argument": {
         "end": 152,
         "start": 145
+      },
+      "id": {
+        "end": 152,
+        "start": 145
       }
     },
     "reference": {
@@ -17,6 +21,10 @@
     "id": "Namespace.rich",
     "ranges": {
       "argument": {
+        "end": 170,
+        "start": 164
+      },
+      "id": {
         "end": 170,
         "start": 164
       }
@@ -33,6 +41,10 @@
       "argument": {
         "end": 192,
         "start": 184
+      },
+      "id": {
+        "end": 192,
+        "start": 184
       }
     },
     "reference": {
@@ -45,6 +57,10 @@
     "id": "Namespace.has",
     "ranges": {
       "argument": {
+        "end": 208,
+        "start": 203
+      },
+      "id": {
         "end": 208,
         "start": 203
       }
@@ -61,6 +77,10 @@
       "argument": {
         "end": 224,
         "start": 219
+      },
+      "id": {
+        "end": 224,
+        "start": 219
       }
     },
     "reference": {
@@ -73,6 +93,10 @@
     "id": "global",
     "ranges": {
       "argument": {
+        "end": 239,
+        "start": 231
+      },
+      "id": {
         "end": 239,
         "start": 231
       }

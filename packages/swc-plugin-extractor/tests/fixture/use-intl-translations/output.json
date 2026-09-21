@@ -5,6 +5,10 @@
       "argument": {
         "end": 228,
         "start": 221
+      },
+      "id": {
+        "end": 228,
+        "start": 221
       }
     },
     "reference": {
@@ -17,6 +21,10 @@
     "id": "global",
     "ranges": {
       "argument": {
+        "end": 243,
+        "start": 235
+      },
+      "id": {
         "end": 243,
         "start": 235
       }

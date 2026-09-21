@@ -5,6 +5,10 @@
       "argument": {
         "end": 201,
         "start": 196
+      },
+      "id": {
+        "end": 201,
+        "start": 196
       }
     },
     "reference": {
@@ -17,6 +21,10 @@
     "id": "Pöll.no",
     "ranges": {
       "argument": {
+        "end": 210,
+        "start": 206
+      },
+      "id": {
         "end": 210,
         "start": 206
       }
@@ -33,6 +41,10 @@
       "argument": {
         "end": 290,
         "start": 280
+      },
+      "id": {
+        "end": 290,
+        "start": 280
       }
     },
     "reference": {
@@ -47,6 +59,10 @@
       "argument": {
         "end": 308,
         "start": 302
+      },
+      "id": {
+        "end": 308,
+        "start": 302
       }
     },
     "reference": {
@@ -59,6 +75,10 @@
     "id": "Pöll.wrapped",
     "ranges": {
       "argument": {
+        "end": 363,
+        "start": 354
+      },
+      "id": {
         "end": 363,
         "start": 354
       }

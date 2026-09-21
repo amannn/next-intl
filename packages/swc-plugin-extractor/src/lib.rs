@@ -91,8 +91,11 @@ pub struct Ranges {
     /// The `description` value literal, when one is provided.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<Range>,
-    /// The explicit `id` value literal. Present only when the call provides
-    /// an id of its own, so this doubles as the explicit-id signal.
+    /// The literal the call's own id is written in. For an extracted message,
+    /// the explicit `id` value — present only when the call provides one, so
+    /// this doubles as the explicit-id signal. For a key reference, the key —
+    /// present only when it's static, where it equals `argument` (just as
+    /// `message` does in an extracted call's string form).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<Range>,
 }
@@ -257,6 +260,7 @@ impl TransformVisitor {
             .args
             .first()
             .and_then(|arg| extract_static_string(&arg.expr));
+        let has_static_key = key.is_some();
         let id = match (namespace, key) {
             (Some(ns), Some(k)) => format!(
                 "{}{}{}",
@@ -282,7 +286,7 @@ impl TransformVisitor {
                 argument,
                 message: None,
                 description: None,
-                id: None,
+                id: has_static_key.then_some(argument),
             });
         self.results
             .push(SourceMessage::Translation(TranslationUse {
