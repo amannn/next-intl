@@ -71,18 +71,23 @@ pub struct ExtractedMessage {
     pub ranges: Option<Ranges>,
 }
 
-/// Source ranges for an extracted call. Each is a half-open range of
-/// UTF-8 byte offsets into the source file, covering a whole token
-/// including its delimiters (quotes, braces).
+/// Source ranges for a translator call, shared by both kinds of result. Each
+/// is a half-open range of UTF-8 byte offsets into the source file, covering a
+/// whole token including its delimiters (quotes, braces).
 #[derive(Debug, Clone, Copy, Serialize)]
 pub struct Ranges {
-    /// The whole first argument — the string literal in string form, the
-    /// object literal in object form. Tooling that rewrites a call (e.g.
-    /// converting between the two forms) replaces this range.
+    /// The whole first argument. For an extracted message, the string literal
+    /// in string form or the object literal in object form — tooling that
+    /// rewrites a call (e.g. converting between the two forms) replaces this
+    /// range. For a key reference, the key literal or the expression a dynamic
+    /// key is computed from. A line can't tell two calls apart; this names the
+    /// call, however its argument is written.
     pub argument: Range,
     /// The `message` value literal. In string form this equals `argument`,
-    /// since the argument is the message literal itself.
-    pub message: Range,
+    /// since the argument is the message literal itself. Always present for an
+    /// extracted message; a key reference has no inline message.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message: Option<Range>,
     /// The `description` value literal, when one is provided.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<Range>,
@@ -104,19 +109,11 @@ pub struct Range {
 pub struct TranslationUse {
     pub id: String,
     pub reference: Reference,
-    /// Source ranges of the call's tokens. Absent when the call has no
-    /// argument, or when no source map is available to resolve spans against.
+    /// Source ranges of the call's tokens, in the shape extracted messages
+    /// report them. Absent when the call has no argument, or when no source
+    /// map is available to resolve spans against.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub ranges: Option<TranslationRanges>,
-}
-
-/// Source ranges for a key reference, in the same units as [`Ranges`].
-#[derive(Debug, Clone, Copy, Serialize)]
-pub struct TranslationRanges {
-    /// The whole first argument — the key literal, or the expression a dynamic
-    /// key is computed from. `reference.line` can't tell two calls on one line
-    /// apart; this names the call, however its key is written.
-    pub argument: Range,
+    pub ranges: Option<Ranges>,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -281,7 +278,12 @@ impl TransformVisitor {
             .args
             .first()
             .and_then(|arg| self.span_range(arg.expr.span()))
-            .map(|argument| TranslationRanges { argument });
+            .map(|argument| Ranges {
+                argument,
+                message: None,
+                description: None,
+                id: None,
+            });
         self.results
             .push(SourceMessage::Translation(TranslationUse {
                 id,
@@ -383,7 +385,7 @@ impl TransformVisitor {
         let ranges = match (argument_range, message_range) {
             (Some(argument), Some(message)) => Some(Ranges {
                 argument,
-                message,
+                message: Some(message),
                 description: description_range,
                 id: id_range,
             }),
