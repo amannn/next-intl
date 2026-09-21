@@ -1,6 +1,12 @@
 [
   {
     "id": "Namespace",
+    "ranges": {
+      "argument": {
+        "end": 247,
+        "start": 244
+      }
+    },
     "reference": {
       "line": 9,
       "path": "input.js"
