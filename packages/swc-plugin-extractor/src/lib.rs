@@ -104,6 +104,19 @@ pub struct Range {
 pub struct TranslationUse {
     pub id: String,
     pub reference: Reference,
+    /// Source ranges of the call's tokens. Absent when the call has no
+    /// argument, or when no source map is available to resolve spans against.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub ranges: Option<TranslationRanges>,
+}
+
+/// Source ranges for a key reference, in the same units as [`Ranges`].
+#[derive(Debug, Clone, Copy, Serialize)]
+pub struct TranslationRanges {
+    /// The whole first argument — the key literal, or the expression a dynamic
+    /// key is computed from. `reference.line` can't tell two calls on one line
+    /// apart; this names the call, however its key is written.
+    pub argument: Range,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -264,6 +277,11 @@ impl TransformVisitor {
             .source_map
             .as_ref()
             .map_or(0, |sm| sm.lookup_char_pos(call.span.lo).line);
+        let ranges = call
+            .args
+            .first()
+            .and_then(|arg| self.span_range(arg.expr.span()))
+            .map(|argument| TranslationRanges { argument });
         self.results
             .push(SourceMessage::Translation(TranslationUse {
                 id,
@@ -271,6 +289,7 @@ impl TransformVisitor {
                     path: self.file_path.clone(),
                     line,
                 },
+                ranges,
             }));
     }
 

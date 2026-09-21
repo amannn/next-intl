@@ -21,6 +21,12 @@
   },
   {
     "id": "Namespace.title",
+    "ranges": {
+      "argument": {
+        "end": 178,
+        "start": 171
+      }
+    },
     "reference": {
       "line": 8,
       "path": "input.js"

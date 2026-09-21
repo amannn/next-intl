@@ -1,6 +1,12 @@
 [
   {
     "id": "Account.name",
+    "ranges": {
+      "argument": {
+        "end": 131,
+        "start": 125
+      }
+    },
     "reference": {
       "line": 5,
       "path": "input.js"

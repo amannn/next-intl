@@ -21,6 +21,12 @@
   },
   {
     "id": "Navigation.title",
+    "ranges": {
+      "argument": {
+        "end": 281,
+        "start": 274
+      }
+    },
     "reference": {
       "line": 11,
       "path": "input.js"

@@ -21,6 +21,12 @@
   },
   {
     "id": "greeting",
+    "ranges": {
+      "argument": {
+        "end": 186,
+        "start": 176
+      }
+    },
     "reference": {
       "line": 7,
       "path": "input.js"

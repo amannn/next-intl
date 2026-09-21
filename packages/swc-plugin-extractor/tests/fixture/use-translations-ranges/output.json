@@ -1,10 +1,10 @@
 [
   {
-    "id": "Namespace.title",
+    "id": "Pöll.yes",
     "ranges": {
       "argument": {
-        "end": 152,
-        "start": 145
+        "end": 201,
+        "start": 196
       }
     },
     "reference": {
@@ -14,39 +14,25 @@
     "type": "translation"
   },
   {
-    "id": "Namespace.rich",
+    "id": "Pöll.no",
     "ranges": {
       "argument": {
-        "end": 170,
-        "start": 164
+        "end": 210,
+        "start": 206
       }
     },
     "reference": {
-      "line": 8,
+      "line": 7,
       "path": "input.js"
     },
     "type": "translation"
   },
   {
-    "id": "Namespace.markup",
+    "id": "Pöll.template",
     "ranges": {
       "argument": {
-        "end": 192,
-        "start": 184
-      }
-    },
-    "reference": {
-      "line": 9,
-      "path": "input.js"
-    },
-    "type": "translation"
-  },
-  {
-    "id": "Namespace.has",
-    "ranges": {
-      "argument": {
-        "end": 208,
-        "start": 203
+        "end": 290,
+        "start": 280
       }
     },
     "reference": {
@@ -56,11 +42,11 @@
     "type": "translation"
   },
   {
-    "id": "Namespace.raw",
+    "id": "Pöll.rich",
     "ranges": {
       "argument": {
-        "end": 224,
-        "start": 219
+        "end": 308,
+        "start": 302
       }
     },
     "reference": {
@@ -70,15 +56,29 @@
     "type": "translation"
   },
   {
-    "id": "global",
+    "id": "Pöll.wrapped",
     "ranges": {
       "argument": {
-        "end": 239,
-        "start": 231
+        "end": 363,
+        "start": 354
       }
     },
     "reference": {
       "line": 12,
+      "path": "input.js"
+    },
+    "type": "translation"
+  },
+  {
+    "id": "Pöll",
+    "ranges": {
+      "argument": {
+        "end": 467,
+        "start": 453
+      }
+    },
+    "reference": {
+      "line": 17,
       "path": "input.js"
     },
     "type": "translation"
