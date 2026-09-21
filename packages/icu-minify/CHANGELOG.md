@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.14.6 (2026-09-21)
+
+### Bug Fixes
+
+* Emit source ranges for `useTranslations` key references in SWC plugin ([#2420](https://github.com/amannn/next-intl/issues/2420)) ([5209b97](https://github.com/amannn/next-intl/commit/5209b973fd60a4664c8c6e25771988bbd7eb10c6)) – by @amannn
+
 ## 4.14.5 (2026-09-14)
 
 ### Bug Fixes
