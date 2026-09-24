@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.14.7 (2026-09-24)
+
+### Bug Fixes
+
+* Add optional `@types/react` peer dependency to support global virtual stores of package managers ([#2421](https://github.com/amannn/next-intl/issues/2421)) ([8df0500](https://github.com/amannn/next-intl/commit/8df05005fb91e438f18f32c865ed0865737a604a)) – by @unrevised6419
+
 ## 4.14.6 (2026-09-21)
 
 ### Bug Fixes
