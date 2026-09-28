@@ -24,6 +24,16 @@ export default function convertFormatsToIntlMessageFormat(
     Formats['dateTime']
   >;
 
+  const defaultDateTime = {
+    ...globalFormats?.defaults?.dateTime,
+    ...inlineFormats?.defaults?.dateTime
+  };
+
+  const defaultNumber = {
+    ...globalFormats?.defaults?.number,
+    ...inlineFormats?.defaults?.number
+  };
+
   const dateTimeFormats = {
     ...globalFormats?.dateTime,
     ...inlineFormats?.dateTime
@@ -44,6 +54,27 @@ export default function convertFormatsToIntlMessageFormat(
     }
     // (list is not supported in ICU messages)
   };
+
+  if (Object.keys(defaultDateTime).length > 0) {
+    ['date', 'time'].forEach((property) => {
+      const formats = allFormats[property as keyof typeof allFormats];
+      for (const [key, value] of Object.entries(formats)) {
+        formats[key] = {
+          ...defaultDateTime,
+          ...value
+        };
+      }
+    });
+  }
+
+  if (Object.keys(defaultNumber).length > 0) {
+    for (const [key, value] of Object.entries(allFormats.number)) {
+      allFormats.number[key] = {
+        ...defaultNumber,
+        ...value
+      };
+    }
+  }
 
   if (timeZone) {
     // The only way to set a time zone with `intl-messageformat` is to merge it into the formats

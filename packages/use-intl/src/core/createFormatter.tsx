@@ -113,6 +113,7 @@ export default function createFormatter(props: Props) {
   }
 
   function resolveFormatOrOptions<Options>(
+    defaultOptions: Options | undefined,
     typeFormats: Record<string, Options> | undefined,
     formatOrOptions?: string | Options,
     overrides?: Options
@@ -136,14 +137,19 @@ export default function createFormatter(props: Props) {
       options = formatOrOptions;
     }
 
-    if (overrides) {
-      options = {...options, ...overrides};
+    if (defaultOptions || options || overrides) {
+      return {
+        ...defaultOptions,
+        ...options,
+        ...overrides
+      };
     }
 
-    return options;
+    return undefined;
   }
 
   function getFormattedValue<Options, Output>(
+    defaultOptions: Options | undefined,
     formatOrOptions: string | Options | undefined,
     overrides: Options | undefined,
     typeFormats: Record<string, Options> | undefined,
@@ -152,7 +158,12 @@ export default function createFormatter(props: Props) {
   ) {
     let options;
     try {
-      options = resolveFormatOrOptions(typeFormats, formatOrOptions, overrides);
+      options = resolveFormatOrOptions(
+        defaultOptions,
+        typeFormats,
+        formatOrOptions,
+        overrides
+      );
     } catch {
       return getFallback();
     }
@@ -184,6 +195,7 @@ export default function createFormatter(props: Props) {
     overrides?: DateTimeFormatOptions
   ) {
     return getFormattedValue(
+      formats?.defaults?.dateTime,
       formatOrOptions,
       overrides,
       formats?.dateTime,
@@ -217,6 +229,7 @@ export default function createFormatter(props: Props) {
     overrides?: DateTimeFormatOptions
   ) {
     return getFormattedValue(
+      formats?.defaults?.dateTime,
       formatOrOptions,
       overrides,
       formats?.dateTime,
@@ -245,6 +258,7 @@ export default function createFormatter(props: Props) {
     overrides?: NumberFormatOptions
   ) {
     return getFormattedValue(
+      formats?.defaults?.number,
       formatOrOptions,
       overrides,
       formats?.number,
@@ -373,6 +387,7 @@ export default function createFormatter(props: Props) {
       Intl.ListFormatOptions,
       Value extends string ? string : Iterable<ReactElement>
     >(
+      formats?.defaults?.list,
       formatOrOptions,
       overrides,
       formats?.list,
@@ -412,6 +427,7 @@ export default function createFormatter(props: Props) {
     overrides?: Intl.DisplayNamesOptions
   ) {
     return getFormattedValue(
+      formats?.defaults?.displayName,
       formatOrOptions,
       overrides,
       formats?.displayName,

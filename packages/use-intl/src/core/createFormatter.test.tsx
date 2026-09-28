@@ -457,3 +457,80 @@ describe('list', () => {
     ).toBe('apple, banana, and orange');
   });
 });
+
+describe('formats.defaults', () => {
+  it('applies default number format options', () => {
+    const formatter = createFormatter({
+      locale: 'en',
+      timeZone: 'Europe/Berlin',
+      formats: {
+        defaults: {
+          number: {
+            style: 'currency',
+            currency: 'USD'
+          }
+        }
+      }
+    });
+
+    expect(formatter.number(123456)).toBe('$123,456.00');
+  });
+
+  it('can combine default number format options with a named format', () => {
+    const formatter = createFormatter({
+      locale: 'en',
+      timeZone: 'Europe/Berlin',
+      formats: {
+        defaults: {
+          number: {
+            style: 'currency'
+          }
+        },
+        number: {
+          precise: {
+            minimumFractionDigits: 3
+          }
+        }
+      }
+    });
+
+    expect(formatter.number(1234.5, 'precise', {currency: 'EUR'})).toBe(
+      '€1,234.500'
+    );
+  });
+
+  it('applies default dateTime format options', () => {
+    const formatter = createFormatter({
+      locale: 'en',
+      timeZone: 'Europe/Berlin',
+      formats: {
+        defaults: {
+          dateTime: {
+            dateStyle: 'short'
+          }
+        }
+      }
+    });
+
+    expect(formatter.dateTime(parseISO('2020-11-20T10:36:01.516Z'))).toBe(
+      '11/20/20'
+    );
+  });
+
+  it('allows to override default format options', () => {
+    const formatter = createFormatter({
+      locale: 'en',
+      timeZone: 'Europe/Berlin',
+      formats: {
+        defaults: {
+          number: {
+            minimumFractionDigits: 2
+          }
+        }
+      }
+    });
+
+    expect(formatter.number(1234)).toBe('1,234.00');
+    expect(formatter.number(1234, {minimumFractionDigits: 0})).toBe('1,234');
+  });
+});
