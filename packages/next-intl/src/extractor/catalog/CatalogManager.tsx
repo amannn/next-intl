@@ -461,12 +461,16 @@ export default class CatalogManager implements Disposable {
       return true;
     }
 
-    // Check differences in beforeMessages vs afterMessages
+    // Check differences in beforeMessages vs afterMessages. Key order is
+    // extraction order, which decides the order of same-line messages.
+    const afterIds = Array.from(afterMessages.keys());
+    let index = 0;
     for (const [id, prevSourceMessages] of beforeMessages) {
-      const nextSourceMessages = afterMessages.get(id);
-      if (!nextSourceMessages) {
+      if (afterIds[index++] !== id) {
         return true;
       }
+
+      const nextSourceMessages = afterMessages.get(id)!;
 
       if (
         !this.areSourceMessageArraysEqual(
@@ -519,7 +523,7 @@ export default class CatalogManager implements Disposable {
   private async saveLocale(locale: Locale): Promise<void> {
     await this.loadCatalogsPromise;
 
-    const messages = Array.from(this.messagesById.values());
+    const messages = this.getMessagesInSourceOrder();
     const persister = await this.getPersister();
     const isSourceLocale = locale === this.config.extract.sourceLocale;
 
@@ -556,6 +560,43 @@ export default class CatalogManager implements Disposable {
     // Update timestamps
     const newTime = await persister.getLastModified(locale);
     this.lastWriteByLocale.set(locale, newTime);
+  }
+
+  /**
+   * Messages ordered by their first reference, with ties (e.g. two messages
+   * on the same line) broken by extraction order within that file. Insertion
+   * order of `messagesById` can't be used for this, since it depends on the
+   * history of edits (e.g. an id that is removed and added back is appended).
+   */
+  private getMessagesInSourceOrder(): Array<ExtractorMessage> {
+    const extractionIndexByPath = new Map<string, Map<string, number>>();
+    for (const fileMessages of this.sourceMessagesByFile.values()) {
+      const extractionIndexById = new Map<string, number>();
+      let referencePath: string | undefined;
+      for (const [id, sourceMessages] of fileMessages) {
+        extractionIndexById.set(id, extractionIndexById.size);
+        referencePath ??= sourceMessages[0]?.reference.path;
+      }
+      if (referencePath != null) {
+        extractionIndexByPath.set(referencePath, extractionIndexById);
+      }
+    }
+
+    return Array.from(this.messagesById.values()).toSorted((a, b) => {
+      const refA = a.references[0];
+      const refB = b.references[0];
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      if (refA == null || refB == null) return 0;
+
+      const referenceCompare = compareReferences(refA, refB);
+      if (referenceCompare !== 0) return referenceCompare;
+
+      const extractionIndexById = extractionIndexByPath.get(refA.path);
+      return (
+        (extractionIndexById?.get(a.id) ?? 0) -
+        (extractionIndexById?.get(b.id) ?? 0)
+      );
+    });
   }
 
   private onLocalesChange = async (params: {
