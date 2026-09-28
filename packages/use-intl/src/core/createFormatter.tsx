@@ -112,12 +112,12 @@ export default function createFormatter(props: Props) {
     return options;
   }
 
-  function resolveFormatOrOptions<Options>(
+  function resolveFormatOrOptions<Options extends object>(
     defaultOptions: Options | undefined,
     typeFormats: Record<string, Options> | undefined,
     formatOrOptions?: string | Options,
     overrides?: Options
-  ) {
+  ): Options | undefined {
     let options;
     if (typeof formatOrOptions === 'string') {
       const formatName = formatOrOptions;
@@ -142,13 +142,13 @@ export default function createFormatter(props: Props) {
         ...defaultOptions,
         ...options,
         ...overrides
-      };
+      } as Options;
     }
 
     return undefined;
   }
 
-  function getFormattedValue<Options, Output>(
+  function getFormattedValue<Options extends object, Output>(
     defaultOptions: Options | undefined,
     formatOrOptions: string | Options | undefined,
     overrides: Options | undefined,
