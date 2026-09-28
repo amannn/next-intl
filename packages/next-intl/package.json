@@ -158,7 +158,7 @@
     "eslint": "9.11.1",
     "eslint-config-molindo": "^8.0.0",
     "eslint-plugin-react-compiler": "0.0.0-experimental-8e3b87c-20240822",
-    "next": "^16.3.1",
+    "next": "^16.3.6",
     "path-to-regexp": "^6.2.2",
     "po-parser": "^2.2.0",
     "prettier": "^3.3.3",
