@@ -8,6 +8,7 @@
       }
     },
     "reference": {
+      "column": 2,
       "line": 9,
       "path": "input.js"
     },

@@ -12,6 +12,7 @@
       }
     },
     "reference": {
+      "column": 2,
       "line": 5,
       "path": "input.js"
     },

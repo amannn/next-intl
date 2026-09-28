@@ -123,6 +123,8 @@ pub struct TranslationUse {
 pub struct Reference {
     pub path: String,
     pub line: usize,
+    /// 0-based, in characters. Orders calls that share a line.
+    pub column: usize,
 }
 
 /// A next-intl hook a translator can be bound to.
@@ -274,10 +276,10 @@ impl TransformVisitor {
             // `useTranslations()` with a dynamic key can't be statically analyzed; skip it.
             (None, None) => return,
         };
-        let line = self
-            .source_map
-            .as_ref()
-            .map_or(0, |sm| sm.lookup_char_pos(call.span.lo).line);
+        let (line, column) = self.source_map.as_ref().map_or((0, 0), |sm| {
+            let loc = sm.lookup_char_pos(call.span.lo);
+            (loc.line, loc.col.0)
+        });
         let ranges = call
             .args
             .first()
@@ -294,6 +296,7 @@ impl TransformVisitor {
                 reference: Reference {
                     path: self.file_path.clone(),
                     line,
+                    column,
                 },
                 ranges,
             }));
@@ -381,10 +384,10 @@ impl TransformVisitor {
                 .join(NAMESPACE_SEPARATOR)
                 .into()
         });
-        let line = self
-            .source_map
-            .as_ref()
-            .map_or(0, |sm| sm.lookup_char_pos(call.span.lo).line);
+        let (line, column) = self.source_map.as_ref().map_or((0, 0), |sm| {
+            let loc = sm.lookup_char_pos(call.span.lo);
+            (loc.line, loc.col.0)
+        });
 
         let ranges = match (argument_range, message_range) {
             (Some(argument), Some(message)) => Some(Ranges {
@@ -404,6 +407,7 @@ impl TransformVisitor {
                 reference: Reference {
                     path: self.file_path.clone(),
                     line,
+                    column,
                 },
                 ranges,
             }));

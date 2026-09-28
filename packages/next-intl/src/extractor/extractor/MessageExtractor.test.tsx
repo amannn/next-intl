@@ -54,6 +54,7 @@ it('extracts same message used multiple times in one file as separate source mes
         "id": "OpKKos",
         "message": "Hello!",
         "reference": {
+          "column": 11,
           "line": 7,
           "path": "test.tsx",
         },
@@ -63,6 +64,7 @@ it('extracts same message used multiple times in one file as separate source mes
         "id": "OpKKos",
         "message": "Hello!",
         "reference": {
+          "column": 17,
           "line": 8,
           "path": "test.tsx",
         },
@@ -106,6 +108,7 @@ it('supports destructuring from `Promise.all`', async () => {
         "id": "OpKKos",
         "message": "Hello!",
         "reference": {
+          "column": 6,
           "line": 8,
           "path": "test.tsx",
         },
@@ -137,6 +140,7 @@ it('keeps descriptions on separate source message uses', async () => {
         "id": "jvo0vs",
         "message": "Save",
         "reference": {
+          "column": 11,
           "line": 7,
           "path": "test.tsx",
         },
@@ -146,6 +150,7 @@ it('keeps descriptions on separate source message uses', async () => {
         "id": "jvo0vs",
         "message": "Save",
         "reference": {
+          "column": 11,
           "line": 8,
           "path": "test.tsx",
         },
@@ -181,6 +186,7 @@ it('does not add a fallback message in production', async () => {
           "id": "-YJVTi",
           "message": "Hey!",
           "reference": {
+            "column": 6,
             "line": 5,
             "path": "test.tsx",
           },
