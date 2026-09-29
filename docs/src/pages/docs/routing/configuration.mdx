@@ -412,6 +412,8 @@ export const routing = defineRouting({
 
 In this case, only the locale prefix and a potentially [matching domain](#domains) are used to determine the locale.
 
+Note that this only stops the middleware from _reading_ the `accept-language` header and the [`NEXT_LOCALE` cookie](#locale-cookie). The cookie is still written when a request has none and its `accept-language` header doesn't resolve to the current locale, e.g. for crawlers that don't send the header. If you rely entirely on the URL, nothing reads the cookie, so you can turn it off with [`localeCookie: false`](#locale-cookie).
+
 ### `localeCookie` [#locale-cookie]
 
 If a user changes the locale to a value that doesn't match the `accept-language` header, `next-intl` will set a session cookie called `NEXT_LOCALE` that contains the most recently detected locale. This is used to [remember the user's locale](/docs/routing/middleware#locale-detection) preference for subsequent requests.
@@ -476,6 +478,7 @@ However, there are cases where you may want to provide these links yourself:
 
 1. You have pages that are only available for certain locales
 2. You're using an external system like a CMS to manage pathnames of your pages
+3. You already provide `hreflang` annotations in another way, e.g. via the [Metadata API](/docs/environments/actions-metadata-route-handlers#metadata-api) or a sitemap
 
 In this case, you can opt-out of this behavior by setting `alternateLinks` to `false`:
 
@@ -488,6 +491,8 @@ export const routing = defineRouting({
   alternateLinks: false
 });
 ```
+
+The header uses your locale identifiers (e.g. `zh`) as `hreflang` values. If your other annotations use more specific language tags (e.g. `zh-Hans-CN`), search engines will see two different sets of alternates. Google treats the [three methods](https://developers.google.com/search/docs/specialty/international/localized-versions#all-method-guidelines) (HTML tags, HTTP headers, sitemap) as equivalent, so a single one is enough.
 
 **Learn more:**
 
