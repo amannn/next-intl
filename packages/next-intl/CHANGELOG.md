@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.14.8 (2026-09-29)
+
+### Bug Fixes
+
+* Keep source order for `useExtracted` messages on the same line ([#2426](https://github.com/amannn/next-intl/issues/2426)) ([3ef2e6a](https://github.com/amannn/next-intl/commit/3ef2e6afc33ca5c541890f14f7b71a16357d98f6)) – by @amannn
+
 ## 4.14.7 (2026-09-24)
 
 ### Bug Fixes
