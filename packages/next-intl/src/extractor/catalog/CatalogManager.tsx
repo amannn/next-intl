@@ -502,7 +502,8 @@ export default class CatalogManager implements Disposable {
       msg1.message === msg2.message &&
       msg1.description === msg2.description &&
       msg1.reference.path === msg2.reference.path &&
-      msg1.reference.line === msg2.reference.line
+      msg1.reference.line === msg2.reference.line &&
+      msg1.reference.column === msg2.reference.column
     );
   }
 

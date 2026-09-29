@@ -83,7 +83,10 @@ export function compareReferences(
 ): number {
   const pathCompare = localeCompare(refA.path, refB.path);
   if (pathCompare !== 0) return pathCompare;
-  return (refA.line ?? 0) - (refB.line ?? 0);
+  return (
+    (refA.line ?? 0) - (refB.line ?? 0) ||
+    (refA.column ?? 0) - (refB.column ?? 0)
+  );
 }
 
 export function getDefaultProjectRoot() {

@@ -12,6 +12,7 @@
       }
     },
     "reference": {
+      "column": 2,
       "line": 8,
       "path": "input.js"
     },
@@ -30,6 +31,7 @@
       }
     },
     "reference": {
+      "column": 2,
       "line": 9,
       "path": "input.js"
     },

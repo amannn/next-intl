@@ -1078,6 +1078,68 @@ describe('po format', {timeout: 20_000}, () => {
     `);
   });
 
+  describe('same-line messages', () => {
+    // Source order is deliberately the reverse of id order
+    // ("Save" → `jvo0vs`, "Cancel" → `47FYwb`)
+    function createDialog(first: string, second: string) {
+      return `
+      import {useExtracted} from 'next-intl';
+      export default function Dialog() {
+        const t = useExtracted();
+        return <Dialog confirm={t('${first}')} cancel={t('${second}')} />;
+      }
+      `;
+    }
+
+    function getLastWrite() {
+      return vi.mocked(fs.writeFile).mock.calls.at(-1)?.[1] as string;
+    }
+
+    function getMsgids(content: string) {
+      return Array.from(content.matchAll(/^msgid "(.+)"$/gm), (m) => m[1]);
+    }
+
+    it('keeps source order when a message is removed and added back', async () => {
+      filesystem.project.src['Dialog.tsx'] = createDialog('Save', 'Cancel');
+
+      using compiler = createCompiler();
+      await compiler.extractAll();
+      await waitForWriteFileCalls(1);
+      const initial = getLastWrite();
+      expect(getMsgids(initial)).toEqual(['Save', 'Cancel']);
+
+      await simulateSourceFileUpdate(
+        '/project/src/Dialog.tsx',
+        createDialog('Save!', 'Cancel')
+      );
+      await waitForWriteFileCalls(2);
+      expect(getMsgids(getLastWrite())).toEqual(['Save!', 'Cancel']);
+
+      await simulateSourceFileUpdate(
+        '/project/src/Dialog.tsx',
+        createDialog('Save', 'Cancel')
+      );
+      await waitForWriteFileCalls(3);
+      expect(getLastWrite()).toEqual(initial);
+    });
+
+    it('updates the order when messages on the same line are swapped', async () => {
+      filesystem.project.src['Dialog.tsx'] = createDialog('Save', 'Cancel');
+
+      using compiler = createCompiler();
+      await compiler.extractAll();
+      await waitForWriteFileCalls(1);
+      expect(getMsgids(getLastWrite())).toEqual(['Save', 'Cancel']);
+
+      await simulateSourceFileUpdate(
+        '/project/src/Dialog.tsx',
+        createDialog('Cancel', 'Save')
+      );
+      await waitForWriteFileCalls(2);
+      expect(getMsgids(getLastWrite())).toEqual(['Cancel', 'Save']);
+    });
+  });
+
   it('orders same-reference messages independently of file processing order', async () => {
     async function extractWithDelayedFile(delayedFileName: string) {
       filesystem.project = {
