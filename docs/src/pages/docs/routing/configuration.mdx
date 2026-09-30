@@ -412,6 +412,8 @@ export const routing = defineRouting({
 
 In this case, only the locale prefix and a potentially [matching domain](#domains) are used to determine the locale.
 
+If you don't rely on a locale cookie being set, you can consider [turning it off](#locale-cookie).
+
 ### `localeCookie` [#locale-cookie]
 
 If a user changes the locale to a value that doesn't match the `accept-language` header, `next-intl` will set a session cookie called `NEXT_LOCALE` that contains the most recently detected locale. This is used to [remember the user's locale](/docs/routing/middleware#locale-detection) preference for subsequent requests.
@@ -488,6 +490,8 @@ export const routing = defineRouting({
   alternateLinks: false
 });
 ```
+
+If you want to provide alternate links yourself, you can do so for example with a [sitemap](/docs/environments/actions-metadata-route-handlers#sitemap) or by using the [Metadata API](/docs/environments/actions-metadata-route-handlers#metadata-api).
 
 **Learn more:**
 
