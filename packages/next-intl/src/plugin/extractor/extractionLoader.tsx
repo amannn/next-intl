@@ -29,7 +29,13 @@ export default function extractionLoader(
   extractor
     .extract(this.resourcePath, source)
     .then((result) => {
-      callback(null, result.code, result.map);
+      // Webpack loaders conventionally pass source maps as objects (e.g.
+      // `next-swc-loader` calls `JSON.stringify` on its input source map)
+      callback(
+        null,
+        result.code,
+        result.map ? JSON.parse(result.map) : undefined
+      );
     })
     .catch(callback);
 }

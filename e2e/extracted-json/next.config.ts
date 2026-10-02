@@ -14,5 +14,13 @@ const withNextIntl = createNextIntlPlugin({
   }
 });
 
-const config: NextConfig = {};
+const config: NextConfig = {
+  // Set by `tests/webpack-build.spec.ts`
+  webpack(webpackConfig) {
+    if (process.env.E2E_WEBPACK_DEVTOOL) {
+      webpackConfig.devtool = process.env.E2E_WEBPACK_DEVTOOL;
+    }
+    return webpackConfig;
+  }
+};
 export default withNextIntl(config);
