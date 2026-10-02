@@ -73,7 +73,9 @@ export default class MessageExtractor {
         }
       },
       sourceMaps: this.sourceMap,
-      sourceFileName: filePath,
+      // Is converted into a relative path by Next.js when
+      // the final source map is generated
+      sourceFileName: absoluteFilePath,
       filename: filePath
     });
 
