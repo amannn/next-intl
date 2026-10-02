@@ -73,7 +73,7 @@ export default class MessageExtractor {
         }
       },
       sourceMaps: this.sourceMap,
-      sourceFileName: filePath,
+      sourceFileName: absoluteFilePath,
       filename: filePath
     });
 
