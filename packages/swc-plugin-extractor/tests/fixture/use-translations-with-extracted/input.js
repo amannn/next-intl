@@ -6,4 +6,13 @@ function Component() {
 
   e('Hello!');
   t('title');
+
+  e({
+    message: 'Book',
+    description: 'Label in navigation menu for reading materials'
+  });
+  e({
+    message: 'Book',
+    description: 'Action button in checkout flow to complete reservation'
+  });
 }

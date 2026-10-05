@@ -38,5 +38,55 @@
       "path": "input.js"
     },
     "type": "translation"
+  },
+  {
+    "description": "Label in navigation menu for reading materials",
+    "id": "rLk6i4",
+    "message": "Book",
+    "ranges": {
+      "argument": {
+        "end": 278,
+        "start": 186
+      },
+      "description": {
+        "end": 274,
+        "start": 226
+      },
+      "message": {
+        "end": 207,
+        "start": 201
+      }
+    },
+    "reference": {
+      "column": 2,
+      "line": 10,
+      "path": "input.js"
+    },
+    "type": "extracted"
+  },
+  {
+    "description": "Action button in checkout flow to complete reservation",
+    "id": "lrvw5B",
+    "message": "Book",
+    "ranges": {
+      "argument": {
+        "end": 385,
+        "start": 285
+      },
+      "description": {
+        "end": 381,
+        "start": 325
+      },
+      "message": {
+        "end": 306,
+        "start": 300
+      }
+    },
+    "reference": {
+      "column": 2,
+      "line": 14,
+      "path": "input.js"
+    },
+    "type": "extracted"
   }
 ]

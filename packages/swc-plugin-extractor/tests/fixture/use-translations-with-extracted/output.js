@@ -4,4 +4,6 @@ function Component() {
     const t = useTranslations('Namespace');
     e("OpKKos", void 0, void 0, "Hello!");
     t('title');
+    e("rLk6i4", void 0, void 0, "Book");
+    e("lrvw5B", void 0, void 0, "Book");
 }
