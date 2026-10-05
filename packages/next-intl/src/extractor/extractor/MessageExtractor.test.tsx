@@ -137,7 +137,7 @@ it('keeps descriptions on separate source message uses', async () => {
     [
       {
         "description": "Button label",
-        "id": "jvo0vs",
+        "id": "b2GCMq",
         "message": "Save",
         "reference": {
           "column": 11,
@@ -147,7 +147,7 @@ it('keeps descriptions on separate source message uses', async () => {
       },
       {
         "description": "Menu item label",
-        "id": "jvo0vs",
+        "id": "dfMcic",
         "message": "Save",
         "reference": {
           "column": 11,
@@ -314,5 +314,59 @@ export default function Invalid() {
     }).rejects.toThrow(
       'Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
     );
+  });
+});
+
+describe('MessageExtractor key generation parity', () => {
+  it('generates exact key hash matching Rust KeyGenerator for known message + description', async () => {
+    const extractor = new MessageExtractor({});
+
+    const code = `
+      import {useExtracted} from 'next-intl';
+
+      export function Component() {
+        const t = useExtracted();
+        t({
+          message: 'Hello',
+          description: 'Greeting'
+        });
+      }
+    `;
+
+    const result = await extractor.extract('/test/Component.tsx', code);
+
+    expect(result.messages).toHaveLength(1);
+
+    // Asserts 1:1 match with Rust KeyGenerator output!
+    expect(result.messages[0].id).toBe('QrEapY');
+  });
+
+  it('generates unique IDs for same message with different descriptions', async () => {
+    const extractor = new MessageExtractor({});
+
+    const code = `
+      import {useExtracted} from 'next-intl';
+
+      export function Component() {
+        const t = useExtracted();
+        t({
+          message: 'Save',
+          description: 'Form button'
+        });
+        t({
+          message: 'Save',
+          description: 'Settings header'
+        });
+      }
+    `;
+
+    const result = await extractor.extract('/test/Component.tsx', code);
+
+    expect(result.messages).toHaveLength(2);
+
+    const [key1, key2] = result.messages.map((m) => m.id);
+
+    // Matches `generates_unique_ids_for_same_message_with_different_descriptions` from Rust
+    expect(key1).not.toBe(key2);
   });
 });

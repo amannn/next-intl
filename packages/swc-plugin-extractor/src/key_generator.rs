@@ -25,24 +25,30 @@ impl KeyGenerator {
     }
 }
 
-#[test]
-fn generates_unique_ids_for_same_message_with_different_descriptions() {
-    let message = Wtf8Atom::from("Click here");
-    let desc1 = Wtf8Atom::from("Button label on homepage banner");
-    let desc2 = Wtf8Atom::from("Link label in footer navigation");
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-    // Generate keys using KeyGenerator::generate
-    let key1 = KeyGenerator::generate(&message, Some(&desc1));
-    let key2 = KeyGenerator::generate(&message, Some(&desc2));
+    #[test]
+    fn test_known_key_output() {
+        let message = Wtf8Atom::from("Hello");
+        let description = Some(Wtf8Atom::from("Greeting"));
 
-    // 1. Verify that keys/IDs do NOT collide
-    assert_ne!(
-        key1, key2,
-        "Key generator produced identical keys ('{}') for different descriptions!",
-        key1
-    );
+        let key = KeyGenerator::generate(&message, description.as_ref());
 
-    // 2. Verify both keys are non-empty
-    assert!(!key1.is_empty(), "Key 1 should not be empty");
-    assert!(!key2.is_empty(), "Key 2 should not be empty");
+        // Asserts parity with TypeScript generateKey in MessageExtractor.test.tsx
+        assert_eq!(key, "QrEapY");
+    }
+
+    #[test]
+    fn generates_unique_ids_for_same_message_with_different_descriptions() {
+        let msg = Wtf8Atom::from("Save");
+        let desc1 = Some(Wtf8Atom::from("Form button"));
+        let desc2 = Some(Wtf8Atom::from("Settings header"));
+
+        let key1 = KeyGenerator::generate(&msg, desc1.as_ref());
+        let key2 = KeyGenerator::generate(&msg, desc2.as_ref());
+
+        assert_ne!(key1, key2);
+    }
 }

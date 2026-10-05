@@ -1,9 +1,29 @@
 import {createRequire} from 'module';
 import path from 'path';
+import crypto from 'node:crypto';
 import {transform} from '@swc/core';
 import type {SourceExtractedMessage} from '../types.js';
 import {getDefaultProjectRoot, normalizePathToPosix} from '../utils.js';
 import LRUCache from './LRUCache.js';
+
+function generateKey(message: string, description?: string | null): string {
+  // Match Rust: check if description exists AND is non-empty
+  const input =
+    description && description.length > 0
+      ? `${message}:${description}`
+      : message;
+
+  // Match Rust: SHA-512
+  const hash = crypto.createHash('sha512').update(input, 'utf8').digest();
+
+  // Match Rust: URL_SAFE_NO_PAD base64 (using base64url and stripping standard padding '=')
+  const base64Url = hash
+    .toString('base64url') // Uses URL-safe alphabet (-, _)
+    .replace(/=/g, ''); // NO_PAD
+
+  // Match Rust: slice first 6 characters
+  return base64Url.slice(0, 6);
+}
 
 const require = createRequire(import.meta.url);
 
@@ -85,16 +105,26 @@ export default class MessageExtractor {
     // `useTranslations` usages; this extractor only consumes the former.
     const messages = (
       JSON.parse(JSON.parse(output).results) as Array<
-        {type: 'extracted' | 'translation'} & SourceExtractedMessage
+        {
+          type: 'extracted' | 'translation';
+          ranges?: {id?: unknown};
+        } & SourceExtractedMessage
       >
     )
       .filter((item) => item.type === 'extracted')
-      .map((item) => ({
-        id: item.id,
-        message: item.message,
-        description: item.description,
-        reference: item.reference
-      }));
+      .map((item) => {
+        const hasExplicitId = Boolean(item.ranges?.id);
+        const id = hasExplicitId
+          ? item.id
+          : generateKey(item.message, item.description);
+
+        return {
+          id,
+          message: item.message,
+          description: item.description,
+          reference: item.reference
+        };
+      });
 
     const extractionResult = {
       code: result.code,
