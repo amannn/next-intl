@@ -1,9 +1,9 @@
-export type NestedKeyOf<ObjectType> = ObjectType extends object
+export type NestedKeyOf<ObjectType> = [ObjectType] extends [object]
   ? {
-      [Property in keyof ObjectType]:
-        | `${Property & string}`
-        | `${Property & string}.${NestedKeyOf<ObjectType[Property]>}`;
-    }[keyof ObjectType]
+      [Property in keyof ObjectType & string]:
+        | Property
+        | `${Property}.${NestedKeyOf<ObjectType[Property]>}`;
+    }[keyof ObjectType & string]
   : never;
 
 export type NestedValueOf<
@@ -30,7 +30,9 @@ export type MessageKeys<ObjectType, AllKeys extends string> = {
   [PropertyPath in AllKeys]: NestedValueOf<
     ObjectType,
     PropertyPath
-  > extends string
-    ? PropertyPath
+  > extends infer V
+    ? V extends string
+      ? PropertyPath
+      : never
     : never;
 }[AllKeys];
