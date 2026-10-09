@@ -377,8 +377,10 @@ impl TransformVisitor {
             return;
         };
 
-        let call_key = explicit_id
-            .unwrap_or_else(|| key_generator::KeyGenerator::generate(&message_text).into());
+        let call_key = explicit_id.unwrap_or_else(|| {
+            key_generator::KeyGenerator::generate(&message_text, description.as_ref()).into()
+        });
+
         let full_key = namespace.map_or(call_key.clone(), |namespace| {
             [&*namespace.to_string_lossy(), &*call_key.to_string_lossy()]
                 .join(NAMESPACE_SEPARATOR)

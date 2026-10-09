@@ -1,0 +1,73 @@
+[
+  {
+    "description": "Header greeting",
+    "id": "RByuRZ",
+    "message": "Hello world",
+    "ranges": {
+      "argument": {
+        "end": 248,
+        "start": 180
+      },
+      "description": {
+        "end": 244,
+        "start": 227
+      },
+      "message": {
+        "end": 208,
+        "start": 195
+      }
+    },
+    "reference": {
+      "column": 17,
+      "line": 7,
+      "path": "input.js"
+    },
+    "type": "extracted"
+  },
+  {
+    "description": "Footer greeting",
+    "id": "ZdC-As",
+    "message": "Hello world",
+    "ranges": {
+      "argument": {
+        "end": 339,
+        "start": 271
+      },
+      "description": {
+        "end": 335,
+        "start": 318
+      },
+      "message": {
+        "end": 299,
+        "start": 286
+      }
+    },
+    "reference": {
+      "column": 17,
+      "line": 12,
+      "path": "input.js"
+    },
+    "type": "extracted"
+  },
+  {
+    "description": null,
+    "id": "t_eDuu",
+    "message": "Hello world",
+    "ranges": {
+      "argument": {
+        "end": 432,
+        "start": 400
+      },
+      "message": {
+        "end": 428,
+        "start": 415
+      }
+    },
+    "reference": {
+      "column": 21,
+      "line": 18,
+      "path": "input.js"
+    },
+    "type": "extracted"
+  }
+]
