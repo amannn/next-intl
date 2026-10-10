@@ -1,6 +1,5 @@
 import {createRequire} from 'module';
 import path from 'path';
-import {transform} from '@swc/core';
 import type {SourceExtractedMessage} from '../types.js';
 import {getDefaultProjectRoot, normalizePathToPosix} from '../utils.js';
 import LRUCache from './LRUCache.js';
@@ -46,6 +45,9 @@ export default class MessageExtractor {
       return {messages: [], code: source};
     }
 
+    // Load lazily so that importing the plugin doesn't require loading the
+    // SWC native binding when no files use `useExtracted`.
+    const {transform} = await import('@swc/core');
     const filePath = normalizePathToPosix(
       path.relative(this.projectRoot, absoluteFilePath)
     );
