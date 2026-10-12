@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["perf"],
+  "compilerOptions": {
+    "paths": {
+      "use-intl/format-message": ["./src/core/format-message/index.tsx"]
+    }
+  }
+}
