@@ -29,7 +29,8 @@ fn next_intl_plugin(mut program: Program, data: TransformPluginProgramMetadata) 
         config.is_development,
         config.file_path,
         Some(Box::new(data.source_map) as Box<dyn SourceMapper>),
-    );
+    )
+    .with_key_includes_description(config.key_includes_description);
     program.visit_mut_with(&mut visitor);
 
     experimental_emit(
@@ -47,6 +48,8 @@ const NAMESPACE_SEPARATOR: &str = ".";
 struct Config {
     is_development: bool,
     file_path: String,
+    #[serde(default)]
+    key_includes_description: bool,
 }
 
 /// A statically analyzable usage, tagged by kind in the serialized output.
@@ -187,6 +190,10 @@ pub struct TransformVisitor {
     file_path: String,
     source_map: Option<Box<dyn SourceMapper>>,
 
+    /// Hash the description into auto-generated keys, so identical messages
+    /// with different descriptions get separate keys.
+    key_includes_description: bool,
+
     /// Local import names of next-intl hooks (`useExtracted`, `useTranslations`, …).
     hook_local_names: FxHashMap<Id, Hook>,
 
@@ -207,10 +214,16 @@ impl TransformVisitor {
             is_development,
             file_path,
             source_map,
+            key_includes_description: false,
             hook_local_names: Default::default(),
             translator_map: Default::default(),
             results: Default::default(),
         }
+    }
+
+    pub fn with_key_includes_description(mut self, key_includes_description: bool) -> Self {
+        self.key_includes_description = key_includes_description;
+        self
     }
 
     pub fn get_results(&self) -> Vec<SourceMessage> {
@@ -377,8 +390,12 @@ impl TransformVisitor {
             return;
         };
 
-        let call_key = explicit_id
-            .unwrap_or_else(|| key_generator::KeyGenerator::generate(&message_text).into());
+        let call_key = explicit_id.unwrap_or_else(|| {
+            let key_description = description
+                .as_ref()
+                .filter(|_| self.key_includes_description);
+            key_generator::KeyGenerator::generate(&message_text, key_description).into()
+        });
         let full_key = namespace.map_or(call_key.clone(), |namespace| {
             [&*namespace.to_string_lossy(), &*call_key.to_string_lossy()]
                 .join(NAMESPACE_SEPARATOR)
