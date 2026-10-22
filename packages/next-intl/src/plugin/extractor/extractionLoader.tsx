@@ -21,6 +21,7 @@ export default function extractionLoader(
   if (!extractor) {
     extractor = new MessageExtractor({
       isDevelopment,
+      keyIncludesDescription: this.getOptions().extract.keyIncludesDescription,
       projectRoot,
       sourceMap: this.sourceMap
     });
