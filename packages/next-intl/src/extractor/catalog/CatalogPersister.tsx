@@ -1,3 +1,4 @@
+import {randomUUID} from 'crypto';
 import fs from 'fs/promises';
 import fsPath from 'path';
 import type ExtractorCodec from '../format/ExtractorCodec.js';
@@ -75,11 +76,18 @@ export default class CatalogPersister {
     warnAboutMissingReferences(messages);
     const content = this.codec.encode(messages, context);
 
+    // Write to a temporary file first and move it into place, so that
+    // concurrent readers (e.g. a build compiling catalogs) never observe a
+    // truncated file. Not ending with the catalog extension, so that the
+    // temporary file isn't mistaken for a locale.
+    const tempPath = `${filePath}.${process.pid}.${randomUUID()}.tmp`;
     try {
       const outputDir = fsPath.dirname(filePath);
       await fs.mkdir(outputDir, {recursive: true});
-      await fs.writeFile(filePath, content);
+      await fs.writeFile(tempPath, content);
+      await fs.rename(tempPath, filePath);
     } catch (error) {
+      await fs.rm(tempPath, {force: true}).catch(() => {});
       console.error(`❌ Failed to write catalog: ${error}`);
     }
   }
