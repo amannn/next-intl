@@ -372,22 +372,54 @@ function getNumberFormatOptions(
   return style as NumberStyleOptions;
 }
 
+// Mirrors intl-messageformat's defaults so precompiled messages match the non-precompiled behavior
+const DEFAULT_DATE_TIME_FORMATS: Record<
+  'date' | 'time',
+  Record<string, Intl.DateTimeFormatOptions | undefined>
+> = {
+  date: {
+    short: {month: 'numeric', day: 'numeric', year: '2-digit'},
+    medium: {month: 'short', day: 'numeric', year: 'numeric'},
+    long: {month: 'long', day: 'numeric', year: 'numeric'},
+    full: {weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'}
+  },
+  time: {
+    short: {hour: 'numeric', minute: 'numeric'},
+    medium: {hour: 'numeric', minute: 'numeric', second: 'numeric'},
+    long: {
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+      timeZoneName: 'short'
+    },
+    full: {
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+      timeZoneName: 'short'
+    }
+  }
+};
+
 function getDateTimeFormatOptions(
   style: DateTimeStyle | undefined,
   type: 'date' | 'time',
   formatOptions: FormatOptions
 ): Intl.DateTimeFormatOptions | undefined {
-  if (!style) return undefined;
+  const resolvedStyle = !style && type === 'time' ? 'medium' : style;
+  if (!resolvedStyle) return undefined;
 
-  if (typeof style === 'string') {
-    const resolved = formatOptions.formats?.dateTime?.[style];
+  if (typeof resolvedStyle === 'string') {
+    const resolved =
+      formatOptions.formats?.dateTime?.[resolvedStyle] ??
+      DEFAULT_DATE_TIME_FORMATS[type][resolvedStyle];
     if (process.env.NODE_ENV !== 'production' && !resolved) {
-      throw new Error(`Missing ${type} format "${style}"`);
+      throw new Error(`Missing ${type} format "${resolvedStyle}"`);
     }
     return resolved;
   }
 
-  return style as DateTimeStyleOptions;
+  return resolvedStyle as DateTimeStyleOptions;
 }
 
 function formatTag<RichTextElement>(

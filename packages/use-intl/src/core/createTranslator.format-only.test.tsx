@@ -183,6 +183,63 @@ it('uses the global time zone when no local time zone is set', async () => {
   expect(result).toMatchInlineSnapshot(`"01/01/2020"`);
 });
 
+describe('date and time formatting', () => {
+  const date = new Date('2026-09-27T14:30:00Z');
+
+  // Expected values use intl-messageformat's default date/time formats, computed at runtime so they match the Node/ICU version.
+  function format(options?: Intl.DateTimeFormatOptions) {
+    return new Intl.DateTimeFormat('en', {
+      ...options,
+      timeZone: 'UTC'
+    }).format(date);
+  }
+
+  it('formats time without style', () => {
+    const t = getTranslator('{value, time}', {timeZone: 'UTC'});
+    expect(t('message', {value: date})).toBe(
+      format({hour: 'numeric', minute: 'numeric', second: 'numeric'})
+    );
+  });
+
+  it('formats time with short style', () => {
+    const t = getTranslator('{value, time, short}', {timeZone: 'UTC'});
+    expect(t('message', {value: date})).toBe(
+      format({hour: 'numeric', minute: 'numeric'})
+    );
+  });
+
+  it('formats date with medium style', () => {
+    const t = getTranslator('{value, date, medium}', {timeZone: 'UTC'});
+    expect(t('message', {value: date})).toBe(
+      format({month: 'short', day: 'numeric', year: 'numeric'})
+    );
+  });
+
+  it('formats date with short style', () => {
+    const t = getTranslator('{value, date, short}', {timeZone: 'UTC'});
+    expect(t('message', {value: date})).toBe(
+      format({month: 'numeric', day: 'numeric', year: '2-digit'})
+    );
+  });
+
+  it('allows app-defined dateTime format to override a built-in style', () => {
+    const t = getTranslator('{value, date, short}', {
+      formats: {
+        dateTime: {
+          short: {weekday: 'long'}
+        }
+      },
+      timeZone: 'UTC'
+    });
+    expect(t('message', {value: date})).toBe(format({weekday: 'long'}));
+  });
+
+  it('formats date without style', () => {
+    const t = getTranslator('{value, date}', {timeZone: 'UTC'});
+    expect(t('message', {value: date})).toBe(format());
+  });
+});
+
 describe('error handling', () => {
   it('handles missing arguments', async () => {
     const onError = vi.fn();

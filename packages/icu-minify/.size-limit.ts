@@ -5,7 +5,7 @@ const config: SizeLimitConfig = [
     name: "import format from 'icu-minify/format' (production)",
     import: 'format',
     path: 'dist/esm/production/format.js',
-    limit: '0.65 kB'
+    limit: '0.78 kB'
   },
   {
     name: "import compile from 'icu-minify/compile' (production)",
