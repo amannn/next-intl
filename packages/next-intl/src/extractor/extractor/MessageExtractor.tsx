@@ -48,6 +48,7 @@ export default class MessageExtractor {
     // Load lazily so that importing the plugin doesn't require loading the
     // SWC native binding when no files use `useExtracted`.
     const {transform} = await import('@swc/core');
+
     const filePath = normalizePathToPosix(
       path.relative(this.projectRoot, absoluteFilePath)
     );
