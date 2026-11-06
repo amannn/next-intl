@@ -44,11 +44,37 @@ export default function createMiddleware<
 ) {
   const resolvedRouting = receiveRoutingConfig(routing);
 
+  const pathnames = (resolvedRouting as any).pathnames as
+    | AppPathnames
+    | undefined;
+
+  // The pathname is matched with `%25` kept encoded (see below),
+  // therefore a literal `%` in localized pathnames is encoded too
+  const encodedPathnames =
+    pathnames &&
+    (Object.fromEntries(
+      Object.entries(pathnames).map(([internalPathname, localized]) => [
+        internalPathname,
+        typeof localized === 'string'
+          ? localized.replace(/%/g, '%25')
+          : Object.fromEntries(
+              Object.entries(localized).map(([locale, template]) => [
+                locale,
+                (template as string).replace(/%/g, '%25')
+              ])
+            )
+      ])
+    ) as AppPathnames);
+
   return function middleware(request: NextRequest) {
     let unsafeExternalPathname: string;
     try {
-      // Resolve potential foreign symbols (e.g. /ja/%E7%B4%84 → /ja/約))
-      unsafeExternalPathname = decodeURI(request.nextUrl.pathname);
+      // Resolve potential foreign symbols (e.g. /ja/%E7%B4%84 → /ja/約)).
+      // `%25` is kept encoded, since a decoded `%` would end up in
+      // redirect and rewrite targets (e.g. /a%25b → /a%b).
+      unsafeExternalPathname = decodeURI(
+        request.nextUrl.pathname.replace(/%25/g, '%2525')
+      );
     } catch {
       // In case an invalid pathname is encountered, forward
       // it to Next.js which in turn responds with a 400
@@ -182,19 +208,16 @@ export default function createMiddleware<
     let hasRedirected: boolean | undefined;
 
     let unprefixedInternalPathname = unprefixedExternalPathname;
-    const pathnames = (resolvedRouting as any).pathnames as
-      | AppPathnames
-      | undefined;
-    if (pathnames) {
+    if (encodedPathnames) {
       let resolvedTemplateLocale: AppLocales[number] | undefined;
       [resolvedTemplateLocale, internalTemplateName] = getInternalTemplate(
-        pathnames,
+        encodedPathnames,
         unprefixedExternalPathname,
         locale
       ) as [AppLocales[number] | undefined, string | undefined];
 
       if (internalTemplateName) {
-        const pathnameConfig = pathnames[internalTemplateName];
+        const pathnameConfig = encodedPathnames[internalTemplateName];
         const localeTemplate: string = getLocalizedTemplate(
           pathnameConfig,
           locale,
