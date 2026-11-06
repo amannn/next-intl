@@ -403,11 +403,39 @@ export default class CatalogManager implements Disposable {
       return;
     }
 
+    const first = sourceMessages[0];
+    const conflicts: string[] = [];
+    const formatRef = (ref: typeof first.reference) =>
+      ref ? `${ref.path}:${ref.line}:${ref.column}` : 'unknown';
+    const normDesc = (d: unknown) => (d == null ? null : d);
+
+    for (let i = 1; i < sourceMessages.length; i++) {
+      const current = sourceMessages[i];
+      if (
+        current.message !== first.message ||
+        normDesc(current.description) !== normDesc(first.description)
+      ) {
+        conflicts.push(
+          `  - ${formatRef(current.reference)} (message: "${current.message}", description: ${current.description ? `"${current.description}"` : 'none'})`
+        );
+      }
+    }
+
+    if (conflicts.length > 0) {
+      throw new Error(
+        `Conflicting definitions for duplicate ID "${id}".\n` +
+          `Expected (from ${formatRef(first.reference)}):\n` +
+          `  message: "${first.message}", description: ${first.description ? `"${first.description}"` : 'none'}\n` +
+          `Conflicts:\n` +
+          conflicts.join('\n')
+      );
+    }
+
     const previousMessage = this.messagesById.get(id);
     const aggregate: ExtractorMessage = {
       description: this.mergeDescriptions(sourceMessages),
       id,
-      message: sourceMessages[0].message,
+      message: first.message,
       references: sourceMessages
         .map((message) => message.reference)
         .sort(compareReferences)
@@ -415,8 +443,6 @@ export default class CatalogManager implements Disposable {
 
     if (previousMessage) {
       for (const key of Object.keys(previousMessage)) {
-        // Preserve extra fields (e.g. from disk/codec) across rebuilds; the
-        // four core fields above are always recomputed from source messages.
         if (
           !CatalogManager.extractorOwnedAggregatorKeys.has(key) &&
           aggregate[key] == null
