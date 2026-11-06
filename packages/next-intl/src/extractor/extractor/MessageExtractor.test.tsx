@@ -159,6 +159,60 @@ it('keeps descriptions on separate source message uses', async () => {
   `);
 });
 
+it('keys messages by their description with `keyIncludesDescription`', async () => {
+  const result = await process(
+    `import {useExtracted} from 'next-intl';
+
+    function Component() {
+      const t = useExtracted();
+      return (
+        <div>
+          {t('Save')}
+          {t({message: 'Save', description: 'Button label'})}
+          {t({message: 'Save', description: 'Menu item label'})}
+        </div>
+      );
+    }
+  `,
+    {keyIncludesDescription: true}
+  );
+
+  expect(result.messages).toMatchInlineSnapshot(`
+    [
+      {
+        "description": null,
+        "id": "jvo0vs",
+        "message": "Save",
+        "reference": {
+          "column": 11,
+          "line": 7,
+          "path": "test.tsx",
+        },
+      },
+      {
+        "description": "Button label",
+        "id": "IGQ835",
+        "message": "Save",
+        "reference": {
+          "column": 11,
+          "line": 8,
+          "path": "test.tsx",
+        },
+      },
+      {
+        "description": "Menu item label",
+        "id": "ZkrBkL",
+        "message": "Save",
+        "reference": {
+          "column": 11,
+          "line": 9,
+          "path": "test.tsx",
+        },
+      },
+    ]
+  `);
+});
+
 it('does not add a fallback message in production', async () => {
   const result = await process(
     `import {useExtracted} from 'next-intl';

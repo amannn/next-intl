@@ -15,7 +15,12 @@ export default class ExtractionCompiler implements Disposable {
       sourceMap?: boolean;
     } = {}
   ) {
-    const extractor = opts.extractor ?? new MessageExtractor(opts);
+    const extractor =
+      opts.extractor ??
+      new MessageExtractor({
+        ...opts,
+        keyIncludesDescription: config.extract.keyIncludesDescription
+      });
     this.manager = new CatalogManager(config, {
       ...opts,
       extractor

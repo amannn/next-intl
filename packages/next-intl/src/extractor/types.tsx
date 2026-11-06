@@ -56,12 +56,19 @@ export type ExtractorConfigInput = {
         path?: string;
         /** @deprecated Prefer `messages.sourceLocale`. */
         sourceLocale?: string;
+        /**
+         * Includes the `description` of a message in its auto-generated key,
+         * so identical messages with different descriptions are translated
+         * separately. Defaults to `false`.
+         */
+        keyIncludesDescription?: boolean;
       };
 };
 
 /** Normalized config used internally after `normalizeExtractorConfig`. */
 export type ExtractorConfig = {
   extract: {
+    keyIncludesDescription?: boolean;
     locales: 'infer' | ReadonlyArray<Locale>;
     path: string;
     sourceLocale: string;

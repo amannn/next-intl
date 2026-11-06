@@ -1,0 +1,127 @@
+[
+  {
+    "description": null,
+    "id": "JfG49w",
+    "message": "Open",
+    "ranges": {
+      "argument": {
+        "end": 102,
+        "start": 96
+      },
+      "message": {
+        "end": 102,
+        "start": 96
+      }
+    },
+    "reference": {
+      "column": 2,
+      "line": 5,
+      "path": "input.js"
+    },
+    "type": "extracted"
+  },
+  {
+    "description": "Button that opens the file",
+    "id": "fiDkD4",
+    "message": "Open",
+    "ranges": {
+      "argument": {
+        "end": 169,
+        "start": 109
+      },
+      "description": {
+        "end": 168,
+        "start": 140
+      },
+      "message": {
+        "end": 125,
+        "start": 119
+      }
+    },
+    "reference": {
+      "column": 2,
+      "line": 6,
+      "path": "input.js"
+    },
+    "type": "extracted"
+  },
+  {
+    "description": "Status of an invoice",
+    "id": "iQZJ2Q",
+    "message": "Open",
+    "ranges": {
+      "argument": {
+        "end": 230,
+        "start": 176
+      },
+      "description": {
+        "end": 229,
+        "start": 207
+      },
+      "message": {
+        "end": 192,
+        "start": 186
+      }
+    },
+    "reference": {
+      "column": 2,
+      "line": 7,
+      "path": "input.js"
+    },
+    "type": "extracted"
+  },
+  {
+    "description": "",
+    "id": "JfG49w",
+    "message": "Open",
+    "ranges": {
+      "argument": {
+        "end": 271,
+        "start": 237
+      },
+      "description": {
+        "end": 270,
+        "start": 268
+      },
+      "message": {
+        "end": 253,
+        "start": 247
+      }
+    },
+    "reference": {
+      "column": 2,
+      "line": 8,
+      "path": "input.js"
+    },
+    "type": "extracted"
+  },
+  {
+    "description": "Link to the file",
+    "id": "openLink",
+    "message": "Open",
+    "ranges": {
+      "argument": {
+        "end": 344,
+        "start": 278
+      },
+      "description": {
+        "end": 343,
+        "start": 325
+      },
+      "id": {
+        "end": 293,
+        "start": 283
+      },
+      "message": {
+        "end": 310,
+        "start": 304
+      }
+    },
+    "reference": {
+      "column": 2,
+      "line": 9,
+      "path": "input.js"
+    },
+    "type": "extracted"
+  }
+]

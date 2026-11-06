@@ -174,6 +174,8 @@ In order to provide more context about a message for (AI) translators, you can p
 </button>
 ```
 
+By default, descriptions don't affect the auto-generated key, so identical messages share a translation and their descriptions are combined. If identical messages should be translated based on their description, you can enable [`extract.keyIncludesDescription`](/docs/usage/plugin#extract-key-includes-description).
+
 ### Explicit IDs
 
 If you want to use an explicit ID instead of the auto-generated one, you can optionally provide one:

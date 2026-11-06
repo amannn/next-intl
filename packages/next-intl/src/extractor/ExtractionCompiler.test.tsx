@@ -512,6 +512,70 @@ describe('po format', {timeout: 20_000}, () => {
 `);
   });
 
+  it('writes separate entries for different descriptions with `keyIncludesDescription`', async () => {
+    filesystem.project.src['A.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function A() {
+      const t = useExtracted();
+      return <div>{t({message: 'Open', description: 'Button that opens the file'})}</div>;
+    }
+    `;
+    filesystem.project.src['Z.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Z() {
+      const t = useExtracted();
+      return <div>{t({message: 'Open', description: 'Status of an invoice'})}</div>;
+    }
+    `;
+    filesystem.project.messages = {};
+
+    using compiler = new ExtractionCompiler(
+      {
+        extract: {
+          keyIncludesDescription: true,
+          locales: 'infer',
+          path: './messages',
+          sourceLocale: 'en',
+          srcPath: './src'
+        },
+        messages: {
+          format: 'po',
+          path: ['./messages']
+        }
+      },
+      {
+        isDevelopment: true,
+        projectRoot: '/project',
+        saveDebounceMs: 0
+      }
+    );
+    await compiler.extractAll();
+    await waitForWriteFileCalls(1);
+
+    expect(vi.mocked(fs.writeFile).mock.calls[0][1]).toMatchInlineSnapshot(`
+      "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: @eloqnt/format-po\\n"
+      "X-Message-Key: msgctxt\\n"
+
+      #. Button that opens the file
+      #: src/A.tsx
+      msgctxt "fiDkD4"
+      msgid "Open"
+      msgstr "Open"
+
+      #. Status of an invoice
+      #: src/Z.tsx
+      msgctxt "iQZJ2Q"
+      msgid "Open"
+      msgstr "Open"
+      "
+    `);
+  });
+
   it('stacks descriptions when the same message appears multiple times in one file', async () => {
     filesystem.project.src['FileA.tsx'] = `
     import {useExtracted} from 'next-intl';

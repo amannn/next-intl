@@ -9,6 +9,7 @@ const require = createRequire(import.meta.url);
 
 export default class MessageExtractor {
   private isDevelopment: boolean;
+  private keyIncludesDescription: boolean;
   private projectRoot: string;
   private sourceMap: boolean;
   private compileCache = new LRUCache<{
@@ -19,10 +20,12 @@ export default class MessageExtractor {
 
   public constructor(opts: {
     isDevelopment?: boolean;
+    keyIncludesDescription?: boolean;
     projectRoot?: string;
     sourceMap?: boolean;
   }) {
     this.isDevelopment = opts.isDevelopment ?? false;
+    this.keyIncludesDescription = opts.keyIncludesDescription ?? false;
     this.projectRoot = opts.projectRoot ?? getDefaultProjectRoot();
     this.sourceMap = opts.sourceMap ?? false;
   }
@@ -66,6 +69,7 @@ export default class MessageExtractor {
               require.resolve('next-intl-swc-plugin-extractor'),
               {
                 isDevelopment: this.isDevelopment,
+                keyIncludesDescription: this.keyIncludesDescription,
                 filePath
               }
             ]

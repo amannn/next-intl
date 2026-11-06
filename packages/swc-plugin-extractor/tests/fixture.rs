@@ -58,8 +58,10 @@ fn test(input: PathBuf) {
     let dir = input.parent().unwrap().to_path_buf();
     let output = dir.join("output.js");
     let output_json = dir.join("output.json");
+    let key_includes_description = read_key_includes_description(&dir);
 
-    let visitor = TransformVisitor::new(true, "input.js".to_string(), None);
+    let visitor = TransformVisitor::new(true, "input.js".to_string(), None)
+        .with_key_includes_description(key_includes_description);
     let visitor_rc = Rc::new(RefCell::new(visitor));
 
     // Test JS transformation
@@ -100,7 +102,8 @@ fn test(input: PathBuf) {
             true,
             file_name,
             Some(Box::new(cm) as Box<dyn swc_core::common::SourceMapper>),
-        );
+        )
+        .with_key_includes_description(key_includes_description);
 
         program.visit_mut_with(&mut visitor);
 
@@ -109,6 +112,16 @@ fn test(input: PathBuf) {
         let actual_results = serde_json::to_value(visitor.get_results()).unwrap();
         assert_json(&output_json, &actual_results, update);
     });
+}
+
+/// Reads the `keyIncludesDescription` plugin option from an optional
+/// `config.json` next to the fixture's input.
+fn read_key_includes_description(dir: &Path) -> bool {
+    let Ok(config) = fs::read_to_string(dir.join("config.json")) else {
+        return false;
+    };
+    let config: Value = serde_json::from_str(&config).expect("Invalid config.json");
+    config["keyIncludesDescription"].as_bool().unwrap_or(false)
 }
 
 /// Compares `actual` against the JSON at `path`, or rewrites it with `UPDATE=1`.

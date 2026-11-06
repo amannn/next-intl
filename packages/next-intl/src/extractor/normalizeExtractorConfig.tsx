@@ -31,8 +31,11 @@ export default function normalizeExtractorConfig(
 
   let extractPath: string | undefined;
   let sourceLocale: string | undefined;
+  let keyIncludesDescription = false;
 
   if (extract !== undefined && extract !== true) {
+    keyIncludesDescription = extract.keyIncludesDescription ?? false;
+
     if (extract.sourceLocale) {
       warn(
         '`extract.sourceLocale` is deprecated in favor of `messages.sourceLocale`.'
@@ -81,6 +84,7 @@ export default function normalizeExtractorConfig(
 
   return {
     extract: {
+      keyIncludesDescription,
       locales,
       path: extractPath,
       sourceLocale,
