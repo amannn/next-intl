@@ -49,14 +49,29 @@ export function getAcceptLanguageLocale<AppLocales extends Locales>(
       'accept-language': requestHeaders.get('accept-language') || undefined
     }
   }).languages();
-  try {
-    const orderedLocales = orderLocales(locales);
-    locale = mapToProvidedLocale(
-      locales,
-      match(languages, orderedLocales, defaultLocale)
-    );
-  } catch {
-    // Invalid language
+
+  // `match` rejects the whole list if a single entry is invalid (e.g. `*` or
+  // `en_US`), so only pass on the valid ones
+  const validLanguages = languages.filter((language) => {
+    try {
+      return Intl.getCanonicalLocales(language);
+    } catch {
+      return false;
+    }
+  });
+
+  // If no entry is valid (e.g. no header, which yields `*`), keep returning
+  // `undefined` instead of the default locale
+  if (validLanguages.length > 0 || languages.length === 0) {
+    try {
+      const orderedLocales = orderLocales(locales);
+      locale = mapToProvidedLocale(
+        locales,
+        match(validLanguages, orderedLocales, defaultLocale)
+      );
+    } catch {
+      // Invalid language
+    }
   }
 
   return locale;

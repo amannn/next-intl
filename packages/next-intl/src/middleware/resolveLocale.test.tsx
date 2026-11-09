@@ -58,4 +58,31 @@ describe('getAcceptLanguageLocale', () => {
       getAcceptLanguageLocale(requestHeaders, locales, defaultLocale)
     ).toBe('en-x-p1');
   });
+
+  it('ignores a wildcard entry and keeps the other preferences', () => {
+    const requestHeaders = new Headers({
+      'accept-language': 'de, *;q=0.5'
+    });
+    expect(getAcceptLanguageLocale(requestHeaders, ['en', 'de'], 'en')).toBe(
+      'de'
+    );
+  });
+
+  it('ignores an invalid tag and keeps the other preferences', () => {
+    const requestHeaders = new Headers({
+      'accept-language': 'de-DE, en_US;q=0.5'
+    });
+    expect(getAcceptLanguageLocale(requestHeaders, ['en', 'de'], 'en')).toBe(
+      'de'
+    );
+  });
+
+  it('returns no locale if the header only has a wildcard or invalid tags', () => {
+    for (const acceptLanguage of ['*', 'en_US', 'en_US, *;q=0.5']) {
+      const requestHeaders = new Headers({'accept-language': acceptLanguage});
+      expect(
+        getAcceptLanguageLocale(requestHeaders, ['en', 'de'], 'en')
+      ).toBeUndefined();
+    }
+  });
 });

@@ -42,7 +42,7 @@ const config: SizeLimitConfig = [
   {
     name: "import * from 'next-intl/middleware'",
     path: 'dist/esm/production/middleware.js',
-    limit: '10.12 KB'
+    limit: '10.14 KB'
   },
   {
     name: "import * from 'next-intl/routing'",
