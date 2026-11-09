@@ -1575,6 +1575,33 @@ describe('prefix-based routing', () => {
         );
       });
 
+      it('redirects an overlapping static internal pathname to the localized static path when the dynamic route is declared first', () => {
+        // https://github.com/amannn/next-intl/issues/2454
+        const middlewareWithOverlappingPathnames = createMiddleware({
+          defaultLocale: 'en',
+          locales: ['en', 'de'],
+          pathnames: {
+            '/': '/',
+            '/news/[articleSlug]': {
+              de: '/neuigkeiten/[articleSlug]'
+            },
+            '/news/just-in': {
+              de: '/neuigkeiten/aktuell'
+            }
+          }
+        });
+
+        middlewareWithOverlappingPathnames(
+          createMockRequest('/de/news/just-in', 'de')
+        );
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/de/neuigkeiten/aktuell'
+        );
+      });
+
       it('allows to map a nested path to the root', () => {
         // https://github.com/amannn/next-intl/issues/940
         const middlewareWithMapping = createMiddleware({

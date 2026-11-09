@@ -222,6 +222,36 @@ describe('getInternalTemplate', () => {
       '/internal/[id]'
     ]);
   });
+
+  it('prefers a static internal pathname over an overlapping dynamic one when the dynamic route is declared first', () => {
+    const pathnamesDynamicFirst = {
+      '/news/[articleSlug]': {
+        de: '/neuigkeiten/[articleSlug]'
+      },
+      '/news/just-in': {
+        de: '/neuigkeiten/aktuell'
+      }
+    };
+
+    expect(
+      getInternalTemplate(pathnamesDynamicFirst, '/news/just-in', 'de')
+    ).toEqual([undefined, '/news/just-in']);
+  });
+
+  it('prefers a static internal pathname over an overlapping dynamic one when the static route is declared first', () => {
+    const pathnamesStaticFirst = {
+      '/news/just-in': {
+        de: '/neuigkeiten/aktuell'
+      },
+      '/news/[articleSlug]': {
+        de: '/neuigkeiten/[articleSlug]'
+      }
+    };
+
+    expect(
+      getInternalTemplate(pathnamesStaticFirst, '/news/just-in', 'de')
+    ).toEqual([undefined, '/news/just-in']);
+  });
 });
 
 describe('getPathnameMatch', () => {
