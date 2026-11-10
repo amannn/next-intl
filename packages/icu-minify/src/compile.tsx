@@ -157,14 +157,8 @@ function compileDate(node: DateElement): CompiledNode {
 }
 
 function compileTime(node: TimeElement): CompiledNode {
-  const result: CompiledNode = [node.value, TYPE_TIME];
-
-  const style = compileDateTimeStyle(node.style);
-  if (style !== undefined) {
-    result.push(style);
-  }
-
-  return result;
+  // Like `intl-messageformat`, `{value, time}` uses the `medium` style
+  return [node.value, TYPE_TIME, compileDateTimeStyle(node.style) ?? 'medium'];
 }
 
 function compileDateTimeStyle(

@@ -510,6 +510,56 @@ describe('time formatting', () => {
     });
   });
 
+  it('uses the medium style when no style is provided', () => {
+    const compiled = compile('{t, time}');
+    expect(compiled).toEqual([['t', 6, 'medium']]);
+    const result = formatMessage(
+      compiled,
+      'en',
+      {t: date},
+      {
+        timeZone: 'UTC',
+        formats: {time: {medium: {hour: 'numeric', hour12: false}}}
+      }
+    );
+    expect(result).toBe('14');
+  });
+
+  it('resolves styles from type-specific formats', () => {
+    const compiled = compile('{t, date, short} {t, time, short}');
+    const result = formatMessage(
+      compiled,
+      'en',
+      {t: date},
+      {
+        timeZone: 'UTC',
+        formats: {
+          date: {short: {year: 'numeric'}},
+          time: {short: {hour: 'numeric', hour12: false}}
+        }
+      }
+    );
+    expect(result).toBe('2024 14');
+  });
+
+  it('prefers `dateTime` formats over type-specific formats', () => {
+    const compiled = compile('{t, date, short} {t, time, short}');
+    const result = formatMessage(
+      compiled,
+      'en',
+      {t: date},
+      {
+        timeZone: 'UTC',
+        formats: {
+          dateTime: {short: {month: 'long'}},
+          date: {short: {year: 'numeric'}},
+          time: {short: {hour: 'numeric', hour12: false}}
+        }
+      }
+    );
+    expect(result).toBe('March March');
+  });
+
   it('throws for non-Date values', () => {
     const compiled = compile('{t, time}');
     expect(() => formatMessage(compiled, 'en', {t: 'not a date'})).toThrow(
