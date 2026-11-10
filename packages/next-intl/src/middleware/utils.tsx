@@ -320,6 +320,19 @@ export function getLocaleAsPrefix<AppLocales extends Locales>(
   return `/${locale}`;
 }
 
+/**
+ * Resolves potential foreign symbols (e.g. /ja/%E7%B4%84 → /ja/約).
+ *
+ * Similar to how `decodeURI` keeps reserved characters like `%2F` encoded,
+ * `%25` is kept encoded too. Otherwise the decoded `%` would end up in
+ * redirect and rewrite targets (e.g. /a%25b → /a%b), which are invalid.
+ *
+ * Throws for malformed pathnames (e.g. /%).
+ */
+export function decodePathname(pathname: string) {
+  return decodeURI(pathname.replace(/%25/g, '%2525'));
+}
+
 export function sanitizePathname(pathname: string) {
   // Sanitize malicious URIs, e.g.:
   // '/en/\\example.org'  → '/en/%5Cexample.org'     (backslash → %5C)

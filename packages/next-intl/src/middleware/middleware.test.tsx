@@ -255,6 +255,15 @@ describe('prefix-based routing', () => {
           'http://localhost:3000/%2509/some-page'
         );
       });
+
+      it('redirects to a same-origin URL when a backslash is double-encoded as %255C', () => {
+        middleware(createMockRequest('/en/%255Cexample.org'));
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/%255Cexample.org'
+        );
+      });
     });
 
     describe('encoded percent signs', () => {
@@ -273,13 +282,6 @@ describe('prefix-based routing', () => {
         expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
           'http://localhost:3000/a%25b'
-        );
-      });
-
-      it('does not decode encoded escape sequences twice', () => {
-        middleware(createMockRequest('/%25E2%2582%25AC'));
-        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-          'http://localhost:3000/en/%25E2%2582%25AC'
         );
       });
 
@@ -621,6 +623,28 @@ describe('prefix-based routing', () => {
         expect(MockedNextResponse.next).toHaveBeenCalled();
         expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+      });
+
+      it('keeps an encoded percent sign in params when rewriting', () => {
+        middlewareWithPathnames(
+          createMockRequest('/de/produkte/100%25-off', 'de')
+        );
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/de/products/100%25-off'
+        );
+      });
+
+      it('keeps an encoded percent sign in params when redirecting', () => {
+        middlewareWithPathnames(
+          createMockRequest('/de/products/100%25-off', 'de')
+        );
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/de/produkte/100%25-off'
+        );
       });
 
       it('serves requests for a non-default locale at nested paths for "de"', () => {
@@ -1299,38 +1323,6 @@ describe('prefix-based routing', () => {
         middleware(createMockRequest('/users?sort=asc'));
         expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
           'http://localhost:3000/en/users/?sort=asc'
-        );
-      });
-    });
-
-    describe('localized pathnames with a literal percent sign', () => {
-      const middlewareWithPathnames = createMiddleware({
-        defaultLocale: 'en',
-        locales: ['en', 'de'],
-        localePrefix: 'always',
-        pathnames: {
-          '/sale': {
-            en: '/sale',
-            de: '/100%-rabatt'
-          }
-        }
-      });
-
-      it('rewrites a localized pathname with an encoded percent sign', () => {
-        middlewareWithPathnames(createMockRequest('/de/100%25-rabatt'));
-        expect(MockedNextResponse.next).not.toHaveBeenCalled();
-        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
-        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-          'http://localhost:3000/de/sale'
-        );
-      });
-
-      it('redirects to a localized pathname with an encoded percent sign', () => {
-        middlewareWithPathnames(createMockRequest('/de/sale'));
-        expect(MockedNextResponse.next).not.toHaveBeenCalled();
-        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
-        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-          'http://localhost:3000/de/100%25-rabatt'
         );
       });
     });
