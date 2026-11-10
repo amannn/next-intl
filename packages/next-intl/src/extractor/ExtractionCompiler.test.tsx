@@ -81,6 +81,32 @@ describe('json format', {timeout: 20_000}, () => {
     });
   });
 
+  it('does not rewrite catalogs whose content is unchanged', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hey!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {'de.json': '{}'};
+
+    {
+      using compiler = createCompiler();
+      await compiler.extractAll();
+      await waitForWriteFileCalls(2);
+    }
+    vi.mocked(fs.writeFile).mockClear();
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+
+    expect(vi.mocked(fs.writeFile)).not.toHaveBeenCalled();
+    expect(JSON.parse(filesystem.project.messages!['de.json'])).toEqual({
+      '-YJVTi': ''
+    });
+  });
+
   it('creates all locale files immediately when explicit locales are provided', async () => {
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
