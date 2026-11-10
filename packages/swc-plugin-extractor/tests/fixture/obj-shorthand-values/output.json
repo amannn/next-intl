@@ -1,0 +1,23 @@
+[
+  {
+    "description": null,
+    "id": "wafoOY",
+    "message": "Hello {name}!",
+    "ranges": {
+      "argument": {
+        "end": 164,
+        "start": 130
+      },
+      "message": {
+        "end": 155,
+        "start": 140
+      }
+    },
+    "reference": {
+      "column": 2,
+      "line": 6,
+      "path": "input.js"
+    },
+    "type": "extracted"
+  }
+]
