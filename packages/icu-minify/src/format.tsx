@@ -30,7 +30,12 @@ export type FormatValues<RichTextElement = unknown> = Record<
 >;
 
 export type Formats = {
+  /** Applies to both `date` and `time` arguments and takes precedence over `date` and `time`. */
   dateTime?: Record<string, Intl.DateTimeFormatOptions>;
+  /** Only applies to `date` arguments. */
+  date?: Record<string, Intl.DateTimeFormatOptions>;
+  /** Only applies to `time` arguments. */
+  time?: Record<string, Intl.DateTimeFormatOptions>;
   number?: Record<string, Intl.NumberFormatOptions>;
 };
 
@@ -380,7 +385,8 @@ function getDateTimeFormatOptions(
   if (!style) return undefined;
 
   if (typeof style === 'string') {
-    const resolved = formatOptions.formats?.dateTime?.[style];
+    const formats = formatOptions.formats;
+    const resolved = formats?.dateTime?.[style] ?? formats?.[type]?.[style];
     if (process.env.NODE_ENV !== 'production' && !resolved) {
       throw new Error(`Missing ${type} format "${style}"`);
     }

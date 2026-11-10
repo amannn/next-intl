@@ -1,5 +1,6 @@
 import format, {type CompiledMessage} from 'icu-minify/format';
 import type {ReactNode} from 'react';
+import defaultFormats from './defaultFormats.js';
 import type {FormatMessage} from './types.js';
 
 /**
@@ -14,11 +15,15 @@ export default function formatMessage(
 
   const result = format<ReactNode>(message, locale, values, {
     formats: {
+      // Formats from the app take precedence over built-in date and time styles
       dateTime: {
         ...globalFormats?.dateTime,
         ...formats?.dateTime
       },
+      date: defaultFormats.date,
+      time: defaultFormats.time,
       number: {
+        ...defaultFormats.number,
         ...globalFormats?.number,
         ...formats?.number
       }

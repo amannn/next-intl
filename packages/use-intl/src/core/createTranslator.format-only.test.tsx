@@ -1,8 +1,10 @@
 import compile from 'icu-minify/compile';
+import {IntlMessageFormat} from 'intl-messageformat';
 import {type ReactElement, isValidElement} from 'react';
 import {describe, expect, it, vi} from 'vitest';
 import type IntlError from './IntlError.js';
 import IntlErrorCode from './IntlErrorCode.js';
+import convertFormatsToIntlMessageFormat from './convertFormatsToIntlMessageFormat.js';
 import createTranslator from './createTranslator.js';
 
 vi.mock('use-intl/format-message', async () => {
@@ -181,6 +183,68 @@ it('uses the global time zone when no local time zone is set', async () => {
 
   const result = t('message', {value: date});
   expect(result).toMatchInlineSnapshot(`"01/01/2020"`);
+});
+
+describe('built-in styles', () => {
+  const value = new Date('2026-09-27T14:30:00Z');
+
+  // Same output as without precompilation
+  function formatWithIntlMessageFormat(message: string, val: Date | number) {
+    return new IntlMessageFormat(
+      message,
+      'en',
+      convertFormatsToIntlMessageFormat(undefined, undefined, 'UTC')
+    ).format({value: val});
+  }
+
+  it.each([
+    '{value, date}',
+    '{value, date, short}',
+    '{value, date, medium}',
+    '{value, date, long}',
+    '{value, date, full}',
+    '{value, time}',
+    '{value, time, short}',
+    '{value, time, medium}',
+    '{value, time, long}',
+    '{value, time, full}'
+  ])('formats `%s` like intl-messageformat', (message) => {
+    const t = getTranslator(message, {timeZone: 'UTC'});
+    const result = t('message', {value});
+    expect(result).toBe(formatWithIntlMessageFormat(message, value));
+  });
+
+  it.each(['{value, number, integer}', '{value, number, percent}'])(
+    'formats `%s` like intl-messageformat',
+    (message) => {
+      const t = getTranslator(message);
+      const result = t('message', {value: 0.5});
+      expect(result).toBe(formatWithIntlMessageFormat(message, 0.5));
+    }
+  );
+
+  it('distinguishes date and time styles with the same name', () => {
+    const message = '{value, date, short} {value, time, short}';
+    const t = getTranslator(message, {timeZone: 'UTC'});
+    const result = t('message', {value});
+    expect(result).toBe(formatWithIntlMessageFormat(message, value));
+    expect(result).toMatch(/^9\/27\/26 2:30\sPM$/);
+  });
+
+  it('prefers a `dateTime` format from the app over a built-in style', () => {
+    const t = getTranslator('{value, date, short} {value, time, short}', {
+      timeZone: 'UTC',
+      formats: {dateTime: {short: {weekday: 'long'}}}
+    });
+    expect(t('message', {value})).toBe('Sunday Sunday');
+  });
+
+  it('prefers a `number` format from the app over a built-in style', () => {
+    const t = getTranslator('{value, number, percent}', {
+      formats: {number: {percent: {style: 'percent', minimumFractionDigits: 1}}}
+    });
+    expect(t('message', {value: 0.5})).toBe('50.0%');
+  });
 });
 
 describe('error handling', () => {
