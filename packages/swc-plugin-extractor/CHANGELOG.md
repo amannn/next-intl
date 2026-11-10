@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.14.10 (2026-11-10)
+
+### Bug Fixes
+
+* Support built-in date, time and number styles in precompiled messages ([#2459](https://github.com/amannn/next-intl/issues/2459)) ([761b09b](https://github.com/amannn/next-intl/commit/761b09b49beab136a80851c08a8b0d3602025b6a)) – by @amannn
+
 ## 4.14.9 (2026-10-02)
 
 ### Bug Fixes
