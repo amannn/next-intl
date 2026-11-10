@@ -65,7 +65,7 @@ export function getInternalTemplate<
 
   // Try to find an internal pathname that matches (this can be the case
   // if all localized pathnames are different from the internal pathnames)
-  for (const internalPathname of Object.keys(pathnames)) {
+  for (const internalPathname of sortedPathnames) {
     if (matchesPathname(internalPathname, pathname)) {
       return [undefined, internalPathname];
     }
