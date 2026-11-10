@@ -76,6 +76,13 @@ export default class CatalogPersister {
     warnAboutMissingReferences(messages);
     const content = this.codec.encode(messages, context);
 
+    // Skip unchanged catalogs to avoid needless file system writes, which
+    // would otherwise trigger watchers and bundler recompilation
+    const currentContent = await fs
+      .readFile(filePath, 'utf8')
+      .catch(() => undefined);
+    if (currentContent === content) return;
+
     // Write to a temporary file first and move it into place, so that
     // concurrent readers (e.g. a build compiling catalogs) never observe a
     // truncated file. Not ending with the catalog extension, so that the
