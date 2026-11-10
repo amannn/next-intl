@@ -65,7 +65,7 @@ export function getInternalTemplate<
 
   // Try to find an internal pathname that matches (this can be the case
   // if all localized pathnames are different from the internal pathnames)
-  for (const internalPathname of Object.keys(pathnames)) {
+  for (const internalPathname of sortedPathnames) {
     if (matchesPathname(internalPathname, pathname)) {
       return [undefined, internalPathname];
     }
@@ -318,6 +318,19 @@ export function getLocaleAsPrefix<AppLocales extends Locales>(
   locale: AppLocales[number]
 ) {
   return `/${locale}`;
+}
+
+/**
+ * Resolves potential foreign symbols (e.g. /ja/%E7%B4%84 → /ja/約).
+ *
+ * Similar to how `decodeURI` keeps reserved characters like `%2F` encoded,
+ * `%25` is kept encoded too. Otherwise the decoded `%` would end up in
+ * redirect and rewrite targets (e.g. /a%25b → /a%b), which are invalid.
+ *
+ * Throws for malformed pathnames (e.g. /%).
+ */
+export function decodePathname(pathname: string) {
+  return decodeURI(pathname.replace(/%25/g, '%2525'));
 }
 
 export function sanitizePathname(pathname: string) {

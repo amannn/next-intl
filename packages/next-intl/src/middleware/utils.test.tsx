@@ -1,5 +1,6 @@
 import {describe, expect, it} from 'vitest';
 import {
+  decodePathname,
   formatPathnameTemplate,
   getInternalTemplate,
   getNormalizedPathname,
@@ -7,6 +8,22 @@ import {
   getRouteParams,
   sanitizePathname
 } from './utils.js';
+
+describe('decodePathname', () => {
+  it('decodes foreign symbols', () => {
+    expect(decodePathname('/ja/%E7%B4%84')).toBe('/ja/約');
+  });
+
+  it('keeps encoded percent signs', () => {
+    expect(decodePathname('/a%25b')).toBe('/a%25b');
+    expect(decodePathname('/%25E2%2582%25AC')).toBe('/%25E2%2582%25AC');
+    expect(decodePathname('/%255C')).toBe('/%255C');
+  });
+
+  it('throws for malformed pathnames', () => {
+    expect(() => decodePathname('/%')).toThrow();
+  });
+});
 
 describe('sanitizePathname', () => {
   it('leaves normal pathnames unchanged', () => {
@@ -221,6 +238,36 @@ describe('getInternalTemplate', () => {
       'it',
       '/internal/[id]'
     ]);
+  });
+
+  it('prefers a static internal pathname over an overlapping dynamic one when the dynamic route is declared first', () => {
+    const pathnamesDynamicFirst = {
+      '/news/[articleSlug]': {
+        de: '/neuigkeiten/[articleSlug]'
+      },
+      '/news/just-in': {
+        de: '/neuigkeiten/aktuell'
+      }
+    };
+
+    expect(
+      getInternalTemplate(pathnamesDynamicFirst, '/news/just-in', 'de')
+    ).toEqual([undefined, '/news/just-in']);
+  });
+
+  it('prefers a static internal pathname over an overlapping dynamic one when the static route is declared first', () => {
+    const pathnamesStaticFirst = {
+      '/news/just-in': {
+        de: '/neuigkeiten/aktuell'
+      },
+      '/news/[articleSlug]': {
+        de: '/neuigkeiten/[articleSlug]'
+      }
+    };
+
+    expect(
+      getInternalTemplate(pathnamesStaticFirst, '/news/just-in', 'de')
+    ).toEqual([undefined, '/news/just-in']);
   });
 });
 
