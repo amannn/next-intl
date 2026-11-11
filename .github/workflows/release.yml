@@ -2,81 +2,225 @@ name: release
 
 # A single workflow file so npm Trusted Publishing can be configured against it.
 # The branch determines which release runs: `main` → stable (latest), `canary`
-# → prerelease (canary). Only the job matching the pushed branch runs.
+# → prerelease (canary).
+#
+# Stable releases are staged, not published. A push of a fix/feat commit to
+# `main` runs these jobs:
+#
+#   version → build → stage → draft-release
+#
+# 1. `version` bumps versions, writes the changelog and pushes the version
+#    commit and tag (`vX.Y.Z`).
+# 2. `build` builds and packs the packages from that tag, without any secrets.
+# 3. `stage` uploads the tarballs to npm with `npm stage publish`. Nothing is
+#    installable until a maintainer approves the staged versions with 2FA on
+#    npmjs.com (or `npm stage approve <id>`).
+# 4. `draft-release` prepares a draft GitHub release for the tag.
+#
+# A maintainer then approves the staged versions on npm and publishes the draft
+# release. To abandon a release, reject the staged versions
+# (`npm stage reject <id>`) and delete the draft release.
+#
+# Separate jobs keep each credential in the job that needs it: only `stage`
+# can talk to npm (via OIDC, in the `npm-publish` environment), and it neither
+# checks out the repo nor installs dependencies.
 on:
   push:
     branches:
       - main
       - canary
-  # Manual recovery for a release whose npm publish failed partway through.
-  #
-  # The push-triggered release below bumps versions, commits, tags and creates
-  # the GitHub release, and only THEN publishes each package to npm. If npm fails
-  # mid-publish (e.g. a transient `504 Gateway Timeout`), some packages end up
-  # live at the new version while others are left behind — but the version bump
-  # and tag are already pushed.
-  #
-  # Do NOT re-run the failed release job in that case: it would run `lerna
-  # publish` again and bump a brand-new version. Instead, dispatch this workflow
-  # with `ref` set to the release tag that failed to fully publish (e.g.
-  # `v4.13.4`). It runs `lerna publish from-package`, which publishes only the
-  # packages whose version is missing from the registry and skips the rest — it
-  # never bumps versions or creates tags.
+  # Recovery for a stable release whose staging failed partway through (e.g. a
+  # transient `504 Gateway Timeout` from npm), after the version commit and tag
+  # were already pushed. Don't re-run the push-triggered run's `version` job:
+  # it would bump a brand-new version. Instead, dispatch this workflow from
+  # `main` with the release tag (e.g. `v4.15.1`). It rebuilds that tag and
+  # stages only the versions that are neither published nor staged yet.
   #
   # This lives in the same file as the automatic release on purpose: npm Trusted
   # Publishing is bound to a specific workflow filename, so recovery must run
-  # from `release.yml` to be authorized to publish (a separate workflow file
-  # produces an unrecognized OIDC identity and npm rejects the publish).
+  # from `release.yml` to be authorized (a separate workflow file produces an
+  # unrecognized OIDC identity and npm rejects it).
   workflow_dispatch:
     inputs:
-      ref:
-        description: 'Release tag/commit to publish from (e.g. v4.13.4)'
+      tag:
+        description: 'Release tag to stage (e.g. v4.15.1)'
         required: true
 
 permissions: {}
 
 jobs:
-  stable:
-    name: stable (latest)
-    if: github.ref == 'refs/heads/main'
+  version:
+    name: version
+    if: "${{github.event_name == 'push' && github.ref == 'refs/heads/main' && (startsWith(github.event.head_commit.message, 'fix: ') || startsWith(github.event.head_commit.message, 'feat: ') || startsWith(github.event.head_commit.message, 'feat!: '))}}"
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Push version commits and tags, create GitHub releases
-      id-token: write # npm trusted publishing
+      contents: write # Push the version commit and tag
+    outputs:
+      # Empty if no package changed since the last release
+      tag: ${{ steps.tag.outputs.tag }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          # On push this is empty and checkout uses the triggering commit; on
-          # manual recovery it checks out the given release tag.
-          ref: ${{ github.event.inputs.ref }}
           # Lerna pushes the version commit and tag with these credentials
           persist-credentials: true
       - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 22.x
-          registry-url: 'https://registry.npmjs.org'
-          # Fresh install from the registry, so a poisoned cache can't run in a job that can publish
           package-manager-cache: false
-      - run: npm install -g npm@12.2.2 # Trusted publishing needs npm >= 11.5.1 # zizmor: ignore[adhoc-packages]
       - run: pnpm install --frozen-lockfile
       - env:
           ACTOR: ${{ github.actor }}
         run: |
           git config --global user.name "$ACTOR"
           git config --global user.email "$ACTOR@users.noreply.github.com"
-      # Automatic release: bump versions, tag and publish on a fix/feat commit.
-      - run: pnpm run release
-        if: "${{github.event_name == 'push' && (startsWith(github.event.head_commit.message, 'fix: ') || startsWith(github.event.head_commit.message, 'feat: ') || startsWith(github.event.head_commit.message, 'feat!: '))}}"
+      - run: pnpm exec lerna version --yes
         env:
+          # Looks up GitHub logins of commit authors for the changelog
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # No NODE_AUTH_TOKEN since we use Trusted Publishers
-      # Manual recovery: publish only the packages missing from the registry.
-      - run: pnpm exec lerna publish from-package --yes
-        if: "${{github.event_name == 'workflow_dispatch'}}"
+      - id: tag
+        run: echo "tag=$(git tag --points-at HEAD --list 'v*')" >> "$GITHUB_OUTPUT"
+
+  build:
+    name: build
+    needs: version
+    # Runs after `version` created a tag, or on manual recovery
+    if: "${{!cancelled() && !failure() && github.ref == 'refs/heads/main' && (needs.version.outputs.tag != '' || github.event_name == 'workflow_dispatch')}}"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      TAG: ${{ needs.version.outputs.tag || inputs.tag }}
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+    steps:
+      - id: tag
+        run: |
+          [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "Invalid release tag: $TAG"; exit 1; }
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: refs/tags/${{ env.TAG }}
+          persist-credentials: false
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22.x
+          # Fresh install from the registry, so a poisoned cache can't end up in a published package
+          package-manager-cache: false
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm turbo run build --filter './packages/**'
+      # `pnpm pack` replaces `workspace:` ranges with real versions. Only
+      # packages at the release version are packed.
+      - run: |
+          version="${TAG#v}"
+          mkdir -p "$RUNNER_TEMP/tarballs"
+          cp README.md packages/next-intl/README.md
+          echo "### Packed for $TAG" >> "$GITHUB_STEP_SUMMARY"
+          for dir in packages/*/; do
+            if [ "$(jq -r .version "$dir/package.json")" != "$version" ]; then
+              continue
+            fi
+            jq 'del(.devDependencies, .prettier)' "$dir/package.json" > "$RUNNER_TEMP/package.json"
+            mv "$RUNNER_TEMP/package.json" "$dir/package.json"
+            (cd "$dir" && pnpm pack --pack-destination "$RUNNER_TEMP/tarballs")
+          done
+          cd "$RUNNER_TEMP/tarballs"
+          for tarball in *.tgz; do
+            integrity="sha512-$(openssl dgst -sha512 -binary "$tarball" | base64 -w0)"
+            echo "- \`$tarball\`: \`$integrity\`" >> "$GITHUB_STEP_SUMMARY"
+          done
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: tarballs
+          path: ${{ runner.temp }}/tarballs/*.tgz
+          if-no-files-found: error
+          retention-days: 7
+
+  stage:
+    name: stage
+    needs: build
+    if: "${{!cancelled() && needs.build.result == 'success'}}"
+    runs-on: ubuntu-latest
+    # npm's trusted publisher config is bound to this environment
+    environment: npm-publish
+    permissions:
+      id-token: write # npm trusted publishing
+    env:
+      TAG: ${{ needs.build.outputs.tag }}
+    steps:
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22.x
+          registry-url: 'https://registry.npmjs.org'
+          package-manager-cache: false
+      - run: npm install -g npm@12.2.2 # Staged publishing needs npm >= 11.15.0 # zizmor: ignore[adhoc-packages]
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: tarballs
+          path: tarballs
+      # Dependencies first, so approving in this order never exposes a version
+      # whose dependency isn't live yet
+      - run: |
+          version="${TAG#v}"
+          echo "### Staged for $TAG" >> "$GITHUB_STEP_SUMMARY"
+          for name in icu-minify use-intl next-intl-swc-plugin-extractor next-intl; do
+            tarball="tarballs/$name-$version.tgz"
+            [ -f "$tarball" ] || continue
+            if [ "$(npm view "$name@$version" version 2>/dev/null || true)" = "$version" ]; then
+              echo "$name@$version is already published"
+              continue
+            fi
+            if ! output=$(npm stage publish "./$tarball" --tag latest --access public --provenance 2>&1); then
+              echo "$output"
+              if grep -qE 'E409|409 Conflict' <<< "$output"; then
+                echo "$name@$version is already staged"
+                echo "- \`$name@$version\` (staged before)" >> "$GITHUB_STEP_SUMMARY"
+                continue
+              fi
+              exit 1
+            fi
+            echo "$output"
+            echo "- \`$name@$version\`" >> "$GITHUB_STEP_SUMMARY"
+          done
+          echo "Approve the staged versions on npmjs.com (Staged Packages) with 2FA, then publish the draft release for $TAG." >> "$GITHUB_STEP_SUMMARY"
+        # No NODE_AUTH_TOKEN since we use Trusted Publishers
+
+  draft-release:
+    name: draft release
+    needs: [build, stage]
+    if: "${{!cancelled() && needs.stage.result == 'success'}}"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Create the draft GitHub release
+    env:
+      TAG: ${{ needs.build.outputs.tag }}
+      # Release notes are this file's section for the version
+      NOTES_FILE: CHANGELOG.md
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: refs/tags/${{ env.TAG }}
+          persist-credentials: false
+      - run: |
+          if gh release list --limit 50 --json tagName --jq '.[].tagName' | grep -qx "$TAG"; then
+            echo "A release for $TAG exists already"
+            exit 0
+          fi
+          awk -v version="${TAG#v}" '
+            /^## / {
+              if (found) exit
+              if (index($0, "## " version " ") == 1 || index($0, "## [" version "]") == 1) found = 1
+            }
+            found { print }
+          ' "$NOTES_FILE" > "$RUNNER_TEMP/notes.md"
+          if ! grep -q '[^[:space:]]' "$RUNNER_TEMP/notes.md"; then
+            echo "No notes for $TAG in $NOTES_FILE"
+            exit 1
+          fi
+          gh release create "$TAG" --draft --verify-tag --title "$TAG" --notes-file "$RUNNER_TEMP/notes.md"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # No NODE_AUTH_TOKEN since we use Trusted Publishers
+          GH_TOKEN: ${{ github.token }}
 
   canary:
     name: prerelease (canary)

@@ -2,7 +2,7 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "release": "lerna publish",
+    "release": "lerna version",
     "build-packages": "turbo run build --filter './packages/**' --filter '!./packages/swc-plugin-extractor'"
   },
   "devDependencies": {
