@@ -33,31 +33,38 @@ on:
         description: 'Release tag/commit to publish from (e.g. v4.13.4)'
         required: true
 
+permissions: {}
+
 jobs:
   stable:
     name: stable (latest)
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      id-token: write
+      contents: write # Push version commits and tags, create GitHub releases
+      id-token: write # npm trusted publishing
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           # On push this is empty and checkout uses the triggering commit; on
           # manual recovery it checks out the given release tag.
           ref: ${{ github.event.inputs.ref }}
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+          # Lerna pushes the version commit and tag with these credentials
+          persist-credentials: true
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          cache: 'pnpm'
           node-version: 22.x
           registry-url: 'https://registry.npmjs.org'
-      - run: npm install -g npm@latest # Trusted publishers
-      - run: pnpm install
-      - run: |
-          git config --global user.name "${{ github.actor }}"
-          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          # Fresh install from the registry, so a poisoned cache can't run in a job that can publish
+          package-manager-cache: false
+      - run: npm install -g npm@12.2.2 # Trusted publishing needs npm >= 11.5.1
+      - run: pnpm install --frozen-lockfile
+      - env:
+          ACTOR: ${{ github.actor }}
+        run: |
+          git config --global user.name "$ACTOR"
+          git config --global user.email "$ACTOR@users.noreply.github.com"
       # Automatic release: bump versions, tag and publish on a fix/feat commit.
       - run: pnpm run release
         if: "${{github.event_name == 'push' && (startsWith(github.event.head_commit.message, 'fix: ') || startsWith(github.event.head_commit.message, 'feat: ') || startsWith(github.event.head_commit.message, 'feat!: '))}}"
@@ -76,22 +83,27 @@ jobs:
     if: github.ref == 'refs/heads/canary'
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      id-token: write
+      contents: write # Push version commits and tags, create GitHub releases
+      id-token: write # npm trusted publishing
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          cache: 'pnpm'
+          persist-credentials: false
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
           node-version: 22.x
           registry-url: 'https://registry.npmjs.org'
-      - run: npm install -g npm@latest # Trusted publishers
-      - run: pnpm install
+          # Fresh install from the registry, so a poisoned cache can't run in a job that can publish
+          package-manager-cache: false
+      - run: npm install -g npm@12.2.2 # Trusted publishing needs npm >= 11.5.1
+      - run: pnpm install --frozen-lockfile
       - run: pnpm turbo run build --filter './packages/**'
-      - run: |
-          git config --global user.name "${{ github.actor }}"
-          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+      - env:
+          ACTOR: ${{ github.actor }}
+        run: |
+          git config --global user.name "$ACTOR"
+          git config --global user.email "$ACTOR@users.noreply.github.com"
       # Change workspace dependencies from "workspace:^" to "workspace:"
       - run: |
           sed -i 's/"use-intl": "workspace:\^"/"use-intl": "workspace:"/' ./packages/next-intl/package.json && \

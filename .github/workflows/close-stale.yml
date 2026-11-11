@@ -4,14 +4,16 @@ on:
     # Once per day at midnight
     - cron: '0 0 * * *'
 
-permissions:
-  issues: write
+permissions: {}
 
 jobs:
   close-reproduction-missing:
     runs-on: ubuntu-latest
+    permissions:
+      actions: write # The action keeps its state in the Actions cache
+      issues: write # Comment on and close issues
     steps:
-      - uses: actions/stale@v8
+      - uses: actions/stale@4391f3da665fdf50b6810c1a66712fb9ba21aa93 # v11.0.0
         with:
           days-before-stale: 7
           days-before-close: 0
@@ -19,8 +21,11 @@ jobs:
           stale-issue-message: 'This issue has been automatically closed because it is currently not actionable and has become stale. If the problem persists, please create a new issue.'
   close-stale:
     runs-on: ubuntu-latest
+    permissions:
+      actions: write # The action keeps its state in the Actions cache
+      issues: write # Comment on and close issues
     steps:
-      - uses: actions/stale@v8
+      - uses: actions/stale@4391f3da665fdf50b6810c1a66712fb9ba21aa93 # v11.0.0
         with:
           days-before-stale: 14
           days-before-close: 0
