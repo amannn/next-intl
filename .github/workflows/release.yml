@@ -58,7 +58,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
           # Fresh install from the registry, so a poisoned cache can't run in a job that can publish
           package-manager-cache: false
-      - run: npm install -g npm@12.2.2 # Trusted publishing needs npm >= 11.5.1
+      - run: npm install -g npm@12.2.2 # Trusted publishing needs npm >= 11.5.1 # zizmor: ignore[adhoc-packages]
       - run: pnpm install --frozen-lockfile
       - env:
           ACTOR: ${{ github.actor }}
@@ -96,7 +96,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
           # Fresh install from the registry, so a poisoned cache can't run in a job that can publish
           package-manager-cache: false
-      - run: npm install -g npm@12.2.2 # Trusted publishing needs npm >= 11.5.1
+      - run: npm install -g npm@12.2.2 # Trusted publishing needs npm >= 11.5.1 # zizmor: ignore[adhoc-packages]
       - run: pnpm install --frozen-lockfile
       - run: pnpm turbo run build --filter './packages/**'
       - env:
