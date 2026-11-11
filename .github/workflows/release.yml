@@ -2,7 +2,7 @@ name: release
 
 # A single workflow file so npm Trusted Publishing can be configured against it.
 # The branch determines which release runs: `main` → stable (latest), `canary`
-# → prerelease (canary). For how stable releases work, see CONTRIBUTORS.md.
+# → prerelease (canary). Only the job matching the pushed branch runs.
 on:
   push:
     branches:
@@ -12,15 +12,15 @@ on:
 permissions: {}
 
 jobs:
-  version:
-    name: version
+  stable:
+    name: stable (latest)
     if: "${{github.ref == 'refs/heads/main' && (startsWith(github.event.head_commit.message, 'fix: ') || startsWith(github.event.head_commit.message, 'feat: ') || startsWith(github.event.head_commit.message, 'feat!: '))}}"
     runs-on: ubuntu-latest
+    # npm's trusted publisher config requires this environment
+    environment: npm-publish
     permissions:
-      contents: write # Push the version commit and tag
-    outputs:
-      # Empty if no package changed since the last release
-      tag: ${{ steps.tag.outputs.tag }}
+      contents: write # Push version commits and tags, create GitHub releases
+      id-token: write # npm trusted publishing
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -30,6 +30,8 @@ jobs:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 22.x
+          registry-url: 'https://registry.npmjs.org'
+          # Fresh install from the registry, so a poisoned cache can't run in a job that can publish
           package-manager-cache: false
       - run: pnpm install --frozen-lockfile
       - env:
@@ -37,142 +39,20 @@ jobs:
         run: |
           git config --global user.name "$ACTOR"
           git config --global user.email "$ACTOR@users.noreply.github.com"
-      - run: pnpm exec lerna version --yes
+      - run: pnpm run release
         env:
-          # Looks up GitHub logins of commit authors for the changelog
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - id: tag
-        run: echo "tag=$(git tag --points-at HEAD --list 'v*')" >> "$GITHUB_OUTPUT"
-
-  build:
-    name: build
-    needs: version
-    if: needs.version.outputs.tag != ''
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    env:
-      TAG: ${{ needs.version.outputs.tag }}
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          ref: refs/tags/${{ env.TAG }}
-          persist-credentials: false
-      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version: 22.x
-          # Fresh install from the registry, so a poisoned cache can't end up in a published package
-          package-manager-cache: false
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm turbo run build --filter './packages/**'
-      # `pnpm pack` replaces `workspace:` ranges with real versions. Only
-      # packages at the release version are packed.
+      # Uploads the new versions to npm, but they only go live once a maintainer
+      # approves them with 2FA (see CONTRIBUTORS.md). `pnpm stage` needs pnpm 12.
+      - run: npx --yes pnpm@12.18.0 -r --filter './packages/**' stage publish --access public --provenance --no-git-checks # zizmor: ignore[adhoc-packages]
+        env:
+          # Keeps pnpm 12 from switching to the repo's `packageManager` version
+          npm_config_manage_package_manager_versions: false
+          # No NODE_AUTH_TOKEN since we use Trusted Publishers
+      # A draft, so it's only published once the npm versions are live
       - run: |
-          version="${TAG#v}"
-          mkdir -p "$RUNNER_TEMP/tarballs"
-          cp README.md packages/next-intl/README.md
-          echo "### Packed for $TAG" >> "$GITHUB_STEP_SUMMARY"
-          for dir in packages/*/; do
-            if [ "$(jq -r .version "$dir/package.json")" != "$version" ]; then
-              continue
-            fi
-            jq 'del(.devDependencies, .prettier)' "$dir/package.json" > "$RUNNER_TEMP/package.json"
-            mv "$RUNNER_TEMP/package.json" "$dir/package.json"
-            (cd "$dir" && pnpm pack --pack-destination "$RUNNER_TEMP/tarballs")
-          done
-          cd "$RUNNER_TEMP/tarballs"
-          for tarball in *.tgz; do
-            integrity="sha512-$(openssl dgst -sha512 -binary "$tarball" | base64 -w0)"
-            echo "- \`$tarball\`: \`$integrity\`" >> "$GITHUB_STEP_SUMMARY"
-          done
-      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: tarballs
-          path: ${{ runner.temp }}/tarballs/*.tgz
-          if-no-files-found: error
-          retention-days: 7
-
-  stage:
-    name: stage
-    needs: [version, build]
-    runs-on: ubuntu-latest
-    # npm's trusted publisher config should require this environment
-    environment: npm-publish
-    permissions:
-      id-token: write # npm trusted publishing
-    env:
-      TAG: ${{ needs.version.outputs.tag }}
-    steps:
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version: 22.x
-          registry-url: 'https://registry.npmjs.org'
-          package-manager-cache: false
-      - run: npm install -g npm@12.2.2 # Staged publishing needs npm >= 11.15.0 # zizmor: ignore[adhoc-packages]
-      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
-        with:
-          name: tarballs
-          path: tarballs
-      # Dependencies first, so the staged versions are listed in the order to
-      # approve them in
-      - run: |
-          version="${TAG#v}"
-          echo "### Staged for $TAG" >> "$GITHUB_STEP_SUMMARY"
-          for name in icu-minify use-intl next-intl-swc-plugin-extractor next-intl; do
-            tarball="tarballs/$name-$version.tgz"
-            [ -f "$tarball" ] || continue
-            if [ "$(npm view "$name@$version" version 2>/dev/null || true)" = "$version" ]; then
-              echo "$name@$version is already published"
-              continue
-            fi
-            if ! output=$(npm stage publish "./$tarball" --tag latest --access public --provenance 2>&1); then
-              echo "$output"
-              if grep -qE 'E409|409 Conflict' <<< "$output"; then
-                echo "$name@$version is already staged"
-                echo "- \`$name@$version\` (staged before)" >> "$GITHUB_STEP_SUMMARY"
-                continue
-              fi
-              exit 1
-            fi
-            echo "$output"
-            echo "- \`$name@$version\`" >> "$GITHUB_STEP_SUMMARY"
-          done
-          echo "Approve with \`pnpm release:approve $TAG\`, or on npmjs.com and then publish the draft release." >> "$GITHUB_STEP_SUMMARY"
-        # No NODE_AUTH_TOKEN since we use Trusted Publishers
-
-  draft-release:
-    name: draft release
-    needs: [version, stage]
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write # Create the draft GitHub release
-    env:
-      TAG: ${{ needs.version.outputs.tag }}
-      # Release notes are this file's section for the version
-      NOTES_FILE: CHANGELOG.md
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          ref: refs/tags/${{ env.TAG }}
-          persist-credentials: false
-      - run: |
-          if gh release list --limit 50 --json tagName --jq '.[].tagName' | grep -qx "$TAG"; then
-            echo "A release for $TAG exists already"
-            exit 0
-          fi
-          awk -v version="${TAG#v}" '
-            /^## / {
-              if (found) exit
-              if (index($0, "## " version " ") == 1 || index($0, "## [" version "]") == 1) found = 1
-            }
-            found { print }
-          ' "$NOTES_FILE" > "$RUNNER_TEMP/notes.md"
-          if ! grep -q '[^[:space:]]' "$RUNNER_TEMP/notes.md"; then
-            echo "No notes for $TAG in $NOTES_FILE"
-            exit 1
-          fi
-          gh release create "$TAG" --draft --verify-tag --title "$TAG" --notes-file "$RUNNER_TEMP/notes.md"
+          tag=$(git tag --points-at HEAD --list 'v*')
+          [ -z "$tag" ] || gh release create "$tag" --draft --verify-tag --generate-notes
         env:
           GH_TOKEN: ${{ github.token }}
 
