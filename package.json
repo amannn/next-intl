@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "release": "lerna version",
+    "release:approve": "./scripts/approve-release.sh",
     "build-packages": "turbo run build --filter './packages/**' --filter '!./packages/swc-plugin-extractor'"
   },
   "devDependencies": {

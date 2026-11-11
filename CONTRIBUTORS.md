@@ -93,6 +93,19 @@ Other prefixes that are allowed and will _not_ create a release are the followin
 4. `build`: Changes that affect the build system or external dependencies
 5. `chore`: Other changes that don't modify src or test files
 
+Stable releases are staged on npm and need a maintainer's approval with 2FA before they're installable. For a release, the [`release` workflow](.github/workflows/release.yml):
+
+1. Bumps the versions, writes the changelog and pushes the version commit and tag (e.g. `v4.15.1`)
+2. Builds and packs the packages from that tag (the integrity of each tarball is listed in the job summary)
+3. Stages the packages on npm with `npm stage publish`
+4. Creates a draft GitHub release for the tag
+
+To ship the release, run `pnpm release:approve` (needs `npm login` and `gh auth login`). It approves the staged versions of the newest draft release (one OTP covers all of them) and then publishes the draft. Alternatively, approve the staged versions on npmjs.com ("Staged Packages") and publish the draft release on GitHub afterwards.
+
+To abandon a release, reject the staged versions (`npm stage reject <id>`) and delete the draft release. The next release bumps past that version.
+
+If staging fails partway (e.g. due to a timeout from npm), use "Re-run failed jobs" on the workflow run within a week. Versions that are already staged are skipped.
+
 ### Prereleases
 
 Canary versions are automatically published on the `canary` branch. The prerelease version is determined based on the commit prefix (`fix`/`feat`).

@@ -2,59 +2,19 @@ name: release
 
 # A single workflow file so npm Trusted Publishing can be configured against it.
 # The branch determines which release runs: `main` → stable (latest), `canary`
-# → prerelease (canary).
-#
-# Stable releases are staged, not published. A push of a fix/feat commit to
-# `main` runs these jobs:
-#
-#   version → build → stage → draft-release
-#
-# 1. `version` bumps versions, writes the changelog and pushes the version
-#    commit and tag (`vX.Y.Z`).
-# 2. `build` builds and packs the packages from that tag, with a read-only
-#    token.
-# 3. `stage` uploads the tarballs to npm with `npm stage publish`. Nothing is
-#    installable until a maintainer approves the staged versions with 2FA on
-#    npmjs.com (or `npm stage approve <id>`).
-# 4. `draft-release` prepares a draft GitHub release for the tag.
-#
-# A maintainer then approves the staged versions on npm, and
-# `publish-release.yml` publishes the draft release once they're live. To
-# abandon a release, reject the staged versions (`npm stage reject <id>`) and
-# delete the draft release.
-#
-# Separate jobs keep each credential in the job that needs it: only `stage`
-# can talk to npm (via OIDC, in the `npm-publish` environment), and it neither
-# checks out the repo nor installs dependencies.
+# → prerelease (canary). For how stable releases work, see CONTRIBUTORS.md.
 on:
   push:
     branches:
       - main
       - canary
-  # Recovery for a stable release whose staging failed partway through (e.g. a
-  # transient `504 Gateway Timeout` from npm), after the version commit and tag
-  # were already pushed. Within a week, "Re-run failed jobs" on the original
-  # run works too, since it reuses the uploaded tarballs. Otherwise dispatch
-  # this workflow from `main` with the release tag (e.g. `v4.15.1`). It
-  # rebuilds that tag and stages only the versions that are neither published
-  # nor staged yet.
-  #
-  # This lives in the same file as the automatic release on purpose: npm Trusted
-  # Publishing is bound to a specific workflow filename, so recovery must run
-  # from `release.yml` to be authorized (a separate workflow file produces an
-  # unrecognized OIDC identity and npm rejects it).
-  workflow_dispatch:
-    inputs:
-      tag:
-        description: 'Release tag to stage (e.g. v4.15.1)'
-        required: true
 
 permissions: {}
 
 jobs:
   version:
     name: version
-    if: "${{github.event_name == 'push' && github.ref == 'refs/heads/main' && (startsWith(github.event.head_commit.message, 'fix: ') || startsWith(github.event.head_commit.message, 'feat: ') || startsWith(github.event.head_commit.message, 'feat!: '))}}"
+    if: "${{github.ref == 'refs/heads/main' && (startsWith(github.event.head_commit.message, 'fix: ') || startsWith(github.event.head_commit.message, 'feat: ') || startsWith(github.event.head_commit.message, 'feat!: '))}}"
     runs-on: ubuntu-latest
     permissions:
       contents: write # Push the version commit and tag
@@ -87,20 +47,13 @@ jobs:
   build:
     name: build
     needs: version
-    # Runs after `version` created a tag, or on manual recovery
-    if: "${{!cancelled() && !failure() && github.ref == 'refs/heads/main' && (needs.version.outputs.tag != '' || github.event_name == 'workflow_dispatch')}}"
+    if: needs.version.outputs.tag != ''
     runs-on: ubuntu-latest
     permissions:
       contents: read
     env:
-      TAG: ${{ needs.version.outputs.tag || inputs.tag }}
-    outputs:
-      tag: ${{ steps.tag.outputs.tag }}
+      TAG: ${{ needs.version.outputs.tag }}
     steps:
-      - id: tag
-        run: |
-          [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "Invalid release tag: $TAG"; exit 1; }
-          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: refs/tags/${{ env.TAG }}
@@ -142,15 +95,14 @@ jobs:
 
   stage:
     name: stage
-    needs: build
-    if: "${{!cancelled() && needs.build.result == 'success'}}"
+    needs: [version, build]
     runs-on: ubuntu-latest
     # npm's trusted publisher config should require this environment
     environment: npm-publish
     permissions:
       id-token: write # npm trusted publishing
     env:
-      TAG: ${{ needs.build.outputs.tag }}
+      TAG: ${{ needs.version.outputs.tag }}
     steps:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
@@ -186,18 +138,17 @@ jobs:
             echo "$output"
             echo "- \`$name@$version\`" >> "$GITHUB_STEP_SUMMARY"
           done
-          echo "Approve the staged versions on npmjs.com (Staged Packages) with 2FA. The draft release for $TAG gets published once they're live." >> "$GITHUB_STEP_SUMMARY"
+          echo "Approve with \`pnpm release:approve $TAG\`, or on npmjs.com and then publish the draft release." >> "$GITHUB_STEP_SUMMARY"
         # No NODE_AUTH_TOKEN since we use Trusted Publishers
 
   draft-release:
     name: draft release
-    needs: [build, stage]
-    if: "${{!cancelled() && needs.stage.result == 'success'}}"
+    needs: [version, stage]
     runs-on: ubuntu-latest
     permissions:
       contents: write # Create the draft GitHub release
     env:
-      TAG: ${{ needs.build.outputs.tag }}
+      TAG: ${{ needs.version.outputs.tag }}
       # Release notes are this file's section for the version
       NOTES_FILE: CHANGELOG.md
     steps:
