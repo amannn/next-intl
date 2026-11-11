@@ -43,12 +43,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       # Uploads the new versions to npm, but they only go live once a maintainer
-      # approves them with 2FA (see CONTRIBUTORS.md). `pnpm stage` needs pnpm 12.
-      - run: npx --yes pnpm@12.18.0 -r --filter './packages/**' stage publish --access public --provenance --no-git-checks # zizmor: ignore[adhoc-packages]
-        env:
-          # Keeps pnpm 12 from switching to the repo's `packageManager` version
-          npm_config_manage_package_manager_versions: false
-          # No NODE_AUTH_TOKEN since we use Trusted Publishers
+      # approves them with 2FA (see CONTRIBUTORS.md)
+      - run: pnpm -r --filter './packages/**' stage publish --access public --provenance --no-git-checks
+        # No NODE_AUTH_TOKEN since we use Trusted Publishers
       # A draft, so it's only published once the npm versions are live
       - run: |
           tag=$(git tag --points-at HEAD --list 'v*')

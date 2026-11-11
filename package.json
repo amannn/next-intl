@@ -12,13 +12,5 @@
     "conventional-changelog-conventionalcommits": "^8.0.0",
     "turbo": "^2.4.4"
   },
-  "pnpm": {
-    "overrides": {
-      "@babel/parser": "7.21.9"
-    },
-    "patchedDependencies": {
-      "nextra-theme-docs": "patches/nextra-theme-docs.patch"
-    }
-  },
-  "packageManager": "pnpm@9.11.0"
+  "packageManager": "pnpm@12.18.0"
 }
