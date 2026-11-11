@@ -42,16 +42,19 @@ jobs:
       - run: pnpm run release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # Empty if lerna found no changed packages
+      - id: version
+        run: echo "tag=$(git tag --points-at HEAD --list 'v*')" >> "$GITHUB_OUTPUT"
       # Uploads the new versions to npm, but they only go live once a maintainer
       # approves them with 2FA (see CONTRIBUTORS.md)
-      - run: pnpm -r --filter './packages/**' stage publish --access public --provenance --no-git-checks
-        # No NODE_AUTH_TOKEN since we use Trusted Publishers
+      - if: steps.version.outputs.tag
+        run: pnpm -r --filter './packages/**' stage publish --provenance --no-git-checks
       # A draft, so it's only published once the npm versions are live
-      - run: |
-          tag=$(git tag --points-at HEAD --list 'v*')
-          [ -z "$tag" ] || gh release create "$tag" --draft --verify-tag --generate-notes
+      - if: steps.version.outputs.tag
+        run: gh release create "$TAG" --draft --verify-tag --generate-notes
         env:
-          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   canary:
     name: prerelease (canary)
