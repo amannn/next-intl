@@ -45,3 +45,25 @@ it('supports a link in the shell of a dynamic route', async ({page}) => {
   await page.getByRole('link', {name: 'Go to home page'}).click();
   await expect(page.getByRole('heading', {name: 'Home'})).toBeVisible();
 });
+
+it('supports useRouter in the shell of a dynamic route', async ({page}) => {
+  await page.goto('/dynamic/example');
+  await expect(page.getByRole('heading', {name: 'Dynamic page'})).toBeVisible();
+
+  // Detects a full page load
+  await page.evaluate(() => {
+    // @ts-expect-error -- Only used in this test
+    window.spa = true;
+  });
+
+  await page.getByRole('button', {name: 'Go to German home page'}).click();
+  await expect(page).toHaveURL('/de');
+  await expect(page.getByRole('heading', {name: 'Startseite'})).toBeVisible();
+  await expect(getLocaleCookieValue(page)).toHaveText('de');
+
+  const isSpa = await page.evaluate(
+    // @ts-expect-error -- Only used in this test
+    () => window.spa
+  );
+  expect(isSpa).toBe(true);
+});
