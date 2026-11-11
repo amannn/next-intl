@@ -252,8 +252,44 @@ describe('prefix-based routing', () => {
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-          'http://localhost:3000/%09/some-page'
+          'http://localhost:3000/%2509/some-page'
         );
+      });
+
+      it('redirects to a same-origin URL when a backslash is double-encoded as %255C', () => {
+        middleware(createMockRequest('/en/%255Cexample.org'));
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/%255Cexample.org'
+        );
+      });
+    });
+
+    describe('encoded percent signs', () => {
+      it('keeps an encoded percent sign when rewriting', () => {
+        middleware(createMockRequest('/a%25b'));
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/en/a%25b'
+        );
+      });
+
+      it('keeps an encoded percent sign when redirecting', () => {
+        middleware(createMockRequest('/en/a%25b'));
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/a%25b'
+        );
+      });
+
+      it('does not rewrite a prefixed request for a non-default locale', () => {
+        middleware(createMockRequest('/de/a%25b'));
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).toHaveBeenCalled();
       });
     });
 
@@ -587,6 +623,28 @@ describe('prefix-based routing', () => {
         expect(MockedNextResponse.next).toHaveBeenCalled();
         expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+      });
+
+      it('keeps an encoded percent sign in params when rewriting', () => {
+        middlewareWithPathnames(
+          createMockRequest('/de/produkte/100%25-off', 'de')
+        );
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/de/products/100%25-off'
+        );
+      });
+
+      it('keeps an encoded percent sign in params when redirecting', () => {
+        middlewareWithPathnames(
+          createMockRequest('/de/products/100%25-off', 'de')
+        );
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/de/produkte/100%25-off'
+        );
       });
 
       it('serves requests for a non-default locale at nested paths for "de"', () => {
@@ -1572,6 +1630,33 @@ describe('prefix-based routing', () => {
         expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
         expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
           'http://localhost:3000/de/external-de/22/foo/bar'
+        );
+      });
+
+      it('redirects an overlapping static internal pathname to the localized static path when the dynamic route is declared first', () => {
+        // https://github.com/amannn/next-intl/issues/2454
+        const middlewareWithOverlappingPathnames = createMiddleware({
+          defaultLocale: 'en',
+          locales: ['en', 'de'],
+          pathnames: {
+            '/': '/',
+            '/news/[articleSlug]': {
+              de: '/neuigkeiten/[articleSlug]'
+            },
+            '/news/just-in': {
+              de: '/neuigkeiten/aktuell'
+            }
+          }
+        });
+
+        middlewareWithOverlappingPathnames(
+          createMockRequest('/de/news/just-in', 'de')
+        );
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/de/neuigkeiten/aktuell'
         );
       });
 

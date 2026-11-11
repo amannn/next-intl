@@ -81,6 +81,32 @@ describe('json format', {timeout: 20_000}, () => {
     });
   });
 
+  it('does not rewrite catalogs whose content is unchanged', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hey!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {'de.json': '{}'};
+
+    {
+      using compiler = createCompiler();
+      await compiler.extractAll();
+      await waitForWriteFileCalls(2);
+    }
+    vi.mocked(fs.writeFile).mockClear();
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+
+    expect(vi.mocked(fs.writeFile)).not.toHaveBeenCalled();
+    expect(JSON.parse(filesystem.project.messages!['de.json'])).toEqual({
+      '-YJVTi': ''
+    });
+  });
+
   it('creates all locale files immediately when explicit locales are provided', async () => {
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
@@ -2425,6 +2451,7 @@ const watchCallbacks: Map<string, (event: string, filename: string) => void> =
   new Map();
 const mockWatchers: Map<string, {close(): void}> = new Map();
 const readFileInterceptors = new Map<string, () => Promise<void>>();
+const pendingWrites = new Map<string, string>();
 const parcelWatcherCallbacks: Map<
   string,
   (err: Error | null, events: Array<{type: string; path: string}>) => void
@@ -2711,9 +2738,24 @@ vi.mock('fs/promises', () => ({
       return contents;
     }),
     mkdir: vi.fn(async () => {}),
+    // Catalogs are written to a temporary file that is then renamed
     writeFile: vi.fn(async (filePath: string, content: string) => {
-      setNestedValue(filesystem, filePath, content);
-      fileTimestamps.set(filePath, new Date());
+      pendingWrites.set(filePath, content);
+    }),
+    rename: vi.fn(async (fromPath: string, toPath: string) => {
+      const content = pendingWrites.get(fromPath);
+      pendingWrites.delete(fromPath);
+      if (content === undefined) throw createENOENTError(fromPath);
+      // Report the write under its final path to keep assertions readable
+      const call = vi
+        .mocked(fs.writeFile)
+        .mock.calls.find((args) => args[0] === fromPath);
+      if (call) call[0] = toPath;
+      setNestedValue(filesystem, toPath, content);
+      fileTimestamps.set(toPath, new Date());
+    }),
+    rm: vi.fn(async (filePath: string) => {
+      pendingWrites.delete(filePath);
     }),
     stat: vi.fn(async (filePath: string) => {
       const content = getNestedValue(filesystem, filePath);

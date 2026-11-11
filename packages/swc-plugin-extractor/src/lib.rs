@@ -355,6 +355,13 @@ impl TransformVisitor {
                             } else if key.sym == "formats" {
                                 formats_node = Some(value.clone());
                             }
+                        } else if let PropOrSpread::Prop(box Prop::Shorthand(ident)) = prop {
+                            // Handle shorthand: t({message: 'text', values})
+                            if ident.sym == "values" {
+                                values_node = Some(Box::new(Expr::Ident(ident.clone())));
+                            } else if ident.sym == "formats" {
+                                formats_node = Some(Box::new(Expr::Ident(ident.clone())));
+                            }
                         }
                     }
                 }

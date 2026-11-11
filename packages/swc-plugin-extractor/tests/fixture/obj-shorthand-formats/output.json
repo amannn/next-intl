@@ -1,0 +1,23 @@
+[
+  {
+    "description": null,
+    "id": "aaDPz2",
+    "message": "Today is {date, date, short}",
+    "ranges": {
+      "argument": {
+        "end": 239,
+        "start": 181
+      },
+      "message": {
+        "end": 221,
+        "start": 191
+      }
+    },
+    "reference": {
+      "column": 2,
+      "line": 7,
+      "path": "input.js"
+    },
+    "type": "extracted"
+  }
+]
