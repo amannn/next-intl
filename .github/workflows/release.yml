@@ -11,7 +11,8 @@ name: release
 #
 # 1. `version` bumps versions, writes the changelog and pushes the version
 #    commit and tag (`vX.Y.Z`).
-# 2. `build` builds and packs the packages from that tag, without any secrets.
+# 2. `build` builds and packs the packages from that tag, with a read-only
+#    token.
 # 3. `stage` uploads the tarballs to npm with `npm stage publish`. Nothing is
 #    installable until a maintainer approves the staged versions with 2FA on
 #    npmjs.com (or `npm stage approve <id>`).
@@ -31,10 +32,11 @@ on:
       - canary
   # Recovery for a stable release whose staging failed partway through (e.g. a
   # transient `504 Gateway Timeout` from npm), after the version commit and tag
-  # were already pushed. Don't re-run the push-triggered run's `version` job:
-  # it would bump a brand-new version. Instead, dispatch this workflow from
-  # `main` with the release tag (e.g. `v4.15.1`). It rebuilds that tag and
-  # stages only the versions that are neither published nor staged yet.
+  # were already pushed. Within a week, "Re-run failed jobs" on the original
+  # run works too, since it reuses the uploaded tarballs. Otherwise dispatch
+  # this workflow from `main` with the release tag (e.g. `v4.15.1`). It
+  # rebuilds that tag and stages only the versions that are neither published
+  # nor staged yet.
   #
   # This lives in the same file as the automatic release on purpose: npm Trusted
   # Publishing is bound to a specific workflow filename, so recovery must run
@@ -142,7 +144,7 @@ jobs:
     needs: build
     if: "${{!cancelled() && needs.build.result == 'success'}}"
     runs-on: ubuntu-latest
-    # npm's trusted publisher config is bound to this environment
+    # npm's trusted publisher config should require this environment
     environment: npm-publish
     permissions:
       id-token: write # npm trusted publishing
@@ -159,8 +161,8 @@ jobs:
         with:
           name: tarballs
           path: tarballs
-      # Dependencies first, so approving in this order never exposes a version
-      # whose dependency isn't live yet
+      # Dependencies first, so the staged versions are listed in the order to
+      # approve them in
       - run: |
           version="${TAG#v}"
           echo "### Staged for $TAG" >> "$GITHUB_STEP_SUMMARY"
