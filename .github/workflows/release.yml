@@ -18,9 +18,10 @@ name: release
 #    npmjs.com (or `npm stage approve <id>`).
 # 4. `draft-release` prepares a draft GitHub release for the tag.
 #
-# A maintainer then approves the staged versions on npm and publishes the draft
-# release. To abandon a release, reject the staged versions
-# (`npm stage reject <id>`) and delete the draft release.
+# A maintainer then approves the staged versions on npm, and
+# `publish-release.yml` publishes the draft release once they're live. To
+# abandon a release, reject the staged versions (`npm stage reject <id>`) and
+# delete the draft release.
 #
 # Separate jobs keep each credential in the job that needs it: only `stage`
 # can talk to npm (via OIDC, in the `npm-publish` environment), and it neither
@@ -185,7 +186,7 @@ jobs:
             echo "$output"
             echo "- \`$name@$version\`" >> "$GITHUB_STEP_SUMMARY"
           done
-          echo "Approve the staged versions on npmjs.com (Staged Packages) with 2FA, then publish the draft release for $TAG." >> "$GITHUB_STEP_SUMMARY"
+          echo "Approve the staged versions on npmjs.com (Staged Packages) with 2FA. The draft release for $TAG gets published once they're live." >> "$GITHUB_STEP_SUMMARY"
         # No NODE_AUTH_TOKEN since we use Trusted Publishers
 
   draft-release:

@@ -1,0 +1,45 @@
+name: publish release
+
+# Publishes the draft GitHub release that `release.yml` prepared, once a
+# maintainer has approved all of its staged npm versions. The approval itself
+# needs an interactive npm login with 2FA, so it can't run here; this only
+# watches for its outcome.
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: publish-release
+
+jobs:
+  publish:
+    name: publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Publish draft releases
+    steps:
+      - run: |
+          drafts=$(gh release list --repo "$GITHUB_REPOSITORY" --limit 20 --json tagName,isDraft --jq '.[] | select(.isDraft) | .tagName')
+          for tag in $drafts; do
+            version="${tag#v}"
+            live=true
+            for dir in icu-minify use-intl swc-plugin-extractor next-intl; do
+              manifest=$(gh api "repos/$GITHUB_REPOSITORY/contents/packages/$dir/package.json?ref=$tag" --jq .content | base64 -d)
+              name=$(jq -r .name <<< "$manifest")
+              # Packages that weren't bumped aren't part of this release
+              [ "$(jq -r .version <<< "$manifest")" = "$version" ] || continue
+              if [ "$(npm view "$name@$version" version 2>/dev/null || true)" != "$version" ]; then
+                echo "$tag: $name@$version isn't live on npm yet"
+                live=false
+              fi
+            done
+            if [ "$live" = true ]; then
+              gh release edit "$tag" --repo "$GITHUB_REPOSITORY" --draft=false
+              echo "$tag: published"
+            fi
+          done
+        env:
+          GH_TOKEN: ${{ github.token }}
