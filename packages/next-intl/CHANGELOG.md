@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.15.0 (2026-11-11)
+
+### Features
+
+* `next-intl@4.15` ([#2452](https://github.com/amannn/next-intl/issues/2452)) ([8073942](https://github.com/amannn/next-intl/commit/80739428e1f7075517ab82a29f20d5e235b6d561)) – by @amannn
+
 ## 4.14.10 (2026-11-10)
 
 ### Bug Fixes
