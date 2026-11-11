@@ -1,0 +1,32 @@
+name: zizmor
+
+# Static analysis for GitHub Actions workflows (https://docs.zizmor.sh/),
+# e.g. unpinned actions, overly broad permissions or template injection.
+on:
+  pull_request:
+    paths:
+      - '.github/**'
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/**'
+
+permissions: {}
+
+jobs:
+  zizmor:
+    name: Audit workflows
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read # Checkout
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: zizmorcore/zizmor-action@45d7276c9ca790aabd705e31ca99c6185c3e76dd # v0.8.1
+        with:
+          version: 1.32.0
+          # Fail the job on findings instead of uploading them to the security tab
+          advanced-security: false
+          annotations: true
