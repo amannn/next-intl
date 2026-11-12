@@ -7,7 +7,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Patch Changes
 
-- [#2469](https://github.com/amannn/next-intl/pull/2469) [`5ef113c`](https://github.com/amannn/next-intl/commit/5ef113ca55b42ad42054e7e2133771e1391f3773) Thanks [@amannn](https://github.com/amannn)! - Fix the link to the design RFC in the README, which was broken on npm.
+- Fix the link to the design RFC in the README, which was broken on npm. ([#2469](https://github.com/amannn/next-intl/pull/2469), [`5ef113c`](https://github.com/amannn/next-intl/commit/5ef113ca55b42ad42054e7e2133771e1391f3773), [@amannn](https://github.com/amannn))
 
 ## 4.15.1 (2026-11-12)
 
