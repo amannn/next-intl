@@ -50,7 +50,7 @@ jobs:
         run: |
           git add -A
           if ! git diff --cached --quiet; then
-            git commit -m "chore: version packages"
+            git commit -m "chore: Version packages"
             pnpm changeset git-tag
             git push --follow-tags
           fi
