@@ -86,3 +86,16 @@ Nothing is installable until a maintainer approves the staged versions with 2FA:
 - Alternatively, approve them on npmjs.com ("Staged Packages") and publish the draft releases on GitHub.
 
 To abandon a release, reject the staged versions and delete the draft releases.
+
+### Preview packages
+
+Every push to `main` and every PR with the `preview` label publishes the packages to [pkg.pr.new](https://pkg.pr.new), so a change can be tried before it's released, e.g. `npm i https://pkg.pr.new/next-intl@<pr-number>`. The pkg.pr.new bot comments the install commands on the PR. Previews aren't published to npm and include all packages except the SWC plugin, which resolves to its version on npm.
+
+### Major releases
+
+A new major version is developed on the `next` branch in [prerelease mode](https://github.com/changesets/changesets/blob/main/docs/prereleases.md), with a PR from `next` to `main` for review:
+
+1. Create `next` from `main`, run `pnpm changeset pre enter next` and push it.
+2. Changesets merged to `next` are released like stable ones, but as prereleases (e.g. `5.0.0-next.0`) under the `next` dist-tag (`npm i next-intl@next`), with draft GitHub releases marked as prereleases.
+3. Merge `main` into `next` regularly to pick up fixes.
+4. For the stable release, run `pnpm changeset pre exit` on `next`, then merge `next` into `main`.

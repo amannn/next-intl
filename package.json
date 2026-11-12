@@ -9,6 +9,7 @@
   "devDependencies": {
     "@changesets/changelog-github": "1.0.1",
     "@changesets/cli": "^3.0.3",
+    "pkg-pr-new": "0.0.93",
     "turbo": "2.11.10"
   },
   "packageManager": "pnpm@12.18.0"

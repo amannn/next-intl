@@ -1,0 +1,33 @@
+name: preview
+
+# Publishes installable preview packages to pkg.pr.new (not npm)
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [labeled, synchronize]
+
+permissions: {}
+
+jobs:
+  preview:
+    name: Publish preview packages
+    if: github.event_name == 'push' || contains(github.event.pull_request.labels.*.name, 'preview')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read # Checkout
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22.x
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run build-packages
+      # The SWC plugin needs a Rust build, so previews depend on its npm version.
+      # pkg.pr.new authenticates the run through its GitHub App, not npm.
+      - run: pnpm exec pkg-pr-new publish --pnpm './packages/*' '!./packages/swc-plugin-extractor' # zizmor: ignore[use-trusted-publishing]

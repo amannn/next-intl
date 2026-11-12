@@ -5,17 +5,20 @@ on:
   push:
     branches:
       - main
+      - next # Prereleases of the next major, see CONTRIBUTORS.md
 
 permissions: {}
 
-# A queued run checks out the tip of `main`, so it also releases what a
+# A queued run checks out the tip of its branch, so it also releases what a
 # running one didn't get to
-concurrency: ${{ github.workflow }}
+concurrency: ${{ github.workflow }}-${{ github.ref_name }}
 
 jobs:
-  stable:
-    name: stable (latest)
+  release:
+    name: release (${{ github.ref_name }})
     runs-on: ubuntu-latest
+    env:
+      DIST_TAG: ${{ github.ref_name == 'next' && 'next' || 'latest' }}
     # npm's trusted publisher config requires this environment
     environment: npm-publish
     permissions:
@@ -33,7 +36,6 @@ jobs:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 22.x
-          registry-url: 'https://registry.npmjs.org'
           # Fresh install from the registry, so a poisoned cache can't run in a job that can publish
           package-manager-cache: false
       - run: pnpm install --frozen-lockfile
@@ -42,8 +44,9 @@ jobs:
         run: |
           git config --global user.name "$ACTOR"
           git config --global user.email "$ACTOR@users.noreply.github.com"
-      # `changeset version` fails if there are no changesets
-      - if: hashFiles('.changeset/*.md') != ''
+      # `changeset version` fails if there are no changesets. After `pre exit`,
+      # they're in `.changeset/pre/` until the stable release.
+      - if: hashFiles('.changeset/*.md') != '' || (env.DIST_TAG == 'latest' && hashFiles('.changeset/pre.json') != '')
         run: pnpm run version-packages
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -60,7 +63,7 @@ jobs:
       # Uploads the new versions to npm, but they only go live once a maintainer
       # approves them with 2FA (see CONTRIBUTORS.md)
       - if: steps.version.outputs.tags
-        run: pnpm -r --filter './packages/**' stage publish --provenance --no-git-checks
+        run: pnpm -r --filter './packages/**' stage publish --provenance --no-git-checks --tag "$DIST_TAG"
       # Drafts, so they're only published once the npm versions are live. Notes
       # are the package's changelog entry.
       - if: steps.version.outputs.tags
@@ -68,8 +71,9 @@ jobs:
           for tag in $TAGS; do
             dir=$(dirname "$(grep -l "\"name\": \"${tag%@*}\"" packages/*/package.json)")
             awk -v heading="## ${tag##*@}" '$0 == heading {found=1; next} /^## / {found=0} found' "$dir/CHANGELOG.md" > notes.md
-            gh release create "$tag" --draft --verify-tag --title "$tag" --notes-file notes.md
+            gh release create "$tag" --draft --verify-tag --prerelease="$PRERELEASE" --title "$tag" --notes-file notes.md
           done
         env:
           TAGS: ${{ steps.version.outputs.tags }}
+          PRERELEASE: ${{ env.DIST_TAG != 'latest' }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
