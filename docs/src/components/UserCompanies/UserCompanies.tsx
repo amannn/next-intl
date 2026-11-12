@@ -5,17 +5,17 @@ import bigcommerceLogo from './bigcommerce-logo.svg';
 import boltLogo from './bolt-logo.svg';
 import elevenlabsLogo from './elevenlabs-logo.svg';
 import ethereumLogo from './ethereum-logo.svg';
+import grafanaLogo from './grafana-logo.svg';
 import hashicorpLogo from './hashicorp-logo.svg';
 import icelandairLogo from './icelandair-logo.svg';
-import mistralLogo from './mistral-logo.svg';
 import nodejsLogo from './nodejs-logo.svg';
+import postmanLogo from './postman-logo.svg';
 import solanaLogo from './solana-logo.svg';
-import soundtrackLogo from './soundtrack-logo.svg';
 import speechifyLogo from './speechify-logo.svg';
 import starbucksLogo from './starbucks-logo.svg';
-import todoistLogo from './todoist-logo.svg';
 import uberLogo from './uber-logo.svg';
 import ubisoftLogo from './ubisoft-logo.svg';
+import unityLogo from './unity-logo.svg';
 import vintedgoLogo from './vintedgo-logo.svg';
 import watershedLogo from './watershed-logo.svg';
 
@@ -51,6 +51,12 @@ const companies = [
     url: 'https://ethereum.org'
   },
   {
+    name: 'Grafana Labs',
+    logo: grafanaLogo,
+    scale: 1.1,
+    url: 'https://grafana.com'
+  },
+  {
     name: 'HashiCorp',
     logo: hashicorpLogo,
     url: 'https://www.hashicorp.com'
@@ -62,28 +68,21 @@ const companies = [
     url: 'https://www.icelandair.com'
   },
   {
-    name: 'Mistral',
-    logo: mistralLogo,
-    scale: 1.1,
-    url: 'https://mistral.ai'
-  },
-  {
     name: 'Node.js',
     logo: nodejsLogo,
     scale: 1.3,
     url: 'https://nodejs.org'
   },
   {
+    name: 'Postman',
+    logo: postmanLogo,
+    url: 'https://www.postman.com'
+  },
+  {
     name: 'Solana',
     logo: solanaLogo,
     scale: 0.9,
     url: 'https://solana.com'
-  },
-  {
-    name: 'Soundtrack',
-    logo: soundtrackLogo,
-    scale: 1.1,
-    url: 'https://www.soundtrack.io'
   },
   {
     name: 'Speechify',
@@ -97,12 +96,6 @@ const companies = [
     url: 'https://www.starbucks.co.uk'
   },
   {
-    name: 'Todoist',
-    logo: todoistLogo,
-    scale: 0.9,
-    url: 'https://todoist.com'
-  },
-  {
     name: 'Uber',
     logo: uberLogo,
     scale: 0.7,
@@ -113,6 +106,12 @@ const companies = [
     logo: ubisoftLogo,
     scale: 0.95,
     url: 'https://www.ubisoft.com'
+  },
+  {
+    name: 'Unity',
+    logo: unityLogo,
+    scale: 0.85,
+    url: 'https://unity.com'
   },
   {
     name: 'VintedGo',
