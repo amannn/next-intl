@@ -62,7 +62,7 @@ pnpm prettier src --write
 
 ### Pull requests
 
-This repository uses [action-semantic-pull-request](https://github.com/amannn/action-semantic-pull-request) to ensure that pull request titles match the [Conventional Commits spec](https://www.conventionalcommits.org/en/v1.0.0/). This is due to PR titles being used as commit messages to [automate releases](#releases).
+This repository uses [action-semantic-pull-request](https://github.com/amannn/action-semantic-pull-request) to ensure that pull request titles match the [Conventional Commits spec](https://www.conventionalcommits.org/en/v1.0.0/). PR titles become the commit messages on `main`, and use sentence case after the type prefix.
 
 ## Repository workflows
 
@@ -72,36 +72,17 @@ This repository uses [action-semantic-pull-request](https://github.com/amannn/ac
 
 ## Releases
 
-Releases are automated via [`lerna-light`](https://github.com/lerna-lite/lerna-lite). To determine the next version, [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) is used.
+Releases are automated with [changesets](https://github.com/changesets/changesets). Each package is versioned independently.
 
 ### Stable releases
 
-Every commit on `main` with the following prefixes will trigger a release:
+A PR that changes a published package adds a changeset with `pnpm changeset`, which asks for the packages, the bump type (patch, minor, major) and a summary for the changelog. PRs without changes to published packages (docs, CI, tests) don't need one.
 
-1. `fix: `: Patch release
-2. `feat: `: Minor release
+When a PR with changesets is merged to `main`, CI consumes them right away: it bumps the versions, updates the changelogs, pushes a version commit and a tag per package, uploads the new versions with `pnpm stage publish` and creates a draft GitHub release per package. To batch several changes into one release, collect them on a branch and merge that.
 
-Due to this, it's important to clean up commit messages of merged PRs since the commit title will appear in the changelog. Note that the PR title and description should be cleaned up by the person who initiates the merge since the PR is linked to from the changelog & release and should contain relevant details.
+Nothing is installable until a maintainer approves the staged versions with 2FA:
 
-Note that the exclamation mark syntax (`!`) for indicating breaking changes is currently [not supported by Lerna](https://github.com/lerna/lerna/issues/2668#issuecomment-1467902595). Instead, a block like `BREAKING CHANGE: Dropped support for Node.js 12` should be added to the body of the commit message.
+- `pnpm release:approve` (needs `npm login` and `gh auth login`) shows the staged versions in a picker, approves the ones you select with one OTP and publishes the draft releases. Select all staged versions, since packages can depend on each other's new versions.
+- Alternatively, approve them on npmjs.com ("Staged Packages") and publish the draft releases on GitHub.
 
-Other prefixes that are allowed and will _not_ create a release are the following:
-
-1. `docs`: Documentation-only changes and updated examples
-2. `test`: Missing tests were added or existing ones corrected
-3. `ci`: Changes to CI configuration files and scripts
-4. `build`: Changes that affect the build system or external dependencies
-5. `chore`: Other changes that don't modify src or test files
-
-Stable releases are staged on npm: CI bumps the versions, pushes the version commit and tag, uploads the new versions with `pnpm stage publish` and creates a draft GitHub release. Nothing is installable until a maintainer approves the staged versions with 2FA:
-
-- `pnpm release:approve` (needs `npm login` and `gh auth login`) shows the staged versions in a picker, approves the ones you select with one OTP and publishes the draft release. Select all versions of the release, since packages depend on each other's new versions.
-- Alternatively, approve them on npmjs.com ("Staged Packages") and publish the draft release on GitHub.
-
-To abandon a release, reject the staged versions and delete the draft release.
-
-### Prereleases
-
-Canary versions are automatically published on the `canary` branch. The prerelease version is determined based on the commit prefix (`fix`/`feat`).
-
-When merging from `canary` to `main`, a release will be triggered if new commits are added that use one of the release prefixes mentioned above. Note that the `canary` branch should also be merged to `main` via a pull request for documentation and review purposes.
+To abandon a release, reject the staged versions and delete the draft releases.

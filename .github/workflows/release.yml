@@ -1,20 +1,20 @@
 name: release
 
 # A single workflow file so npm Trusted Publishing can be configured against it.
-# The branch determines which release runs: `main` → stable (latest), `canary`
-# → prerelease (canary). Only the job matching the pushed branch runs.
 on:
   push:
     branches:
       - main
-      - canary
 
 permissions: {}
+
+# A queued run checks out the tip of `main`, so it also releases what a
+# running one didn't get to
+concurrency: ${{ github.workflow }}
 
 jobs:
   stable:
     name: stable (latest)
-    if: "${{github.ref == 'refs/heads/main' && (startsWith(github.event.head_commit.message, 'fix: ') || startsWith(github.event.head_commit.message, 'feat: ') || startsWith(github.event.head_commit.message, 'feat!: '))}}"
     runs-on: ubuntu-latest
     # npm's trusted publisher config requires this environment
     environment: npm-publish
@@ -24,7 +24,10 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          # Lerna pushes the version commit and tag with these credentials
+          ref: ${{ github.ref_name }}
+          # Existing tags let changesets tag only the new versions
+          fetch-tags: true
+          # Pushes the version commit and tags with these credentials
           persist-credentials: true
       - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
@@ -39,56 +42,32 @@ jobs:
         run: |
           git config --global user.name "$ACTOR"
           git config --global user.email "$ACTOR@users.noreply.github.com"
-      - run: pnpm run release
+      - run: pnpm run version-packages
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      # Empty if lerna found no changed packages
+      # Empty if no changesets were merged
       - id: version
-        run: echo "tag=$(git tag --points-at HEAD --list 'v*')" >> "$GITHUB_OUTPUT"
+        run: |
+          git add -A
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: Version packages"
+            pnpm changeset git-tag
+            git push --follow-tags
+          fi
+          echo "tags=$(git tag --points-at HEAD | xargs)" >> "$GITHUB_OUTPUT"
       # Uploads the new versions to npm, but they only go live once a maintainer
       # approves them with 2FA (see CONTRIBUTORS.md)
-      - if: steps.version.outputs.tag
+      - if: steps.version.outputs.tags
         run: pnpm -r --filter './packages/**' stage publish --provenance --no-git-checks
-      # A draft, so it's only published once the npm versions are live
-      - if: steps.version.outputs.tag
-        run: gh release create "$TAG" --draft --verify-tag --generate-notes
-        env:
-          TAG: ${{ steps.version.outputs.tag }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  canary:
-    name: prerelease (canary)
-    if: github.ref == 'refs/heads/canary'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write # Push version commits and tags, create GitHub releases
-      id-token: write # npm trusted publishing
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version: 22.x
-          registry-url: 'https://registry.npmjs.org'
-          # Fresh install from the registry, so a poisoned cache can't run in a job that can publish
-          package-manager-cache: false
-      - run: npm install -g npm@12.2.2 # Trusted publishing needs npm >= 11.5.1 # zizmor: ignore[adhoc-packages]
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm turbo run build --filter './packages/**'
-      - env:
-          ACTOR: ${{ github.actor }}
+      # Drafts, so they're only published once the npm versions are live. Notes
+      # are the package's changelog entry.
+      - if: steps.version.outputs.tags
         run: |
-          git config --global user.name "$ACTOR"
-          git config --global user.email "$ACTOR@users.noreply.github.com"
-      # Change workspace dependencies from "workspace:^" to "workspace:"
-      - run: |
-          sed -i 's/"use-intl": "workspace:\^"/"use-intl": "workspace:"/' ./packages/next-intl/package.json && \
-          sed -i 's/"next-intl-swc-plugin-extractor": "workspace:\^"/"next-intl-swc-plugin-extractor": "workspace:"/' ./packages/next-intl/package.json && \
-          git commit -am "use fixed version"
-      - run: pnpm lerna publish 0.0.0-canary-${GITHUB_SHA::7} --no-git-reset --dist-tag canary --no-push --yes
-        if: "${{startsWith(github.event.head_commit.message, 'fix: ') || startsWith(github.event.head_commit.message, 'feat: ') || startsWith(github.event.head_commit.message, 'feat!: ')}}"
+          for tag in $TAGS; do
+            dir=$(dirname "$(grep -l "\"name\": \"${tag%@*}\"" packages/*/package.json)")
+            awk -v heading="## ${tag##*@}" '$0 == heading {found=1; next} /^## / {found=0} found' "$dir/CHANGELOG.md" > notes.md
+            gh release create "$tag" --draft --verify-tag --title "$tag" --notes-file notes.md
+          done
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # No NODE_AUTH_TOKEN since we use Trusted Publishers
+          TAGS: ${{ steps.version.outputs.tags }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

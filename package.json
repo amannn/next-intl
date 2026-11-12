@@ -2,14 +2,13 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "release": "lerna version",
+    "version-packages": "changeset version && pnpm install --lockfile-only",
     "release:approve": "./scripts/approve-release.sh",
     "build-packages": "turbo run build --filter './packages/**' --filter '!./packages/swc-plugin-extractor'"
   },
   "devDependencies": {
-    "@lerna-lite/cli": "^4.9.4",
-    "@lerna-lite/publish": "^4.9.4",
-    "conventional-changelog-conventionalcommits": "^8.0.0",
+    "@changesets/changelog-github": "^1.0.1",
+    "@changesets/cli": "^3.0.3",
     "turbo": "2.11.10"
   },
   "packageManager": "pnpm@12.18.0"
