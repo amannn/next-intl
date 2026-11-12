@@ -19,8 +19,8 @@ import speechifyLogo from './speechify-logo.svg';
 import starbucksLogo from './starbucks-logo.svg';
 import supercellLogo from './supercell-logo.svg';
 import teamviewerLogo from './teamviewer-logo.svg';
+import texasInstrumentsLogo from './texas-instruments-logo.svg';
 import uberLogo from './uber-logo.svg';
-import ubisoftLogo from './ubisoft-logo.svg';
 import unityLogo from './unity-logo.svg';
 import vintedgoLogo from './vintedgo-logo.svg';
 import watershedLogo from './watershed-logo.svg';
@@ -138,16 +138,16 @@ const companies = [
     url: 'https://www.teamviewer.com'
   },
   {
+    name: 'Texas Instruments',
+    logo: texasInstrumentsLogo,
+    scale: 1.5,
+    url: 'https://www.ti.com'
+  },
+  {
     name: 'Uber',
     logo: uberLogo,
     scale: 0.7,
     url: 'https://jobs.uber.com'
-  },
-  {
-    name: 'Ubisoft',
-    logo: ubisoftLogo,
-    scale: 0.95,
-    url: 'https://www.ubisoft.com'
   },
   {
     name: 'Unity',
