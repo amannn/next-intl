@@ -9,10 +9,10 @@ import hashicorpLogo from './hashicorp-logo.svg';
 import icelandairLogo from './icelandair-logo.svg';
 import mistralLogo from './mistral-logo.svg';
 import nodejsLogo from './nodejs-logo.svg';
-import qasaLogo from './qasa-logo.svg';
 import solanaLogo from './solana-logo.svg';
 import soundtrackLogo from './soundtrack-logo.svg';
 import speechifyLogo from './speechify-logo.svg';
+import starbucksLogo from './starbucks-logo.svg';
 import todoistLogo from './todoist-logo.svg';
 import uberLogo from './uber-logo.svg';
 import ubisoftLogo from './ubisoft-logo.svg';
@@ -74,12 +74,6 @@ const companies = [
     url: 'https://nodejs.org'
   },
   {
-    name: 'Qasa',
-    logo: qasaLogo,
-    scale: 0.75,
-    url: 'https://qasa.com'
-  },
-  {
     name: 'Solana',
     logo: solanaLogo,
     scale: 0.9,
@@ -96,6 +90,11 @@ const companies = [
     logo: speechifyLogo,
     scale: 1.15,
     url: 'https://speechify.com'
+  },
+  {
+    name: 'Starbucks',
+    logo: starbucksLogo,
+    url: 'https://www.starbucks.co.uk'
   },
   {
     name: 'Todoist',
