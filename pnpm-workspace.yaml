@@ -4,3 +4,19 @@ packages:
   - 'e2e/*'
   - 'docs'
   - 'tools'
+
+linkWorkspacePackages: true
+preferWorkspacePackages: true
+
+overrides:
+  '@babel/parser': 7.21.9
+
+patchedDependencies:
+  nextra-theme-docs: patches/nextra-theme-docs.patch
+
+allowBuilds:
+  '@parcel/watcher': true
+  '@swc/core': true
+  core-js-pure: false
+  esbuild: true
+  sharp: true

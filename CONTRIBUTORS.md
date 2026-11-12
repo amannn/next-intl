@@ -93,6 +93,13 @@ Other prefixes that are allowed and will _not_ create a release are the followin
 4. `build`: Changes that affect the build system or external dependencies
 5. `chore`: Other changes that don't modify src or test files
 
+Stable releases are staged on npm: CI bumps the versions, pushes the version commit and tag, uploads the new versions with `pnpm stage publish` and creates a draft GitHub release. Nothing is installable until a maintainer approves the staged versions with 2FA:
+
+- `pnpm release:approve` (needs `npm login` and `gh auth login`) lets you pick the staged versions, approves them with one OTP and publishes the draft release.
+- Alternatively, approve them on npmjs.com ("Staged Packages") and publish the draft release on GitHub.
+
+To abandon a release, reject the staged versions and delete the draft release.
+
 ### Prereleases
 
 Canary versions are automatically published on the `canary` branch. The prerelease version is determined based on the commit prefix (`fix`/`feat`).

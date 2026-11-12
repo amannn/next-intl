@@ -17,7 +17,7 @@
     "version": {
       "changelogIncludeCommitsClientLogin": " – by @%l",
       "conventionalCommits": true,
-      "createRelease": "github",
+      "remoteClient": "github",
       "syncWorkspaceLock": true
     }
   }

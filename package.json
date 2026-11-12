@@ -2,22 +2,15 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "release": "lerna publish",
+    "release": "lerna version",
+    "release:approve": "./scripts/approve-release.sh",
     "build-packages": "turbo run build --filter './packages/**' --filter '!./packages/swc-plugin-extractor'"
   },
   "devDependencies": {
     "@lerna-lite/cli": "^4.9.4",
     "@lerna-lite/publish": "^4.9.4",
     "conventional-changelog-conventionalcommits": "^8.0.0",
-    "turbo": "^2.4.4"
+    "turbo": "2.11.10"
   },
-  "pnpm": {
-    "overrides": {
-      "@babel/parser": "7.21.9"
-    },
-    "patchedDependencies": {
-      "nextra-theme-docs": "patches/nextra-theme-docs.patch"
-    }
-  },
-  "packageManager": "pnpm@9.11.0"
+  "packageManager": "pnpm@12.18.0"
 }
