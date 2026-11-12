@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.15.2
+
+### Patch Changes
+
+- [#2469](https://github.com/amannn/next-intl/pull/2469) [`5ef113c`](https://github.com/amannn/next-intl/commit/5ef113ca55b42ad42054e7e2133771e1391f3773) Thanks [@amannn](https://github.com/amannn)! - Fix the link to the design RFC in the README, which was broken on npm.
+
 ## 4.15.1 (2026-11-12)
 
 ### Bug Fixes
