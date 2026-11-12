@@ -64,16 +64,17 @@ jobs:
       # approves them with 2FA (see CONTRIBUTORS.md)
       - if: steps.version.outputs.tags
         run: pnpm -r --filter './packages/**' stage publish --provenance --no-git-checks --tag "$DIST_TAG"
-      # Drafts, so they're only published once the npm versions are live. Notes
-      # are the package's changelog entry.
+      # Only next-intl gets a GitHub release, the other packages have their
+      # changelogs. A draft, so it's only published once the npm versions are
+      # live. Notes are the changelog entry.
       - if: steps.version.outputs.tags
         run: |
-          for tag in $TAGS; do
-            dir=$(dirname "$(grep -l "\"name\": \"${tag%@*}\"" packages/*/package.json)")
-            awk -v heading="## ${tag##*@}" '$0 == heading {found=1; next} /^## / {found=0} found' "$dir/CHANGELOG.md" > notes.md
-            gh release create "$tag" --draft --verify-tag --prerelease="$PRERELEASE" --title "$tag" --notes-file notes.md
-          done
+          tag=$(git tag --points-at HEAD "$PACKAGE@*")
+          [ -n "$tag" ] || exit 0
+          dir=$(dirname "$(grep -l "\"name\": \"$PACKAGE\"" packages/*/package.json)")
+          awk -v heading="## ${tag##*@}" '$0 == heading {found=1; next} /^## / {found=0} found' "$dir/CHANGELOG.md" > notes.md
+          gh release create "$tag" --draft --verify-tag --prerelease="$PRERELEASE" --title "$tag" --notes-file notes.md
         env:
-          TAGS: ${{ steps.version.outputs.tags }}
+          PACKAGE: next-intl
           PRERELEASE: ${{ env.DIST_TAG != 'latest' }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

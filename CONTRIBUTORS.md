@@ -78,14 +78,14 @@ Releases are automated with [changesets](https://github.com/changesets/changeset
 
 A PR that changes a published package adds a changeset with `pnpm changeset`, which asks for the packages, the bump type (patch, minor, major) and a summary for the changelog. PRs without changes to published packages (docs, CI, tests) don't need one.
 
-When a PR with changesets is merged to `main`, CI consumes them right away: it bumps the versions, updates the changelogs, pushes a version commit and a tag per package, uploads the new versions with `pnpm stage publish` and creates a draft GitHub release per package. To batch several changes into one release, collect them on a branch and merge that.
+When a PR with changesets is merged to `main`, CI consumes them right away: it bumps the versions, updates the changelogs, pushes a version commit and a tag per package, uploads the new versions with `pnpm stage publish` and, if `next-intl` was released, creates a draft GitHub release for it. The other packages only have their `CHANGELOG.md`, so the repo's "Latest" release is always `next-intl`. To batch several changes into one release, collect them on a branch and merge that.
 
 Nothing is installable until a maintainer approves the staged versions with 2FA:
 
-- `pnpm release:approve` (needs `npm login` and `gh auth login`) shows the staged versions in a picker, approves the ones you select with one OTP and publishes the draft releases. Select all staged versions, since packages can depend on each other's new versions.
-- Alternatively, approve them on npmjs.com ("Staged Packages") and publish the draft releases on GitHub.
+- `pnpm release:approve` (needs `npm login` and `gh auth login`) shows the staged versions in a picker, approves the ones you select with one OTP and publishes the draft release. Select all staged versions, since packages can depend on each other's new versions.
+- Alternatively, approve them on npmjs.com ("Staged Packages") and publish the draft release on GitHub.
 
-To abandon a release, reject the staged versions and delete the draft releases.
+To abandon a release, reject the staged versions and delete the draft release.
 
 ### Preview packages
 
@@ -96,6 +96,6 @@ Every PR with the `preview` label publishes its packages to [pkg.pr.new](https:/
 A new major version is developed on the `next` branch in [prerelease mode](https://github.com/changesets/changesets/blob/main/docs/prereleases.md), with a PR from `next` to `main` for review:
 
 1. Create `next` from `main`, run `pnpm changeset pre enter next` and push it.
-2. Changesets merged to `next` are released like stable ones, but as prereleases (e.g. `5.0.0-next.0`) under the `next` dist-tag (`npm i next-intl@next`), with draft GitHub releases marked as prereleases.
+2. Changesets merged to `next` are released like stable ones, but as prereleases (e.g. `5.0.0-next.0`) under the `next` dist-tag (`npm i next-intl@next`), with next-intl's draft GitHub release marked as a prerelease.
 3. Merge `main` into `next` regularly to pick up fixes.
 4. For the stable release, run `pnpm changeset pre exit` on `next`, then merge `next` into `main`.
