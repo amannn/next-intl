@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import adidasRunningLogo from './adidas-running.svg';
+import autodeskLogo from './autodesk-logo.svg';
 import bigcommerceLogo from './bigcommerce-logo.svg';
 import boltLogo from './bolt-logo.svg';
 import elevenlabsLogo from './elevenlabs-logo.svg';
@@ -21,10 +21,10 @@ import watershedLogo from './watershed-logo.svg';
 
 const companies = [
   {
-    name: 'Adidas Running',
-    logo: adidasRunningLogo,
-    scale: 0.9,
-    url: 'https://www.runtastic.com/'
+    name: 'Autodesk',
+    logo: autodeskLogo,
+    scale: 1.1,
+    url: 'https://www.autodesk.com'
   },
   {
     name: 'BigCommerce Catalyst',
