@@ -12,6 +12,7 @@ echo "$tags"
 # Pick the versions to approve, one OTP for all
 pnpm stage approve
 
+# Only reached if approving succeeded (`set -e`)
 for tag in $tags; do
   gh release edit "$tag" --draft=false
 done
