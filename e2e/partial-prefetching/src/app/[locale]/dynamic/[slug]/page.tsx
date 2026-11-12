@@ -9,6 +9,9 @@ export default function DynamicPage() {
     <main>
       <h1>Dynamic page</h1>
       <Link href="/">Go to home page</Link>
+      <Link href="/" locale="de">
+        Go to German home page
+      </Link>
       <RouterNavigation />
     </main>
   );
