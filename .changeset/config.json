@@ -3,7 +3,8 @@
   "changelog": [
     "@changesets/changelog-github",
     {
-      "repo": "amannn/next-intl"
+      "repo": "amannn/next-intl",
+      "template": "\n\n- {summary} ({pull}, {commit}, {authors})"
     }
   ],
   "access": "public",
