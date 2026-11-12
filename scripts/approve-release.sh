@@ -1,6 +1,7 @@
 #!/bin/sh
-# Approves the staged npm versions of a release and publishes its draft GitHub
-# releases (one per package). Needs `npm login` and `gh auth login`.
+# Run manually after a release to approve the staged npm versions and publish
+# the draft GitHub releases (one per package). Needs `npm login` and
+# `gh auth login`. See https://github.com/amannn/next-intl/blob/main/CONTRIBUTORS.md#stable-releases
 set -e
 
 tags=$(gh release list --json tagName,isDraft --jq '.[] | select(.isDraft) | .tagName')
