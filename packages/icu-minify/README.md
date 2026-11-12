@@ -33,4 +33,4 @@ This library is heavily inspired by [`icu-to-json`](https://github.com/jantimon/
 
 ## Design
 
-For detailed design rationale, motivation, tradeoffs, and implementation details, see [RFC: Ahead-of-time compilation of ICU messages](../../rfcs/002-icu-message-precompilation.md).
+For detailed design rationale, motivation, tradeoffs, and implementation details, see [RFC: Ahead-of-time compilation of ICU messages](https://github.com/amannn/next-intl/blob/main/rfcs/002-icu-message-precompilation.md).
