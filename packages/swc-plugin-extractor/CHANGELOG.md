@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.15.1 (2026-11-12)
+
+### Bug Fixes
+
+* Point docs links in error messages to their current URLs ([#2466](https://github.com/amannn/next-intl/issues/2466)) ([b3941b2](https://github.com/amannn/next-intl/commit/b3941b20561dcdd4e25dc1be5a730825df3e0125)) – by @amannn
+
 ## 4.15.0 (2026-11-11)
 
 ### Features
