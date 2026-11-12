@@ -59,9 +59,15 @@ jobs:
       # approves them with 2FA (see CONTRIBUTORS.md)
       - if: steps.version.outputs.tags
         run: pnpm -r --filter './packages/**' stage publish --provenance --no-git-checks
-      # Drafts, so they're only published once the npm versions are live
+      # Drafts, so they're only published once the npm versions are live. Notes
+      # are the package's changelog entry.
       - if: steps.version.outputs.tags
-        run: ./scripts/draft-releases.sh $TAGS
+        run: |
+          for tag in $TAGS; do
+            dir=$(dirname "$(grep -l "\"name\": \"${tag%@*}\"" packages/*/package.json)")
+            awk -v heading="## ${tag##*@}" '$0 == heading {found=1; next} /^## / {found=0} found' "$dir/CHANGELOG.md" > notes.md
+            gh release create "$tag" --draft --verify-tag --title "$tag" --notes-file notes.md
+          done
         env:
           TAGS: ${{ steps.version.outputs.tags }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
