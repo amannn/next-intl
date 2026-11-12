@@ -89,7 +89,7 @@ To abandon a release, reject the staged versions and delete the draft releases.
 
 ### Preview packages
 
-Every push to `main` and every PR with the `preview` label publishes the packages to [pkg.pr.new](https://pkg.pr.new), so a change can be tried before it's released, e.g. `npm i https://pkg.pr.new/next-intl@<pr-number>`. The pkg.pr.new bot comments the install commands on the PR. Previews aren't published to npm and include all packages except the SWC plugin, which resolves to its version on npm.
+Every PR with the `preview` label publishes its packages to [pkg.pr.new](https://pkg.pr.new), so a change can be tried before it's released, e.g. `npm i https://pkg.pr.new/next-intl@<pr-number>`. The pkg.pr.new bot comments the install commands on the PR. Previews aren't published to npm and include all packages except the SWC plugin, which resolves to its version on npm.
 
 ### Major releases
 
