@@ -3,16 +3,22 @@ import Link from 'next/link';
 import autodeskLogo from './autodesk-logo.svg';
 import bigcommerceLogo from './bigcommerce-logo.svg';
 import boltLogo from './bolt-logo.svg';
+import chanelLogo from './chanel-logo.svg';
+import coderabbitLogo from './coderabbit-logo.svg';
+import deepseekLogo from './deepseek-logo.svg';
 import elevenlabsLogo from './elevenlabs-logo.svg';
 import ethereumLogo from './ethereum-logo.svg';
 import grafanaLogo from './grafana-logo.svg';
 import hashicorpLogo from './hashicorp-logo.svg';
 import icelandairLogo from './icelandair-logo.svg';
 import nodejsLogo from './nodejs-logo.svg';
+import philipsLogo from './philips-logo.svg';
 import postmanLogo from './postman-logo.svg';
 import solanaLogo from './solana-logo.svg';
 import speechifyLogo from './speechify-logo.svg';
 import starbucksLogo from './starbucks-logo.svg';
+import supercellLogo from './supercell-logo.svg';
+import teamviewerLogo from './teamviewer-logo.svg';
 import uberLogo from './uber-logo.svg';
 import ubisoftLogo from './ubisoft-logo.svg';
 import unityLogo from './unity-logo.svg';
@@ -37,6 +43,24 @@ const companies = [
     logo: boltLogo,
     scale: 0.8,
     url: 'https://bolt.eu'
+  },
+  {
+    name: 'Chanel',
+    logo: chanelLogo,
+    scale: 0.9,
+    url: 'https://www.chanel.com'
+  },
+  {
+    name: 'CodeRabbit',
+    logo: coderabbitLogo,
+    scale: 1.1,
+    url: 'https://www.coderabbit.ai'
+  },
+  {
+    name: 'DeepSeek',
+    logo: deepseekLogo,
+    scale: 1.1,
+    url: 'https://www.deepseek.com'
   },
   {
     name: 'ElevenLabs',
@@ -74,6 +98,12 @@ const companies = [
     url: 'https://nodejs.org'
   },
   {
+    name: 'Philips',
+    logo: philipsLogo,
+    scale: 1.1,
+    url: 'https://www.philips.com'
+  },
+  {
     name: 'Postman',
     logo: postmanLogo,
     url: 'https://www.postman.com'
@@ -95,6 +125,17 @@ const companies = [
     logo: starbucksLogo,
     scale: 1.1,
     url: 'https://www.starbucks.co.uk'
+  },
+  {
+    name: 'Supercell',
+    logo: supercellLogo,
+    scale: 0.8,
+    url: 'https://supercell.com'
+  },
+  {
+    name: 'TeamViewer',
+    logo: teamviewerLogo,
+    url: 'https://www.teamviewer.com'
   },
   {
     name: 'Uber',
