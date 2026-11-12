@@ -35,7 +35,7 @@ const companies = [
   {
     name: 'Bolt',
     logo: boltLogo,
-    scale: 0.85,
+    scale: 0.8,
     url: 'https://bolt.eu'
   },
   {
@@ -93,6 +93,7 @@ const companies = [
   {
     name: 'Starbucks',
     logo: starbucksLogo,
+    scale: 1.1,
     url: 'https://www.starbucks.co.uk'
   },
   {
@@ -110,6 +111,7 @@ const companies = [
   {
     name: 'Unity',
     logo: unityLogo,
+    scale: 0.9,
     url: 'https://unity.com'
   },
   {
