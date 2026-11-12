@@ -94,7 +94,7 @@ const companies = [
   {
     name: 'Starbucks',
     logo: starbucksLogo,
-    url: 'https://www.starbucks.at'
+    url: 'https://www.starbucks.co.uk'
   },
   {
     name: 'Todoist',
