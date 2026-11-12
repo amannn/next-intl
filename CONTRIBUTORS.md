@@ -95,7 +95,7 @@ Other prefixes that are allowed and will _not_ create a release are the followin
 
 Stable releases are staged on npm: CI bumps the versions, pushes the version commit and tag, uploads the new versions with `pnpm stage publish` and creates a draft GitHub release. Nothing is installable until a maintainer approves the staged versions with 2FA:
 
-- `pnpm release:approve` (needs `npm login` and `gh auth login`) lets you pick the staged versions, approves them with one OTP and publishes the draft release.
+- `pnpm release:approve` (needs `npm login` and `gh auth login`) shows the staged versions and asks for confirmation, lets you pick which to approve, approves them with one OTP and publishes the draft release.
 - Alternatively, approve them on npmjs.com ("Staged Packages") and publish the draft release on GitHub.
 
 To abandon a release, reject the staged versions and delete the draft release.
