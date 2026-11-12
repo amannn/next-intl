@@ -13,5 +13,6 @@
     "version": false,
     "tag": false
   },
-  "bumpVersionsWithWorkspaceProtocolOnly": true
+  "bumpVersionsWithWorkspaceProtocolOnly": true,
+  "format": false
 }
