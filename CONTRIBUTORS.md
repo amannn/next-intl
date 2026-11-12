@@ -62,7 +62,7 @@ pnpm prettier src --write
 
 ### Pull requests
 
-This repository uses [action-semantic-pull-request](https://github.com/amannn/action-semantic-pull-request) to ensure that pull request titles match the [Conventional Commits spec](https://www.conventionalcommits.org/en/v1.0.0/). PR titles become the commit messages on `main`.
+This repository uses [action-semantic-pull-request](https://github.com/amannn/action-semantic-pull-request) to ensure that pull request titles match the [Conventional Commits spec](https://www.conventionalcommits.org/en/v1.0.0/). PR titles become the commit messages on `main`, and use sentence case after the type prefix.
 
 ## Repository workflows
 
@@ -78,7 +78,7 @@ Releases are automated with [changesets](https://github.com/changesets/changeset
 
 A PR that changes a published package adds a changeset with `pnpm changeset`, which asks for the packages, the bump type (patch, minor, major) and a summary for the changelog. PRs without changes to published packages (docs, CI, tests) don't need one.
 
-When a PR with changesets is merged to `main`, CI consumes them right away: it bumps the versions, updates the changelogs, pushes a `chore: version packages` commit and a tag per package (e.g. `use-intl@4.15.1`), uploads the new versions with `pnpm stage publish` and creates a draft GitHub release per package. To batch several changes into one release, collect them on a branch and merge that.
+When a PR with changesets is merged to `main`, CI consumes them right away: it bumps the versions, updates the changelogs, pushes a version commit and a tag per package, uploads the new versions with `pnpm stage publish` and creates a draft GitHub release per package. To batch several changes into one release, collect them on a branch and merge that.
 
 Nothing is installable until a maintainer approves the staged versions with 2FA:
 
