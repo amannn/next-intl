@@ -42,7 +42,9 @@ jobs:
         run: |
           git config --global user.name "$ACTOR"
           git config --global user.email "$ACTOR@users.noreply.github.com"
-      - run: pnpm run version-packages
+      # `changeset version` fails if there are no changesets
+      - if: hashFiles('.changeset/*.md') != ''
+        run: pnpm run version-packages
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       # Empty if no changesets were merged
