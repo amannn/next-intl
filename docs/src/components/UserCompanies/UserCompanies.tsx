@@ -110,7 +110,6 @@ const companies = [
   {
     name: 'Unity',
     logo: unityLogo,
-    scale: 0.85,
     url: 'https://unity.com'
   },
   {
