@@ -98,7 +98,7 @@ Stable releases are staged on npm: CI bumps the versions, pushes the version com
 - `pnpm release:approve` (needs `npm login` and `gh auth login`) lets you pick the staged versions, approves them with one OTP and publishes the draft release.
 - Alternatively, approve them on npmjs.com ("Staged Packages") and publish the draft release on GitHub.
 
-To abandon a release, reject the staged versions and delete the draft release. If staging fails partway, approve the versions that did get staged, then check out the release tag and run the `stage publish` command from the workflow locally (without `--provenance`, so these versions have no provenance) and `gh release create <tag> --draft --generate-notes`. Versions that are already on npm are skipped.
+To abandon a release, reject the staged versions and delete the draft release.
 
 ### Prereleases
 

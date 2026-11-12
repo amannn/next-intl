@@ -165,8 +165,6 @@ settings:
 overrides:
   '@babel/parser': 7.21.9
 
-pnpmfileChecksum: sha256-V9Gs08DpQoFR8z/eIGcupwihxOwPQxRsT79ySVMDedU=
-
 patchedDependencies:
   nextra-theme-docs: c2aeac89d5e5b8dd66566232f0a6fbe91a248914e51308fa9cbf3c8c64d470ba
 
