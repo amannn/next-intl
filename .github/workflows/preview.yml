@@ -27,4 +27,4 @@ jobs:
       - run: pnpm run build-packages
       # The SWC plugin needs a Rust build, so previews depend on its npm version.
       # pkg.pr.new authenticates the run through its GitHub App, not npm.
-      - run: pnpm exec pkg-pr-new publish --pnpm './packages/*' '!./packages/swc-plugin-extractor' # zizmor: ignore[use-trusted-publishing]
+      - run: pnpm exec pkg-pr-new publish --pnpm --no-template './packages/*' '!./packages/swc-plugin-extractor' # zizmor: ignore[use-trusted-publishing]
