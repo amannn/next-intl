@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - main # Stable releases (latest)
-      - next # Prereleases of the next major, see CONTRIBUTORS.md
+      - next # Prereleases of the next major
 
 permissions: {}
 
