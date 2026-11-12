@@ -13,7 +13,5 @@ echo "$tags"
 pnpm stage approve
 
 for tag in $tags; do
-  # Fails if this version isn't live yet
-  npm view "$tag" version --prefer-online
   gh release edit "$tag" --draft=false
 done

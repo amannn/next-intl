@@ -82,7 +82,7 @@ When a PR with changesets is merged to `main`, CI consumes them right away: it b
 
 Nothing is installable until a maintainer approves the staged versions with 2FA:
 
-- `pnpm release:approve` (needs `npm login` and `gh auth login`) lets you pick the staged versions, approves them with one OTP and publishes the draft releases.
+- `pnpm release:approve` (needs `npm login` and `gh auth login`) shows the staged versions in a picker, approves the ones you select with one OTP and publishes the draft releases. Select all staged versions, since packages can depend on each other's new versions.
 - Alternatively, approve them on npmjs.com ("Staged Packages") and publish the draft releases on GitHub.
 
 To abandon a release, reject the staged versions and delete the draft releases.

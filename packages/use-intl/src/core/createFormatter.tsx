@@ -102,7 +102,7 @@ export default function createFormatter(props: Props) {
           new IntlError(
             IntlErrorCode.ENVIRONMENT_FALLBACK,
             process.env.NODE_ENV !== 'production'
-              ? `The \`timeZone\` parameter wasn't provided and there is no global default configured. Consider adding a global default to avoid markup mismatches caused by environment differences. Learn more: https://next-intl.dev/docs/configuration#time-zone`
+              ? `The \`timeZone\` parameter wasn't provided and there is no global default configured. Consider adding a global default to avoid markup mismatches caused by environment differences. Learn more: https://next-intl.dev/docs/usage/configuration#time-zone`
               : undefined
           )
         );
