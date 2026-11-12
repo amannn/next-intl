@@ -12,8 +12,7 @@ echo "$tags"
 # Pick the versions to approve, one OTP for all
 pnpm stage approve
 
+# Only reached if approving succeeded (`set -e`)
 for tag in $tags; do
-  # Fails if this version isn't live yet
-  npm view "$tag" version --prefer-online
   gh release edit "$tag" --draft=false
 done
