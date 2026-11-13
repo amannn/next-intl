@@ -60,6 +60,12 @@ pnpm eslint src --fix
 pnpm prettier src --write
 ```
 
+### Dependencies
+
+pnpm only installs versions that have been published for at least 3 days (`minimumReleaseAge` in `pnpm-workspace.yaml`), since most compromised releases are detected and removed within that window. It also refuses a version that is published with weaker provenance than earlier ones (`trustPolicy: no-downgrade`), which is a common sign of a hijacked account.
+
+If you need a version that is newer than that, e.g. to test against a fresh Next.js release, add it with its exact version to `minimumReleaseAgeExclude` in the same PR so it gets reviewed.
+
 ### Pull requests
 
 This repository uses [action-semantic-pull-request](https://github.com/amannn/action-semantic-pull-request) to ensure that pull request titles match the [Conventional Commits spec](https://www.conventionalcommits.org/en/v1.0.0/). PR titles become the commit messages on `main`, and use sentence case after the type prefix.
