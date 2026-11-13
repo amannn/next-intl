@@ -9,7 +9,7 @@
     "test:jest": "jest",
     "build": "next build",
     "start": "next start",
-    "storybook": "^8.6.4"
+    "storybook": "storybook dev -p 6006"
   },
   "dependencies": {
     "@radix-ui/react-dropdown-menu": "^2.2.1",

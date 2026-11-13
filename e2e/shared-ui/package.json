@@ -12,7 +12,7 @@
   },
   "peerDependencies": {
     "next-intl": "workspace:*",
-    "react": "^19.3.1"
+    "react": "^19.0.0"
   },
   "devDependencies": {
     "@types/react": "^19.3.0",
