@@ -146,7 +146,7 @@
     }
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.17.4",
+    "@arethetypeswrong/cli": "^0.18.5",
     "@edge-runtime/vm": "^5.0.0",
     "@size-limit/preset-small-lib": "^11.2.0",
     "@testing-library/react": "^16.3.3",
@@ -162,7 +162,7 @@
     "path-to-regexp": "^6.3.0",
     "po-parser": "^2.2.0",
     "prettier": "^3.9.10",
-    "publint": "^0.2.12",
+    "publint": "^0.3.25",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "rollup": "^4.68.2",
