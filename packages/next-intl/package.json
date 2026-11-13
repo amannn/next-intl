@@ -149,7 +149,7 @@
     "@arethetypeswrong/cli": "^0.17.4",
     "@edge-runtime/vm": "^5.0.0",
     "@size-limit/preset-small-lib": "^11.2.0",
-    "@testing-library/react": "^16.2.0",
+    "@testing-library/react": "^16.3.3",
     "@types/negotiator": "^0.6.3",
     "@types/node": "^20.14.5",
     "@types/react": "^19.2.14",
@@ -159,7 +159,7 @@
     "eslint-config-molindo": "^8.0.0",
     "eslint-plugin-react-compiler": "0.0.0-experimental-8e3b87c-20240822",
     "next": "^16.3.6",
-    "path-to-regexp": "^6.2.2",
+    "path-to-regexp": "^6.3.0",
     "po-parser": "^2.2.0",
     "prettier": "^3.3.3",
     "publint": "^0.2.8",
@@ -170,7 +170,7 @@
     "size-limit": "^11.2.0",
     "tools": "workspace:^",
     "typescript": "^6.0.0",
-    "vitest": "^3.0.8"
+    "vitest": "^3.2.7"
   },
   "prettier": "eslint-config-molindo/.prettierrc.json"
 }

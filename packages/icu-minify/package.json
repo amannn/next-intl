@@ -61,14 +61,14 @@
     "@types/node": "^20.14.5",
     "eslint": "9.11.1",
     "eslint-config-molindo": "^8.0.0",
-    "intl-messageformat": "^11.1.0",
+    "intl-messageformat": "^11.2.15",
     "prettier": "^3.3.3",
     "publint": "^0.2.8",
     "rollup": "^4.68.2",
     "size-limit": "^11.2.0",
     "tools": "workspace:^",
     "typescript": "^6.0.0",
-    "vitest": "^3.0.8"
+    "vitest": "^3.2.7"
   },
   "prettier": "eslint-config-molindo/.prettierrc.json"
 }
