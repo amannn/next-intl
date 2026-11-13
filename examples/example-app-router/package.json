@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "@eloqnt/cli": "^0.6.29",
-    "@eslint/eslintrc": "^3.1.0",
+    "@eslint/eslintrc": "^3.3.7",
     "@jest/globals": "^29.7.0",
     "@playwright/test": "^1.65.0",
     "@testing-library/react": "^16.2.0",
@@ -29,12 +29,12 @@
     "@types/node": "^20.14.5",
     "@types/react": "^19.3.0",
     "autoprefixer": "^10.4.19",
-    "eslint": "^9.38.0",
+    "eslint": "^9.39.5",
     "eslint-config-next": "^16.4.6",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "postcss": "^8.5.3",
-    "prettier": "^3.3.3",
+    "prettier": "^3.9.10",
     "typescript": "^6.0.3"
   },
   "prettier": {

@@ -16,12 +16,12 @@
     "react-dom": "^19.3.1"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.1.0",
+    "@eslint/eslintrc": "^3.3.7",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
-    "eslint": "^9.38.0",
+    "eslint": "^9.39.5",
     "eslint-config-next": "^16.4.6",
-    "prettier": "^3.3.3",
+    "prettier": "^3.9.10",
     "typescript": "^6.0.3"
   },
   "prettier": {
