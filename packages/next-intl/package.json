@@ -150,10 +150,10 @@
     "@edge-runtime/vm": "^5.0.0",
     "@size-limit/preset-small-lib": "^11.2.0",
     "@testing-library/react": "^16.3.3",
-    "@types/negotiator": "^0.6.3",
+    "@types/negotiator": "^0.6.5",
     "@types/node": "^20.14.5",
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "@types/webpack": "^5.28.5",
     "eslint": "9.11.1",
     "eslint-config-molindo": "^8.0.0",
@@ -169,7 +169,7 @@
     "rollup-plugin-preserve-directives": "0.4.0",
     "size-limit": "^11.2.0",
     "tools": "workspace:^",
-    "typescript": "^6.0.0",
+    "typescript": "^6.0.3",
     "vitest": "^3.2.7"
   },
   "prettier": "eslint-config-molindo/.prettierrc.json"
