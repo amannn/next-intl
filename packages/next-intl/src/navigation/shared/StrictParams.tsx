@@ -16,7 +16,9 @@ type RemovePrefixes<Key> = Key extends `[...${infer Name}`
 
 type StrictParams<Pathname> = Pathname extends `${string}[${string}`
   ? {
-      [Key in ReadFrom<Pathname>[number] as RemovePrefixes<Key>]: Key extends `[...${string}`
+      [
+        Key in ReadFrom<Pathname>[number] as RemovePrefixes<Key>
+      ]: Key extends `[...${string}`
         ? Array<ParamValue> | undefined
         : Key extends `...${string}`
           ? Array<ParamValue>

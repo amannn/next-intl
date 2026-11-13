@@ -137,8 +137,7 @@ export default function createMiddleware<
             request.nextUrl.protocol;
 
           const redirectDomainPort = redirectDomain.split(':')[1] as
-            | string
-            | undefined;
+            string | undefined;
           urlObj.port =
             redirectDomainPort ?? request.headers.get('x-forwarded-port') ?? '';
         }
@@ -183,8 +182,7 @@ export default function createMiddleware<
 
     let unprefixedInternalPathname = unprefixedExternalPathname;
     const pathnames = (resolvedRouting as any).pathnames as
-      | AppPathnames
-      | undefined;
+      AppPathnames | undefined;
     if (pathnames) {
       let resolvedTemplateLocale: AppLocales[number] | undefined;
       [resolvedTemplateLocale, internalTemplateName] = getInternalTemplate(

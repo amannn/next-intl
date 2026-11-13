@@ -946,10 +946,10 @@ importers:
         specifier: ^11.2.15
         version: 11.2.15
       prettier:
-        specifier: ^3.3.3
-        version: 3.8.0
+        specifier: ^3.9.10
+        version: 3.9.10
       publint:
-        specifier: ^0.2.8
+        specifier: ^0.2.12
         version: 0.2.12
       rollup:
         specifier: ^4.68.2
@@ -1046,10 +1046,10 @@ importers:
         specifier: ^2.2.0
         version: 2.2.0
       prettier:
-        specifier: ^3.3.3
-        version: 3.8.0
+        specifier: ^3.9.10
+        version: 3.9.10
       publint:
-        specifier: ^0.2.8
+        specifier: ^0.2.12
         version: 0.2.12
       react:
         specifier: ^19.2.3
@@ -1124,10 +1124,10 @@ importers:
         specifier: 0.0.0-experimental-8e3b87c-20240822
         version: 0.0.0-experimental-8e3b87c-20240822(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)
       prettier:
-        specifier: ^3.3.3
-        version: 3.8.0
+        specifier: ^3.9.10
+        version: 3.9.10
       publint:
-        specifier: ^0.2.8
+        specifier: ^0.2.12
         version: 0.2.12
       react:
         specifier: ^19.2.3
@@ -9741,6 +9741,11 @@ packages:
 
   prettier@3.8.0:
     resolution: {integrity: sha512-yEPsovQfpxYfgWNhCfECjG5AQaO+K3dp6XERmOepyPDVqcJm+bjyCVO3pmU+nAPe0N5dDvekfGezt/EIiRe1TA==}
+    engines: {node: '>=14'}
+    hasBin: true
+
+  prettier@3.9.10:
+    resolution: {integrity: sha512-skGHTH1Yb9QvaTC4hWnRTzEYtCpApF0UMBPz+t/0ZPzP8ihefo/btKd+QA7pUE0fEwA1SbS/NmhyEcstdXOIdA==}
     engines: {node: '>=14'}
     hasBin: true
 
@@ -22972,6 +22977,8 @@ snapshots:
   prelude-ls@1.2.1: {}
 
   prettier@3.8.0: {}
+
+  prettier@3.9.10: {}
 
   pretty-error@4.0.0:
     dependencies:
