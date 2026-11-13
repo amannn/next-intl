@@ -551,8 +551,8 @@ importers:
         version: 3.4.19(yaml@2.9.0)
     devDependencies:
       '@eloqnt/cli':
-        specifier: ^0.6.29
-        version: 0.6.29(@swc/helpers@0.5.23)
+        specifier: ^0.6.33
+        version: 0.6.33(@swc/helpers@0.5.23)
       '@eslint/eslintrc':
         specifier: ^3.3.7
         version: 3.3.7(supports-color@8.1.1)
@@ -2643,8 +2643,8 @@ packages:
     resolution: {integrity: sha512-NKBGBSIKUG584qrS1tyxVpX/AKJKQw5HgjYEnPLC0QsTw79JrGn+qUr8CXFb955Iy7GUdiiUv1rJ6JBGvaKb6w==}
     engines: {node: '>=18'}
 
-  '@eloqnt/cli@0.6.29':
-    resolution: {integrity: sha512-IEqOlk6vEBYTzgTRzhNNOoSLXKafJuudigC9hZSOQKTblMGZ+2Vy7I7oI/Jj2Lq/sDFPpSgN7jEuT4La2SDGQA==}
+  '@eloqnt/cli@0.6.33':
+    resolution: {integrity: sha512-4O5Eb7ebLJn0N1vLkKMHUeCWkpwlrFFTvA/hwhRgPJzNv74+UpiAH+26dbaUw1qktzjrvavJ7UyKChDDSa/unA==}
     hasBin: true
 
   '@eloqnt/config@0.1.1':
@@ -2656,8 +2656,8 @@ packages:
   '@eloqnt/format-po@0.1.1':
     resolution: {integrity: sha512-aLtmIoqXGEaeTT0RcsLN8sZ3aIrsT/c/dVs28zrLhDjO3+vA3KNP+r98N0xq8w/k36+/GIUt4uZNbqcA71GVWw==}
 
-  '@eloqnt/sdk@0.6.27':
-    resolution: {integrity: sha512-dIvAXFXyAYOdoCIc+RQk+q1avI7wb8e5VSbQyYy08UVbmjXilmyNl/hey5LuqWK1ZZZ5Qw3EajfyKQt92GFtVA==}
+  '@eloqnt/sdk@0.6.31':
+    resolution: {integrity: sha512-QDMxjApRJ3B9GcDzd36P0kaSmcGwKwFMkzjt2TH4jr3JnAPMJIlT4FnxTfoTDeYyRr/LWN6vvZ4r/rBWfuXHqw==}
 
   '@emnapi/runtime@1.11.2':
     resolution: {integrity: sha512-kyOl3X0DuTiT1h2ft8r2fYO8JYtU9a9Xis/zBSiGArNaagCOWx90N1k2wxp18czFDH+OgcWGb5ZP/XMt3dcyPA==}
@@ -3083,9 +3083,6 @@ packages:
 
   '@formatjs/icu-messageformat-parser@3.4.0':
     resolution: {integrity: sha512-2bSQc59NFiEuN5VW0dUh7Txn5Qbeib5kZtzxFDXXqxUljvwhA3Qsrv2AwuVCRMISjbgOYwA2Rp5HW6tbdTnv9g==}
-
-  '@formatjs/icu-messageformat-parser@3.5.17':
-    resolution: {integrity: sha512-cN9jhVqT7u0K9tix43fhjoUwL0nazyW6zsNIXs2QdPADr+nurPfYyssUiMqcSCGlPcCiqnYVxgSn7zBSuI+5Bg==}
 
   '@formatjs/icu-messageformat-parser@3.5.18':
     resolution: {integrity: sha512-wX1efcL8d7K5QapOTRsP/OLTA/kpwe4LwqWyNxDNg5iRs8i9jJbCyxB5P8jc4KOW5oiLzz2DJr+BRY5xMV9+bA==}
@@ -9145,8 +9142,8 @@ packages:
   neo-async@2.6.2:
     resolution: {integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==}
 
-  next-intl-swc-plugin-extractor@4.14.2:
-    resolution: {integrity: sha512-R+i9Xw6XKyn1QVx+I5IDZQNGQBwT79ugGwzbuJudgejob/IYnXXrRKMlLhmMxLdKH8jUWh92nqwNnp+5rtSVJA==}
+  next-intl-swc-plugin-extractor@4.14.10:
+    resolution: {integrity: sha512-e89472WWtdFJkm2XEmbeIU6YhPfGvZGErJ6Lm2KnSOQubcT2f/sAm2nrAmd1DIeqzy5LIAALN2QnnYrqrqmvWw==}
 
   next-sitemap@4.2.3:
     resolution: {integrity: sha512-vjdCxeDuWDzldhCnyFCQipw5bfpl4HmZA7uoo3GAaYGjGgfL4Cxb1CiztPuWGmS+auYs7/8OekRS8C2cjdAsjQ==}
@@ -13536,10 +13533,10 @@ snapshots:
     dependencies:
       '@edge-runtime/primitives': 6.0.0
 
-  '@eloqnt/cli@0.6.29(@swc/helpers@0.5.23)':
+  '@eloqnt/cli@0.6.33(@swc/helpers@0.5.23)':
     dependencies:
       '@clack/prompts': 1.8.0
-      '@eloqnt/sdk': 0.6.27(@swc/helpers@0.5.23)
+      '@eloqnt/sdk': 0.6.31(@swc/helpers@0.5.23)
       citty: 0.1.6
       open: 11.0.2
       picocolors: 1.1.1
@@ -13557,17 +13554,17 @@ snapshots:
       '@eloqnt/config': 0.1.1
       po-parser: 2.2.0
 
-  '@eloqnt/sdk@0.6.27(@swc/helpers@0.5.23)':
+  '@eloqnt/sdk@0.6.31(@swc/helpers@0.5.23)':
     dependencies:
       '@eloqnt/config': 0.1.1
       '@eloqnt/format-json': 0.1.0
       '@eloqnt/format-po': 0.1.1
-      '@formatjs/icu-messageformat-parser': 3.5.17
+      '@formatjs/icu-messageformat-parser': 3.5.21
       '@swc/core': 1.16.0(@swc/helpers@0.5.23)
       ai: 7.0.95(zod@4.6.7)
       jiti: 2.7.0
       magic-string: 0.30.21
-      next-intl-swc-plugin-extractor: 4.14.2
+      next-intl-swc-plugin-extractor: 4.14.10
       tinyglobby: 0.2.17
       yaml: 2.9.0
       zod: 4.6.7
@@ -13878,10 +13875,6 @@ snapshots:
       '@formatjs/ecma402-abstract': 3.1.0
       '@formatjs/icu-skeleton-parser': 2.1.0
       tslib: 2.8.1
-
-  '@formatjs/icu-messageformat-parser@3.5.17':
-    dependencies:
-      '@formatjs/icu-skeleton-parser': 2.1.11
 
   '@formatjs/icu-messageformat-parser@3.5.18':
     dependencies:
@@ -22244,7 +22237,7 @@ snapshots:
 
   neo-async@2.6.2: {}
 
-  next-intl-swc-plugin-extractor@4.14.2: {}
+  next-intl-swc-plugin-extractor@4.14.10: {}
 
   next-sitemap@4.2.3(next@14.2.35(@babel/core@7.29.13(supports-color@8.1.1))(@opentelemetry/api@1.9.0)(@playwright/test@1.65.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)):
     dependencies:
