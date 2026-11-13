@@ -23,7 +23,7 @@
     "@types/react-dom": "^19.3.0",
     "eslint": "^9.39.5",
     "eslint-config-next": "^16.4.6",
-    "postcss": "^8.5.3",
+    "postcss": "^8.5.32",
     "prettier": "^3.9.10",
     "typescript": "^6.0.3"
   },
