@@ -58,7 +58,7 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
     "@size-limit/preset-small-lib": "^11.2.0",
-    "@types/node": "^20.14.5",
+    "@types/node": "^20.19.43",
     "eslint": "9.11.1",
     "eslint-config-molindo": "^8.0.0",
     "intl-messageformat": "^11.2.15",

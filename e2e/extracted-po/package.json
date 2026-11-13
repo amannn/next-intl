@@ -11,21 +11,21 @@
   },
   "dependencies": {
     "e2e-utils": "workspace:*",
-    "next": "^16.3.6",
+    "next": "^16.4.6",
     "next-intl": "workspace:*",
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
     "use-intl": "workspace:*"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.1.0",
+    "@eslint/eslintrc": "^3.3.7",
     "@playwright/test": "^1.65.0",
-    "@types/react": "^19.2.3",
-    "@types/react-dom": "^19.2.3",
-    "eslint": "^9.38.0",
-    "eslint-config-next": "^16.3.6",
-    "prettier": "^3.3.3",
-    "typescript": "^5.5.3"
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.4.6",
+    "prettier": "^3.9.10",
+    "typescript": "^6.0.3"
   },
   "prettier": {
     "singleQuote": true,
