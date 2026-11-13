@@ -43,13 +43,12 @@ export default function createSharedNavigationFns<
 >(
   getLocale: () => PromiseOrValue<Locale>,
   routing?: [AppPathnames] extends [never]
-    ?
-        | RoutingConfigSharedNavigation<
-            AppLocales,
-            AppLocalePrefixMode,
-            AppDomains
-          >
-        | undefined
+    ? | RoutingConfigSharedNavigation<
+          AppLocales,
+          AppLocalePrefixMode,
+          AppDomains
+        >
+      | undefined
     : RoutingConfigLocalizedNavigation<
         AppLocales,
         AppLocalePrefixMode,

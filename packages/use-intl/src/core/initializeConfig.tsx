@@ -23,11 +23,9 @@ export default function initializeConfig<
   return {
     ...rest,
     formats: (formats || undefined) as
-      | NonNullable<IntlConfig['formats']>
-      | undefined,
+      NonNullable<IntlConfig['formats']> | undefined,
     messages: (messages || undefined) as
-      | NonNullable<IntlConfig['messages']>
-      | undefined,
+      NonNullable<IntlConfig['messages']> | undefined,
     onError: finalOnError,
     getMessageFallback: finalGetMessageFallback
   };

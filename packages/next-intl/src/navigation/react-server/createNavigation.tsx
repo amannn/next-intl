@@ -18,13 +18,12 @@ export default function createNavigation<
   const AppDomains extends DomainsConfig<AppLocales> = never
 >(
   routing?: [AppPathnames] extends [never]
-    ?
-        | RoutingConfigSharedNavigation<
-            AppLocales,
-            AppLocalePrefixMode,
-            AppDomains
-          >
-        | undefined
+    ? | RoutingConfigSharedNavigation<
+          AppLocales,
+          AppLocalePrefixMode,
+          AppDomains
+        >
+      | undefined
     : RoutingConfigLocalizedNavigation<
         AppLocales,
         AppLocalePrefixMode,
