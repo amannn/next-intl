@@ -8,6 +8,13 @@ packages:
 linkWorkspacePackages: true
 preferWorkspacePackages: true
 
+minimumReleaseAge: 4320 # 3 days
+minimumReleaseAgeExclude:
+  - '@eloqnt/*' # own packages, so fixes across both repos don't wait
+minimumReleaseAgeExcludePrune: true
+trustPolicy: no-downgrade
+trustPolicyIgnoreAfter: 525600 # 1 year: older backports (e.g. semver@5.7.2) often have less provenance than releases before them
+
 overrides:
   '@babel/parser': 7.21.9
 
