@@ -12,13 +12,13 @@
   },
   "peerDependencies": {
     "next-intl": "workspace:*",
-    "react": "^19.0.0"
+    "react": "^19.3.1"
   },
   "devDependencies": {
-    "@types/react": "^19.2.3",
-    "@types/react-dom": "^19.2.3",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "eslint": "^9.38.0",
-    "eslint-config-next": "^16.3.6",
+    "eslint-config-next": "^16.4.6",
     "next-intl": "workspace:*",
     "prettier": "^3.3.3",
     "typescript": "^5.5.3"

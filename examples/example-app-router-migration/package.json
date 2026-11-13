@@ -9,17 +9,17 @@
     "start": "next start"
   },
   "dependencies": {
-    "next": "^16.3.6",
+    "next": "^16.4.6",
     "next-intl": "^4.0.0",
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3"
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
   },
   "devDependencies": {
     "@types/lodash": "^4.17.5",
     "@types/node": "^20.14.5",
-    "@types/react": "^19.2.14",
+    "@types/react": "^19.3.0",
     "eslint": "^9.38.0",
-    "eslint-config-next": "^16.3.6",
+    "eslint-config-next": "^16.4.6",
     "@eslint/eslintrc": "^3.1.0",
     "prettier": "^3.3.3",
     "typescript": "^6.0.0"
