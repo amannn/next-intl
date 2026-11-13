@@ -21,7 +21,7 @@
     "eslint-config-next": "^16.4.6",
     "next-intl": "workspace:*",
     "prettier": "^3.3.3",
-    "typescript": "^5.5.3"
+    "typescript": "^6.0.3"
   },
   "prettier": {
     "singleQuote": true,
