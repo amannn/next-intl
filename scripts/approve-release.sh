@@ -5,6 +5,7 @@
 set -e
 
 # Pick the versions to approve, one OTP for all
+echo "Select all staged versions, packages depend on each other's new versions."
 pnpm stage approve
 
 # Only reached if approving succeeded (`set -e`)
