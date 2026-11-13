@@ -8,6 +8,12 @@ packages:
 linkWorkspacePackages: true
 preferWorkspacePackages: true
 
+minimumReleaseAge: 4320 # 3 days
+minimumReleaseAgeExclude:
+  - '@eloqnt/*'
+trustPolicy: no-downgrade
+trustPolicyIgnoreAfter: 525600 # 1 year: older releases often predate trusted publishing
+
 overrides:
   '@babel/parser': 7.21.9
 
