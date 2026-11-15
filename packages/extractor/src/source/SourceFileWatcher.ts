@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
-import type {AsyncSubscription, Event} from '@parcel/watcher';
+import {type AsyncSubscription, type Event, subscribe} from '@parcel/watcher';
 import SourceFileFilter from './SourceFileFilter.js';
 import SourceFileScanner from './SourceFileScanner.js';
 
@@ -22,10 +22,6 @@ export default class SourceFileWatcher implements Disposable {
     if (this.subscriptions.length > 0) {
       return;
     }
-
-    // Loaded lazily, so importing this package (e.g. from a loader that only
-    // needs `MessageExtractor`) doesn't load the native watcher binding.
-    const {subscribe} = await import('@parcel/watcher');
 
     const ignore = SourceFileFilter.IGNORED_DIRECTORIES.map(
       (dir) => `**/${dir}/**`
