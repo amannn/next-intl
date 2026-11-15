@@ -44,7 +44,11 @@ export default [
       'next-intl/config',
       'use-intl/core',
       'use-intl/react',
-      'icu-minify/compile'
+      'icu-minify/compile',
+      '@eloqnt/extractor/_internal',
+      '@eloqnt/extractor/_internal-transform',
+      '@eloqnt/messages/_internal',
+      '@eloqnt/messages/_internal-codec'
     ],
     output: {
       preserveModules: true
