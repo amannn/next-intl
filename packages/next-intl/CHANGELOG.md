@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.15.2
+
+### Patch Changes
+
+- Move the message extraction internals into the new `@eloqnt/messages` and `@eloqnt/extractor` packages, so next-intl and the eloqnt CLI share one implementation. No change in behavior. ([#2486](https://github.com/amannn/next-intl/pull/2486), [`086f18b`](https://github.com/amannn/next-intl/commit/086f18b485cdb96288d72e75307e3f0729bd9857), [@amannn](https://github.com/amannn))
+- Updated dependencies [[`086f18b`](https://github.com/amannn/next-intl/commit/086f18b485cdb96288d72e75307e3f0729bd9857)]:
+  - @eloqnt/messages@0.1.0
+  - @eloqnt/extractor@0.1.0
+
 ## 4.15.1 (2026-11-12)
 
 ### Bug Fixes

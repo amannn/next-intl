@@ -1,6 +1,6 @@
 {
   "name": "@eloqnt/messages",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Reads and writes messages files for eloqnt and next-intl (internal)",
   "license": "MIT",
   "repository": {

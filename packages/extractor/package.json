@@ -1,6 +1,6 @@
 {
   "name": "@eloqnt/extractor",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Extracts messages from source code for eloqnt and next-intl (internal)",
   "license": "MIT",
   "repository": {
