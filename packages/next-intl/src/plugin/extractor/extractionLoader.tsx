@@ -1,4 +1,4 @@
-import MessageExtractor from '../../extractor/extractor/MessageExtractor.js';
+import {MessageExtractor} from '@eloqnt/extractor/_internal-transform';
 import type {ExtractorConfig} from '../../extractor/types.js';
 import type {TurbopackLoaderContext} from '../types.js';
 

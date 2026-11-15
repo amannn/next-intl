@@ -1,4 +1,4 @@
-import {expect, it} from 'vitest';
+import {expect, it} from 'vite-plus/test';
 import LRUCache from './LRUCache.js';
 
 it('should store and retrieve values', () => {

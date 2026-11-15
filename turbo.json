@@ -17,8 +17,14 @@
         "tools#build",
         "@eloqnt/config#build",
         "@eloqnt/format-json#build",
-        "@eloqnt/format-po#build"
+        "@eloqnt/format-po#build",
+        "@eloqnt/messages#build",
+        "@eloqnt/extractor#build"
       ],
+      "outputs": ["dist/**"]
+    },
+    "@eloqnt/extractor#build": {
+      "dependsOn": ["@eloqnt/messages#build"],
       "outputs": ["dist/**"]
     },
     "lint": {

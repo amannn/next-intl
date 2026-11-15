@@ -1,7 +1,7 @@
 import {createRequire} from 'module';
 import path from 'path';
 import {pathToFileURL} from 'url';
-import {throwError} from '../../plugin/utils.js';
+import {throwError} from '../logging.js';
 import type ExtractorCodec from './ExtractorCodec.js';
 import type {BuiltInMessagesFormat, MessagesFormat} from './types.js';
 

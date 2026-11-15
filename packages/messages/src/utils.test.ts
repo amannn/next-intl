@@ -1,4 +1,4 @@
-import {describe, expect, it, vi} from 'vitest';
+import {describe, expect, it, vi} from 'vite-plus/test';
 import {setNestedProperty, warnAboutMissingReferences} from './utils.js';
 
 describe('warnAboutMissingReferences', () => {
