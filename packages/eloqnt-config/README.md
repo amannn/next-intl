@@ -15,4 +15,4 @@ export default defineCodec(() => ({
 }));
 ```
 
-See the [docs](https://cli.eloqnt.dev/docs/formats/configuration) for details.
+See the [docs](https://cli.eloqnt.dev/docs/formats/custom) for details.
