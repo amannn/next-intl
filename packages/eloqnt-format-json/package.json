@@ -1,6 +1,6 @@
 {
   "name": "@eloqnt/format-json",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "JSON messages support for eloqnt",
   "homepage": "https://cli.eloqnt.dev/docs/configuration",
   "license": "MIT",

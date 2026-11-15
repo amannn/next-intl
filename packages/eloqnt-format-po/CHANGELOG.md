@@ -1,5 +1,13 @@
 # @eloqnt/format-po
 
+## 0.1.2
+
+### Patch Changes
+
+- Publish from the public [next-intl repository](https://github.com/amannn/next-intl), with provenance. ([#2484](https://github.com/amannn/next-intl/pull/2484), [`e06f4ee`](https://github.com/amannn/next-intl/commit/e06f4ee49e29ef033de3a044305b6c661291a2fe), [@amannn](https://github.com/amannn))
+- Updated dependencies [[`e06f4ee`](https://github.com/amannn/next-intl/commit/e06f4ee49e29ef033de3a044305b6c661291a2fe)]:
+  - @eloqnt/config@0.1.2
+
 ## 0.1.1
 
 ### Patch Changes

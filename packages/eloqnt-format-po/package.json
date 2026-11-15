@@ -1,6 +1,6 @@
 {
   "name": "@eloqnt/format-po",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Gettext-style PO support for eloqnt",
   "homepage": "https://cli.eloqnt.dev/docs/formats/po",
   "license": "MIT",
