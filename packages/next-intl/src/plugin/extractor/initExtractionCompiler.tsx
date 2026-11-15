@@ -1,4 +1,4 @@
-import {ExtractionCompiler} from '@eloqnt/extractor/_internal';
+import ExtractionCompiler from '../../extractor/ExtractionCompiler.js';
 import type {ExtractorConfig} from '../../extractor/types.js';
 import {hasLocalesToExtract} from '../../extractor/utils.js';
 import {isDevelopment, isNextBuild} from '../config.js';

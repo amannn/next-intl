@@ -1,4 +1,4 @@
-import {defineCodec} from '@eloqnt/config';
+import {defineCodec} from '../../ExtractorCodec.js';
 
 type StoredMessage = {message: string; description?: Array<string>};
 
