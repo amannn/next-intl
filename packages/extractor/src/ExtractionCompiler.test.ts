@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
-import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {beforeEach, describe, expect, it, vi} from 'vite-plus/test';
 import ExtractionCompiler from './ExtractionCompiler.js';
 
 const filesystem: {
@@ -2148,10 +2148,7 @@ describe('custom format', () => {
         },
         messages: {
           format: {
-            codec: path.resolve(
-              __dirname,
-              'format/codecs/fixtures/POCodecLegacy.tsx'
-            ),
+            codec: path.resolve(__dirname, 'fixtures/POCodecLegacy.ts'),
             extension: '.po'
           },
           path: ['./messages']
@@ -2244,10 +2241,7 @@ describe('custom format', () => {
         },
         messages: {
           format: {
-            codec: path.resolve(
-              __dirname,
-              'format/codecs/fixtures/JSONCodecStructured.tsx'
-            ),
+            codec: path.resolve(__dirname, 'fixtures/JSONCodecStructured.ts'),
             extension: '.json'
           },
           path: ['./messages']

@@ -1,0 +1,58 @@
+{
+  "name": "@eloqnt/messages",
+  "version": "0.0.0",
+  "description": "Reads and writes messages files for eloqnt and next-intl (internal)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amannn/next-intl.git",
+    "directory": "packages/messages"
+  },
+  "files": [
+    "dist",
+    "!dist/**/*.map",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "type": "module",
+  "exports": {
+    "./_internal": {
+      "types": "./dist/_internal.d.mts",
+      "import": "./dist/_internal.mjs",
+      "default": "./dist/_internal.mjs"
+    },
+    "./_internal-codec": {
+      "types": "./dist/_internal-codec.d.mts",
+      "import": "./dist/_internal-codec.mjs",
+      "default": "./dist/_internal-codec.mjs"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "vp pack --minify src/_internal.ts src/_internal-codec.ts",
+    "lint": "pnpm run lint:source && pnpm run lint:package",
+    "lint:source": "eslint src && tsc --noEmit && pnpm run lint:prettier",
+    "lint:package": "publint && attw --pack --profile esm-only",
+    "lint:prettier": "prettier src --check",
+    "prepublishOnly": "turbo build",
+    "test": "vp test"
+  },
+  "dependencies": {
+    "@eloqnt/config": "workspace:^",
+    "@eloqnt/format-json": "workspace:^",
+    "@eloqnt/format-po": "workspace:^"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.5",
+    "@types/node": "^22.0.0",
+    "eslint": "9.11.1",
+    "eslint-config-molindo": "^8.0.0",
+    "prettier": "^3.9.10",
+    "publint": "^0.3.25",
+    "typescript": "^6.0.3",
+    "vite-plus": "1.0.0"
+  },
+  "prettier": "eslint-config-molindo/.prettierrc.json"
+}
