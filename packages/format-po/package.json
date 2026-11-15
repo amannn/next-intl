@@ -1,13 +1,13 @@
 {
-  "name": "@eloqnt/format-json",
-  "version": "0.1.1",
-  "description": "JSON messages support for eloqnt",
-  "homepage": "https://cli.eloqnt.dev/docs/configuration",
+  "name": "@eloqnt/format-po",
+  "version": "0.1.2",
+  "description": "Gettext-style PO support for eloqnt",
+  "homepage": "https://cli.eloqnt.dev/docs/formats/po",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/amannn/next-intl.git",
-    "directory": "packages/eloqnt-format-json"
+    "directory": "packages/format-po"
   },
   "files": [
     "dist",
@@ -36,7 +36,8 @@
     "prepublishOnly": "turbo build"
   },
   "dependencies": {
-    "@eloqnt/config": "workspace:^"
+    "@eloqnt/config": "workspace:^",
+    "po-parser": "^2.2.0"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",

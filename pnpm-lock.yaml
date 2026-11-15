@@ -921,7 +921,7 @@ importers:
         specifier: ^6.4.6
         version: 6.4.6(@types/node@20.19.43)(jiti@2.7.0)(lightningcss@1.33.0)(terser@5.45.0)(yaml@2.9.0)
 
-  packages/eloqnt-config:
+  packages/config:
     devDependencies:
       '@arethetypeswrong/cli':
         specifier: ^0.18.5
@@ -948,11 +948,11 @@ importers:
         specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@edge-runtime/vm@5.0.0)(@opentelemetry/api@1.9.0)(@types/node@22.20.5)(@vitest/ui@5.0.1)(esbuild@0.28.2)(jiti@2.7.0)(jsdom@20.0.3(supports-color@8.1.1))(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(yaml@2.9.0)
 
-  packages/eloqnt-format-json:
+  packages/format-json:
     dependencies:
       '@eloqnt/config':
         specifier: workspace:^
-        version: link:../eloqnt-config
+        version: link:../config
     devDependencies:
       '@arethetypeswrong/cli':
         specifier: ^0.18.5
@@ -979,11 +979,11 @@ importers:
         specifier: 1.0.0
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@edge-runtime/vm@5.0.0)(@opentelemetry/api@1.9.0)(@types/node@22.20.5)(@vitest/ui@5.0.1)(esbuild@0.28.2)(jiti@2.7.0)(jsdom@20.0.3(supports-color@8.1.1))(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(yaml@2.9.0)
 
-  packages/eloqnt-format-po:
+  packages/format-po:
     dependencies:
       '@eloqnt/config':
         specifier: workspace:^
-        version: link:../eloqnt-config
+        version: link:../config
       po-parser:
         specifier: ^2.2.0
         version: 2.2.0
@@ -1063,13 +1063,13 @@ importers:
     dependencies:
       '@eloqnt/config':
         specifier: workspace:^
-        version: link:../eloqnt-config
+        version: link:../config
       '@eloqnt/format-json':
         specifier: workspace:^
-        version: link:../eloqnt-format-json
+        version: link:../format-json
       '@eloqnt/format-po':
         specifier: workspace:^
-        version: link:../eloqnt-format-po
+        version: link:../format-po
       '@formatjs/intl-localematcher':
         specifier: ^0.8.1
         version: 0.8.1

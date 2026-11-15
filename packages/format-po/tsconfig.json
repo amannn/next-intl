@@ -12,7 +12,7 @@
     "noEmit": true,
     "noUncheckedIndexedAccess": true,
     "paths": {
-      "@eloqnt/config": ["../eloqnt-config/src/index.ts"]
+      "@eloqnt/config": ["../config/src/index.ts"]
     }
   }
 }
