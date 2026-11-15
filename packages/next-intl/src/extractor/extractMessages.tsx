@@ -1,8 +1,6 @@
-import {
-  ExtractionCompiler,
-  MessageExtractor
-} from '@eloqnt/extractor/_internal';
 import {warn} from '../plugin/utils.js';
+import ExtractionCompiler from './ExtractionCompiler.js';
+import MessageExtractor from './extractor/MessageExtractor.js';
 import normalizeExtractorConfig from './normalizeExtractorConfig.js';
 import type {ExtractorConfigInput} from './types.js';
 import {getDefaultProjectRoot, hasLocalesToExtract} from './utils.js';

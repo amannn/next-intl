@@ -1,25 +1,25 @@
 import fs from 'fs/promises';
 import path from 'path';
-import {
-  CatalogLocales,
-  CatalogPersister,
-  type ExtractorCodec,
-  type ExtractorMessage,
-  type Locale,
-  getFormatExtension,
-  resolveCodec
-} from '@eloqnt/messages/_internal';
 import type MessageExtractor from '../extractor/MessageExtractor.js';
+import type ExtractorCodec from '../format/ExtractorCodec.js';
+import {getFormatExtension, resolveCodec} from '../format/index.js';
 import SourceFileScanner from '../source/SourceFileScanner.js';
 import SourceFileWatcher, {
   type SourceFileWatcherEvent
 } from '../source/SourceFileWatcher.js';
-import type {ExtractorConfig, SourceExtractedMessage} from '../types.js';
+import type {
+  ExtractorConfig,
+  ExtractorMessage,
+  Locale,
+  SourceExtractedMessage
+} from '../types.js';
 import {
   compareReferences,
   getDefaultProjectRoot,
   localeCompare
 } from '../utils.js';
+import CatalogLocales from './CatalogLocales.js';
+import CatalogPersister from './CatalogPersister.js';
 import SaveScheduler from './SaveScheduler.js';
 
 export default class CatalogManager implements Disposable {
