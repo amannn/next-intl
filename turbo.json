@@ -12,7 +12,13 @@
       ]
     },
     "next-intl#build": {
-      "dependsOn": ["use-intl#build", "tools#build"],
+      "dependsOn": [
+        "use-intl#build",
+        "tools#build",
+        "@eloqnt/config#build",
+        "@eloqnt/format-json#build",
+        "@eloqnt/format-po#build"
+      ],
       "outputs": ["dist/**"]
     },
     "lint": {

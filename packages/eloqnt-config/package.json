@@ -1,0 +1,48 @@
+{
+  "name": "@eloqnt/config",
+  "version": "0.1.1",
+  "description": "Shared configuration for eloqnt",
+  "homepage": "https://cli.eloqnt.dev/docs/configuration",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amannn/next-intl.git",
+    "directory": "packages/eloqnt-config"
+  },
+  "files": [
+    "dist",
+    "!dist/**/*.map",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs",
+      "default": "./dist/index.mjs"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "vp pack --minify src/index.ts",
+    "lint": "pnpm run lint:source && pnpm run lint:package",
+    "lint:source": "eslint src && tsc --noEmit && pnpm run lint:prettier",
+    "lint:package": "publint && attw --pack --profile esm-only",
+    "lint:prettier": "prettier src --check",
+    "prepublishOnly": "turbo build"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.5",
+    "@types/node": "^22.0.0",
+    "eslint": "9.11.1",
+    "eslint-config-molindo": "^8.0.0",
+    "prettier": "^3.9.10",
+    "publint": "^0.3.25",
+    "typescript": "^6.0.3",
+    "vite-plus": "1.0.0"
+  },
+  "prettier": "eslint-config-molindo/.prettierrc.json"
+}
