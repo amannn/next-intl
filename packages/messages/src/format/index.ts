@@ -1,7 +1,7 @@
 import {createRequire} from 'module';
 import path from 'path';
 import {pathToFileURL} from 'url';
-import {throwError} from '../logging.js';
+import UserError from '../UserError.js';
 import type ExtractorCodec from './ExtractorCodec.js';
 import type {BuiltInMessagesFormat, MessagesFormat} from './types.js';
 
@@ -54,7 +54,7 @@ export async function resolveCodec(
           format.codec
         );
       } catch (error) {
-        throwError(
+        throw new UserError(
           `Could not resolve the codec package "${format.codec}". Is it installed?\n${error}`
         );
       }
@@ -64,13 +64,15 @@ export async function resolveCodec(
     try {
       module = await import(pathToFileURL(resolvedPath).href);
     } catch (error) {
-      throwError(`Could not load codec from "${resolvedPath}".\n${error}`);
+      throw new UserError(
+        `Could not load codec from "${resolvedPath}".\n${error}`
+      );
     }
 
     const factory = module.default;
 
     if (!factory || typeof factory !== 'function') {
-      throwError(
+      throw new UserError(
         `Codec at "${resolvedPath}" must have a default export returned from \`defineCodec\`.`
       );
     }

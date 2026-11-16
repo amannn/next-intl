@@ -1,4 +1,3 @@
-import {warn} from './logging.js';
 import type {ExtractorMessage} from './types.js';
 
 const FORBIDDEN_OBJECT_KEYS = new Set([
@@ -41,7 +40,8 @@ export function setNestedProperty(
 }
 
 export function warnAboutMissingReferences(
-  messages: Array<ExtractorMessage>
+  messages: Array<ExtractorMessage>,
+  warn: (message: string) => void
 ): void {
   const warnedIds = new Set<string>();
   for (const message of messages) {

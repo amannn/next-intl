@@ -3,24 +3,26 @@ import {setNestedProperty, warnAboutMissingReferences} from './utils.js';
 
 describe('warnAboutMissingReferences', () => {
   it('warns once per message id without a reference', () => {
-    const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const warn = vi.fn();
 
-    warnAboutMissingReferences([
-      {
-        description: [],
-        id: 'a',
-        message: 'a',
-        references: [{path: 'components/A.tsx', line: 1}]
-      },
-      {description: [], id: 'b', message: 'b', references: []},
-      {description: [], id: 'b', message: 'b', references: []}
-    ]);
+    warnAboutMissingReferences(
+      [
+        {
+          description: [],
+          id: 'a',
+          message: 'a',
+          references: [{path: 'components/A.tsx', line: 1}]
+        },
+        {description: [], id: 'b', message: 'b', references: []},
+        {description: [], id: 'b', message: 'b', references: []}
+      ],
+      warn
+    );
 
-    expect(consoleSpy).toHaveBeenCalledTimes(1);
-    expect(consoleSpy.mock.calls[0][0]).toContain(
+    expect(warn).toHaveBeenCalledTimes(1);
+    expect(warn).toHaveBeenCalledWith(
       'Missing file reference for extracted message: b'
     );
-    consoleSpy.mockRestore();
   });
 });
 

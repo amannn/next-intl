@@ -2,7 +2,8 @@ import {ExtractionCompiler} from '@eloqnt/extractor/_internal';
 import type {ExtractorConfig} from '../../extractor/types.js';
 import {hasLocalesToExtract} from '../../extractor/utils.js';
 import {isDevelopment, isNextBuild} from '../config.js';
-import {once} from '../utils.js';
+import prefixUserError from '../prefixUserError.js';
+import {once, warn} from '../utils.js';
 import SourceFileWatcher from './SourceFileWatcher.js';
 
 // Single compiler instance, initialized once per process
@@ -36,15 +37,18 @@ export default function initExtractionCompiler(
   runOnce(() => {
     compiler = new ExtractionCompiler(extractorConfig, {
       isDevelopment,
-      projectRoot: process.cwd()
+      projectRoot: process.cwd(),
+      warn
     });
 
     if (isDevelopment) {
       // Subscribing before the initial scan, so changes during the scan are
       // picked up too (the compiler processes them once the scan is done)
-      watcher = new SourceFileWatcher(
-        compiler.getSrcPaths(),
-        compiler.update.bind(compiler)
+      const target = compiler;
+      watcher = new SourceFileWatcher(target.getSrcPaths(), (events) =>
+        target.update(events).catch((error) => {
+          throw prefixUserError(error);
+        })
       );
       void watcher.start();
     }
@@ -55,7 +59,9 @@ export default function initExtractionCompiler(
     // The result is ok though, as if we encounter untranslated messages,
     // we'll simply add empty messages to the catalog. So for actually
     // running the app, there is no difference.
-    compiler.extractAll();
+    compiler.extractAll().catch((error) => {
+      throw prefixUserError(error);
+    });
 
     function cleanup() {
       if (watcher) {

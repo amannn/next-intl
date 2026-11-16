@@ -10,3 +10,4 @@ export type {
   Locale
 } from './types.js';
 export {setNestedProperty} from './utils.js';
+export {default as UserError} from './UserError.js';

@@ -14,6 +14,7 @@ export default class ExtractionCompiler implements Disposable {
       projectRoot?: string;
       saveDebounceMs?: number;
       sourceMap?: boolean;
+      warn?(message: string): void;
     } = {}
   ) {
     const extractor = opts.extractor ?? new MessageExtractor(opts);

@@ -2,6 +2,7 @@ import {
   ExtractionCompiler,
   MessageExtractor
 } from '@eloqnt/extractor/_internal';
+import prefixUserError from '../plugin/prefixUserError.js';
 import {warn} from '../plugin/utils.js';
 import normalizeExtractorConfig from './normalizeExtractorConfig.js';
 import type {ExtractorConfigInput} from './types.js';
@@ -19,7 +20,8 @@ export default async function extractMessages(params: ExtractorConfigInput) {
     extractor: new MessageExtractor({
       isDevelopment: false,
       projectRoot: getDefaultProjectRoot()
-    })
+    }),
+    warn
   });
 
   // Kept from when the compiler registered these itself, so that
@@ -29,5 +31,9 @@ export default async function extractMessages(params: ExtractorConfigInput) {
   process.on('SIGINT', cleanup);
   process.on('SIGTERM', cleanup);
 
-  await compiler.extractAll();
+  try {
+    await compiler.extractAll();
+  } catch (error) {
+    throw prefixUserError(error);
+  }
 }

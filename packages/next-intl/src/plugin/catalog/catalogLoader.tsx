@@ -8,6 +8,7 @@ import {
 } from '@eloqnt/messages/_internal-codec';
 import compile from 'icu-minify/compile';
 import type {CatalogLoaderConfig} from '../../extractor/types.js';
+import prefixUserError from '../prefixUserError.js';
 import type {TurbopackLoaderContext} from '../types.js';
 
 // The module scope is safe for some caching, but Next.js can
@@ -83,7 +84,7 @@ export default function catalogLoader(
 
       callback(null, result);
     })
-    .catch(callback);
+    .catch((error) => callback(prefixUserError(error) as Error));
 }
 
 function warnIfToJSONStringProvided(codec: ExtractorCodec) {

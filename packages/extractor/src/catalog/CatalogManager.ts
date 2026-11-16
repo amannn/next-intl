@@ -78,6 +78,7 @@ export default class CatalogManager implements Disposable {
   private saveScheduler: SaveScheduler<void>;
   private projectRoot: string;
   private isDevelopment: boolean;
+  private warn?: (message: string) => void;
 
   // Cached instances
   private persister?: CatalogPersister;
@@ -99,12 +100,14 @@ export default class CatalogManager implements Disposable {
       projectRoot?: string;
       saveDebounceMs?: number;
       sourceMap?: boolean;
+      warn?(message: string): void;
     }
   ) {
     this.config = config;
     this.saveScheduler = new SaveScheduler<void>(opts.saveDebounceMs ?? 50);
     this.projectRoot = opts.projectRoot ?? getDefaultProjectRoot();
     this.isDevelopment = opts.isDevelopment ?? false;
+    this.warn = opts.warn;
 
     this.extractor = opts.extractor;
   }
@@ -127,7 +130,8 @@ export default class CatalogManager implements Disposable {
         messagesPath: this.config.extract.path,
         codec: await this.getCodec(),
         extension: getFormatExtension(this.config.messages.format),
-        sourceLocale: this.config.extract.sourceLocale
+        sourceLocale: this.config.extract.sourceLocale,
+        warn: this.warn
       });
       return this.persister;
     }

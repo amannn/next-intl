@@ -1,4 +1,4 @@
-function formatMessage(message: string) {
+export function formatMessage(message: string) {
   return `\n[next-intl] ${message}\n`;
 }
 
