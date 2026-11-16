@@ -1,5 +1,6 @@
 import CatalogManager from './catalog/CatalogManager.js';
 import MessageExtractor from './extractor/MessageExtractor.js';
+import type {SourceFileEvent} from './source/SourceFileEvents.js';
 import type {ExtractorConfig} from './types.js';
 
 export default class ExtractionCompiler implements Disposable {
@@ -21,7 +22,6 @@ export default class ExtractionCompiler implements Disposable {
       extractor
     });
     this[Symbol.dispose] = this[Symbol.dispose].bind(this);
-    this.installExitHandlers();
   }
 
   public async extractAll() {
@@ -31,22 +31,20 @@ export default class ExtractionCompiler implements Disposable {
     await this.manager.save();
   }
 
+  /** Absolute paths of the directories to watch for `update`. */
+  public getSrcPaths() {
+    return this.manager.getSrcPaths();
+  }
+
+  /**
+   * Re-extracts the files that changed. Events that arrive during the initial
+   * `extractAll` are processed once it's done.
+   */
+  public update(events: Array<SourceFileEvent>) {
+    return this.manager.update(events);
+  }
+
   public [Symbol.dispose](): void {
-    this.uninstallExitHandlers();
     this.manager[Symbol.dispose]();
-  }
-
-  private installExitHandlers() {
-    const cleanup = this[Symbol.dispose];
-    process.on('exit', cleanup);
-    process.on('SIGINT', cleanup);
-    process.on('SIGTERM', cleanup);
-  }
-
-  private uninstallExitHandlers() {
-    const cleanup = this[Symbol.dispose];
-    process.off('exit', cleanup);
-    process.off('SIGINT', cleanup);
-    process.off('SIGTERM', cleanup);
   }
 }

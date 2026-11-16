@@ -953,9 +953,6 @@ importers:
       '@eloqnt/messages':
         specifier: workspace:^
         version: link:../messages
-      '@parcel/watcher':
-        specifier: ^2.4.1
-        version: 2.5.4
       '@swc/core':
         specifier: ~1.16.0
         version: 1.16.0(@swc/helpers@0.5.23)

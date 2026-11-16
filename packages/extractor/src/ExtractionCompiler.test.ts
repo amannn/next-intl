@@ -1,7 +1,27 @@
 import fs from 'fs/promises';
 import path from 'path';
 import {beforeEach, describe, expect, it, vi} from 'vite-plus/test';
-import ExtractionCompiler from './ExtractionCompiler.js';
+import BaseExtractionCompiler from './ExtractionCompiler.js';
+
+// Stands in for the file watcher of the consumer (e.g. next-intl), which
+// forwards watcher events to `update`
+class ExtractionCompiler extends BaseExtractionCompiler {
+  public constructor(
+    ...args: ConstructorParameters<typeof BaseExtractionCompiler>
+  ) {
+    super(...args);
+    if (args[1]?.isDevelopment) {
+      for (const srcPath of this.getSrcPaths()) {
+        watcherCallbacks.set(srcPath, (err, events) => this.update(events));
+      }
+    }
+  }
+
+  public [Symbol.dispose](): void {
+    watcherCallbacks.clear();
+    super[Symbol.dispose]();
+  }
+}
 
 const filesystem: {
   project: {
@@ -28,8 +48,7 @@ beforeEach(() => {
   watchCallbacks.clear();
   mockWatchers.clear();
   readFileInterceptors.clear();
-  parcelWatcherCallbacks.clear();
-  parcelWatcherSubscriptions.clear();
+  watcherCallbacks.clear();
   vi.clearAllMocks();
 });
 
@@ -1695,7 +1714,7 @@ msgstr ""
 
     using compiler = createCompiler();
     await vi.waitFor(() =>
-      expect(parcelWatcherCallbacks.has('/project/src')).toBe(true)
+      expect(watcherCallbacks.has('/project/src')).toBe(true)
     );
 
     const ioError = new Error('EACCES: permission denied');
@@ -1873,7 +1892,7 @@ msgstr "Hallo!"`
       delete (filesystem.project.src as any).components;
       fileTimestamps.delete('/project/src/components/Button.tsx');
 
-      const callback = parcelWatcherCallbacks.get('/project/src')!;
+      const callback = watcherCallbacks.get('/project/src')!;
       await Promise.resolve(
         callback(null, [{type: 'delete', path: '/project/src/components'}])
       );
@@ -1932,7 +1951,7 @@ msgstr "Hallo!"`
       delete (filesystem.project.src as any).old;
       fileTimestamps.delete('/project/src/old/Button.tsx');
 
-      const callback = parcelWatcherCallbacks.get('/project/src')!;
+      const callback = watcherCallbacks.get('/project/src')!;
       await Promise.resolve(
         callback(null, [
           {type: 'create', path: '/project/src/new'},
@@ -2446,12 +2465,13 @@ const watchCallbacks: Map<string, (event: string, filename: string) => void> =
 const mockWatchers: Map<string, {close(): void}> = new Map();
 const readFileInterceptors = new Map<string, () => Promise<void>>();
 const pendingWrites = new Map<string, string>();
-const parcelWatcherCallbacks: Map<
+const watcherCallbacks: Map<
   string,
-  (err: Error | null, events: Array<{type: string; path: string}>) => void
+  (
+    err: Error | null,
+    events: Array<{type: 'create' | 'update' | 'delete'; path: string}>
+  ) => Promise<void>
 > = new Map();
-const parcelWatcherSubscriptions: Map<string, {unsubscribe(): Promise<void>}> =
-  new Map();
 
 function simulateFileEvent(
   dirPath: string,
@@ -2517,7 +2537,7 @@ async function simulateSourceFileCreate(
   ];
 
   for (const testPath of pathsToTry) {
-    const callback = parcelWatcherCallbacks.get(testPath);
+    const callback = watcherCallbacks.get(testPath);
     if (callback) {
       await Promise.resolve(
         callback(null, [{type: 'create', path: normalizedPath}])
@@ -2547,7 +2567,7 @@ async function simulateSourceFileUpdate(
   ];
 
   for (const testPath of pathsToTry) {
-    const callback = parcelWatcherCallbacks.get(testPath);
+    const callback = watcherCallbacks.get(testPath);
     if (callback) {
       await Promise.resolve(
         callback(null, [{type: 'update', path: normalizedPath}])
@@ -2587,7 +2607,7 @@ async function simulateSourceFileDelete(filePath: string): Promise<void> {
   ];
 
   for (const testPath of pathsToTry) {
-    const callback = parcelWatcherCallbacks.get(testPath);
+    const callback = watcherCallbacks.get(testPath);
     if (callback) {
       await Promise.resolve(
         callback(null, [{type: 'delete', path: normalizedPath}])
@@ -2596,49 +2616,6 @@ async function simulateSourceFileDelete(filePath: string): Promise<void> {
     }
   }
 }
-
-vi.mock('@parcel/watcher', () => ({
-  subscribe: vi.fn(
-    async (
-      rootPath: string,
-      callback: (
-        err: Error | null,
-        events: Array<{type: string; path: string}>
-      ) => void,
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      options?: {ignore?: Array<string>}
-    ) => {
-      // Store callback with exact path as provided (for test matching)
-      // Also store normalized variants for flexibility
-      parcelWatcherCallbacks.set(rootPath, callback);
-      const normalizedPath = path.resolve(rootPath);
-      if (normalizedPath !== rootPath) {
-        parcelWatcherCallbacks.set(normalizedPath, callback);
-      }
-      if (!rootPath.startsWith('/')) {
-        parcelWatcherCallbacks.set(
-          path.join(process.cwd(), rootPath),
-          callback
-        );
-      }
-
-      const subscription = {
-        unsubscribe: vi.fn(async () => {
-          parcelWatcherCallbacks.delete(rootPath);
-          if (normalizedPath !== rootPath) {
-            parcelWatcherCallbacks.delete(normalizedPath);
-          }
-          if (!rootPath.startsWith('/')) {
-            parcelWatcherCallbacks.delete(path.join(process.cwd(), rootPath));
-          }
-          parcelWatcherSubscriptions.delete(rootPath);
-        })
-      };
-      parcelWatcherSubscriptions.set(rootPath, subscription);
-      return subscription;
-    }
-  )
-}));
 
 vi.mock('fs', () => ({
   default: {

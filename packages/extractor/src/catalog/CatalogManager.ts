@@ -10,10 +10,12 @@ import {
   resolveCodec
 } from '@eloqnt/messages/_internal';
 import type MessageExtractor from '../extractor/MessageExtractor.js';
+import {
+  type SourceFileEvent,
+  expandDirectoryDeleteEvents,
+  normalizeEvents
+} from '../source/SourceFileEvents.js';
 import SourceFileScanner from '../source/SourceFileScanner.js';
-import SourceFileWatcher, {
-  type SourceFileWatcherEvent
-} from '../source/SourceFileWatcher.js';
 import type {ExtractorConfig, SourceExtractedMessage} from '../types.js';
 import {
   compareReferences,
@@ -82,7 +84,6 @@ export default class CatalogManager implements Disposable {
   private codec?: ExtractorCodec;
   private catalogLocales?: CatalogLocales;
   private extractor: MessageExtractor;
-  private sourceWatcher?: SourceFileWatcher;
 
   // Resolves when all catalogs are loaded
   private loadCatalogsPromise?: Promise<unknown>;
@@ -106,17 +107,6 @@ export default class CatalogManager implements Disposable {
     this.isDevelopment = opts.isDevelopment ?? false;
 
     this.extractor = opts.extractor;
-
-    if (this.isDevelopment) {
-      // We kick this off as early as possible, so we get notified about changes
-      // that happen during the initial project scan (while awaiting it to
-      // complete though)
-      this.sourceWatcher = new SourceFileWatcher(
-        this.getSrcPaths(),
-        this.handleFileEvents.bind(this)
-      );
-      void this.sourceWatcher.start();
-    }
   }
 
   private async getCodec(): Promise<ExtractorCodec> {
@@ -162,7 +152,7 @@ export default class CatalogManager implements Disposable {
     return this.getCatalogLocales().getTargetLocales();
   }
 
-  private getSrcPaths(): Array<string> {
+  public getSrcPaths(): Array<string> {
     return (
       Array.isArray(this.config.extract.srcPath)
         ? this.config.extract.srcPath
@@ -579,7 +569,12 @@ export default class CatalogManager implements Disposable {
     }
   };
 
-  private async handleFileEvents(events: Array<SourceFileWatcherEvent>) {
+  public async update(events: Array<SourceFileEvent>) {
+    const normalizedEvents = await normalizeEvents(events);
+    if (normalizedEvents.length === 0) {
+      return;
+    }
+
     if (this.loadCatalogsPromise) {
       await this.loadCatalogsPromise;
     }
@@ -590,11 +585,10 @@ export default class CatalogManager implements Disposable {
     }
 
     let changed = false;
-    const expandedEvents =
-      await this.sourceWatcher!.expandDirectoryDeleteEvents(
-        events,
-        Array.from(this.sourceMessagesByFile.keys())
-      );
+    const expandedEvents = expandDirectoryDeleteEvents(
+      normalizedEvents,
+      Array.from(this.sourceMessagesByFile.keys())
+    );
     // Stable file order keeps catalog ties independent of event timing.
     for (const event of expandedEvents.toSorted((a, b) =>
       localeCompare(a.path, b.path)
@@ -609,9 +603,6 @@ export default class CatalogManager implements Disposable {
   }
 
   public [Symbol.dispose](): void {
-    this.sourceWatcher?.stop();
-    this.sourceWatcher = undefined;
-
     this.saveScheduler[Symbol.dispose]();
     if (this.catalogLocales && this.isDevelopment) {
       this.catalogLocales.unsubscribeLocalesChange(this.onLocalesChange);

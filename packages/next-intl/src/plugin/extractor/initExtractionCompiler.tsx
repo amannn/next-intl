@@ -3,9 +3,11 @@ import type {ExtractorConfig} from '../../extractor/types.js';
 import {hasLocalesToExtract} from '../../extractor/utils.js';
 import {isDevelopment, isNextBuild} from '../config.js';
 import {once} from '../utils.js';
+import SourceFileWatcher from './SourceFileWatcher.js';
 
 // Single compiler instance, initialized once per process
 let compiler: ExtractionCompiler | undefined;
+let watcher: SourceFileWatcher | undefined;
 
 const runOnce = once('_NEXT_INTL_EXTRACT');
 
@@ -37,8 +39,17 @@ export default function initExtractionCompiler(
       projectRoot: process.cwd()
     });
 
+    if (isDevelopment) {
+      // Subscribing before the initial scan, so changes during the scan are
+      // picked up too (the compiler processes them once the scan is done)
+      watcher = new SourceFileWatcher(
+        compiler.getSrcPaths(),
+        compiler.update.bind(compiler)
+      );
+      void watcher.start();
+    }
+
     // Fire-and-forget: Start extraction, don't block config return.
-    // In dev mode, this also starts the file watcher.
     // In prod, ideally we would wait until the extraction is complete,
     // but we can't `await` anywhere (at least for Turbopack).
     // The result is ok though, as if we encounter untranslated messages,
@@ -47,6 +58,10 @@ export default function initExtractionCompiler(
     compiler.extractAll();
 
     function cleanup() {
+      if (watcher) {
+        watcher[Symbol.dispose]();
+        watcher = undefined;
+      }
       if (compiler) {
         compiler[Symbol.dispose]();
         compiler = undefined;

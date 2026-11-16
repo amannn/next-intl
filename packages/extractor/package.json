@@ -41,7 +41,6 @@
   },
   "dependencies": {
     "@eloqnt/messages": "workspace:^",
-    "@parcel/watcher": "^2.4.1",
     "@swc/core": "~1.16.0",
     "next-intl-swc-plugin-extractor": "workspace:*"
   },
