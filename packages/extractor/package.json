@@ -35,7 +35,7 @@
     "prepublishOnly": "turbo build"
   },
   "dependencies": {
-    "@eloqnt/messages": "workspace:^",
+    "@eloqnt/messages": "workspace:~",
     "@swc/core": "~1.16.0",
     "next-intl-swc-plugin-extractor": "workspace:*"
   },

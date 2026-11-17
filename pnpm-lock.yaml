@@ -951,7 +951,7 @@ importers:
   packages/extractor:
     dependencies:
       '@eloqnt/messages':
-        specifier: workspace:^
+        specifier: workspace:~
         version: link:../messages
       '@swc/core':
         specifier: ~1.16.0
@@ -1099,13 +1099,13 @@ importers:
   packages/messages:
     dependencies:
       '@eloqnt/config':
-        specifier: workspace:^
+        specifier: workspace:~
         version: link:../config
       '@eloqnt/format-json':
-        specifier: workspace:^
+        specifier: workspace:~
         version: link:../format-json
       '@eloqnt/format-po':
-        specifier: workspace:^
+        specifier: workspace:~
         version: link:../format-po
     devDependencies:
       '@arethetypeswrong/cli':
@@ -1136,19 +1136,19 @@ importers:
   packages/next-intl:
     dependencies:
       '@eloqnt/config':
-        specifier: workspace:^
+        specifier: workspace:~
         version: link:../config
       '@eloqnt/extractor':
-        specifier: workspace:^
+        specifier: workspace:~
         version: link:../extractor
       '@eloqnt/format-json':
-        specifier: workspace:^
+        specifier: workspace:~
         version: link:../format-json
       '@eloqnt/format-po':
-        specifier: workspace:^
+        specifier: workspace:~
         version: link:../format-po
       '@eloqnt/messages':
-        specifier: workspace:^
+        specifier: workspace:~
         version: link:../messages
       '@formatjs/intl-localematcher':
         specifier: ^0.8.1

@@ -40,9 +40,9 @@
     "test": "vp test"
   },
   "dependencies": {
-    "@eloqnt/config": "workspace:^",
-    "@eloqnt/format-json": "workspace:^",
-    "@eloqnt/format-po": "workspace:^"
+    "@eloqnt/config": "workspace:~",
+    "@eloqnt/format-json": "workspace:~",
+    "@eloqnt/format-po": "workspace:~"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
