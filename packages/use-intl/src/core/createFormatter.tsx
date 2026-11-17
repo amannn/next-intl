@@ -231,16 +231,16 @@ export default function createFormatter(props: Props) {
   }
 
   function number(
-    value: number | bigint,
+    value: number | bigint | string,
     options?: NumberFormatOptions
   ): string;
   function number(
-    value: number | bigint,
+    value: number | bigint | string,
     format?: FormatNames['number'],
     options?: NumberFormatOptions
   ): string;
   function number(
-    value: number | bigint,
+    value: number | bigint | string,
     formatOrOptions?: FormatNames['number'] | NumberFormatOptions,
     overrides?: NumberFormatOptions
   ) {
@@ -248,7 +248,14 @@ export default function createFormatter(props: Props) {
       formatOrOptions,
       overrides,
       formats?.number,
-      (options) => formatters.getNumberFormat(locale, options).format(value),
+      (options) => {
+        const numberFormat = formatters.getNumberFormat(locale, options);
+        // For strings, Intl's type accepts numeric literals, not general strings.
+        const format = numberFormat.format as (
+          value: number | bigint | string
+        ) => string;
+        return format(value);
+      },
       () => String(value)
     );
   }

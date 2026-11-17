@@ -69,6 +69,36 @@ describe('number', () => {
     );
   });
 
+  it('formats a number string without losing integer precision', () => {
+    const formatter = createFormatter({
+      locale: 'en',
+      timeZone: 'Europe/Berlin'
+    });
+    expect(formatter.number('9007199254740993')).toBe('9,007,199,254,740,993');
+  });
+
+  it('formats a very large number string', () => {
+    const formatter = createFormatter({
+      locale: 'en',
+      timeZone: 'Europe/Berlin'
+    });
+    expect(formatter.number('123456789012345678901234567890')).toBe(
+      '123,456,789,012,345,678,901,234,567,890'
+    );
+  });
+
+  it('formats a decimal number string with options', () => {
+    const formatter = createFormatter({
+      locale: 'en',
+      timeZone: 'Europe/Berlin'
+    });
+    expect(
+      formatter.number('0.1234567890123456789', {
+        maximumFractionDigits: 20
+      })
+    ).toBe('0.1234567890123456789');
+  });
+
   it('formats a number as currency', () => {
     const formatter = createFormatter({
       locale: 'en',
@@ -109,6 +139,25 @@ describe('number', () => {
     expect(formatter.number(123456.789, 'price', {currency: 'EUR'})).toBe(
       '€123,456.79'
     );
+  });
+
+  it('formats a precise decimal string with a named format', () => {
+    const formatter = createFormatter({
+      locale: 'en',
+      timeZone: 'Europe/Berlin',
+      formats: {
+        number: {
+          price: {
+            style: 'currency',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          }
+        }
+      }
+    });
+    expect(
+      formatter.number('9007199254740993.12', 'price', {currency: 'EUR'})
+    ).toBe('€9,007,199,254,740,993.12');
   });
 });
 
