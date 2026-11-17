@@ -1,7 +1,7 @@
 import fs from 'fs';
 import fsPromises from 'fs/promises';
 import path from 'path';
-import type {Locale} from '../types.js';
+import {type Locale, getTargetLocales} from '@eloqnt/messages/_internal';
 
 type LocaleChangeCallback = (params: {
   added: Array<Locale>;
@@ -32,30 +32,17 @@ export default class CatalogLocales {
   }
 
   public async getTargetLocales(): Promise<Array<Locale>> {
-    if (this.targetLocales) {
-      return this.targetLocales;
-    }
-
-    if (this.locales === 'infer') {
-      this.targetLocales = await this.readTargetLocales();
-    } else {
-      this.targetLocales = this.locales.filter(
-        (locale) => locale !== this.sourceLocale
-      );
-    }
+    this.targetLocales ??= await this.readTargetLocales();
     return this.targetLocales;
   }
 
-  private async readTargetLocales(): Promise<Array<Locale>> {
-    try {
-      const files = await fsPromises.readdir(this.messagesDir);
-      return files
-        .filter((file) => file.endsWith(this.extension))
-        .map((file) => path.basename(file, this.extension))
-        .filter((locale) => locale !== this.sourceLocale);
-    } catch {
-      return [];
-    }
+  private readTargetLocales(): Promise<Array<Locale>> {
+    return getTargetLocales({
+      messagesDir: this.messagesDir,
+      extension: this.extension,
+      locales: this.locales,
+      sourceLocale: this.sourceLocale
+    });
   }
 
   public subscribeLocalesChange(callback: LocaleChangeCallback): void {

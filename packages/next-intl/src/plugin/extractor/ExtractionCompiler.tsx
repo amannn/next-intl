@@ -1,25 +1,25 @@
-import CatalogManager from './catalog/CatalogManager.js';
-import MessageExtractor from './extractor/MessageExtractor.js';
-import type {SourceFileEvent} from './source/SourceFileEvents.js';
-import type {ExtractorConfig} from './types.js';
+import {
+  type ExtractorConfig,
+  MessageExtractor
+} from '@eloqnt/extractor/_internal';
+import CatalogManager from './CatalogManager.js';
+import type {SourceFileEvent} from './SourceFileEvents.js';
 
+/** Extraction for `next dev`, see `CatalogManager`. */
 export default class ExtractionCompiler implements Disposable {
   private manager: CatalogManager;
 
   public constructor(
     config: ExtractorConfig,
     opts: {
-      extractor?: MessageExtractor;
-      isDevelopment?: boolean;
-      projectRoot?: string;
+      projectRoot: string;
       saveDebounceMs?: number;
       warn?(message: string): void;
-    } = {}
+    }
   ) {
-    const extractor = opts.extractor ?? new MessageExtractor(opts);
     this.manager = new CatalogManager(config, {
       ...opts,
-      extractor
+      extractor: new MessageExtractor({projectRoot: opts.projectRoot})
     });
     this[Symbol.dispose] = this[Symbol.dispose].bind(this);
   }

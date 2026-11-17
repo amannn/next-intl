@@ -1,9 +1,10 @@
-import {ExtractionCompiler} from '@eloqnt/extractor/_internal';
+import {extractMessages} from '@eloqnt/extractor/_internal';
 import type {ExtractorConfig} from '../../extractor/types.js';
 import {hasLocalesToExtract} from '../../extractor/utils.js';
 import {isDevelopment, isNextBuild} from '../config.js';
 import prefixUserError from '../prefixUserError.js';
 import {once, warn} from '../utils.js';
+import ExtractionCompiler from './ExtractionCompiler.js';
 import SourceFileWatcher from './SourceFileWatcher.js';
 
 // Single compiler instance, initialized once per process
@@ -35,22 +36,27 @@ export default function initExtractionCompiler(
   if (!shouldRun) return;
 
   runOnce(() => {
-    compiler = new ExtractionCompiler(extractorConfig, {
-      isDevelopment,
-      projectRoot: process.cwd(),
-      warn
-    });
-
+    const projectRoot = process.cwd();
+    let extraction: Promise<void>;
     if (isDevelopment) {
+      const target = new ExtractionCompiler(extractorConfig, {
+        projectRoot,
+        warn
+      });
+      compiler = target;
+
       // Subscribing before the initial scan, so changes during the scan are
       // picked up too (the compiler processes them once the scan is done)
-      const target = compiler;
       watcher = new SourceFileWatcher(target.getSrcPaths(), (events) =>
         target.update(events).catch((error) => {
           throw prefixUserError(error);
         })
       );
       void watcher.start();
+
+      extraction = target.extractAll();
+    } else {
+      extraction = extractMessages(extractorConfig, {projectRoot, warn});
     }
 
     // Fire-and-forget: Start extraction, don't block config return.
@@ -59,7 +65,7 @@ export default function initExtractionCompiler(
     // The result is ok though, as if we encounter untranslated messages,
     // we'll simply add empty messages to the catalog. So for actually
     // running the app, there is no difference.
-    compiler.extractAll().catch((error) => {
+    extraction.catch((error) => {
       throw prefixUserError(error);
     });
 

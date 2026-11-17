@@ -1,19 +1,17 @@
+// @vitest-environment node
 import fs from 'fs/promises';
 import path from 'path';
-import {beforeEach, describe, expect, it, vi} from 'vite-plus/test';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
 import BaseExtractionCompiler from './ExtractionCompiler.js';
 
-// Stands in for the file watcher of the consumer (e.g. next-intl), which
-// forwards watcher events to `update`
+// Stands in for `SourceFileWatcher`, which forwards watcher events to `update`
 class ExtractionCompiler extends BaseExtractionCompiler {
   public constructor(
     ...args: ConstructorParameters<typeof BaseExtractionCompiler>
   ) {
     super(...args);
-    if (args[1]?.isDevelopment) {
-      for (const srcPath of this.getSrcPaths()) {
-        watcherCallbacks.set(srcPath, (err, events) => this.update(events));
-      }
+    for (const srcPath of this.getSrcPaths()) {
+      watcherCallbacks.set(srcPath, (err, events) => this.update(events));
     }
   }
 
@@ -68,7 +66,6 @@ describe('json format', {timeout: 20_000}, () => {
         }
       },
       {
-        isDevelopment: true,
         projectRoot: '/project',
         saveDebounceMs: 0
       }
@@ -150,7 +147,6 @@ describe('json format', {timeout: 20_000}, () => {
         }
       },
       {
-        isDevelopment: true,
         projectRoot: '/project',
         saveDebounceMs: 0
       }
@@ -433,41 +429,6 @@ describe('json format', {timeout: 20_000}, () => {
       ]
     `);
   });
-  it('rejects a catalog that contains an array', async () => {
-    filesystem.project.src['Greeting.tsx'] = `
-      import {useExtracted} from 'next-intl';
-      function Greeting() {
-        const t = useExtracted();
-        return <div>{t('Hello!')}</div>;
-      }
-      `;
-    filesystem.project.messages = {
-      'en.json': '{"items": ["One", "Two"]}'
-    };
-
-    using compiler = new ExtractionCompiler(
-      {
-        extract: {
-          locales: 'infer',
-          path: './messages',
-          sourceLocale: 'en',
-          srcPath: './src'
-        },
-        messages: {
-          format: 'json',
-          path: ['./messages']
-        }
-      },
-      {
-        isDevelopment: false,
-        projectRoot: '/project',
-        saveDebounceMs: 0
-      }
-    );
-    await expect(compiler.extractAll()).rejects.toThrowError(
-      /resolved to an array/
-    );
-  });
 });
 
 describe('po format', {timeout: 20_000}, () => {
@@ -486,7 +447,6 @@ describe('po format', {timeout: 20_000}, () => {
         }
       },
       {
-        isDevelopment: true,
         projectRoot: '/project',
         saveDebounceMs: 0
       }
@@ -624,205 +584,6 @@ describe('po format', {timeout: 20_000}, () => {
       .at(-1)?.[1] as string;
     expect(lastSourceWrite).not.toContain('Zebra from earlier path');
     expect(lastSourceWrite).toContain('#. Apple from later path');
-  });
-
-  it('removes obsolete messages during build', async () => {
-    filesystem.project.messages = {
-      'en.po': `
-      msgid ""
-      msgstr ""
-      "Language: en\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Message-Key: msgctxt\\n"
-
-      #: src/component-a.tsx
-      msgctxt "OpKKos"
-      msgid "Hello!"
-      msgstr "Hello!"
-      `,
-      'de.po': `
-      msgid ""
-      msgstr ""
-      "Language: de\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Message-Key: msgctxt\\n"
-
-      #: src/component-a.tsx
-      msgctxt "OpKKos"
-      msgid "Hello!"
-      msgstr "Hallo!"
-      `
-    };
-    filesystem.project.src['component-b.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    function Component() {
-      const t = useExtracted();
-      return <div>{t('Howdy!')}</div>;
-    }
-    `;
-
-    using compiler = new ExtractionCompiler(
-      {
-        extract: {
-          locales: 'infer',
-          path: './messages',
-          sourceLocale: 'en',
-          srcPath: './src'
-        },
-        messages: {
-          format: 'po',
-          path: ['./messages']
-        }
-      },
-      {
-        isDevelopment: false,
-        projectRoot: '/project',
-        saveDebounceMs: 0
-      }
-    );
-
-    await compiler.extractAll();
-
-    await waitForWriteFileCalls(2);
-    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
-      [
-        [
-          "messages/en.po",
-          "msgid ""
-      msgstr ""
-      "Language: en\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Message-Key: msgctxt\\n"
-
-      #: src/component-b.tsx
-      msgctxt "4xqPlJ"
-      msgid "Howdy!"
-      msgstr "Howdy!"
-      ",
-        ],
-        [
-          "messages/de.po",
-          "msgid ""
-      msgstr ""
-      "Language: de\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Message-Key: msgctxt\\n"
-
-      #: src/component-b.tsx
-      msgctxt "4xqPlJ"
-      msgid "Howdy!"
-      msgstr ""
-      ",
-        ],
-      ]
-    `);
-  });
-
-  it('removes obsolete references after a file rename during build', async () => {
-    filesystem.project.messages = {
-      'en.po': `
-      msgid ""
-      msgstr ""
-      "Language: en\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Message-Key: msgctxt\\n"
-
-      #: src/component-a.tsx
-      msgctxt "OpKKos"
-      msgid "Hello!"
-      msgstr "Hello!"
-      `,
-      'de.po': `
-      msgid ""
-      msgstr ""
-      "Language: de\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Message-Key: msgctxt\\n"
-
-      #: src/component-a.tsx
-      msgctxt "OpKKos"
-      msgid "Hello!"
-      msgstr "Hallo!"
-      `
-    };
-    filesystem.project.src['component-b.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    function Component() {
-      const t = useExtracted();
-      return <div>{t('Hello!')}</div>;
-    }
-    `;
-
-    using compiler = new ExtractionCompiler(
-      {
-        extract: {
-          locales: 'infer',
-          path: './messages',
-          sourceLocale: 'en',
-          srcPath: './src'
-        },
-        messages: {
-          format: 'po',
-          path: ['./messages']
-        }
-      },
-      {
-        isDevelopment: false,
-        projectRoot: '/project',
-        saveDebounceMs: 0
-      }
-    );
-
-    await compiler.extractAll();
-    await waitForWriteFileCalls(2);
-    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
-      [
-        [
-          "messages/en.po",
-          "msgid ""
-      msgstr ""
-      "Language: en\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Message-Key: msgctxt\\n"
-
-      #: src/component-b.tsx
-      msgctxt "OpKKos"
-      msgid "Hello!"
-      msgstr "Hello!"
-      ",
-        ],
-        [
-          "messages/de.po",
-          "msgid ""
-      msgstr ""
-      "Language: de\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Message-Key: msgctxt\\n"
-
-      #: src/component-b.tsx
-      msgctxt "OpKKos"
-      msgid "Hello!"
-      msgstr "Hallo!"
-      ",
-        ],
-      ]
-    `);
   });
 
   it('removes obsolete references after a file rename during dev if create fires before delete', async () => {
@@ -1976,50 +1737,6 @@ msgstr "Hallo!"`
       `);
     });
   });
-  it('rejects a catalog in the previous key-based layout', async () => {
-    filesystem.project.src['Greeting.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    function Greeting() {
-      const t = useExtracted();
-      return <div>{t('Hello!')}</div>;
-    }
-    `;
-    filesystem.project.messages = {
-      'en.po': `
-      msgid ""
-      msgstr ""
-      "Language: en\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
-
-      #: src/Greeting.tsx
-      msgid "OpKKos"
-      msgstr "Hello!"
-      `
-    };
-
-    using compiler = new ExtractionCompiler(
-      {
-        extract: {
-          locales: 'infer',
-          path: './messages',
-          sourceLocale: 'en',
-          srcPath: './src'
-        },
-        messages: {
-          format: 'po',
-          path: ['./messages']
-        }
-      },
-      {
-        isDevelopment: false,
-        projectRoot: '/project',
-        saveDebounceMs: 0
-      }
-    );
-    await expect(compiler.extractAll()).rejects.toThrowError(
-      /previous PO layout/
-    );
-  });
 });
 
 describe('`srcPath` filtering', () => {
@@ -2082,7 +1799,6 @@ describe('`srcPath` filtering', () => {
         }
       },
       {
-        isDevelopment: true,
         projectRoot: '/project',
         saveDebounceMs: 0
       }
@@ -2167,14 +1883,13 @@ describe('custom format', () => {
         },
         messages: {
           format: {
-            codec: path.resolve(__dirname, 'fixtures/POCodecLegacy.ts'),
+            codec: path.resolve(__dirname, 'fixtures/POCodecLegacy.tsx'),
             extension: '.po'
           },
           path: ['./messages']
         }
       },
       {
-        isDevelopment: true,
         projectRoot: '/project',
         saveDebounceMs: 0
       }
@@ -2260,14 +1975,13 @@ describe('custom format', () => {
         },
         messages: {
           format: {
-            codec: path.resolve(__dirname, 'fixtures/JSONCodecStructured.ts'),
+            codec: path.resolve(__dirname, 'fixtures/JSONCodecStructured.tsx'),
             extension: '.json'
           },
           path: ['./messages']
         }
       },
       {
-        isDevelopment: true,
         projectRoot: '/project',
         saveDebounceMs: 0
       }

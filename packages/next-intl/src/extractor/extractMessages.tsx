@@ -1,7 +1,4 @@
-import {
-  ExtractionCompiler,
-  MessageExtractor
-} from '@eloqnt/extractor/_internal';
+import {extractMessages as extractAll} from '@eloqnt/extractor/_internal';
 import prefixUserError from '../plugin/prefixUserError.js';
 import {warn} from '../plugin/utils.js';
 import normalizeExtractorConfig from './normalizeExtractorConfig.js';
@@ -16,13 +13,8 @@ export default async function extractMessages(params: ExtractorConfigInput) {
     return;
   }
 
-  const compiler = new ExtractionCompiler(config, {
-    extractor: new MessageExtractor({projectRoot: getDefaultProjectRoot()}),
-    warn
-  });
-
   try {
-    await compiler.extractAll();
+    await extractAll(config, {projectRoot: getDefaultProjectRoot(), warn});
   } catch (error) {
     throw prefixUserError(error);
   }

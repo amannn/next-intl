@@ -1,5 +1,6 @@
 import path from 'path';
 import type {ExtractorMessageReference} from '@eloqnt/messages/_internal';
+import type {ExtractorConfig} from './types.js';
 
 export function normalizePathToPosix(filePath: string): string {
   // `path.relative` uses OS-specific separators. For stable `.po` references we
@@ -27,4 +28,16 @@ export function compareReferences(
 
 export function getDefaultProjectRoot() {
   return process.cwd();
+}
+
+/** Absolute paths of the directories that are scanned for messages. */
+export function getSrcPaths(
+  config: ExtractorConfig,
+  projectRoot: string
+): Array<string> {
+  return (
+    Array.isArray(config.extract.srcPath)
+      ? config.extract.srcPath
+      : [config.extract.srcPath]
+  ).map((srcPath) => path.join(projectRoot, srcPath));
 }

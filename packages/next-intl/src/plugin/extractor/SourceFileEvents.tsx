@@ -1,7 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
-import SourceFileFilter from './SourceFileFilter.js';
-import SourceFileScanner from './SourceFileScanner.js';
+import {SourceFileFilter, SourceFileScanner} from '@eloqnt/extractor/_internal';
 
 /** A change to a file or directory, as reported by a file watcher. */
 export type SourceFileEvent = {

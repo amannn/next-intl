@@ -41,12 +41,9 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
-    "@eloqnt/config": "workspace:^",
-    "@eloqnt/format-po": "workspace:^",
     "@types/node": "^22.0.0",
     "eslint": "9.11.1",
     "eslint-config-molindo": "^8.0.0",
-    "po-parser": "^2.2.0",
     "prettier": "^3.9.10",
     "publint": "^0.3.25",
     "typescript": "^6.0.3",
