@@ -3,13 +3,13 @@ import {
   type ExtractorCodec,
   type ExtractorMessage,
   getFormatExtension,
-  resolveCodec,
-  setNestedProperty
+  resolveCodec
 } from '@eloqnt/messages/_internal-codec';
 import compile from 'icu-minify/compile';
 import type {CatalogLoaderConfig} from '../../extractor/types.js';
 import prefixUserError from '../prefixUserError.js';
 import type {TurbopackLoaderContext} from '../types.js';
+import setNestedProperty from './setNestedProperty.js';
 
 // The module scope is safe for some caching, but Next.js can
 // create multiple loader instances so don't expect a singleton.

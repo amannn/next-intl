@@ -29,7 +29,7 @@ export default async function extractMessages(
   const projectRoot = opts.projectRoot ?? getDefaultProjectRoot();
   const {sourceLocale} = config.extract;
   const extension = getFormatExtension(config.messages.format);
-  const messagesDir = path.join(projectRoot, config.extract.path);
+  const messagesDir = path.resolve(projectRoot, config.extract.path);
   const persister = new CatalogPersister({
     messagesPath: messagesDir,
     codec: await resolveCodec(config.messages.format, projectRoot),

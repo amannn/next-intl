@@ -27,11 +27,11 @@ function readFile(filePath: string) {
   return fs.readFile(path.join(projectRoot, filePath), 'utf8');
 }
 
-function extract(format: 'json' | 'po') {
+function extract(format: 'json' | 'po', messagesPath = './messages') {
   const config: ExtractorConfig = {
     extract: {
       locales: 'infer',
-      path: './messages',
+      path: messagesPath,
       sourceLocale: 'en',
       srcPath: './src'
     },
@@ -208,4 +208,26 @@ msgstr "Hello!"
   });
 
   await expect(extract('po')).rejects.toThrowError(/previous PO layout/);
+});
+
+it('supports an absolute messages path', async () => {
+  await writeFiles({
+    'src/a.tsx': `
+      import {useExtracted} from 'next-intl';
+      function A() {
+        const t = useExtracted();
+        return <div>{t('Hello!')}</div>;
+      }
+    `,
+    'messages/de.json': '{"OpKKos": "Hallo!"}'
+  });
+
+  await extract('json', path.join(projectRoot, 'messages'));
+
+  expect(JSON.parse(await readFile('messages/en.json'))).toEqual({
+    OpKKos: 'Hello!'
+  });
+  expect(JSON.parse(await readFile('messages/de.json'))).toEqual({
+    OpKKos: 'Hallo!'
+  });
 });
