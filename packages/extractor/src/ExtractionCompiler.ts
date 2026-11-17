@@ -13,7 +13,6 @@ export default class ExtractionCompiler implements Disposable {
       isDevelopment?: boolean;
       projectRoot?: string;
       saveDebounceMs?: number;
-      sourceMap?: boolean;
       warn?(message: string): void;
     } = {}
   ) {

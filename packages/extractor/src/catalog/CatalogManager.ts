@@ -99,7 +99,6 @@ export default class CatalogManager implements Disposable {
       isDevelopment?: boolean;
       projectRoot?: string;
       saveDebounceMs?: number;
-      sourceMap?: boolean;
       warn?(message: string): void;
     }
   ) {
@@ -307,13 +306,11 @@ export default class CatalogManager implements Disposable {
     let messages: Array<SourceExtractedMessage> = [];
     try {
       const content = await fs.readFile(absoluteFilePath, 'utf8');
-      let extraction: Awaited<ReturnType<typeof this.extractor.extract>>;
       try {
-        extraction = await this.extractor.extract(absoluteFilePath, content);
+        messages = await this.extractor.extract(absoluteFilePath, content);
       } catch {
         return undefined;
       }
-      messages = extraction.messages;
     } catch (err) {
       if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
         throw err;

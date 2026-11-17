@@ -1,12 +1,12 @@
-import {MessageExtractor} from '@eloqnt/extractor/_internal-transform';
 import type {ExtractorConfig} from '../../extractor/types.js';
 import type {TurbopackLoaderContext} from '../types.js';
+import SourceTransformer from './SourceTransformer.js';
 
-// Module-level extractor instance for transformation caching.
+// Module-level instance for transformation caching.
 // Note: Next.js/Turbopack may create multiple loader instances, but each
 // only handles file transformation. The ExtractionCompiler (which manages
 // catalogs) is initialized separately in createNextIntlPlugin.
-let extractor: MessageExtractor | undefined;
+let transformer: SourceTransformer | undefined;
 
 export default function extractionLoader(
   this: TurbopackLoaderContext<ExtractorConfig>,
@@ -18,16 +18,16 @@ export default function extractionLoader(
   // Avoid rollup's `replace` plugin to compile this away
   const isDevelopment = process.env['NODE_ENV'.trim()] === 'development';
 
-  if (!extractor) {
-    extractor = new MessageExtractor({
+  if (!transformer) {
+    transformer = new SourceTransformer({
       isDevelopment,
       projectRoot,
       sourceMap: this.sourceMap
     });
   }
 
-  extractor
-    .extract(this.resourcePath, source)
+  transformer
+    .transform(this.resourcePath, source)
     .then((result) => {
       // Webpack loaders conventionally pass source maps as objects (e.g.
       // `next-swc-loader` calls `JSON.stringify` on its input source map)

@@ -46,7 +46,6 @@ export default [
       'use-intl/react',
       'icu-minify/compile',
       '@eloqnt/extractor/_internal',
-      '@eloqnt/extractor/_internal-transform',
       '@eloqnt/messages/_internal',
       '@eloqnt/messages/_internal-codec'
     ],

@@ -1,5 +1,5 @@
-import {test} from 'vite-plus/test';
-import MessageExtractor from './MessageExtractor.js';
+import {bench} from 'vitest';
+import SourceTransformer from './SourceTransformer.js';
 
 const testCode = `
   import {useExtracted} from 'next-intl';
@@ -20,21 +20,22 @@ const testCode = `
   }
 `;
 
-function createExtractor(sourceMap: boolean) {
-  return new MessageExtractor({
+bench('transform without source maps', async () => {
+  const transformer = new SourceTransformer({
     isDevelopment: true,
     projectRoot: '/project',
-    sourceMap
+    sourceMap: false
   });
-}
 
-test('extract messages', async ({bench}) => {
-  await bench.compare(
-    bench('without source maps', async () => {
-      await createExtractor(false).extract('/project/test.tsx', testCode);
-    }),
-    bench('with source maps', async () => {
-      await createExtractor(true).extract('/project/test.tsx', testCode);
-    })
-  );
+  await transformer.transform('/project/test.tsx', testCode);
+});
+
+bench('transform with source maps', async () => {
+  const transformer = new SourceTransformer({
+    isDevelopment: true,
+    projectRoot: '/project',
+    sourceMap: true
+  });
+
+  await transformer.transform('/project/test.tsx', testCode);
 });
