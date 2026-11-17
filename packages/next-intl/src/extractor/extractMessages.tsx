@@ -24,13 +24,6 @@ export default async function extractMessages(params: ExtractorConfigInput) {
     warn
   });
 
-  // Kept from when the compiler registered these itself, so that
-  // `unstable_extractMessages` behaves as before
-  const cleanup = compiler[Symbol.dispose];
-  process.on('exit', cleanup);
-  process.on('SIGINT', cleanup);
-  process.on('SIGTERM', cleanup);
-
   try {
     await compiler.extractAll();
   } catch (error) {
