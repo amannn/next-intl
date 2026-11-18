@@ -67,7 +67,7 @@ export default class CatalogPersister {
       locale: Locale;
       sourceMessagesById: Map<string, ExtractorMessage>;
     }
-  ): Promise<void> {
+  ): Promise<boolean> {
     const filePath = this.getFilePath(context.locale);
     warnAboutMissingReferences(messages, this.warn);
     const content = this.codec.encode(messages, context);
@@ -77,7 +77,7 @@ export default class CatalogPersister {
     const currentContent = await fs
       .readFile(filePath, 'utf8')
       .catch(() => undefined);
-    if (currentContent === content) return;
+    if (currentContent === content) return false;
 
     // Write to a temporary file first and move it into place, so that
     // concurrent readers (e.g. a build compiling catalogs) never observe a
@@ -89,9 +89,11 @@ export default class CatalogPersister {
       await fs.mkdir(outputDir, {recursive: true});
       await fs.writeFile(tempPath, content);
       await fs.rename(tempPath, filePath);
+      return true;
     } catch (error) {
       await fs.rm(tempPath, {force: true}).catch(() => {});
       console.error(`❌ Failed to write catalog: ${error}`);
+      return false;
     }
   }
 

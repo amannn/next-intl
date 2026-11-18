@@ -276,11 +276,27 @@ it('writes separate source and target paths', async () => {
   await writeFiles({
     'src/Greeting.tsx': greeting,
     'i18n/Messages.json': '{}',
-    'i18n/Messages_de.json': '{"OpKKos": "Hallo!"}'
+    'i18n/Messages_de.json': '{\n  "OpKKos": "Hallo!"\n}\n'
   });
 
-  await extract('json', {
+  const result = await extract('json', {
     path: {source: './i18n/Messages', targets: './i18n/Messages_{locale}'}
+  });
+
+  expect(result).toEqual({
+    messageCount: 1,
+    files: [
+      {
+        locale: 'en',
+        filePath: path.join(projectRoot, 'i18n/Messages.json'),
+        updated: true
+      },
+      {
+        locale: 'de',
+        filePath: path.join(projectRoot, 'i18n/Messages_de.json'),
+        updated: false
+      }
+    ]
   });
 
   expect(JSON.parse(await readFile('i18n/Messages.json'))).toEqual({

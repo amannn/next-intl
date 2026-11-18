@@ -2,6 +2,7 @@ import fs from 'fs/promises';
 import {
   CatalogPersister,
   type ExtractorMessage,
+  type Locale,
   UserError,
   getFormatExtension,
   getMessagesFiles,
@@ -23,6 +24,12 @@ import {
   localeCompare
 } from './utils.js';
 
+type ExtractMessagesResult = {
+  messageCount: number;
+  /** Source locale first. */
+  files: Array<{locale: Locale; filePath: string; updated: boolean}>;
+};
+
 /**
  * Extracts the messages of all source files and writes them to the messages
  * files of every locale.
@@ -30,7 +37,7 @@ import {
 export default async function extractMessages(
   config: ExtractorConfig,
   opts: {projectRoot?: string; warn?(message: string): void} = {}
-): Promise<void> {
+): Promise<ExtractMessagesResult> {
   const projectRoot = opts.projectRoot ?? getDefaultProjectRoot();
   const {sourceLocale} = config.extract;
   const files = await getMessagesFiles({
@@ -110,11 +117,11 @@ export default async function extractMessages(
     if (message) fillUnownedFields(message, diskMessage);
   }
 
-  await persister.write(getLocaleMessages(messagesById, messagesById, true), {
-    locale: sourceLocale,
-    sourceMessagesById: messagesById
-  });
-  await Promise.all(
+  const sourceUpdated = await persister.write(
+    getLocaleMessages(messagesById, messagesById, true),
+    {locale: sourceLocale, sourceMessagesById: messagesById}
+  );
+  const targetsUpdated = await Promise.all(
     targetLocales.map((locale) =>
       persister.write(
         getLocaleMessages(
@@ -126,6 +133,15 @@ export default async function extractMessages(
       )
     )
   );
+
+  return {
+    messageCount: messagesById.size,
+    files: [sourceLocale, ...targetLocales].map((locale, index) => ({
+      locale,
+      filePath: files.get(locale)!,
+      updated: index === 0 ? sourceUpdated : targetsUpdated[index - 1]
+    }))
+  };
 }
 
 function mapById(
