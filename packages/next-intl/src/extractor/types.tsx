@@ -1,7 +1,8 @@
-import type {ExtractorConfig} from '@eloqnt/extractor/_internal';
+import type {ExtractorConfig as SharedExtractorConfig} from '@eloqnt/extractor/_internal';
 import type {Locale, MessagesFormat} from '@eloqnt/messages/_internal';
 
-export type {ExtractorConfig};
+// next-intl writes to a single folder
+export type ExtractorConfig = SharedExtractorConfig & {extract: {path: string}};
 
 /**
  * External extractor configuration (Next.js plugin, `extractMessages`).

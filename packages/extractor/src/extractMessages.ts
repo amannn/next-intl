@@ -1,11 +1,10 @@
 import fs from 'fs/promises';
-import path from 'path';
 import {
   CatalogPersister,
   type ExtractorMessage,
   UserError,
   getFormatExtension,
-  getTargetLocales,
+  getMessagesFiles,
   resolveCodec
 } from '@eloqnt/messages/_internal';
 import {
@@ -34,12 +33,17 @@ export default async function extractMessages(
 ): Promise<void> {
   const projectRoot = opts.projectRoot ?? getDefaultProjectRoot();
   const {sourceLocale} = config.extract;
-  const extension = getFormatExtension(config.messages.format);
-  const messagesDir = path.resolve(projectRoot, config.extract.path);
+  const files = await getMessagesFiles({
+    path: config.extract.path,
+    codes: config.messages.codes,
+    rootDir: projectRoot,
+    extension: getFormatExtension(config.messages.format),
+    sourceLocale,
+    locales: config.extract.locales
+  });
   const persister = new CatalogPersister({
-    messagesPath: messagesDir,
+    getFilePath: (locale) => files.get(locale)!,
     codec: await resolveCodec(config.messages.format, projectRoot),
-    extension,
     sourceLocale,
     warn: opts.warn
   });
@@ -48,12 +52,9 @@ export default async function extractMessages(
   // truth for everything else
   const sourceDiskMessages = await persister.read(sourceLocale);
 
-  const targetLocales = await getTargetLocales({
-    messagesDir,
-    extension,
-    locales: config.extract.locales,
-    sourceLocale
-  });
+  const targetLocales = Array.from(files.keys()).filter(
+    (locale) => locale !== sourceLocale
+  );
   const translationsByLocale = new Map(
     await Promise.all(
       targetLocales.map(

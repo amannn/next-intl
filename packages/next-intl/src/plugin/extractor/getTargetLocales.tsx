@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
-import type {Locale} from '../types.js';
+import type {Locale} from '@eloqnt/messages/_internal';
 
 /**
  * The locales to write besides the source locale. With `'infer'`, these are

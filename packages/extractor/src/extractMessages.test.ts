@@ -27,15 +27,25 @@ function readFile(filePath: string) {
   return fs.readFile(path.join(projectRoot, filePath), 'utf8');
 }
 
-function extract(format: 'json' | 'po', messagesPath = './messages') {
+function extract(
+  format: 'json' | 'po',
+  {
+    codes,
+    locales = 'infer',
+    path: messagesPath = './messages'
+  }: Partial<
+    Pick<ExtractorConfig['extract'], 'locales' | 'path'> &
+      Pick<ExtractorConfig['messages'], 'codes'>
+  > = {}
+) {
   const config: ExtractorConfig = {
     extract: {
-      locales: 'infer',
+      locales,
       path: messagesPath,
       sourceLocale: 'en',
       srcPath: './src'
     },
-    messages: {format, path: ['./messages']}
+    messages: {format, path: ['./messages'], codes}
   };
   return extractMessages(config, {projectRoot});
 }
@@ -244,7 +254,7 @@ it('supports an absolute messages path', async () => {
     'messages/de.json': '{"OpKKos": "Hallo!"}'
   });
 
-  await extract('json', path.join(projectRoot, 'messages'));
+  await extract('json', {path: path.join(projectRoot, 'messages')});
 
   expect(JSON.parse(await readFile('messages/en.json'))).toEqual({
     OpKKos: 'Hello!'
@@ -252,4 +262,59 @@ it('supports an absolute messages path', async () => {
   expect(JSON.parse(await readFile('messages/de.json'))).toEqual({
     OpKKos: 'Hallo!'
   });
+});
+
+const greeting = `
+  import {useExtracted} from 'next-intl';
+  function Greeting() {
+    const t = useExtracted();
+    return <div>{t('Hello!')}</div>;
+  }
+`;
+
+it('writes separate source and target paths', async () => {
+  await writeFiles({
+    'src/Greeting.tsx': greeting,
+    'i18n/Messages.json': '{}',
+    'i18n/Messages_de.json': '{"OpKKos": "Hallo!"}'
+  });
+
+  await extract('json', {
+    path: {source: './i18n/Messages', targets: './i18n/Messages_{locale}'}
+  });
+
+  expect(JSON.parse(await readFile('i18n/Messages.json'))).toEqual({
+    OpKKos: 'Hello!'
+  });
+  expect(JSON.parse(await readFile('i18n/Messages_de.json'))).toEqual({
+    OpKKos: 'Hallo!'
+  });
+});
+
+it('maps locales to codes in the path', async () => {
+  await writeFiles({
+    'src/Greeting.tsx': greeting,
+    'res/values-b+es+419/strings.json': '{"OpKKos": "¡Hola!", "unused": "x"}'
+  });
+
+  await extract('json', {
+    path: './res/values-{code}/strings',
+    codes: {'es-419': 'b+es+419'},
+    locales: ['en', 'es-419']
+  });
+
+  expect(JSON.parse(await readFile('res/values-en/strings.json'))).toEqual({
+    OpKKos: 'Hello!'
+  });
+  expect(
+    JSON.parse(await readFile('res/values-b+es+419/strings.json'))
+  ).toEqual({OpKKos: '¡Hola!'});
+});
+
+it('rejects a path that splits messages by namespace', async () => {
+  await writeFiles({'src/Greeting.tsx': greeting});
+
+  await expect(
+    extract('json', {path: './locales/{locale}/{namespace}'})
+  ).rejects.toThrowError(/doesn't support yet/);
 });
