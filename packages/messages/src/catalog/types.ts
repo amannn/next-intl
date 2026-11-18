@@ -43,6 +43,4 @@ export type LoadedCatalogs = {
   catalogs: Array<Catalog>;
   /** So a writer can route each message back to the file it came from. */
   groups: Array<CatalogGroup>;
-  /** For writing a separate file that no group holds yet. */
-  codecFactory(): MessagesCodec;
 };

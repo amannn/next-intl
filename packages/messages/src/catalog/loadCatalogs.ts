@@ -178,7 +178,7 @@ export default async function loadCatalogs(
     (locale): Catalog => mergeLocale(groups, locale) ?? {locale, messages: []}
   );
 
-  return {catalogs: [sourceCatalog, ...targetCatalogs], groups, codecFactory};
+  return {catalogs: [sourceCatalog, ...targetCatalogs], groups};
 }
 
 /**
@@ -280,7 +280,7 @@ async function loadSharedGroups(input: {
     (locale): Catalog => mergeLocale(groups, locale) ?? {locale, messages: []}
   );
 
-  return {catalogs: [sourceCatalog, ...targetCatalogs], groups, codecFactory};
+  return {catalogs: [sourceCatalog, ...targetCatalogs], groups};
 }
 
 /** `undefined` when the file vanished since discovery. */
