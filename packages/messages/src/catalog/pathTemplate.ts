@@ -24,16 +24,17 @@ export type ParsedTemplate = {
 
 /**
  * A `source` path must not carry a locale placeholder (it is the source
- * locale's file), a `targets` template must, and a standalone template falls
- * back to one file per locale in a folder when it has none.
+ * locale's file), a `targets` template must, a standalone template falls back
+ * to one file per locale in a folder when it has none, and a `shared` template
+ * names the one file every locale lives in.
  */
-type TemplateRole = 'standalone' | 'source' | 'targets';
+type TemplateRole = 'standalone' | 'source' | 'targets' | 'shared';
 
 export type ParsedPathEntry =
   | {kind: 'template'; template: ParsedTemplate}
   | {kind: 'split'; source: ParsedTemplate; targets: ParsedTemplate};
 
-type TemplateMatch = {
+export type TemplateMatch = {
   /**
    * Mapped back through `codes` when the template captures `{code}`. Absent
    * for a split entry's source path.
@@ -96,9 +97,30 @@ export function createLocaleCodes(
   };
 }
 
-export function parsePathEntry(entry: MessagesPathEntry): ParsedPathEntry {
+/**
+ * With a shared-file codec, an entry names one file that holds every locale,
+ * so a locale placeholder or a split entry contradicts the layout.
+ */
+export function parsePathEntry(
+  entry: MessagesPathEntry,
+  codecKind: 'separate' | 'shared' = 'separate'
+): ParsedPathEntry {
   if (typeof entry === 'string') {
-    return {kind: 'template', template: parseTemplate(entry, 'standalone')};
+    return {
+      kind: 'template',
+      template: parseTemplate(
+        entry,
+        codecKind === 'shared' ? 'shared' : 'standalone'
+      )
+    };
+  }
+  if (codecKind === 'shared') {
+    throw new UserError(
+      "messages.path can't split source and targets with a shared-file format",
+      {
+        hint: 'The shared file holds every locale. Point messages.path at the file itself, without a placeholder.'
+      }
+    );
   }
   const source = parseTemplate(entry.source, 'source');
   const targets = parseTemplate(entry.targets, 'targets');
@@ -160,6 +182,15 @@ function parseTemplate(source: string, role: TemplateRole): ParsedTemplate {
   }
 
   const hasLocaleAxis = seen.has('locale') || seen.has('code');
+
+  if (role === 'shared' && hasLocaleAxis) {
+    throw new UserError(
+      `messages.path "${source}" uses a locale placeholder with a shared-file format`,
+      {
+        hint: 'The shared file holds every locale. Point messages.path at the file itself, without a placeholder.'
+      }
+    );
+  }
 
   if (role === 'source' && hasLocaleAxis) {
     throw new UserError(
@@ -397,6 +428,24 @@ function matchCapture(
     text.length - segment.suffix.length
   );
   return value.length > 0 ? value : null;
+}
+
+/**
+ * The directory the template walks from, for errors that need to point at
+ * something stable (e.g. a missing messages folder).
+ */
+export function resolveBaseDir(
+  template: ParsedTemplate,
+  rootDir: string
+): string {
+  const literalPrefix: Array<string> = [];
+  // The last segment names the file itself, never a directory, so a fully
+  // literal template (a split entry's source path) must not fold it in
+  for (const segment of template.segments.slice(0, -1)) {
+    if (segment.kind !== 'literal') break;
+    literalPrefix.push(segment.text);
+  }
+  return path.resolve(template.root || rootDir, ...literalPrefix);
 }
 
 // Entries with their types in one call, so matching needs no stat per entry
