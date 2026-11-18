@@ -2,47 +2,24 @@ import {createRequire} from 'module';
 import path from 'path';
 import type {SourceExtractedMessage} from '../types.js';
 import {getDefaultProjectRoot, normalizePathToPosix} from '../utils.js';
-import LRUCache from './LRUCache.js';
 
 const require = createRequire(import.meta.url);
 
 export default class MessageExtractor {
-  private isDevelopment: boolean;
   private projectRoot: string;
-  private sourceMap: boolean;
-  private compileCache = new LRUCache<{
-    messages: Array<SourceExtractedMessage>;
-    code: string;
-    map?: string;
-  }>(750);
 
-  public constructor(opts: {
-    isDevelopment?: boolean;
-    projectRoot?: string;
-    sourceMap?: boolean;
-  }) {
-    this.isDevelopment = opts.isDevelopment ?? false;
+  public constructor(opts: {projectRoot?: string} = {}) {
     this.projectRoot = opts.projectRoot ?? getDefaultProjectRoot();
-    this.sourceMap = opts.sourceMap ?? false;
   }
 
   public async extract(
     absoluteFilePath: string,
     source: string
-  ): Promise<{
-    messages: Array<SourceExtractedMessage>;
-    code: string;
-    map?: string;
-  }> {
-    const cacheKey = [source, absoluteFilePath].join('!');
-    const cached = this.compileCache.get(cacheKey);
-    if (cached) return cached;
-
-    // Shortcut parsing if hook is not used. The Turbopack integration already
-    // pre-filters this, but for webpack this feature doesn't exist, so we need
-    // to do it here.
+  ): Promise<Array<SourceExtractedMessage>> {
+    // Parsing is the expensive part, and only files with these calls have
+    // messages
     if (!source.includes('useExtracted') && !source.includes('getExtracted')) {
-      return {messages: [], code: source};
+      return [];
     }
 
     // Load lazily so that importing the plugin doesn't require loading the
@@ -68,17 +45,14 @@ export default class MessageExtractor {
             [
               require.resolve('next-intl-swc-plugin-extractor'),
               {
-                isDevelopment: this.isDevelopment,
+                // Only changes the compiled code, not the messages
+                isDevelopment: false,
                 filePath
               }
             ]
           ]
         }
       },
-      sourceMaps: this.sourceMap,
-      // Is converted into a relative path by Next.js when
-      // the final source map is generated
-      sourceFileName: absoluteFilePath,
       filename: filePath
     });
 
@@ -86,7 +60,7 @@ export default class MessageExtractor {
     const output = (result as any).output as string;
     // The plugin emits a tagged union of extracted messages and
     // `useTranslations` usages; this extractor only consumes the former.
-    const messages = (
+    return (
       JSON.parse(JSON.parse(output).results) as Array<
         {type: 'extracted' | 'translation'} & SourceExtractedMessage
       >
@@ -98,14 +72,5 @@ export default class MessageExtractor {
         description: item.description,
         reference: item.reference
       }));
-
-    const extractionResult = {
-      code: result.code,
-      map: result.map,
-      messages
-    };
-
-    this.compileCache.set(cacheKey, extractionResult);
-    return extractionResult;
   }
 }

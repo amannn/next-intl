@@ -1,6 +1,8 @@
 import fs from 'fs';
 import {createRequire} from 'module';
 import path from 'path';
+import {SourceFileFilter} from '@eloqnt/extractor/_internal';
+import {getFormatExtension} from '@eloqnt/messages/_internal';
 import type {NextConfig} from 'next';
 import type {
   TurbopackLoaderOptions,
@@ -8,9 +10,7 @@ import type {
   TurbopackRuleConfigItem
 } from 'next/dist/server/config-shared.js';
 import type {Configuration} from 'webpack';
-import {getFormatExtension} from '../extractor/format/index.js';
 import {normalizeMessagesCatalogPaths} from '../extractor/normalizeExtractorConfig.js';
-import SourceFileFilter from '../extractor/source/SourceFileFilter.js';
 import type {CatalogLoaderConfig, ExtractorConfig} from '../extractor/types.js';
 import {isDevelopmentOrNextBuild} from './config.js';
 import {hasStableTurboConfig, isNextJs16OrHigher} from './nextFlags.js';

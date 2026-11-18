@@ -1,16 +1,15 @@
 import path from 'path';
-import compile from 'icu-minify/compile';
-import type ExtractorCodec from '../../extractor/format/ExtractorCodec.js';
 import {
+  type ExtractorCodec,
+  type ExtractorMessage,
   getFormatExtension,
   resolveCodec
-} from '../../extractor/format/index.js';
-import type {
-  CatalogLoaderConfig,
-  ExtractorMessage
-} from '../../extractor/types.js';
-import {setNestedProperty} from '../../extractor/utils.js';
+} from '@eloqnt/messages/_internal-codec';
+import compile from 'icu-minify/compile';
+import type {CatalogLoaderConfig} from '../../extractor/types.js';
+import prefixUserError from '../prefixUserError.js';
 import type {TurbopackLoaderContext} from '../types.js';
+import setNestedProperty from './setNestedProperty.js';
 
 // The module scope is safe for some caching, but Next.js can
 // create multiple loader instances so don't expect a singleton.
@@ -85,7 +84,7 @@ export default function catalogLoader(
 
       callback(null, result);
     })
-    .catch(callback);
+    .catch((error) => callback(prefixUserError(error) as Error));
 }
 
 function warnIfToJSONStringProvided(codec: ExtractorCodec) {

@@ -10,17 +10,20 @@ export default class CatalogPersister {
   private codec: ExtractorCodec;
   private extension: string;
   private sourceLocale: Locale;
+  private warn: (message: string) => void;
 
   public constructor(params: {
     messagesPath: string;
     codec: ExtractorCodec;
     extension: string;
     sourceLocale: Locale;
+    warn?(message: string): void;
   }) {
     this.messagesPath = params.messagesPath;
     this.codec = params.codec;
     this.extension = params.extension;
     this.sourceLocale = params.sourceLocale;
+    this.warn = params.warn ?? console.warn;
   }
 
   private getFileName(locale: Locale): string {
@@ -73,7 +76,7 @@ export default class CatalogPersister {
     }
   ): Promise<void> {
     const filePath = this.getFilePath(context.locale);
-    warnAboutMissingReferences(messages);
+    warnAboutMissingReferences(messages, this.warn);
     const content = this.codec.encode(messages, context);
 
     // Skip unchanged catalogs to avoid needless file system writes, which

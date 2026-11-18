@@ -1,7 +1,25 @@
+// @vitest-environment node
 import fs from 'fs/promises';
 import path from 'path';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
-import ExtractionCompiler from './ExtractionCompiler.js';
+import BaseExtractionCompiler from './ExtractionCompiler.js';
+
+// Stands in for `SourceFileWatcher`, which forwards watcher events to `update`
+class ExtractionCompiler extends BaseExtractionCompiler {
+  public constructor(
+    ...args: ConstructorParameters<typeof BaseExtractionCompiler>
+  ) {
+    super(...args);
+    for (const srcPath of this.getSrcPaths()) {
+      watcherCallbacks.set(srcPath, (err, events) => this.update(events));
+    }
+  }
+
+  public [Symbol.dispose](): void {
+    watcherCallbacks.clear();
+    super[Symbol.dispose]();
+  }
+}
 
 const filesystem: {
   project: {
@@ -28,8 +46,7 @@ beforeEach(() => {
   watchCallbacks.clear();
   mockWatchers.clear();
   readFileInterceptors.clear();
-  parcelWatcherCallbacks.clear();
-  parcelWatcherSubscriptions.clear();
+  watcherCallbacks.clear();
   vi.clearAllMocks();
 });
 
@@ -49,7 +66,6 @@ describe('json format', {timeout: 20_000}, () => {
         }
       },
       {
-        isDevelopment: true,
         projectRoot: '/project',
         saveDebounceMs: 0
       }
@@ -131,7 +147,6 @@ describe('json format', {timeout: 20_000}, () => {
         }
       },
       {
-        isDevelopment: true,
         projectRoot: '/project',
         saveDebounceMs: 0
       }
@@ -414,41 +429,6 @@ describe('json format', {timeout: 20_000}, () => {
       ]
     `);
   });
-  it('rejects a catalog that contains an array', async () => {
-    filesystem.project.src['Greeting.tsx'] = `
-      import {useExtracted} from 'next-intl';
-      function Greeting() {
-        const t = useExtracted();
-        return <div>{t('Hello!')}</div>;
-      }
-      `;
-    filesystem.project.messages = {
-      'en.json': '{"items": ["One", "Two"]}'
-    };
-
-    using compiler = new ExtractionCompiler(
-      {
-        extract: {
-          locales: 'infer',
-          path: './messages',
-          sourceLocale: 'en',
-          srcPath: './src'
-        },
-        messages: {
-          format: 'json',
-          path: ['./messages']
-        }
-      },
-      {
-        isDevelopment: false,
-        projectRoot: '/project',
-        saveDebounceMs: 0
-      }
-    );
-    await expect(compiler.extractAll()).rejects.toThrowError(
-      /resolved to an array/
-    );
-  });
 });
 
 describe('po format', {timeout: 20_000}, () => {
@@ -467,7 +447,6 @@ describe('po format', {timeout: 20_000}, () => {
         }
       },
       {
-        isDevelopment: true,
         projectRoot: '/project',
         saveDebounceMs: 0
       }
@@ -605,205 +584,6 @@ describe('po format', {timeout: 20_000}, () => {
       .at(-1)?.[1] as string;
     expect(lastSourceWrite).not.toContain('Zebra from earlier path');
     expect(lastSourceWrite).toContain('#. Apple from later path');
-  });
-
-  it('removes obsolete messages during build', async () => {
-    filesystem.project.messages = {
-      'en.po': `
-      msgid ""
-      msgstr ""
-      "Language: en\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Message-Key: msgctxt\\n"
-
-      #: src/component-a.tsx
-      msgctxt "OpKKos"
-      msgid "Hello!"
-      msgstr "Hello!"
-      `,
-      'de.po': `
-      msgid ""
-      msgstr ""
-      "Language: de\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Message-Key: msgctxt\\n"
-
-      #: src/component-a.tsx
-      msgctxt "OpKKos"
-      msgid "Hello!"
-      msgstr "Hallo!"
-      `
-    };
-    filesystem.project.src['component-b.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    function Component() {
-      const t = useExtracted();
-      return <div>{t('Howdy!')}</div>;
-    }
-    `;
-
-    using compiler = new ExtractionCompiler(
-      {
-        extract: {
-          locales: 'infer',
-          path: './messages',
-          sourceLocale: 'en',
-          srcPath: './src'
-        },
-        messages: {
-          format: 'po',
-          path: ['./messages']
-        }
-      },
-      {
-        isDevelopment: false,
-        projectRoot: '/project',
-        saveDebounceMs: 0
-      }
-    );
-
-    await compiler.extractAll();
-
-    await waitForWriteFileCalls(2);
-    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
-      [
-        [
-          "messages/en.po",
-          "msgid ""
-      msgstr ""
-      "Language: en\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Message-Key: msgctxt\\n"
-
-      #: src/component-b.tsx
-      msgctxt "4xqPlJ"
-      msgid "Howdy!"
-      msgstr "Howdy!"
-      ",
-        ],
-        [
-          "messages/de.po",
-          "msgid ""
-      msgstr ""
-      "Language: de\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Message-Key: msgctxt\\n"
-
-      #: src/component-b.tsx
-      msgctxt "4xqPlJ"
-      msgid "Howdy!"
-      msgstr ""
-      ",
-        ],
-      ]
-    `);
-  });
-
-  it('removes obsolete references after a file rename during build', async () => {
-    filesystem.project.messages = {
-      'en.po': `
-      msgid ""
-      msgstr ""
-      "Language: en\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Message-Key: msgctxt\\n"
-
-      #: src/component-a.tsx
-      msgctxt "OpKKos"
-      msgid "Hello!"
-      msgstr "Hello!"
-      `,
-      'de.po': `
-      msgid ""
-      msgstr ""
-      "Language: de\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Message-Key: msgctxt\\n"
-
-      #: src/component-a.tsx
-      msgctxt "OpKKos"
-      msgid "Hello!"
-      msgstr "Hallo!"
-      `
-    };
-    filesystem.project.src['component-b.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    function Component() {
-      const t = useExtracted();
-      return <div>{t('Hello!')}</div>;
-    }
-    `;
-
-    using compiler = new ExtractionCompiler(
-      {
-        extract: {
-          locales: 'infer',
-          path: './messages',
-          sourceLocale: 'en',
-          srcPath: './src'
-        },
-        messages: {
-          format: 'po',
-          path: ['./messages']
-        }
-      },
-      {
-        isDevelopment: false,
-        projectRoot: '/project',
-        saveDebounceMs: 0
-      }
-    );
-
-    await compiler.extractAll();
-    await waitForWriteFileCalls(2);
-    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
-      [
-        [
-          "messages/en.po",
-          "msgid ""
-      msgstr ""
-      "Language: en\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Message-Key: msgctxt\\n"
-
-      #: src/component-b.tsx
-      msgctxt "OpKKos"
-      msgid "Hello!"
-      msgstr "Hello!"
-      ",
-        ],
-        [
-          "messages/de.po",
-          "msgid ""
-      msgstr ""
-      "Language: de\\n"
-      "Content-Type: text/plain; charset=utf-8\\n"
-      "Content-Transfer-Encoding: 8bit\\n"
-      "X-Generator: next-intl\\n"
-      "X-Message-Key: msgctxt\\n"
-
-      #: src/component-b.tsx
-      msgctxt "OpKKos"
-      msgid "Hello!"
-      msgstr "Hallo!"
-      ",
-        ],
-      ]
-    `);
   });
 
   it('removes obsolete references after a file rename during dev if create fires before delete', async () => {
@@ -1695,7 +1475,7 @@ msgstr ""
 
     using compiler = createCompiler();
     await vi.waitFor(() =>
-      expect(parcelWatcherCallbacks.has('/project/src')).toBe(true)
+      expect(watcherCallbacks.has('/project/src')).toBe(true)
     );
 
     const ioError = new Error('EACCES: permission denied');
@@ -1873,7 +1653,7 @@ msgstr "Hallo!"`
       delete (filesystem.project.src as any).components;
       fileTimestamps.delete('/project/src/components/Button.tsx');
 
-      const callback = parcelWatcherCallbacks.get('/project/src')!;
+      const callback = watcherCallbacks.get('/project/src')!;
       await Promise.resolve(
         callback(null, [{type: 'delete', path: '/project/src/components'}])
       );
@@ -1932,7 +1712,7 @@ msgstr "Hallo!"`
       delete (filesystem.project.src as any).old;
       fileTimestamps.delete('/project/src/old/Button.tsx');
 
-      const callback = parcelWatcherCallbacks.get('/project/src')!;
+      const callback = watcherCallbacks.get('/project/src')!;
       await Promise.resolve(
         callback(null, [
           {type: 'create', path: '/project/src/new'},
@@ -1956,50 +1736,6 @@ msgstr "Hallo!"`
         ]
       `);
     });
-  });
-  it('rejects a catalog in the previous key-based layout', async () => {
-    filesystem.project.src['Greeting.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    function Greeting() {
-      const t = useExtracted();
-      return <div>{t('Hello!')}</div>;
-    }
-    `;
-    filesystem.project.messages = {
-      'en.po': `
-      msgid ""
-      msgstr ""
-      "Language: en\\n"
-      "X-Crowdin-SourceKey: msgstr\\n"
-
-      #: src/Greeting.tsx
-      msgid "OpKKos"
-      msgstr "Hello!"
-      `
-    };
-
-    using compiler = new ExtractionCompiler(
-      {
-        extract: {
-          locales: 'infer',
-          path: './messages',
-          sourceLocale: 'en',
-          srcPath: './src'
-        },
-        messages: {
-          format: 'po',
-          path: ['./messages']
-        }
-      },
-      {
-        isDevelopment: false,
-        projectRoot: '/project',
-        saveDebounceMs: 0
-      }
-    );
-    await expect(compiler.extractAll()).rejects.toThrowError(
-      /previous PO layout/
-    );
   });
 });
 
@@ -2063,7 +1799,6 @@ describe('`srcPath` filtering', () => {
         }
       },
       {
-        isDevelopment: true,
         projectRoot: '/project',
         saveDebounceMs: 0
       }
@@ -2148,17 +1883,13 @@ describe('custom format', () => {
         },
         messages: {
           format: {
-            codec: path.resolve(
-              __dirname,
-              'format/codecs/fixtures/POCodecLegacy.tsx'
-            ),
+            codec: path.resolve(__dirname, 'fixtures/POCodecLegacy.tsx'),
             extension: '.po'
           },
           path: ['./messages']
         }
       },
       {
-        isDevelopment: true,
         projectRoot: '/project',
         saveDebounceMs: 0
       }
@@ -2244,17 +1975,13 @@ describe('custom format', () => {
         },
         messages: {
           format: {
-            codec: path.resolve(
-              __dirname,
-              'format/codecs/fixtures/JSONCodecStructured.tsx'
-            ),
+            codec: path.resolve(__dirname, 'fixtures/JSONCodecStructured.tsx'),
             extension: '.json'
           },
           path: ['./messages']
         }
       },
       {
-        isDevelopment: true,
         projectRoot: '/project',
         saveDebounceMs: 0
       }
@@ -2452,12 +2179,13 @@ const watchCallbacks: Map<string, (event: string, filename: string) => void> =
 const mockWatchers: Map<string, {close(): void}> = new Map();
 const readFileInterceptors = new Map<string, () => Promise<void>>();
 const pendingWrites = new Map<string, string>();
-const parcelWatcherCallbacks: Map<
+const watcherCallbacks: Map<
   string,
-  (err: Error | null, events: Array<{type: string; path: string}>) => void
+  (
+    err: Error | null,
+    events: Array<{type: 'create' | 'update' | 'delete'; path: string}>
+  ) => Promise<void>
 > = new Map();
-const parcelWatcherSubscriptions: Map<string, {unsubscribe(): Promise<void>}> =
-  new Map();
 
 function simulateFileEvent(
   dirPath: string,
@@ -2523,7 +2251,7 @@ async function simulateSourceFileCreate(
   ];
 
   for (const testPath of pathsToTry) {
-    const callback = parcelWatcherCallbacks.get(testPath);
+    const callback = watcherCallbacks.get(testPath);
     if (callback) {
       await Promise.resolve(
         callback(null, [{type: 'create', path: normalizedPath}])
@@ -2553,7 +2281,7 @@ async function simulateSourceFileUpdate(
   ];
 
   for (const testPath of pathsToTry) {
-    const callback = parcelWatcherCallbacks.get(testPath);
+    const callback = watcherCallbacks.get(testPath);
     if (callback) {
       await Promise.resolve(
         callback(null, [{type: 'update', path: normalizedPath}])
@@ -2593,7 +2321,7 @@ async function simulateSourceFileDelete(filePath: string): Promise<void> {
   ];
 
   for (const testPath of pathsToTry) {
-    const callback = parcelWatcherCallbacks.get(testPath);
+    const callback = watcherCallbacks.get(testPath);
     if (callback) {
       await Promise.resolve(
         callback(null, [{type: 'delete', path: normalizedPath}])
@@ -2602,49 +2330,6 @@ async function simulateSourceFileDelete(filePath: string): Promise<void> {
     }
   }
 }
-
-vi.mock('@parcel/watcher', () => ({
-  subscribe: vi.fn(
-    async (
-      rootPath: string,
-      callback: (
-        err: Error | null,
-        events: Array<{type: string; path: string}>
-      ) => void,
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      options?: {ignore?: Array<string>}
-    ) => {
-      // Store callback with exact path as provided (for test matching)
-      // Also store normalized variants for flexibility
-      parcelWatcherCallbacks.set(rootPath, callback);
-      const normalizedPath = path.resolve(rootPath);
-      if (normalizedPath !== rootPath) {
-        parcelWatcherCallbacks.set(normalizedPath, callback);
-      }
-      if (!rootPath.startsWith('/')) {
-        parcelWatcherCallbacks.set(
-          path.join(process.cwd(), rootPath),
-          callback
-        );
-      }
-
-      const subscription = {
-        unsubscribe: vi.fn(async () => {
-          parcelWatcherCallbacks.delete(rootPath);
-          if (normalizedPath !== rootPath) {
-            parcelWatcherCallbacks.delete(normalizedPath);
-          }
-          if (!rootPath.startsWith('/')) {
-            parcelWatcherCallbacks.delete(path.join(process.cwd(), rootPath));
-          }
-          parcelWatcherSubscriptions.delete(rootPath);
-        })
-      };
-      parcelWatcherSubscriptions.set(rootPath, subscription);
-      return subscription;
-    }
-  )
-}));
 
 vi.mock('fs', () => ({
   default: {

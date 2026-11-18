@@ -1,35 +1,12 @@
-import {describe, expect, it} from 'vitest';
+import {describe, expect, it} from 'vite-plus/test';
 import MessageExtractor from './MessageExtractor.js';
 
-async function process(
-  code: string,
-  opts?: Partial<ConstructorParameters<typeof MessageExtractor>[0]>
-) {
-  return await new MessageExtractor({
-    isDevelopment: true,
-    projectRoot: '/project',
-    ...opts
-  }).extract('/project/test.tsx', code);
+async function process(code: string) {
+  return await new MessageExtractor({projectRoot: '/project'}).extract(
+    '/project/test.tsx',
+    code
+  );
 }
-
-it('can extract with source maps', async () => {
-  const result = await process(
-    `import {useExtracted} from 'next-intl';
-
-    function Component() {
-      const t = useExtracted();
-      t("Hello!");
-    }
-  `,
-    {sourceMap: true}
-  );
-
-  expect(result.map).toMatchInlineSnapshot(
-    `"{"version":3,"sources":["/project/test.tsx"],"sourcesContent":["import {useExtracted} from 'next-intl';\\n\\n    function Component() {\\n      const t = useExtracted();\\n      t(\\"Hello!\\");\\n    }\\n  "],"names":["useExtracted","Component","t"],"mappings":"AAAA,SAAQA,oCAAY,QAAO,YAAY;AAEnC,SAASC;IACP,MAAMC,IAAIF;IACVE,EAAE;AACJ"}"`
-  );
-
-  expect(result.map).not.toContain('<anon>');
-});
 
 it('extracts same message used multiple times in one file as separate source messages', async () => {
   const result = await process(
@@ -47,7 +24,7 @@ it('extracts same message used multiple times in one file as separate source mes
   `
   );
 
-  expect(result.messages).toMatchInlineSnapshot(`
+  expect(result).toMatchInlineSnapshot(`
     [
       {
         "description": null,
@@ -88,20 +65,7 @@ it('supports destructuring from `Promise.all`', async () => {
   `
   );
 
-  expect(result.code).toMatchInlineSnapshot(`
-    "import { getTranslations as getTranslations$1, getTranslations } from 'next-intl/server';
-    async function Component() {
-        const [t, nav] = await Promise.all([
-            getTranslations$1(),
-            getTranslations('Navigation')
-        ]);
-        t("OpKKos", void 0, void 0, "Hello!");
-        nav('title');
-    }
-    "
-  `);
-
-  expect(result.messages).toMatchInlineSnapshot(`
+  expect(result).toMatchInlineSnapshot(`
     [
       {
         "description": null,
@@ -133,7 +97,7 @@ it('keeps descriptions on separate source message uses', async () => {
   `
   );
 
-  expect(result.messages).toMatchInlineSnapshot(`
+  expect(result).toMatchInlineSnapshot(`
     [
       {
         "description": "Button label",
@@ -156,43 +120,6 @@ it('keeps descriptions on separate source message uses', async () => {
         },
       },
     ]
-  `);
-});
-
-it('does not add a fallback message in production', async () => {
-  const result = await process(
-    `import {useExtracted} from 'next-intl';
-
-    function Component() {
-      const t = useExtracted();
-      t("Hey!");
-    }
-  `,
-    {isDevelopment: false}
-  );
-
-  expect(result).toMatchInlineSnapshot(`
-    {
-      "code": "import { useTranslations as useTranslations$1 } from 'next-intl';
-    function Component() {
-        const t = useTranslations$1();
-        t("-YJVTi");
-    }
-    ",
-      "map": undefined,
-      "messages": [
-        {
-          "description": null,
-          "id": "-YJVTi",
-          "message": "Hey!",
-          "reference": {
-            "column": 6,
-            "line": 5,
-            "path": "test.tsx",
-          },
-        },
-      ],
-    }
   `);
 });
 

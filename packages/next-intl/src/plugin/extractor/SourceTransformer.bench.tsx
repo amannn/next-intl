@@ -1,5 +1,5 @@
 import {bench} from 'vitest';
-import MessageExtractor from './MessageExtractor.js';
+import SourceTransformer from './SourceTransformer.js';
 
 const testCode = `
   import {useExtracted} from 'next-intl';
@@ -20,22 +20,22 @@ const testCode = `
   }
 `;
 
-bench('extract messages without source maps', async () => {
-  const extractor = new MessageExtractor({
+bench('transform without source maps', async () => {
+  const transformer = new SourceTransformer({
     isDevelopment: true,
     projectRoot: '/project',
     sourceMap: false
   });
 
-  await extractor.extract('/project/test.tsx', testCode);
+  await transformer.transform('/project/test.tsx', testCode);
 });
 
-bench('extract messages with source maps', async () => {
-  const extractor = new MessageExtractor({
+bench('transform with source maps', async () => {
+  const transformer = new SourceTransformer({
     isDevelopment: true,
     projectRoot: '/project',
     sourceMap: true
   });
 
-  await extractor.extract('/project/test.tsx', testCode);
+  await transformer.transform('/project/test.tsx', testCode);
 });
