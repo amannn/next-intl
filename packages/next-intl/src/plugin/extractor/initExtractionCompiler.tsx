@@ -3,7 +3,7 @@ import type {ExtractorConfig} from '../../extractor/types.js';
 import {hasLocalesToExtract} from '../../extractor/utils.js';
 import {isDevelopment, isNextBuild} from '../config.js';
 import prefixUserError from '../prefixUserError.js';
-import {once, warn} from '../utils.js';
+import {formatMessage, once, warn} from '../utils.js';
 import ExtractionCompiler from './ExtractionCompiler.js';
 import SourceFileWatcher from './SourceFileWatcher.js';
 
@@ -45,16 +45,19 @@ export default function initExtractionCompiler(
       });
       compiler = target;
 
-      // Subscribing before the initial scan, so changes during the scan are
-      // picked up too (the compiler processes them once the scan is done)
       watcher = new SourceFileWatcher(target.getSrcPaths(), (events) =>
         target.update(events).catch((error) => {
           throw prefixUserError(error);
         })
       );
-      void watcher.start();
+      // The watcher loads lazily, so waiting for its subscription keeps it
+      // ahead of the initial scan and changes during the scan are picked up
+      // (the compiler processes them once the scan is done)
+      const watcherReady = watcher.start().catch((error: unknown) => {
+        console.error(error);
+      });
 
-      extraction = target.extractAll();
+      extraction = watcherReady.then(() => target.extractAll());
     } else {
       extraction = extractMessages(extractorConfig, {projectRoot, warn});
     }
@@ -65,9 +68,20 @@ export default function initExtractionCompiler(
     // The result is ok though, as if we encounter untranslated messages,
     // we'll simply add empty messages to the catalog. So for actually
     // running the app, there is no difference.
-    extraction.catch((error) => {
-      throw prefixUserError(error);
-    });
+    if (isNextBuild) {
+      // Next.js exits with 0 once the build is done, so failing loudly here is
+      // the only way to keep a build from passing with outdated catalogs
+      extraction.catch((error: unknown) => {
+        console.error(
+          formatMessage(error instanceof Error ? error.message : String(error))
+        );
+        process.exit(1);
+      });
+    } else {
+      extraction.catch((error) => {
+        throw prefixUserError(error);
+      });
+    }
 
     function cleanup() {
       if (watcher) {

@@ -243,3 +243,46 @@ export default function Invalid() {
     );
   });
 });
+
+describe('syntax per file extension', () => {
+  const typeScriptOnly = `
+    import {useExtracted} from 'next-intl';
+
+    const identity = <T,>(value: T) => value;
+    const cast = <string>identity('x');
+
+    function getMessage() {
+      const t = useExtracted();
+      return t('Hello!') + cast;
+    }
+  `;
+
+  const jsx = `
+    import {useExtracted} from 'next-intl';
+
+    function Component() {
+      const t = useExtracted();
+      return <p>{t('Hello!')}</p>;
+    }
+  `;
+
+  it.each(['ts', 'mts', 'cts'])(
+    'parses type assertions in .%s files',
+    async (extension) => {
+      const result = await new MessageExtractor({
+        projectRoot: '/project'
+      }).extract(`/project/test.${extension}`, typeScriptOnly);
+      expect(result.map((message) => message.message)).toEqual(['Hello!']);
+    }
+  );
+
+  it.each(['tsx', 'js', 'jsx', 'mjs', 'cjs'])(
+    'parses JSX in .%s files',
+    async (extension) => {
+      const result = await new MessageExtractor({
+        projectRoot: '/project'
+      }).extract(`/project/test.${extension}`, jsx);
+      expect(result.map((message) => message.message)).toEqual(['Hello!']);
+    }
+  );
+});

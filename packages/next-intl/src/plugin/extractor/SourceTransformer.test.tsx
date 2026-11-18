@@ -1,4 +1,4 @@
-import {expect, it} from 'vitest';
+import {describe, expect, it} from 'vitest';
 import SourceTransformer from './SourceTransformer.js';
 
 async function transform(
@@ -88,4 +88,44 @@ it('does not add a fallback message in production', async () => {
 it('leaves files without extracted messages untouched', async () => {
   const code = `import {useTranslations} from 'next-intl';`;
   expect(await transform(code)).toEqual({code});
+});
+
+describe('syntax per file extension', () => {
+  it.each(['ts', 'mts', 'cts'])(
+    'parses type assertions in .%s files',
+    async (extension) => {
+      const result = await new SourceTransformer({
+        isDevelopment: false,
+        projectRoot: '/project'
+      }).transform(
+        `/project/test.${extension}`,
+        `import {useExtracted} from 'next-intl';
+        const identity = <T,>(value: T) => value;
+        const cast = <string>identity('x');
+        function getMessage() {
+          const t = useExtracted();
+          return t('Hello!') + cast;
+        }`
+      );
+      expect(result.code).toContain('t("OpKKos")');
+    }
+  );
+
+  it.each(['tsx', 'js', 'jsx', 'mjs', 'cjs'])(
+    'parses JSX in .%s files',
+    async (extension) => {
+      const result = await new SourceTransformer({
+        isDevelopment: false,
+        projectRoot: '/project'
+      }).transform(
+        `/project/test.${extension}`,
+        `import {useExtracted} from 'next-intl';
+        function Component() {
+          const t = useExtracted();
+          return <p>{t('Hello!')}</p>;
+        }`
+      );
+      expect(result.code).toContain('t("OpKKos")');
+    }
+  );
 });
