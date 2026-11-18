@@ -210,6 +210,28 @@ msgstr "Hello!"
   await expect(extract('po')).rejects.toThrowError(/previous PO layout/);
 });
 
+it('writes nothing and names the file when a file fails to parse', async () => {
+  await writeFiles({
+    'src/Valid.tsx': `
+    import {useExtracted} from 'next-intl';
+    function Valid() {
+      const t = useExtracted();
+      return <div>{t('Valid message')}</div>;
+    }
+    `,
+    'src/Invalid.tsx': `
+    import {useExtracted} from 'next-intl';
+    function Invalid() {
+      const t = useExtracted();
+      return <div>{t('Invalid')}</div>;
+    `,
+    'messages/en.json': '{}'
+  });
+
+  await expect(extract('json')).rejects.toThrow('src/Invalid.tsx');
+  expect(await readFile('messages/en.json')).toBe('{}');
+});
+
 it('supports an absolute messages path', async () => {
   await writeFiles({
     'src/a.tsx': `

@@ -41,3 +41,19 @@ export function getSrcPaths(
       : [config.extract.srcPath]
   ).map((srcPath) => path.join(projectRoot, srcPath));
 }
+
+/** Lists files that couldn't be parsed, with the parser's error for each. */
+export function describeParseFailures(
+  failures: Array<{filePath: string; error: unknown}>,
+  projectRoot: string
+): string {
+  return failures
+    .map(({error, filePath}) => {
+      const relativePath = normalizePathToPosix(
+        path.relative(projectRoot, filePath)
+      );
+      const message = error instanceof Error ? error.message : String(error);
+      return `${relativePath}: ${message}`;
+    })
+    .join('\n\n');
+}

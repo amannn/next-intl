@@ -1,7 +1,16 @@
 import path from 'path';
 
 export default class SourceFileFilter {
-  public static readonly EXTENSIONS = ['ts', 'tsx', 'js', 'jsx'];
+  public static readonly EXTENSIONS = [
+    'ts',
+    'tsx',
+    'mts',
+    'cts',
+    'js',
+    'jsx',
+    'mjs',
+    'cjs'
+  ];
 
   // Will not be entered, except if explicitly asked for
   // TODO: At some point we should infer these from .gitignore

@@ -4,6 +4,10 @@ import LRUCache from './LRUCache.js';
 
 const require = createRequire(import.meta.url);
 
+// Same as in `@eloqnt/extractor`, which this module doesn't import so that the
+// loader stays light
+const TS_EXTENSIONS_WITHOUT_JSX = ['.ts', '.mts', '.cts'];
+
 /**
  * Compiles `useExtracted` and `getExtracted` calls for the bundler. The
  * messages themselves are extracted separately by `@eloqnt/extractor`.
@@ -51,7 +55,11 @@ export default class SourceTransformer {
         target: 'esnext',
         parser: {
           syntax: 'typescript',
-          tsx: true,
+          // JSX would make `<T>(x: T) => x` and `<string>value` invalid, so
+          // only enable it where it can occur
+          tsx: !TS_EXTENSIONS_WITHOUT_JSX.includes(
+            path.extname(absoluteFilePath)
+          ),
           decorators: true
         },
         experimental: {

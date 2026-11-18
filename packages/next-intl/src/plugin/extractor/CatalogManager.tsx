@@ -6,6 +6,7 @@ import {
   type SourceExtractedMessage,
   SourceFileScanner,
   aggregateMessage,
+  describeParseFailures,
   fillUnownedFields,
   getLocaleMessages,
   getSrcPaths,
@@ -71,9 +72,16 @@ export default class CatalogManager implements Disposable {
 
   private lastWriteByLocale: Map<Locale, Date | undefined> = new Map();
 
+  /**
+   * Files that failed to parse during the initial scan in development. Their
+   * messages are unknown, so saving would drop them from the catalogs. Saving
+   * resumes once each of them parses again.
+   */
+  private unparsedFiles: Set<string> = new Set();
+
   private saveScheduler: SaveScheduler<void>;
   private projectRoot: string;
-  private warn?: (message: string) => void;
+  private warn: (message: string) => void;
 
   // Cached instances
   private persister?: CatalogPersister;
@@ -84,8 +92,9 @@ export default class CatalogManager implements Disposable {
   // Resolves when all catalogs are loaded
   private loadCatalogsPromise?: Promise<unknown>;
 
-  // Resolves when the initial project scan and processing is complete
-  private scanCompletePromise?: Promise<void>;
+  // Set synchronously by `loadMessages`, so that source file events that
+  // arrive while the catalogs are still being read wait for the full scan
+  private initialLoadPromise?: Promise<void>;
 
   public constructor(
     config: ExtractorConfig,
@@ -99,7 +108,7 @@ export default class CatalogManager implements Disposable {
     this.config = config;
     this.saveScheduler = new SaveScheduler<void>(opts.saveDebounceMs ?? 50);
     this.projectRoot = opts.projectRoot;
-    this.warn = opts.warn;
+    this.warn = opts.warn ?? console.warn;
 
     this.extractor = opts.extractor;
   }
@@ -152,33 +161,47 @@ export default class CatalogManager implements Disposable {
     return getSrcPaths(this.config, this.projectRoot);
   }
 
-  public async loadMessages() {
+  public loadMessages(): Promise<void> {
+    this.initialLoadPromise = this.loadAllMessages();
+    return this.initialLoadPromise;
+  }
+
+  private async loadAllMessages(): Promise<void> {
     const sourceDiskMessages = await this.loadSourceMessages();
 
     this.loadCatalogsPromise = this.loadTargetMessages();
     await this.loadCatalogsPromise;
 
-    this.scanCompletePromise = (async () => {
-      const sourceFiles = Array.from(
-        await SourceFileScanner.getSourceFiles(this.getSrcPaths())
-      )
-        // Stable file order keeps catalog ties independent of processing timing
-        .toSorted((a, b) => a.localeCompare(b, 'en'));
-      const extractedFiles = await Promise.all(
-        sourceFiles.map(async (filePath) => ({
-          filePath,
-          messages: await this.extractFile(filePath)
-        }))
-      );
-      for (const {filePath, messages} of extractedFiles) {
-        if (messages) {
-          this.applyFileMessages(filePath, messages);
-        }
-      }
-      this.mergeSourceDiskMetadata(sourceDiskMessages);
-    })();
+    const sourceFiles = Array.from(
+      await SourceFileScanner.getSourceFiles(this.getSrcPaths())
+    )
+      // Stable file order keeps catalog ties independent of processing timing
+      .toSorted((a, b) => a.localeCompare(b, 'en'));
+    const extractedFiles = await Promise.all(
+      sourceFiles.map(async (filePath) => ({
+        filePath,
+        result: await this.extractFile(filePath)
+      }))
+    );
 
-    await this.scanCompletePromise;
+    const failures = extractedFiles.flatMap(({filePath, result}) =>
+      'error' in result ? [{filePath, error: result.error}] : []
+    );
+    if (failures.length > 0) {
+      for (const {filePath} of failures) {
+        this.unparsedFiles.add(filePath);
+      }
+      this.warn(
+        `Could not extract messages, messages files are updated once these files can be parsed again.\n\n${describeParseFailures(failures, this.projectRoot)}`
+      );
+    }
+
+    for (const {filePath, result} of extractedFiles) {
+      if ('messages' in result) {
+        this.applyFileMessages(filePath, result.messages);
+      }
+    }
+    this.mergeSourceDiskMetadata(sourceDiskMessages);
 
     this.getCatalogLocales().subscribeLocalesChange(this.onLocalesChange);
   }
@@ -267,25 +290,33 @@ export default class CatalogManager implements Disposable {
   }
 
   private async processFile(absoluteFilePath: string): Promise<boolean> {
-    const messages = await this.extractFile(absoluteFilePath);
+    const result = await this.extractFile(absoluteFilePath);
 
-    // `undefined` only when `extractFile()` throws. An empty array is success
-    // and must still run `applyFileMessages` to clear stale ids for this file.
-    if (!messages) return false;
+    // Keep the messages of the last successful parse until the file parses
+    // again. An empty array is success and must still run
+    // `applyFileMessages` to clear stale ids for this file.
+    if ('error' in result) return false;
 
-    return this.applyFileMessages(absoluteFilePath, messages);
+    const wasUnparsed = this.unparsedFiles.delete(absoluteFilePath);
+    const hasChanged = this.applyFileMessages(
+      absoluteFilePath,
+      result.messages
+    );
+
+    // Saving was paused for this file, so catch up now
+    return hasChanged || (wasUnparsed && this.unparsedFiles.size === 0);
   }
 
   private async extractFile(
     absoluteFilePath: string
-  ): Promise<Array<SourceExtractedMessage> | undefined> {
+  ): Promise<{messages: Array<SourceExtractedMessage>} | {error: unknown}> {
     let messages: Array<SourceExtractedMessage> = [];
     try {
       const content = await fs.readFile(absoluteFilePath, 'utf8');
       try {
         messages = await this.extractor.extract(absoluteFilePath, content);
-      } catch {
-        return undefined;
+      } catch (error) {
+        return {error};
       }
     } catch (err) {
       if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
@@ -293,7 +324,7 @@ export default class CatalogManager implements Disposable {
       }
       // ENOENT -> treat as no messages
     }
-    return messages;
+    return {messages};
   }
 
   private applyFileMessages(
@@ -426,6 +457,8 @@ export default class CatalogManager implements Disposable {
   }
 
   private async saveImpl(): Promise<void> {
+    if (this.unparsedFiles.size > 0) return;
+
     await this.saveLocale(this.config.extract.sourceLocale);
     const targetLocales = await this.getTargetLocales();
     await Promise.all(targetLocales.map((locale) => this.saveLocale(locale)));
@@ -472,8 +505,11 @@ export default class CatalogManager implements Disposable {
       ...params.added.map((locale) => this.reloadLocaleCatalog(locale))
     ]);
 
-    for (const locale of params.added) {
-      await this.saveLocale(locale);
+    // While saving is paused, the catch-up save writes new locales too
+    if (this.unparsedFiles.size === 0) {
+      for (const locale of params.added) {
+        await this.saveLocale(locale);
+      }
     }
 
     for (const locale of params.removed) {
@@ -488,20 +524,17 @@ export default class CatalogManager implements Disposable {
       return;
     }
 
-    if (this.loadCatalogsPromise) {
-      await this.loadCatalogsPromise;
-    }
-
-    // Wait for initial scan to complete to avoid race conditions
-    if (this.scanCompletePromise) {
-      await this.scanCompletePromise;
-    }
+    // A failed initial load is reported by `loadMessages` itself
+    await this.initialLoadPromise?.catch(() => {});
+    await this.loadCatalogsPromise;
 
     let changed = false;
-    const expandedEvents = expandDirectoryDeleteEvents(
-      normalizedEvents,
-      Array.from(this.sourceMessagesByFile.keys())
-    );
+    const expandedEvents = expandDirectoryDeleteEvents(normalizedEvents, [
+      ...this.sourceMessagesByFile.keys(),
+      // Unparsed files have no messages, but a moved folder must still
+      // clear them, otherwise saving stays paused
+      ...this.unparsedFiles
+    ]);
     // Stable file order keeps catalog ties independent of event timing.
     for (const event of expandedEvents.toSorted((a, b) =>
       a.path.localeCompare(b.path, 'en')

@@ -5,6 +5,8 @@ import {getDefaultProjectRoot, normalizePathToPosix} from '../utils.js';
 
 const require = createRequire(import.meta.url);
 
+const TS_EXTENSIONS_WITHOUT_JSX = ['.ts', '.mts', '.cts'];
+
 export default class MessageExtractor {
   private projectRoot: string;
 
@@ -34,7 +36,11 @@ export default class MessageExtractor {
         target: 'esnext',
         parser: {
           syntax: 'typescript',
-          tsx: true,
+          // JSX would make `<T>(x: T) => x` and `<string>value` invalid, so
+          // only enable it where it can occur
+          tsx: !TS_EXTENSIONS_WITHOUT_JSX.includes(
+            path.extname(absoluteFilePath)
+          ),
           decorators: true
         },
         experimental: {

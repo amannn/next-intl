@@ -97,6 +97,36 @@ describe('json format', {timeout: 20_000}, () => {
     });
   });
 
+  it('extracts from all supported file extensions', async () => {
+    filesystem.project.src['a.mts'] = `
+    import {useExtracted} from 'next-intl';
+    const t = useExtracted();
+    t('From mts');
+    `;
+    filesystem.project.src['b.cts'] = `
+    import {useExtracted} from 'next-intl';
+    const t = useExtracted();
+    t('From cts');
+    `;
+    filesystem.project.src['c.mjs'] = `
+    import {useExtracted} from 'next-intl';
+    const t = useExtracted();
+    t('From mjs');
+    `;
+    filesystem.project.src['d.cjs'] = `
+    import {useExtracted} from 'next-intl';
+    const t = useExtracted();
+    t('From cjs');
+    `;
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+
+    expect(
+      Object.values(JSON.parse(filesystem.project.messages!['en.json']))
+    ).toEqual(['From mts', 'From cts', 'From mjs', 'From cjs']);
+  });
+
   it('does not rewrite catalogs whose content is unchanged', async () => {
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
@@ -371,7 +401,8 @@ describe('json format', {timeout: 20_000}, () => {
     });
   });
 
-  it('omits file with parse error during initial scan but continues processing others (dev)', async () => {
+  it('keeps messages files unchanged while a file fails to parse during the initial scan (dev)', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
     filesystem.project.src['Valid.tsx'] = `
     import {useExtracted} from 'next-intl';
     function Valid() {
@@ -393,18 +424,148 @@ describe('json format', {timeout: 20_000}, () => {
 
     using compiler = createCompiler();
     await compiler.extractAll();
+
+    expect(vi.mocked(fs.writeFile)).not.toHaveBeenCalled();
+    expect(warn).toHaveBeenCalledTimes(1);
+    expect(warn.mock.calls[0][0]).toContain('src/Invalid.tsx');
+
+    await simulateSourceFileUpdate(
+      '/project/src/Invalid.tsx',
+      `
+    import {useExtracted} from 'next-intl';
+    function Invalid() {
+      const t = useExtracted();
+      return <div>{t('Now valid')}</div>;
+    }
+    `
+    );
     await waitForWriteFileCalls(1);
-    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
+
+    expect(vi.mocked(fs.writeFile).mock.calls.at(-1)).toMatchInlineSnapshot(`
       [
-        [
-          "messages/en.json",
-          "{
+        "messages/en.json",
+        "{
+        "KvzhZT": "Now valid",
         "HovSZ7": "Valid message"
       }
       ",
-        ],
       ]
     `);
+    warn.mockRestore();
+  });
+
+  it('waits for the initial scan when a file changes before the messages files are read', async () => {
+    filesystem.project.src['File1.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function File1() {
+      const t = useExtracted();
+      return <div>{t('Message1')}</div>;
+    }
+    `;
+    filesystem.project.src['File2.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function File2() {
+      const t = useExtracted();
+      return <div>{t('Message2')}</div>;
+    }
+    `;
+    filesystem.project.messages = {'en.json': '{}', 'de.json': '{}'};
+
+    using compiler = createCompiler();
+
+    let resolveFile2: (() => void) | undefined;
+    const file2Promise = new Promise<void>((resolve) => {
+      resolveFile2 = resolve;
+    });
+    readFileInterceptors.set('File2.tsx', () => file2Promise);
+
+    // The watcher subscribes before the initial scan starts, so an event can
+    // arrive before any messages file is read
+    const extractAllPromise = compiler.extractAll();
+    const updateDone = simulateSourceFileUpdate(
+      '/project/src/File1.tsx',
+      filesystem.project.src['File1.tsx']
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    resolveFile2?.();
+    await extractAllPromise;
+    await updateDone;
+    await waitForWriteFileCalls(2);
+
+    for (const [, content] of vi.mocked(fs.writeFile).mock.calls) {
+      expect(Object.keys(JSON.parse(content as string))).toHaveLength(2);
+    }
+  });
+
+  it('resumes saving when a folder with a file that fails to parse is removed', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    filesystem.project.src = {
+      'Valid.tsx': `
+      import {useExtracted} from 'next-intl';
+      function Valid() {
+        const t = useExtracted();
+        return <div>{t('Valid message')}</div>;
+      }
+      `,
+      legacy: {
+        'Invalid.tsx': `
+        import {useExtracted} from 'next-intl';
+        function Invalid() {
+          const t = useExtracted();
+          return <div>{t('Invalid')}</div>;
+        `
+      }
+    } as any;
+    filesystem.project.messages = {'en.json': '{}'};
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+    expect(vi.mocked(fs.writeFile)).not.toHaveBeenCalled();
+
+    delete (filesystem.project.src as any).legacy;
+    fileTimestamps.delete('/project/src/legacy/Invalid.tsx');
+    const callback = watcherCallbacks.get('/project/src')!;
+    await Promise.resolve(
+      callback(null, [{type: 'delete', path: '/project/src/legacy'}])
+    );
+    await waitForWriteFileCalls(1);
+
+    expect(JSON.parse(filesystem.project.messages['en.json'])).toEqual({
+      HovSZ7: 'Valid message'
+    });
+    warn.mockRestore();
+  });
+
+  it('does not write an added locale while a file fails to parse', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    filesystem.project.src['Valid.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Valid() {
+      const t = useExtracted();
+      return <div>{t('Valid message')}</div>;
+    }
+    `;
+    filesystem.project.src['Invalid.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Invalid() {
+      const t = useExtracted();
+      return <div>{t('Invalid')}</div>;
+    `;
+    filesystem.project.messages = {'en.json': '{}'};
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+
+    const readCallsBefore = vi.mocked(fs.readFile).mock.calls.length;
+    filesystem.project.messages['fr.json'] = '{"HovSZ7": "Message valide"}';
+    simulateFileEvent('/project/messages', 'rename', 'fr.json');
+    await vi.waitFor(() =>
+      expect(vi.mocked(fs.readFile).mock.calls.length).toBeGreaterThan(
+        readCallsBefore
+      )
+    );
+    expect(vi.mocked(fs.writeFile)).not.toHaveBeenCalled();
 
     await simulateSourceFileUpdate(
       '/project/src/Invalid.tsx',
@@ -418,16 +579,13 @@ describe('json format', {timeout: 20_000}, () => {
     );
     await waitForWriteFileCalls(2);
 
-    expect(vi.mocked(fs.writeFile).mock.calls.at(-1)).toMatchInlineSnapshot(`
-      [
-        "messages/en.json",
-        "{
-        "KvzhZT": "Now valid",
-        "HovSZ7": "Valid message"
-      }
-      ",
-      ]
-    `);
+    await vi.waitFor(() =>
+      expect(JSON.parse(filesystem.project.messages!['fr.json'])).toEqual({
+        HovSZ7: 'Message valide',
+        KvzhZT: ''
+      })
+    );
+    warn.mockRestore();
   });
 });
 

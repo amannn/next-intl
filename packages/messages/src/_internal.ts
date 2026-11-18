@@ -9,3 +9,4 @@ export type {
   ExtractorMessageReference,
   Locale
 } from './types.js';
+export {default as UserError} from './UserError.js';

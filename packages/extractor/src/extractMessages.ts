@@ -3,6 +3,7 @@ import path from 'path';
 import {
   CatalogPersister,
   type ExtractorMessage,
+  UserError,
   getFormatExtension,
   getTargetLocales,
   resolveCodec
@@ -16,7 +17,12 @@ import {
 import MessageExtractor from './extractor/MessageExtractor.js';
 import SourceFileScanner from './source/SourceFileScanner.js';
 import type {ExtractorConfig, SourceExtractedMessage} from './types.js';
-import {getDefaultProjectRoot, getSrcPaths, localeCompare} from './utils.js';
+import {
+  describeParseFailures,
+  getDefaultProjectRoot,
+  getSrcPaths,
+  localeCompare
+} from './utils.js';
 
 /**
  * Extracts the messages of all source files and writes them to the messages
@@ -64,13 +70,27 @@ export default async function extractMessages(
     // Stable file order keeps catalog ties independent of processing timing
     .toSorted(localeCompare);
   const extractedFiles = await Promise.all(
-    sourceFiles.map((filePath) => extractFile(extractor, filePath))
+    sourceFiles.map(async (filePath) => ({
+      filePath,
+      result: await extractFile(extractor, filePath)
+    }))
   );
 
+  const failures = extractedFiles.flatMap(({filePath, result}) =>
+    'error' in result ? [{filePath, error: result.error}] : []
+  );
+  if (failures.length > 0) {
+    // Writing nothing beats messages files that miss the messages of the files
+    // that couldn't be parsed
+    throw new UserError(
+      `Could not extract messages, no messages files were updated.\n\n${describeParseFailures(failures, projectRoot)}`
+    );
+  }
+
   const sourceMessagesById = new Map<string, Array<SourceExtractedMessage>>();
-  for (const messages of extractedFiles) {
-    if (!messages) continue;
-    for (const [id, fileMessages] of groupSourceMessagesById(messages)) {
+  for (const {result} of extractedFiles) {
+    if (!('messages' in result)) continue;
+    for (const [id, fileMessages] of groupSourceMessagesById(result.messages)) {
       const existing = sourceMessagesById.get(id);
       if (existing) {
         existing.push(...fileMessages);
@@ -116,18 +136,20 @@ function mapById(
 async function extractFile(
   extractor: MessageExtractor,
   absoluteFilePath: string
-): Promise<Array<SourceExtractedMessage> | undefined> {
+): Promise<{messages: Array<SourceExtractedMessage>} | {error: unknown}> {
   let content: string;
   try {
     content = await fs.readFile(absoluteFilePath, 'utf8');
   } catch (error) {
     // Deleted since the scan
-    if ((error as NodeJS.ErrnoException).code === 'ENOENT') return [];
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+      return {messages: []};
+    }
     throw error;
   }
   try {
-    return await extractor.extract(absoluteFilePath, content);
-  } catch {
-    return undefined;
+    return {messages: await extractor.extract(absoluteFilePath, content)};
+  } catch (error) {
+    return {error};
   }
 }
