@@ -59,7 +59,9 @@ export default function initExtractionCompiler(
 
       extraction = watcherReady.then(() => target.extractAll());
     } else {
-      extraction = extractMessages(extractorConfig, {projectRoot, warn});
+      extraction = extractMessages(extractorConfig, {projectRoot, warn}).then(
+        () => {}
+      );
     }
 
     // Fire-and-forget: Start extraction, don't block config return.

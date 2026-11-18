@@ -1,7 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
 import {
-  type ExtractorConfig,
   type MessageExtractor,
   type SourceExtractedMessage,
   SourceFileScanner,
@@ -21,6 +20,7 @@ import {
   getFormatExtension,
   resolveCodec
 } from '@eloqnt/messages/_internal';
+import type {ExtractorConfig} from '../../extractor/types.js';
 import CatalogLocales from './CatalogLocales.js';
 import SaveScheduler from './SaveScheduler.js';
 import {
@@ -127,10 +127,11 @@ export default class CatalogManager implements Disposable {
     if (this.persister) {
       return this.persister;
     } else {
+      const extension = getFormatExtension(this.config.messages.format);
       this.persister = new CatalogPersister({
-        messagesPath: this.config.extract.path,
+        getFilePath: (locale) =>
+          path.join(this.config.extract.path, locale + extension),
         codec: await this.getCodec(),
-        extension: getFormatExtension(this.config.messages.format),
         sourceLocale: this.config.extract.sourceLocale,
         warn: this.warn
       });

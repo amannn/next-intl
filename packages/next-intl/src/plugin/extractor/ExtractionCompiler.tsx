@@ -1,7 +1,5 @@
-import {
-  type ExtractorConfig,
-  MessageExtractor
-} from '@eloqnt/extractor/_internal';
+import {MessageExtractor} from '@eloqnt/extractor/_internal';
+import type {ExtractorConfig} from '../../extractor/types.js';
 import CatalogManager from './CatalogManager.js';
 import type {SourceFileEvent} from './SourceFileEvents.js';
 

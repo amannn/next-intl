@@ -16,3 +16,9 @@ export type ExtractorMessageReference = ExtractorMessage['references'][number];
 export type ExtractorMessage = ReturnType<
   SharedSeparateFileCodec['decode']
 >[number];
+
+/**
+ * A folder with one file per locale, a template with `{locale}` or `{code}`,
+ * or separate paths when the source locale's file has no locale marker.
+ */
+export type MessagesPathEntry = string | {source: string; targets: string};

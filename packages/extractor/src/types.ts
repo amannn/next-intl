@@ -1,7 +1,8 @@
 import type {
   ExtractorMessageReference,
   Locale,
-  MessagesFormat
+  MessagesFormat,
+  MessagesPathEntry
 } from '@eloqnt/messages/_internal';
 
 /** A single statically extracted source-code usage before any aggregation. */
@@ -16,12 +17,14 @@ export type SourceExtractedMessage = {
 export type ExtractorConfig = {
   extract: {
     locales: 'infer' | ReadonlyArray<Locale>;
-    path: string;
+    path: MessagesPathEntry;
     sourceLocale: string;
     srcPath: string | Array<string>;
   };
   messages: {
     format: MessagesFormat;
     path: Array<string>;
+    /** Maps locales to the codes used for `{code}` in `extract.path`. */
+    codes?: Record<Locale, string>;
   };
 };

@@ -6,32 +6,25 @@ import type {ExtractorMessage, Locale} from '../types.js';
 import {warnAboutMissingReferences} from '../utils.js';
 
 export default class CatalogPersister {
-  private messagesPath: string;
+  private getFilePath: (locale: Locale) => string;
   private codec: ExtractorCodec;
-  private extension: string;
   private sourceLocale: Locale;
   private warn: (message: string) => void;
 
   public constructor(params: {
-    messagesPath: string;
+    getFilePath(locale: Locale): string;
     codec: ExtractorCodec;
-    extension: string;
     sourceLocale: Locale;
     warn?(message: string): void;
   }) {
-    this.messagesPath = params.messagesPath;
+    this.getFilePath = params.getFilePath;
     this.codec = params.codec;
-    this.extension = params.extension;
     this.sourceLocale = params.sourceLocale;
     this.warn = params.warn ?? console.warn;
   }
 
-  private getFileName(locale: Locale): string {
-    return locale + this.extension;
-  }
-
-  private getFilePath(locale: Locale): string {
-    return fsPath.join(this.messagesPath, this.getFileName(locale));
+  private getDisplayPath(locale: Locale): string {
+    return fsPath.relative(process.cwd(), this.getFilePath(locale));
   }
 
   public async read(locale: Locale): Promise<Array<ExtractorMessage>> {
@@ -49,7 +42,7 @@ export default class CatalogPersister {
         return [];
       }
       throw new Error(
-        `Error while reading ${this.getFileName(locale)}:\n> ${error}`,
+        `Error while reading ${this.getDisplayPath(locale)}:\n> ${error}`,
         {cause: error}
       );
     }
@@ -62,7 +55,7 @@ export default class CatalogPersister {
       return messages;
     } catch (error) {
       throw new Error(
-        `Error while decoding ${this.getFileName(locale)}:\n> ${error}`,
+        `Error while decoding ${this.getDisplayPath(locale)}:\n> ${error}`,
         {cause: error}
       );
     }
@@ -74,7 +67,7 @@ export default class CatalogPersister {
       locale: Locale;
       sourceMessagesById: Map<string, ExtractorMessage>;
     }
-  ): Promise<void> {
+  ): Promise<boolean> {
     const filePath = this.getFilePath(context.locale);
     warnAboutMissingReferences(messages, this.warn);
     const content = this.codec.encode(messages, context);
@@ -84,7 +77,7 @@ export default class CatalogPersister {
     const currentContent = await fs
       .readFile(filePath, 'utf8')
       .catch(() => undefined);
-    if (currentContent === content) return;
+    if (currentContent === content) return false;
 
     // Write to a temporary file first and move it into place, so that
     // concurrent readers (e.g. a build compiling catalogs) never observe a
@@ -96,9 +89,11 @@ export default class CatalogPersister {
       await fs.mkdir(outputDir, {recursive: true});
       await fs.writeFile(tempPath, content);
       await fs.rename(tempPath, filePath);
+      return true;
     } catch (error) {
       await fs.rm(tempPath, {force: true}).catch(() => {});
       console.error(`❌ Failed to write catalog: ${error}`);
+      return false;
     }
   }
 

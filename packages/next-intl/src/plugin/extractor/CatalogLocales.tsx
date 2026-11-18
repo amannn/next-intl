@@ -1,7 +1,8 @@
 import fs from 'fs';
 import fsPromises from 'fs/promises';
 import path from 'path';
-import {type Locale, getTargetLocales} from '@eloqnt/messages/_internal';
+import type {Locale} from '@eloqnt/messages/_internal';
+import getTargetLocales from './getTargetLocales.js';
 
 type LocaleChangeCallback = (params: {
   added: Array<Locale>;

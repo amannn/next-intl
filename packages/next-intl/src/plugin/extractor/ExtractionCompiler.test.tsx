@@ -1641,7 +1641,7 @@ msgstr ""
     rejectReadFile?.(ioError);
 
     await expect(compiler.extractAll()).rejects.toThrow(
-      'Error while reading de.po:\n> Error: EACCES: permission denied'
+      'Error while reading messages/de.po:\n> Error: EACCES: permission denied'
     );
   });
 
@@ -1699,7 +1699,7 @@ msgstr ""
     using compiler = createCompiler();
 
     await expect(compiler.extractAll()).rejects.toThrow(
-      'Error while decoding de.po:\n> Error: Incomplete quoted string:\n> "Hal'
+      'Error while decoding messages/de.po:\n> Error: Incomplete quoted string:\n> "Hal'
     );
   });
 
