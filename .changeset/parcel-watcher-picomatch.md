@@ -2,4 +2,4 @@
 'next-intl': patch
 ---
 
-Require `@parcel/watcher` 2.6.0 or later, whose `picomatch` range excludes versions affected by CVE-2026-33671 (ReDoS) and CVE-2026-33672.
+Update `@parcel/watcher` to 2.6.0. This also updates its `picomatch` dependency, which resolves audit warnings for CVE-2026-33671 and CVE-2026-33672. next-intl isn't affected by these, since it only passes fixed ignore patterns to the watcher.
