@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.15.3
+
+### Patch Changes
+
+- Update `@parcel/watcher` to 2.6.0. This also updates its `picomatch` dependency, which resolves audit warnings for CVE-2026-33671 and CVE-2026-33672. next-intl isn't affected by these, since it only passes fixed ignore patterns to the watcher. ([#2495](https://github.com/amannn/next-intl/pull/2495), [`e123522`](https://github.com/amannn/next-intl/commit/e12352252da8598bd28117229fba4632fe90a50d), [@Mohsan1995](https://github.com/Mohsan1995))
+
 ## 4.15.2
 
 ### Patch Changes
