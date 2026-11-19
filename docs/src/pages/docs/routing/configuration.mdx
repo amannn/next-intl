@@ -520,7 +520,7 @@ link: <https://example.com/en>; rel="alternate"; hreflang="en",
 
 The [`x-default`](https://developers.google.com/search/docs/specialty/international/localized-versions#xdefault) entry is included to point to a variant that can be used if no other language matches the user's browser setting. This special entry is reserved for language selection & detection, in our case issuing a 307 redirect to the best matching locale.
 
-To provide fully specified URLs, the domain is read from the `x-forwarded-host` header, with a fallback to `host` (hosting platforms typically provide these headers out of the box).
+To provide fully specified URLs, the domain is read from the `x-forwarded-host` header, with a fallback to `host` (hosting platforms typically provide these headers out of the box). If you self-host behind a proxy or CDN, make sure it sets `x-forwarded-host` itself and overwrites any value sent by the client, since Next.js relies on this header as well (e.g. for [Server Actions](https://nextjs.org/docs/app/api-reference/config/next-config-js/serverActions)).
 
 Your middleware configuration, including options like `domains`, `pathnames` and `basePath`, is automatically incorporated.
 
