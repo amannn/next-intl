@@ -130,7 +130,7 @@
     "@eloqnt/format-po": "workspace:~",
     "@eloqnt/messages": "workspace:~",
     "@formatjs/intl-localematcher": "^0.8.1",
-    "@parcel/watcher": "^2.4.1",
+    "@parcel/watcher": "^2.6.0",
     "@swc/core": "~1.16.0",
     "icu-minify": "workspace:^",
     "negotiator": "^1.0.0",
