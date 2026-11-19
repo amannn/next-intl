@@ -21,6 +21,24 @@ describe('serializeSearchParams', () => {
   it('handles arrays', () => {
     expect(serializeSearchParams({v: ['a', 'b']})).toEqual('?v=a&v=b');
   });
+
+  it('handles empty objects', () => {
+    expect(serializeSearchParams({})).toEqual('');
+  });
+
+  it('handles URLSearchParams', () => {
+    expect(
+      serializeSearchParams(new URLSearchParams('v=test&foo=bar'))
+    ).toEqual('?v=test&foo=bar');
+    expect(serializeSearchParams(new URLSearchParams())).toEqual('');
+  });
+
+  it('handles search strings', () => {
+    expect(serializeSearchParams('?v=test')).toEqual('?v=test');
+    expect(serializeSearchParams('v=test')).toEqual('?v=test');
+    expect(serializeSearchParams('')).toEqual('');
+    expect(serializeSearchParams('?')).toEqual('');
+  });
 });
 
 describe('compileLocalizedPathname', () => {
@@ -157,6 +175,86 @@ describe('compileLocalizedPathname', () => {
         pathnames
       })
     ).toBe('/test/a$&b/c');
+  });
+
+  it('handles query as an object', () => {
+    expect(
+      compileLocalizedPathname<Locales, '/test/[one]/[two]'>({
+        locale: 'en',
+        pathname: '/test/[one]/[two]',
+        params: {one: '1', two: '2'},
+        pathnames,
+        query: {foo: 'bar'}
+      })
+    ).toBe('/test/1/2?foo=bar');
+  });
+
+  it('handles query as URLSearchParams', () => {
+    expect(
+      compileLocalizedPathname<Locales, '/test/[one]/[two]'>({
+        locale: 'en',
+        pathname: '/test/[one]/[two]',
+        params: {one: '1', two: '2'},
+        pathnames,
+        query: new URLSearchParams('foo=bar')
+      })
+    ).toBe('/test/1/2?foo=bar');
+  });
+
+  it('handles query as a string', () => {
+    expect(
+      compileLocalizedPathname<Locales, '/test/[one]/[two]'>({
+        locale: 'en',
+        pathname: '/test/[one]/[two]',
+        params: {one: '1', two: '2'},
+        pathnames,
+        query: '?foo=bar'
+      })
+    ).toBe('/test/1/2?foo=bar');
+  });
+
+  it('handles search string', () => {
+    expect(
+      compileLocalizedPathname<Locales, '/test/[one]/[two]'>({
+        locale: 'en',
+        pathname: '/test/[one]/[two]',
+        params: {one: '1', two: '2'},
+        pathnames,
+        search: '?foo=bar'
+      })
+    ).toBe('/test/1/2?foo=bar');
+
+    expect(
+      compileLocalizedPathname<Locales, '/test/[one]/[two]'>({
+        locale: 'en',
+        pathname: '/test/[one]/[two]',
+        params: {one: '1', two: '2'},
+        pathnames,
+        search: 'foo=bar'
+      })
+    ).toBe('/test/1/2?foo=bar');
+  });
+
+  it('omits query or search when empty', () => {
+    expect(
+      compileLocalizedPathname<Locales, '/test/[one]/[two]'>({
+        locale: 'en',
+        pathname: '/test/[one]/[two]',
+        params: {one: '1', two: '2'},
+        pathnames,
+        query: {}
+      })
+    ).toBe('/test/1/2');
+
+    expect(
+      compileLocalizedPathname<Locales, '/test/[one]/[two]'>({
+        locale: 'en',
+        pathname: '/test/[one]/[two]',
+        params: {one: '1', two: '2'},
+        pathnames,
+        search: ''
+      })
+    ).toBe('/test/1/2');
   });
 });
 

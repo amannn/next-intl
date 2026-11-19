@@ -134,7 +134,12 @@ export default function createSharedNavigationFns<
   function getPathname(args: {
     /** @see https://next-intl.dev/docs/routing/navigation#getpathname */
     href: [AppPathnames] extends [never]
-      ? string | {pathname: string; query?: QueryParams}
+      ? | string
+        | {
+            pathname: string;
+            query?: QueryParams;
+            search?: string;
+          }
       : HrefOrHrefWithParams<keyof AppPathnames>;
     /** The locale to compute the pathname for. */
     locale: Locale;
@@ -147,7 +152,9 @@ export default function createSharedNavigationFns<
     if (pathnames == null) {
       if (typeof href === 'object') {
         pathname = href.pathname as string;
-        if (href.query) {
+        if (href.search) {
+          pathname += serializeSearchParams(href.search);
+        } else if (href.query) {
           pathname += serializeSearchParams(href.query);
         }
       } else {

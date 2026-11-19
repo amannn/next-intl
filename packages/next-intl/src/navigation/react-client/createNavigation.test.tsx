@@ -189,6 +189,70 @@ describe("localePrefix: 'always'", () => {
         );
       });
 
+      it('handles search params via URLSearchParams in query', () => {
+        invokeRouter((router) =>
+          router[method]({
+            pathname: '/test',
+            query: new URLSearchParams('foo=bar')
+          })
+        );
+        expect(useNextRouter()[method]).toHaveBeenCalledWith(
+          '/en/test?foo=bar'
+        );
+      });
+
+      it('handles search params via string in query', () => {
+        invokeRouter((router) =>
+          router[method]({
+            pathname: '/test',
+            query: '?foo=bar'
+          })
+        );
+        expect(useNextRouter()[method]).toHaveBeenCalledWith(
+          '/en/test?foo=bar'
+        );
+      });
+
+      it('handles search string via search property', () => {
+        invokeRouter((router) =>
+          router[method]({
+            pathname: '/test',
+            search: '?foo=bar'
+          })
+        );
+        expect(useNextRouter()[method]).toHaveBeenCalledWith(
+          '/en/test?foo=bar'
+        );
+
+        invokeRouter((router) =>
+          router[method]({
+            pathname: '/test',
+            search: 'foo=bar'
+          })
+        );
+        expect(useNextRouter()[method]).toHaveBeenCalledWith(
+          '/en/test?foo=bar'
+        );
+      });
+
+      it('does not append dangling question mark for empty query or search', () => {
+        invokeRouter((router) =>
+          router[method]({
+            pathname: '/test',
+            query: {}
+          })
+        );
+        expect(useNextRouter()[method]).toHaveBeenCalledWith('/en/test');
+
+        invokeRouter((router) =>
+          router[method]({
+            pathname: '/test',
+            search: ''
+          })
+        );
+        expect(useNextRouter()[method]).toHaveBeenCalledWith('/en/test');
+      });
+
       it('passes through absolute urls', () => {
         invokeRouter((router) => router[method]('https://example.com'));
         expect(useNextRouter()[method]).toHaveBeenCalledWith(
@@ -413,6 +477,28 @@ describe("localePrefix: 'always', with `pathnames`", () => {
             query: {
               foo: 'bar'
             }
+          })
+        );
+        expect(useNextRouter()[method]).toHaveBeenCalledWith(
+          '/en/about?foo=bar'
+        );
+      });
+
+      it('handles search params via URLSearchParams and search string with pathnames', () => {
+        invokeRouter((router) =>
+          router[method]({
+            pathname: '/about',
+            query: new URLSearchParams('foo=bar')
+          })
+        );
+        expect(useNextRouter()[method]).toHaveBeenCalledWith(
+          '/en/about?foo=bar'
+        );
+
+        invokeRouter((router) =>
+          router[method]({
+            pathname: '/about',
+            search: '?foo=bar'
           })
         );
         expect(useNextRouter()[method]).toHaveBeenCalledWith(
