@@ -94,7 +94,15 @@ See [`createNextIntlPlugin`](/docs/usage/plugin#extract) for details.
 <Details id="manual">
 <summary>Can I extract messages manually?</summary>
 
-While message extraction is designed to seamlessly integrate with your development workflow based on running `next dev` and `next build`, you can also extract messages manually:
+While message extraction is designed to seamlessly integrate with your development workflow based on running `next dev` and `next build`, you can also extract messages manually.
+
+From the command line, you can use [`eloqnt extract`](https://cli.eloqnt.dev/docs/cli/extract), which runs the same extraction based on your [eloqnt config](https://cli.eloqnt.dev/docs/configuration):
+
+```sh
+npx eloqnt extract
+```
+
+Alternatively, you can call the extraction from a script:
 
 ```tsx
 import {unstable_extractMessages} from 'next-intl/extractor';
@@ -468,7 +476,7 @@ This will extract both first-party and external package messages to your main ap
 
 If your shared package is used by multiple apps, you might want to reuse messages among all consumers.
 
-For this, you can use one-time extraction via [`unstable_extractMessages`](/docs/usage/extraction#manual) as part of your build process to extract the shared messages:
+For this, you can use one-time extraction via [`eloqnt extract`](https://cli.eloqnt.dev/docs/cli/extract) or [`unstable_extractMessages`](/docs/usage/extraction#manual) as part of your build process to extract the shared messages:
 
 ```tsx
 import {unstable_extractMessages} from 'next-intl/extractor';
