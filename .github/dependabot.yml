@@ -13,6 +13,9 @@ updates:
     groups:
       github-actions:
         patterns: ['*']
+      github-actions-security:
+        applies-to: security-updates
+        patterns: ['*']
 
   - package-ecosystem: npm
     directory: /
@@ -31,6 +34,10 @@ updates:
       npm-major:
         patterns: ['*']
         update-types: [major]
+      # Without this, every security alert gets its own pull request
+      npm-security:
+        applies-to: security-updates
+        patterns: ['*']
     exclude-paths:
       - examples/example-pages-router-legacy/** # Intentionally on old Next.js and React
     ignore:
