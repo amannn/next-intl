@@ -12,18 +12,18 @@
   "author": "Jan Amann",
   "license": "MIT",
   "devDependencies": {
-    "@babel/core": "^7.29.13",
-    "@babel/preset-env": "^7.29.7",
-    "@babel/preset-react": "^7.29.7",
-    "@babel/preset-typescript": "^7.29.7",
-    "@rollup/plugin-babel": "^6.1.0",
+    "@babel/core": "^8.1.2",
+    "@babel/preset-env": "^8.0.7",
+    "@babel/preset-react": "^8.0.1",
+    "@babel/preset-typescript": "^8.0.7",
+    "@rollup/plugin-babel": "^7.1.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@rollup/plugin-replace": "^6.0.3",
-    "@rollup/plugin-terser": "^0.4.4",
-    "eslint": "^9.39.5",
+    "@rollup/plugin-terser": "^1.0.2",
+    "eslint": "^10.14.0",
     "eslint-config-molindo": "^8.0.0",
-    "execa": "^9.6.1",
-    "globals": "^16.5.0",
+    "execa": "^10.2.1",
+    "globals": "^17.14.0",
     "rollup": "^4.68.5"
   }
 }

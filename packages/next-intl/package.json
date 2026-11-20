@@ -150,18 +150,18 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
     "@edge-runtime/vm": "^5.0.0",
-    "@size-limit/preset-small-lib": "^11.2.0",
+    "@size-limit/preset-small-lib": "^14.3.0",
     "@testing-library/react": "^16.3.3",
     "@types/negotiator": "^0.6.5",
     "@types/node": "^20.19.43",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@types/webpack": "^5.28.5",
-    "eslint": "9.11.1",
+    "eslint": "10.14.0",
     "eslint-config-molindo": "^8.0.0",
     "eslint-plugin-react-compiler": "0.0.0-experimental-8e3b87c-20240822",
     "next": "^16.4.6",
-    "path-to-regexp": "^6.3.0",
+    "path-to-regexp": "^9.0.0",
     "po-parser": "^2.2.0",
     "prettier": "^3.10.1",
     "publint": "^0.3.25",
@@ -169,10 +169,10 @@
     "react-dom": "^19.3.1",
     "rollup": "^4.68.5",
     "rollup-plugin-preserve-directives": "0.4.0",
-    "size-limit": "^11.2.0",
+    "size-limit": "^14.3.0",
     "tools": "workspace:^",
-    "typescript": "^6.0.3",
-    "vitest": "^3.2.7"
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.0"
   },
   "prettier": "eslint-config-molindo/.prettierrc.json"
 }
