@@ -109,7 +109,7 @@
     "tinyspy": "^4.0.6",
     "tools": "workspace:^",
     "typescript": "^6.0.3",
-    "vitest": "^3.2.7"
+    "vitest": "^4.1.11"
   },
   "prettier": "eslint-config-molindo/.prettierrc.json"
 }
