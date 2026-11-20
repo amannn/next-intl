@@ -36,14 +36,12 @@ reviews:
         but have no changeset in `.changeset/`, and breaking changes to public
         exports or types. Breaking changes to packages below 1.0 need a minor
         bump in their changeset.
-  # Linters that load config from the PR (and can run code from it) are off,
-  # since CI already runs ESLint, Prettier and zizmor.
+  # CodeRabbit runs these by default (mostly with its own config), CI lints
+  # with ours.
   tools:
     eslint:
       enabled: false
     biome:
-      enabled: false
-    oxc:
       enabled: false
     markdownlint:
       enabled: false
