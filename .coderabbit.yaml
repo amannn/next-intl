@@ -37,9 +37,9 @@ reviews:
     - path: 'packages/**'
       instructions: >-
         These packages are published to npm. Flag changes that affect users
-        but have no changeset in `.changeset/`, breaking changes to public
-        exports or types, and code that crosses the server/client boundary
-        (e.g. `react-server` exports, `'use client'`).
+        but have no changeset in `.changeset/`, and breaking changes to public
+        exports or types. Breaking changes to packages below 1.0 need a minor
+        bump in their changeset.
   # Linters that load config from the PR (and can run code from it) are off,
   # since CI already runs ESLint, Prettier and zizmor.
   tools:
