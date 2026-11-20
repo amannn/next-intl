@@ -3,6 +3,8 @@
 # Reviews only: no summaries, walkthrough extras, chat auto-replies or
 # commits pushed by CodeRabbit.
 reviews:
+  auto_review:
+    ignore_usernames: ['dependabot[bot]']
   high_level_summary: false
   changed_files_summary: false
   sequence_diagrams: false
