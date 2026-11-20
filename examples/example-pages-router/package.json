@@ -20,10 +20,10 @@
     "@types/lodash": "^4.17.27",
     "@types/node": "^20.19.43",
     "@types/react": "^19.3.0",
-    "eslint": "^9.39.5",
+    "eslint": "^10.14.0",
     "eslint-config-next": "^16.4.6",
     "prettier": "^3.9.10",
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   },
   "prettier": {
     "singleQuote": true,
