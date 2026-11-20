@@ -3,7 +3,6 @@
 # Reviews only: no summaries, walkthrough extras, chat auto-replies or
 # commits pushed by CodeRabbit.
 reviews:
-  # Review PRs against any branch, not only the default one.
   auto_review:
     base_branches: ['.*']
   high_level_summary: false
