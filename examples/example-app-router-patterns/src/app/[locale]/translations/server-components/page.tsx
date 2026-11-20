@@ -37,9 +37,7 @@ export default function ServerComponentsPage() {
 
       <Prose className="max-w-2xl">
         <p>
-          {t(
-            'Messages stay on the server, so no translation runtime is shipped to the client.'
-          )}
+          {t('Translations in Server Components are resolved on the server.')}
         </p>
 
         <h3>{t('Async components')}</h3>

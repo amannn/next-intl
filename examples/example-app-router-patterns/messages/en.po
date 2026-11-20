@@ -97,9 +97,9 @@ msgid "Output"
 msgstr "Output"
 
 #: src/app/[locale]/translations/server-components/page.tsx
-msgctxt "n5Juxa"
-msgid "Messages stay on the server, so no translation runtime is shipped to the client."
-msgstr "Messages stay on the server, so no translation runtime is shipped to the client."
+msgctxt "felJxe"
+msgid "Translations in Server Components are resolved on the server."
+msgstr "Translations in Server Components are resolved on the server."
 
 #: src/app/[locale]/translations/server-components/page.tsx
 msgctxt "fZd-wY"
