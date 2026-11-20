@@ -1,5 +1,6 @@
 ---
 'icu-minify': patch
+'next-intl': patch
 ---
 
-Fall back to `other` in a `select` when the value matches an inherited object key like `constructor` or `toString`, also for precompiled messages loaded from JSON. Previously, formatting such a message threw an error.
+Fall back to `other` in a `select` of a precompiled message when the value matches an inherited object key like `constructor` or `toString`, instead of throwing an error.

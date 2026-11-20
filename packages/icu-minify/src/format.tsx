@@ -239,7 +239,7 @@ function formatSelect<RichTextElement>(
   const value = String(getValue(values, name));
   // Precompiled messages are loaded via `JSON.parse`, which restores the
   // prototype that `compile` leaves out, so inherited keys must be skipped
-  const branch: CompiledNode | undefined = Object.prototype.hasOwnProperty.call(
+  const branch: CompiledNode | undefined = {}.hasOwnProperty.call(
     options,
     value
   )
