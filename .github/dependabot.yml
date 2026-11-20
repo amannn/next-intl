@@ -8,6 +8,8 @@ updates:
     commit-message:
       prefix: chore
       include: scope
+    cooldown:
+      default-days: 7
     groups:
       github-actions:
         patterns: ['*']
@@ -20,7 +22,7 @@ updates:
       prefix: chore
       include: scope
     cooldown:
-      default-days: 4 # Longer than `minimumReleaseAge` in `pnpm-workspace.yaml`
+      default-days: 7 # At least `minimumReleaseAge` in `pnpm-workspace.yaml`
       exclude: ['@eloqnt/*']
     groups:
       npm:
