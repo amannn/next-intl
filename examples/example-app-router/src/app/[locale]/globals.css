@@ -1,9 +1,1 @@
 @import 'tailwindcss';
-
-@theme {
-  --font-sans: Inter, sans-serif;
-  --font-mono:
-    Monaco, ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono',
-    'Courier New', monospace;
-  --color-slate-850: hsl(222deg 47% 16%);
-}

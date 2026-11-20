@@ -23,7 +23,7 @@ export default function Error({error, reset}: Props) {
           p: (chunks) => <p className="mt-4">{chunks}</p>,
           retry: (chunks) => (
             <button
-              className="cursor-pointer text-white underline underline-offset-2"
+              className="text-white underline underline-offset-2"
               onClick={reset}
               type="button"
             >
