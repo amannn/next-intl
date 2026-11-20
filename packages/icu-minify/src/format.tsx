@@ -237,7 +237,14 @@ function formatSelect<RichTextElement>(
   pluralCtx: PluralContext | undefined
 ): string | RichTextElement | Array<string | RichTextElement> {
   const value = String(getValue(values, name));
-  const branch: CompiledNode | undefined = options[value] ?? options.other;
+  // Precompiled messages are loaded via `JSON.parse`, which restores the
+  // prototype that `compile` leaves out, so inherited keys must be skipped
+  const branch: CompiledNode | undefined = {}.hasOwnProperty.call(
+    options,
+    value
+  )
+    ? options[value]
+    : options.other;
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (process.env.NODE_ENV !== 'production' && branch === undefined) {
