@@ -49,10 +49,10 @@
     "@types/node": "^22.0.0",
     "eslint": "9.11.1",
     "eslint-config-molindo": "^8.0.0",
-    "prettier": "^3.9.10",
+    "prettier": "^3.10.1",
     "publint": "^0.3.25",
     "typescript": "^6.0.3",
-    "vite-plus": "1.0.0"
+    "vite-plus": "1.6.0"
   },
   "prettier": "eslint-config-molindo/.prettierrc.json"
 }

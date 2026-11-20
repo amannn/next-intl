@@ -53,7 +53,7 @@
     "minify"
   ],
   "dependencies": {
-    "@formatjs/icu-messageformat-parser": "^3.4.0"
+    "@formatjs/icu-messageformat-parser": "^3.5.23"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
@@ -62,9 +62,9 @@
     "eslint": "9.11.1",
     "eslint-config-molindo": "^8.0.0",
     "intl-messageformat": "^11.2.15",
-    "prettier": "^3.9.10",
+    "prettier": "^3.10.1",
     "publint": "^0.3.25",
-    "rollup": "^4.68.2",
+    "rollup": "^4.68.3",
     "size-limit": "^11.2.0",
     "tools": "workspace:^",
     "typescript": "^6.0.3",

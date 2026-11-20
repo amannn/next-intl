@@ -24,6 +24,6 @@
     "eslint-config-molindo": "^8.0.0",
     "execa": "^9.6.1",
     "globals": "^16.5.0",
-    "rollup": "^4.68.2"
+    "rollup": "^4.68.3"
   }
 }
