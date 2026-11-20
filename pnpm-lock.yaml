@@ -946,10 +946,10 @@ importers:
         version: 9.11.1(jiti@2.7.0)(supports-color@8.1.1)
       eslint-config-molindo:
         specifier: ^8.0.0
-        version: 8.0.0(@typescript-eslint/eslint-plugin@8.72.2(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint-import-resolver-node@0.3.9(supports-color@8.1.1))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(jest@29.7.0(@types/node@22.20.5)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)(vitest@5.0.1)
+        version: 8.0.0(@typescript-eslint/eslint-plugin@8.72.2(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(yaml@2.9.0))(eslint-import-resolver-node@0.3.9(supports-color@8.1.1))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(jest@29.7.0(@types/node@22.20.5)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)(vitest@5.0.1)
       prettier:
-        specifier: ^3.9.10
-        version: 3.9.10
+        specifier: ^3.10.1
+        version: 3.10.1
       publint:
         specifier: ^0.3.25
         version: 0.3.25
@@ -958,7 +958,7 @@ importers:
         version: 6.0.3
       vite-plus:
         specifier: 1.0.0
-        version: 1.0.0(@arethetypeswrong/core@0.18.5)(@edge-runtime/vm@5.0.0)(@opentelemetry/api@1.9.0)(@types/node@22.20.5)(@vitest/ui@5.0.1)(esbuild@0.28.2)(jiti@2.7.0)(jsdom@20.0.3(supports-color@8.1.1))(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(yaml@2.9.0)
+        version: 1.0.0(@arethetypeswrong/core@0.18.5)(@edge-runtime/vm@5.0.0)(@opentelemetry/api@1.9.0)(@types/node@22.20.5)(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(jiti@2.7.0)(jsdom@20.0.3(supports-color@8.1.1))(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.0))(vitest@5.0.1)(yaml@2.9.0)
 
   packages/extractor:
     dependencies:
@@ -983,10 +983,10 @@ importers:
         version: 9.11.1(jiti@2.7.0)(supports-color@8.1.1)
       eslint-config-molindo:
         specifier: ^8.0.0
-        version: 8.0.0(@typescript-eslint/eslint-plugin@8.72.2(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint-import-resolver-node@0.3.9(supports-color@8.1.1))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(jest@29.7.0(@types/node@22.20.5)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)(vitest@5.0.1)
+        version: 8.0.0(@typescript-eslint/eslint-plugin@8.72.2(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(eslint-import-resolver-node@0.3.9(supports-color@8.1.1))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(jest@29.7.0(@types/node@22.20.5)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.0))(vitest@5.0.1)
       prettier:
-        specifier: ^3.9.10
-        version: 3.9.10
+        specifier: ^3.10.1
+        version: 3.10.1
       publint:
         specifier: ^0.3.25
         version: 0.3.25
@@ -995,7 +995,7 @@ importers:
         version: 6.0.3
       vite-plus:
         specifier: 1.0.0
-        version: 1.0.0(@arethetypeswrong/core@0.18.5)(@edge-runtime/vm@5.0.0)(@opentelemetry/api@1.9.0)(@types/node@22.20.5)(@vitest/ui@5.0.1)(esbuild@0.28.2)(jiti@2.7.0)(jsdom@20.0.3(supports-color@8.1.1))(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(yaml@2.9.0)
+        version: 1.0.0(@arethetypeswrong/core@0.18.5)(@edge-runtime/vm@5.0.0)(@opentelemetry/api@1.9.0)(@types/node@22.20.5)(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(jiti@2.7.0)(jsdom@20.0.3(supports-color@8.1.1))(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.0))(vitest@5.0.1)(yaml@2.9.0)
 
   packages/format-json:
     dependencies:
@@ -1014,10 +1014,10 @@ importers:
         version: 9.11.1(jiti@2.7.0)(supports-color@8.1.1)
       eslint-config-molindo:
         specifier: ^8.0.0
-        version: 8.0.0(@typescript-eslint/eslint-plugin@8.72.2(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint-import-resolver-node@0.3.9(supports-color@8.1.1))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(jest@29.7.0(@types/node@22.20.5)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)(vitest@3.2.7)
+        version: 8.0.0(@typescript-eslint/eslint-plugin@8.72.2(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(eslint-import-resolver-node@0.3.9(supports-color@8.1.1))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(jest@29.7.0(@types/node@22.20.5)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.0))(vitest@5.0.1)
       prettier:
-        specifier: ^3.9.10
-        version: 3.9.10
+        specifier: ^3.10.1
+        version: 3.10.1
       publint:
         specifier: ^0.3.25
         version: 0.3.25
@@ -1026,7 +1026,7 @@ importers:
         version: 6.0.3
       vite-plus:
         specifier: 1.0.0
-        version: 1.0.0(@arethetypeswrong/core@0.18.5)(@edge-runtime/vm@5.0.0)(@opentelemetry/api@1.9.0)(@types/node@22.20.5)(@vitest/ui@5.0.1)(esbuild@0.28.2)(jiti@2.7.0)(jsdom@20.0.3(supports-color@8.1.1))(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(yaml@2.9.0)
+        version: 1.0.0(@arethetypeswrong/core@0.18.5)(@edge-runtime/vm@5.0.0)(@opentelemetry/api@1.9.0)(@types/node@22.20.5)(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(jiti@2.7.0)(jsdom@20.0.3(supports-color@8.1.1))(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.0))(vitest@5.0.1)(yaml@2.9.0)
 
   packages/format-po:
     dependencies:
@@ -1048,10 +1048,10 @@ importers:
         version: 9.11.1(jiti@2.7.0)(supports-color@8.1.1)
       eslint-config-molindo:
         specifier: ^8.0.0
-        version: 8.0.0(@typescript-eslint/eslint-plugin@8.72.2(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint-import-resolver-node@0.3.9(supports-color@8.1.1))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(jest@29.7.0(@types/node@22.20.5)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)(vitest@3.2.7)
+        version: 8.0.0(@typescript-eslint/eslint-plugin@8.72.2(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(eslint-import-resolver-node@0.3.9(supports-color@8.1.1))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(jest@29.7.0(@types/node@22.20.5)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.0))(vitest@5.0.1)
       prettier:
-        specifier: ^3.9.10
-        version: 3.9.10
+        specifier: ^3.10.1
+        version: 3.10.1
       publint:
         specifier: ^0.3.25
         version: 0.3.25
@@ -1060,7 +1060,7 @@ importers:
         version: 6.0.3
       vite-plus:
         specifier: 1.0.0
-        version: 1.0.0(@arethetypeswrong/core@0.18.5)(@edge-runtime/vm@5.0.0)(@opentelemetry/api@1.9.0)(@types/node@22.20.5)(@vitest/ui@5.0.1)(esbuild@0.28.2)(jiti@2.7.0)(jsdom@20.0.3(supports-color@8.1.1))(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(yaml@2.9.0)
+        version: 1.0.0(@arethetypeswrong/core@0.18.5)(@edge-runtime/vm@5.0.0)(@opentelemetry/api@1.9.0)(@types/node@22.20.5)(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(jiti@2.7.0)(jsdom@20.0.3(supports-color@8.1.1))(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.0))(vitest@5.0.1)(yaml@2.9.0)
 
   packages/icu-minify:
     dependencies:
@@ -1128,10 +1128,10 @@ importers:
         version: 9.11.1(jiti@2.7.0)(supports-color@8.1.1)
       eslint-config-molindo:
         specifier: ^8.0.0
-        version: 8.0.0(@typescript-eslint/eslint-plugin@8.72.2(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint-import-resolver-node@0.3.9(supports-color@8.1.1))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(jest@29.7.0(@types/node@22.20.5)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)(vitest@5.0.1)
+        version: 8.0.0(@typescript-eslint/eslint-plugin@8.72.2(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(eslint-import-resolver-node@0.3.9(supports-color@8.1.1))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(jest@29.7.0(@types/node@22.20.5)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.0))(vitest@5.0.1)
       prettier:
-        specifier: ^3.9.10
-        version: 3.9.10
+        specifier: ^3.10.1
+        version: 3.10.1
       publint:
         specifier: ^0.3.25
         version: 0.3.25
@@ -1140,7 +1140,7 @@ importers:
         version: 6.0.3
       vite-plus:
         specifier: 1.0.0
-        version: 1.0.0(@arethetypeswrong/core@0.18.5)(@edge-runtime/vm@5.0.0)(@opentelemetry/api@1.9.0)(@types/node@22.20.5)(@vitest/ui@5.0.1)(esbuild@0.28.2)(jiti@2.7.0)(jsdom@20.0.3(supports-color@8.1.1))(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(yaml@2.9.0)
+        version: 1.0.0(@arethetypeswrong/core@0.18.5)(@edge-runtime/vm@5.0.0)(@opentelemetry/api@1.9.0)(@types/node@22.20.5)(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(jiti@2.7.0)(jsdom@20.0.3(supports-color@8.1.1))(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.0))(vitest@5.0.1)(yaml@2.9.0)
 
   packages/next-intl:
     dependencies:
@@ -10654,11 +10654,6 @@ packages:
     engines: {node: '>=14'}
     hasBin: true
 
-  prettier@3.9.10:
-    resolution: {integrity: sha512-skGHTH1Yb9QvaTC4hWnRTzEYtCpApF0UMBPz+t/0ZPzP8ihefo/btKd+QA7pUE0fEwA1SbS/NmhyEcstdXOIdA==}
-    engines: {node: '>=14'}
-    hasBin: true
-
   pretty-error@4.0.0:
     resolution: {integrity: sha512-AoJ5YMAcXKYxKhuJGdcvse+Voc6v1RgnsR3nWcYU7q4t6z0Q6T86sv5Zq8VIRbOWWFpvdGE83LtdSMNd+6Y0xw==}
 
@@ -18169,17 +18164,19 @@ snapshots:
       - utf-8-validate
       - vite
 
-  '@vitest/browser-preview@5.0.1(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(yaml@2.9.0))(vitest@5.0.1)':
+  '@vitest/browser-preview@5.0.1(@vitest/ui@5.0.1)(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.0))(vitest@5.0.1)':
     dependencies:
       '@testing-library/dom': 10.4.2
       '@testing-library/user-event': 14.6.10(@testing-library/dom@10.4.2)
-      '@vitest/browser': 5.0.1(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(yaml@2.9.0))(vitest@5.0.1)
-      vitest: 5.0.1(@edge-runtime/vm@5.0.0)(@opentelemetry/api@1.9.0)(@types/node@22.20.5)(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(yaml@2.9.0))(jsdom@20.0.3(supports-color@8.1.1))
+      '@vitest/browser': 5.0.1(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.0))(vitest@5.0.1)
+      vitest: 5.0.1(@edge-runtime/vm@5.0.0)(@opentelemetry/api@1.9.0)(@types/node@22.20.5)(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(jsdom@20.0.3(supports-color@8.1.1))(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.0))
     transitivePeerDependencies:
+      - '@vitest/ui'
       - bufferutil
       - msw
       - utf-8-validate
       - vite
+    optional: true
 
   '@vitest/browser@5.0.1(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(yaml@2.9.0))(vitest@5.0.1)':
     dependencies:
@@ -18201,23 +18198,26 @@ snapshots:
       - utf-8-validate
       - vite
 
-  '@vitest/browser@5.0.1(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(yaml@2.9.0))(vitest@5.0.1)':
+  '@vitest/browser@5.0.1(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.0))(vitest@5.0.1)':
     dependencies:
       '@blazediff/core': 1.10.0
-      '@vitest/mocker': 5.0.1(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(yaml@2.9.0))
-      '@vitest/ui': 5.0.1(vitest@5.0.1)
+      '@vitest/mocker': 5.0.1(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.0))
+      '@vitest/ui': 5.0.1(@vitest/browser-preview@5.0.1)(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.0))(vitest@5.0.1)
       '@vitest/utils': 5.0.1
       magic-string: 1.4.5
       pngjs: 7.0.0
       sirv: 3.0.2
       tinyrainbow: 3.2.0
-      vitest: 5.0.1(@edge-runtime/vm@5.0.0)(@opentelemetry/api@1.9.0)(@types/node@22.20.5)(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(yaml@2.9.0))(jsdom@20.0.3(supports-color@8.1.1))
+      vitest: 5.0.1(@edge-runtime/vm@5.0.0)(@opentelemetry/api@1.9.0)(@types/node@22.20.5)(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(jsdom@20.0.3(supports-color@8.1.1))(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.0))
       ws: 8.22.2
     transitivePeerDependencies:
+      - '@vitest/browser-preview'
+      - '@vitest/ui'
       - bufferutil
       - msw
       - utf-8-validate
       - vite
+    optional: true
 
   '@vitest/eslint-plugin@1.1.7(@typescript-eslint/utils@8.46.2(eslint@9.11.1(jiti@1.21.7)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.2))(eslint@9.11.1(jiti@1.21.7)(supports-color@8.1.1))(jiti@1.21.7)(typescript@6.0.2)(vitest@3.2.7)(yaml@2.9.0)':
     dependencies:
@@ -18241,6 +18241,30 @@ snapshots:
       - jiti
       - yaml
 
+  '@vitest/eslint-plugin@1.1.7(@typescript-eslint/utils@8.46.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(yaml@2.9.0))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(typescript@6.0.3)(vitest@5.0.1)':
+    dependencies:
+      '@typescript-eslint/utils': 8.46.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)
+      eslint: 9.11.1(jiti@2.7.0)(supports-color@8.1.1)
+    optionalDependencies:
+      typescript: 6.0.3
+      vitest: 5.0.1(@edge-runtime/vm@5.0.0)(@opentelemetry/api@1.9.0)(@types/node@22.20.5)(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(yaml@2.9.0))(jsdom@20.0.3(supports-color@8.1.1))
+    transitivePeerDependencies:
+      - '@vitest/browser-preview'
+      - '@vitest/ui'
+      - vite
+
+  '@vitest/eslint-plugin@1.1.7(@typescript-eslint/utils@8.46.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(typescript@6.0.3)(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.0))(vitest@5.0.1)':
+    dependencies:
+      '@typescript-eslint/utils': 8.46.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)
+      eslint: 9.11.1(jiti@2.7.0)(supports-color@8.1.1)
+    optionalDependencies:
+      typescript: 6.0.3
+      vitest: 5.0.1(@edge-runtime/vm@5.0.0)(@opentelemetry/api@1.9.0)(@types/node@22.20.5)(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(jsdom@20.0.3(supports-color@8.1.1))(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.0))
+    transitivePeerDependencies:
+      - '@vitest/browser-preview'
+      - '@vitest/ui'
+      - vite
+
   '@vitest/eslint-plugin@1.1.7(@typescript-eslint/utils@8.46.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(jiti@2.7.0)(typescript@6.0.3)(vitest@3.2.7)(yaml@2.9.0)':
     dependencies:
       '@typescript-eslint/utils': 8.46.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)
@@ -18251,22 +18275,6 @@ snapshots:
     transitivePeerDependencies:
       - jiti
       - yaml
-
-  '@vitest/eslint-plugin@1.1.7(@typescript-eslint/utils@8.46.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(typescript@6.0.3)(vitest@3.2.7)':
-    dependencies:
-      '@typescript-eslint/utils': 8.46.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)
-      eslint: 9.11.1(jiti@2.7.0)(supports-color@8.1.1)
-    optionalDependencies:
-      typescript: 6.0.3
-      vitest: 3.2.7(@edge-runtime/vm@5.0.0)(@types/debug@4.1.12)(@types/node@20.19.43)(jiti@2.7.0)(jsdom@20.0.3(supports-color@8.1.1))(lightningcss@1.33.0)(supports-color@8.1.1)(terser@5.45.0)(yaml@2.9.0)
-
-  '@vitest/eslint-plugin@1.1.7(@typescript-eslint/utils@8.46.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(typescript@6.0.3)(vitest@5.0.1)':
-    dependencies:
-      '@typescript-eslint/utils': 8.46.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)
-      eslint: 9.11.1(jiti@2.7.0)(supports-color@8.1.1)
-    optionalDependencies:
-      typescript: 6.0.3
-      vitest: 5.0.1(@edge-runtime/vm@5.0.0)(@opentelemetry/api@1.9.0)(@types/node@22.20.5)(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(yaml@2.9.0))(jsdom@20.0.3(supports-color@8.1.1))
 
   '@vitest/eslint-plugin@1.1.7(@typescript-eslint/utils@8.46.2(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@5.6.1-rc))(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))(jiti@2.7.0)(typescript@5.6.1-rc)(vitest@3.2.7)':
     dependencies:
@@ -18317,6 +18325,16 @@ snapshots:
       magic-string: 1.4.5
     optionalDependencies:
       vite: '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(yaml@2.9.0)'
+
+  '@vitest/mocker@5.0.1(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.0))':
+    dependencies:
+      '@jridgewell/trace-mapping': 0.3.31
+      '@vitest/spy': 5.0.1
+      estree-walker: 3.0.3
+      magic-string: 1.4.5
+    optionalDependencies:
+      vite: 8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.0)
+    optional: true
 
   '@vitest/mocker@5.1.0(vite@8.3.8(@types/node@20.19.43)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.0))':
     dependencies:
@@ -18387,7 +18405,7 @@ snapshots:
       - '@vitest/browser-preview'
       - vite
 
-  '@vitest/ui@5.0.1(vitest@5.0.1)':
+  '@vitest/ui@5.0.1(@vitest/browser-preview@5.0.1)(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.0))(vitest@5.0.1)':
     dependencies:
       '@vitest/utils': 5.0.1
       fflate: 0.8.3
@@ -18395,7 +18413,11 @@ snapshots:
       pathe: 2.0.3
       sirv: 3.0.2
       tinyrainbow: 3.2.0
-      vitest: 5.0.1(@edge-runtime/vm@5.0.0)(@opentelemetry/api@1.9.0)(@types/node@22.20.5)(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(yaml@2.9.0))(jsdom@20.0.3(supports-color@8.1.1))
+      vitest: 5.0.1(@edge-runtime/vm@5.0.0)(@opentelemetry/api@1.9.0)(@types/node@22.20.5)(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(jsdom@20.0.3(supports-color@8.1.1))(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.0))
+    transitivePeerDependencies:
+      - '@vitest/browser-preview'
+      - vite
+    optional: true
 
   '@vitest/utils@2.0.5':
     dependencies:
@@ -20397,6 +20419,74 @@ snapshots:
       - vitest
       - yaml
 
+  eslint-config-molindo@8.0.0(@typescript-eslint/eslint-plugin@8.72.2(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(yaml@2.9.0))(eslint-import-resolver-node@0.3.9(supports-color@8.1.1))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(jest@29.7.0(@types/node@22.20.5)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)(vitest@5.0.1):
+    dependencies:
+      '@eslint/js': 9.38.0
+      '@typescript-eslint/utils': 8.46.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)
+      '@vitest/eslint-plugin': 1.1.7(@typescript-eslint/utils@8.46.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(yaml@2.9.0))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(typescript@6.0.3)(vitest@5.0.1)
+      confusing-browser-globals: 1.0.11
+      eslint: 9.11.1(jiti@2.7.0)(supports-color@8.1.1)
+      eslint-import-resolver-typescript: 3.6.3(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint-import-resolver-node@0.3.9(supports-color@8.1.1))(eslint-plugin-import@2.32.0)(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)
+      eslint-plugin-css-modules: 2.11.0(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))
+      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint-import-resolver-typescript@3.6.3)(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)
+      eslint-plugin-jest: 28.8.3(@typescript-eslint/eslint-plugin@8.72.2(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(jest@29.7.0(@types/node@22.20.5)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)
+      eslint-plugin-jsx-a11y: 6.10.0(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))
+      eslint-plugin-react: 7.37.1(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))
+      eslint-plugin-react-hooks: 5.0.0(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))
+      eslint-plugin-sort-destructure-keys: 2.0.0(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))
+      eslint-plugin-tailwindcss: 3.13.0(tailwindcss@3.4.19(yaml@2.9.0))
+      eslint-plugin-unicorn: 56.0.0(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))
+      eslint-plugin-unused-imports: 4.1.4(@typescript-eslint/eslint-plugin@8.72.2(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))
+      typescript-eslint: 8.46.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)
+    transitivePeerDependencies:
+      - '@typescript-eslint/eslint-plugin'
+      - '@typescript-eslint/parser'
+      - '@vitest/browser-preview'
+      - '@vitest/ui'
+      - eslint-import-resolver-node
+      - eslint-import-resolver-webpack
+      - eslint-plugin-import-x
+      - jest
+      - supports-color
+      - tailwindcss
+      - typescript
+      - vite
+      - vitest
+
+  eslint-config-molindo@8.0.0(@typescript-eslint/eslint-plugin@8.72.2(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(eslint-import-resolver-node@0.3.9(supports-color@8.1.1))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(jest@29.7.0(@types/node@22.20.5)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.0))(vitest@5.0.1):
+    dependencies:
+      '@eslint/js': 9.38.0
+      '@typescript-eslint/utils': 8.46.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)
+      '@vitest/eslint-plugin': 1.1.7(@typescript-eslint/utils@8.46.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(typescript@6.0.3)(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.0))(vitest@5.0.1)
+      confusing-browser-globals: 1.0.11
+      eslint: 9.11.1(jiti@2.7.0)(supports-color@8.1.1)
+      eslint-import-resolver-typescript: 3.6.3(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint-import-resolver-node@0.3.9(supports-color@8.1.1))(eslint-plugin-import@2.32.0)(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)
+      eslint-plugin-css-modules: 2.11.0(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))
+      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint-import-resolver-typescript@3.6.3)(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)
+      eslint-plugin-jest: 28.8.3(@typescript-eslint/eslint-plugin@8.72.2(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(jest@29.7.0(@types/node@22.20.5)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)
+      eslint-plugin-jsx-a11y: 6.10.0(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))
+      eslint-plugin-react: 7.37.1(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))
+      eslint-plugin-react-hooks: 5.0.0(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))
+      eslint-plugin-sort-destructure-keys: 2.0.0(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))
+      eslint-plugin-tailwindcss: 3.13.0(tailwindcss@3.4.19(yaml@2.9.0))
+      eslint-plugin-unicorn: 56.0.0(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))
+      eslint-plugin-unused-imports: 4.1.4(@typescript-eslint/eslint-plugin@8.72.2(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))
+      typescript-eslint: 8.46.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)
+    transitivePeerDependencies:
+      - '@typescript-eslint/eslint-plugin'
+      - '@typescript-eslint/parser'
+      - '@vitest/browser-preview'
+      - '@vitest/ui'
+      - eslint-import-resolver-node
+      - eslint-import-resolver-webpack
+      - eslint-plugin-import-x
+      - jest
+      - supports-color
+      - tailwindcss
+      - typescript
+      - vite
+      - vitest
+
   eslint-config-molindo@8.0.0(@typescript-eslint/eslint-plugin@8.72.2(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint-import-resolver-node@0.3.9(supports-color@8.1.1))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(jest@29.7.0(@types/node@20.19.43)(supports-color@8.1.1))(jiti@2.7.0)(supports-color@8.1.1)(typescript@6.0.3)(vitest@3.2.7)(yaml@2.9.0):
     dependencies:
       '@eslint/js': 9.38.0
@@ -20429,68 +20519,6 @@ snapshots:
       - typescript
       - vitest
       - yaml
-
-  eslint-config-molindo@8.0.0(@typescript-eslint/eslint-plugin@8.72.2(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint-import-resolver-node@0.3.9(supports-color@8.1.1))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(jest@29.7.0(@types/node@22.20.5)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)(vitest@3.2.7):
-    dependencies:
-      '@eslint/js': 9.38.0
-      '@typescript-eslint/utils': 8.46.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)
-      '@vitest/eslint-plugin': 1.1.7(@typescript-eslint/utils@8.46.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(typescript@6.0.3)(vitest@3.2.7)
-      confusing-browser-globals: 1.0.11
-      eslint: 9.11.1(jiti@2.7.0)(supports-color@8.1.1)
-      eslint-import-resolver-typescript: 3.6.3(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint-import-resolver-node@0.3.9(supports-color@8.1.1))(eslint-plugin-import@2.32.0)(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)
-      eslint-plugin-css-modules: 2.11.0(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))
-      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint-import-resolver-typescript@3.6.3)(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)
-      eslint-plugin-jest: 28.8.3(@typescript-eslint/eslint-plugin@8.72.2(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(jest@29.7.0(@types/node@22.20.5)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)
-      eslint-plugin-jsx-a11y: 6.10.0(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))
-      eslint-plugin-react: 7.37.1(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))
-      eslint-plugin-react-hooks: 5.0.0(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))
-      eslint-plugin-sort-destructure-keys: 2.0.0(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))
-      eslint-plugin-tailwindcss: 3.13.0(tailwindcss@3.4.19(yaml@2.9.0))
-      eslint-plugin-unicorn: 56.0.0(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))
-      eslint-plugin-unused-imports: 4.1.4(@typescript-eslint/eslint-plugin@8.72.2(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))
-      typescript-eslint: 8.46.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)
-    transitivePeerDependencies:
-      - '@typescript-eslint/eslint-plugin'
-      - '@typescript-eslint/parser'
-      - eslint-import-resolver-node
-      - eslint-import-resolver-webpack
-      - eslint-plugin-import-x
-      - jest
-      - supports-color
-      - tailwindcss
-      - typescript
-      - vitest
-
-  eslint-config-molindo@8.0.0(@typescript-eslint/eslint-plugin@8.72.2(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint-import-resolver-node@0.3.9(supports-color@8.1.1))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(jest@29.7.0(@types/node@22.20.5)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)(vitest@5.0.1):
-    dependencies:
-      '@eslint/js': 9.38.0
-      '@typescript-eslint/utils': 8.46.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)
-      '@vitest/eslint-plugin': 1.1.7(@typescript-eslint/utils@8.46.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(typescript@6.0.3)(vitest@5.0.1)
-      confusing-browser-globals: 1.0.11
-      eslint: 9.11.1(jiti@2.7.0)(supports-color@8.1.1)
-      eslint-import-resolver-typescript: 3.6.3(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint-import-resolver-node@0.3.9(supports-color@8.1.1))(eslint-plugin-import@2.32.0)(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)
-      eslint-plugin-css-modules: 2.11.0(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))
-      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint-import-resolver-typescript@3.6.3)(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)
-      eslint-plugin-jest: 28.8.3(@typescript-eslint/eslint-plugin@8.72.2(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(jest@29.7.0(@types/node@22.20.5)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)
-      eslint-plugin-jsx-a11y: 6.10.0(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))
-      eslint-plugin-react: 7.37.1(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))
-      eslint-plugin-react-hooks: 5.0.0(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))
-      eslint-plugin-sort-destructure-keys: 2.0.0(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))
-      eslint-plugin-tailwindcss: 3.13.0(tailwindcss@3.4.19(yaml@2.9.0))
-      eslint-plugin-unicorn: 56.0.0(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))
-      eslint-plugin-unused-imports: 4.1.4(@typescript-eslint/eslint-plugin@8.72.2(@typescript-eslint/parser@8.72.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))
-      typescript-eslint: 8.46.2(eslint@9.11.1(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)
-    transitivePeerDependencies:
-      - '@typescript-eslint/eslint-plugin'
-      - '@typescript-eslint/parser'
-      - eslint-import-resolver-node
-      - eslint-import-resolver-webpack
-      - eslint-plugin-import-x
-      - jest
-      - supports-color
-      - tailwindcss
-      - typescript
-      - vitest
 
   eslint-config-molindo@8.0.0(@typescript-eslint/parser@8.46.2(eslint@9.11.1(jiti@1.21.7)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.2))(eslint-import-resolver-node@0.3.9(supports-color@8.1.1))(eslint@9.11.1(jiti@1.21.7)(supports-color@8.1.1))(jest@29.7.0(@types/node@20.19.43)(supports-color@8.1.1))(jiti@1.21.7)(supports-color@8.1.1)(tailwindcss@3.4.19(yaml@2.9.0))(typescript@6.0.2)(vitest@3.2.7)(yaml@2.9.0):
     dependencies:
@@ -24256,7 +24284,7 @@ snapshots:
       object-keys: 1.1.1
       safe-push-apply: 1.0.0
 
-  oxfmt@0.70.0(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@edge-runtime/vm@5.0.0)(@opentelemetry/api@1.9.0)(@types/node@22.20.5)(@vitest/ui@5.0.1)(esbuild@0.28.2)(jiti@2.7.0)(jsdom@20.0.3(supports-color@8.1.1))(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(yaml@2.9.0)):
+  oxfmt@0.70.0(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@edge-runtime/vm@5.0.0)(@opentelemetry/api@1.9.0)(@types/node@22.20.5)(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(jiti@2.7.0)(jsdom@20.0.3(supports-color@8.1.1))(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.0))(vitest@5.0.1)(yaml@2.9.0)):
     dependencies:
       tinypool: 2.1.2
     optionalDependencies:
@@ -24279,7 +24307,7 @@ snapshots:
       '@oxfmt/binding-win32-arm64-msvc': 0.70.0
       '@oxfmt/binding-win32-ia32-msvc': 0.70.0
       '@oxfmt/binding-win32-x64-msvc': 0.70.0
-      vite-plus: 1.0.0(@arethetypeswrong/core@0.18.5)(@edge-runtime/vm@5.0.0)(@opentelemetry/api@1.9.0)(@types/node@22.20.5)(@vitest/ui@5.0.1)(esbuild@0.28.2)(jiti@2.7.0)(jsdom@20.0.3(supports-color@8.1.1))(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(yaml@2.9.0)
+      vite-plus: 1.0.0(@arethetypeswrong/core@0.18.5)(@edge-runtime/vm@5.0.0)(@opentelemetry/api@1.9.0)(@types/node@22.20.5)(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(jiti@2.7.0)(jsdom@20.0.3(supports-color@8.1.1))(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.0))(vitest@5.0.1)(yaml@2.9.0)
 
   oxlint-tsgolint@7.0.2003:
     optionalDependencies:
@@ -24290,7 +24318,7 @@ snapshots:
       '@oxlint-tsgolint/win32-arm64': 7.0.2003
       '@oxlint-tsgolint/win32-x64': 7.0.2003
 
-  oxlint@1.85.0(oxlint-tsgolint@7.0.2003)(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@edge-runtime/vm@5.0.0)(@opentelemetry/api@1.9.0)(@types/node@22.20.5)(@vitest/ui@5.0.1)(esbuild@0.28.2)(jiti@2.7.0)(jsdom@20.0.3(supports-color@8.1.1))(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(yaml@2.9.0)):
+  oxlint@1.85.0(oxlint-tsgolint@7.0.2003)(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@edge-runtime/vm@5.0.0)(@opentelemetry/api@1.9.0)(@types/node@22.20.5)(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(jiti@2.7.0)(jsdom@20.0.3(supports-color@8.1.1))(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.0))(vitest@5.0.1)(yaml@2.9.0)):
     optionalDependencies:
       '@oxlint/binding-android-arm-eabi': 1.85.0
       '@oxlint/binding-android-arm64': 1.85.0
@@ -24312,7 +24340,7 @@ snapshots:
       '@oxlint/binding-win32-ia32-msvc': 1.85.0
       '@oxlint/binding-win32-x64-msvc': 1.85.0
       oxlint-tsgolint: 7.0.2003
-      vite-plus: 1.0.0(@arethetypeswrong/core@0.18.5)(@edge-runtime/vm@5.0.0)(@opentelemetry/api@1.9.0)(@types/node@22.20.5)(@vitest/ui@5.0.1)(esbuild@0.28.2)(jiti@2.7.0)(jsdom@20.0.3(supports-color@8.1.1))(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(yaml@2.9.0)
+      vite-plus: 1.0.0(@arethetypeswrong/core@0.18.5)(@edge-runtime/vm@5.0.0)(@opentelemetry/api@1.9.0)(@types/node@22.20.5)(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(jiti@2.7.0)(jsdom@20.0.3(supports-color@8.1.1))(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.0))(vitest@5.0.1)(yaml@2.9.0)
 
   p-limit@2.3.0:
     dependencies:
@@ -24654,8 +24682,6 @@ snapshots:
   prelude-ls@1.2.1: {}
 
   prettier@3.10.1: {}
-
-  prettier@3.9.10: {}
 
   pretty-error@4.0.0:
     dependencies:
@@ -26627,19 +26653,19 @@ snapshots:
       - tsx
       - yaml
 
-  vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@edge-runtime/vm@5.0.0)(@opentelemetry/api@1.9.0)(@types/node@22.20.5)(@vitest/ui@5.0.1)(esbuild@0.28.2)(jiti@2.7.0)(jsdom@20.0.3(supports-color@8.1.1))(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(yaml@2.9.0):
+  vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@edge-runtime/vm@5.0.0)(@opentelemetry/api@1.9.0)(@types/node@22.20.5)(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(jiti@2.7.0)(jsdom@20.0.3(supports-color@8.1.1))(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.0))(vitest@5.0.1)(yaml@2.9.0):
     dependencies:
       '@oxc-project/types': 0.151.0
       '@oxlint/plugins': 1.79.0
-      '@vitest/browser': 5.0.1(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(yaml@2.9.0))(vitest@5.0.1)
-      '@vitest/browser-preview': 5.0.1(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(yaml@2.9.0))(vitest@5.0.1)
+      '@vitest/browser': 5.0.1(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(yaml@2.9.0))(vitest@5.0.1)
+      '@vitest/browser-preview': 5.0.1(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(yaml@2.9.0))(vitest@5.0.1)
       '@vitest/mocker': 5.0.1(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(yaml@2.9.0))
       '@vitest/pretty-format': 5.0.1
       '@vitest/snapshot': 5.0.1
       '@vitest/spy': 5.0.1
       '@vitest/utils': 5.0.1
-      oxfmt: 0.70.0(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@edge-runtime/vm@5.0.0)(@opentelemetry/api@1.9.0)(@types/node@22.20.5)(@vitest/ui@5.0.1)(esbuild@0.28.2)(jiti@2.7.0)(jsdom@20.0.3(supports-color@8.1.1))(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(yaml@2.9.0))
-      oxlint: 1.85.0(oxlint-tsgolint@7.0.2003)(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@edge-runtime/vm@5.0.0)(@opentelemetry/api@1.9.0)(@types/node@22.20.5)(@vitest/ui@5.0.1)(esbuild@0.28.2)(jiti@2.7.0)(jsdom@20.0.3(supports-color@8.1.1))(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(yaml@2.9.0))
+      oxfmt: 0.70.0(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@edge-runtime/vm@5.0.0)(@opentelemetry/api@1.9.0)(@types/node@22.20.5)(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(jiti@2.7.0)(jsdom@20.0.3(supports-color@8.1.1))(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.0))(vitest@5.0.1)(yaml@2.9.0))
+      oxlint: 1.85.0(oxlint-tsgolint@7.0.2003)(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@edge-runtime/vm@5.0.0)(@opentelemetry/api@1.9.0)(@types/node@22.20.5)(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(esbuild@0.28.2)(jiti@2.7.0)(jsdom@20.0.3(supports-color@8.1.1))(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.0))(vitest@5.0.1)(yaml@2.9.0))
       oxlint-tsgolint: 7.0.2003
       vite: '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(yaml@2.9.0)'
       vitest: 5.0.1(@edge-runtime/vm@5.0.0)(@opentelemetry/api@1.9.0)(@types/node@22.20.5)(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.45.0)(typescript@6.0.3)(yaml@2.9.0))(jsdom@20.0.3(supports-color@8.1.1))
@@ -26658,6 +26684,7 @@ snapshots:
       - '@opentelemetry/api'
       - '@types/node'
       - '@vitejs/devtools'
+      - '@vitest/browser-preview'
       - '@vitest/coverage-istanbul'
       - '@vitest/coverage-v8'
       - '@vitest/ui'
@@ -26680,6 +26707,8 @@ snapshots:
       - unplugin-unused
       - unrun
       - utf-8-validate
+      - vite
+      - vitest
       - yaml
 
   vite@7.3.8(@types/node@20.19.43)(jiti@1.21.7)(lightningcss@1.33.0)(terser@5.45.0)(yaml@2.9.0):
@@ -26728,6 +26757,22 @@ snapshots:
       jiti: 2.7.0
       terser: 5.45.0
       yaml: 2.9.0
+
+  vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.0):
+    dependencies:
+      lightningcss: 1.33.0
+      picomatch: 4.0.7
+      postcss: 8.5.32
+      rolldown: 1.2.19
+      tinyglobby: 0.2.17
+    optionalDependencies:
+      '@types/node': 22.20.5
+      esbuild: 0.28.2
+      fsevents: 2.3.3
+      jiti: 2.7.0
+      terser: 5.45.0
+      yaml: 2.9.0
+    optional: true
 
   vitest@3.2.7(@edge-runtime/vm@5.0.0)(@types/debug@4.1.12)(@types/node@20.19.43)(jiti@1.21.7)(jsdom@20.0.3(supports-color@8.1.1))(lightningcss@1.33.0)(supports-color@8.1.1)(terser@5.45.0)(yaml@2.9.0):
     dependencies:
@@ -26842,6 +26887,33 @@ snapshots:
       jsdom: 20.0.3(supports-color@8.1.1)
     transitivePeerDependencies:
       - msw
+
+  vitest@5.0.1(@edge-runtime/vm@5.0.0)(@opentelemetry/api@1.9.0)(@types/node@22.20.5)(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(jsdom@20.0.3(supports-color@8.1.1))(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.0)):
+    dependencies:
+      '@types/chai': 5.2.3
+      '@vitest/mocker': 5.0.1(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.0))
+      chai: 6.3.0
+      es-module-lexer: 2.3.2
+      expect-type: 1.4.0
+      magic-string: 1.4.5
+      obug: 2.2.1
+      picomatch: 4.0.7
+      std-env: 4.3.0
+      tinybench: 6.1.4
+      tinyexec: 1.3.0
+      tinyglobby: 0.2.17
+      vite: 8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.0)
+      why-is-node-running: 2.3.0
+    optionalDependencies:
+      '@edge-runtime/vm': 5.0.0
+      '@opentelemetry/api': 1.9.0
+      '@types/node': 22.20.5
+      '@vitest/browser-preview': 5.0.1(@vitest/ui@5.0.1)(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.0))(vitest@5.0.1)
+      '@vitest/ui': 5.0.1(@vitest/browser-preview@5.0.1)(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.0))(vitest@5.0.1)
+      jsdom: 20.0.3(supports-color@8.1.1)
+    transitivePeerDependencies:
+      - msw
+    optional: true
 
   vitest@5.1.0(@edge-runtime/vm@5.0.0)(@opentelemetry/api@1.9.0)(@types/node@20.19.43)(jsdom@20.0.3(supports-color@8.1.1))(vite@8.3.8(@types/node@20.19.43)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.0)):
     dependencies:
