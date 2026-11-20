@@ -1,0 +1,64 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+
+# Reviews only: no summaries, walkthrough extras, chat auto-replies or
+# commits pushed by CodeRabbit.
+reviews:
+  profile: chill
+  high_level_summary: false
+  changed_files_summary: false
+  sequence_diagrams: false
+  estimate_code_review_effort: false
+  assess_linked_issues: false
+  related_issues: false
+  related_prs: false
+  suggested_labels: false
+  suggested_reviewers: false
+  in_progress_fortune: false
+  poem: false
+  auto_review:
+    drafts: false
+  finishing_touches:
+    unit_tests:
+      enabled: false
+    autofix:
+      enabled: false
+    fix_ci:
+      enabled: false
+    resolve_merge_conflict:
+      enabled: false
+  pre_merge_checks:
+    title:
+      mode: 'off'
+    description:
+      mode: 'off'
+    issue_assessment:
+      mode: 'off'
+  path_instructions:
+    - path: 'packages/**'
+      instructions: >-
+        These packages are published to npm. Flag changes that affect users
+        but have no changeset in `.changeset/`, breaking changes to public
+        exports or types, and code that crosses the server/client boundary
+        (e.g. `react-server` exports, `'use client'`).
+  # Linters that load config from the PR (and can run code from it) are off,
+  # since CI already runs ESLint, Prettier and zizmor.
+  tools:
+    eslint:
+      enabled: false
+    biome:
+      enabled: false
+    oxc:
+      enabled: false
+    markdownlint:
+      enabled: false
+    stylelint:
+      enabled: false
+    languagetool:
+      enabled: false
+    yamllint:
+      enabled: false
+    zizmor:
+      enabled: false
+chat:
+  auto_reply: false
+  art: false
