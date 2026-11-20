@@ -1,0 +1,38 @@
+version: 2
+
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: quarterly
+    commit-message:
+      prefix: chore
+      include: scope
+    cooldown:
+      default-days: 7
+    groups:
+      github-actions:
+        patterns: ['*']
+
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: quarterly
+    commit-message:
+      prefix: chore
+      include: scope
+    cooldown:
+      default-days: 7 # At least `minimumReleaseAge` in `pnpm-workspace.yaml`
+      exclude: ['@eloqnt/*']
+    groups:
+      npm-minor-patch:
+        patterns: ['*']
+        update-types: [minor, patch]
+      npm-major:
+        patterns: ['*']
+        update-types: [major]
+    exclude-paths:
+      - examples/example-pages-router-legacy/** # Intentionally on old Next.js and React
+    ignore:
+      - dependency-name: '@types/node' # Follows the lowest supported Node.js version
+        update-types: [version-update:semver-major]
