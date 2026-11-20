@@ -20,7 +20,7 @@
     "eslint": "^9.39.5",
     "eslint-config-next": "^16.4.6",
     "next-intl": "workspace:*",
-    "prettier": "^3.9.10",
+    "prettier": "^3.10.1",
     "typescript": "^6.0.3"
   },
   "prettier": {
