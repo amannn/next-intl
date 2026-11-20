@@ -1,0 +1,34 @@
+version: 2
+
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: chore
+      include: scope
+    groups:
+      github-actions:
+        patterns: ['*']
+
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: chore
+      include: scope
+    cooldown:
+      default-days: 4 # Longer than `minimumReleaseAge` in `pnpm-workspace.yaml`
+      exclude: ['@eloqnt/*']
+    groups:
+      npm:
+        patterns: ['*']
+        update-types: [minor, patch]
+    exclude-paths:
+      - examples/example-pages-router-legacy/** # Intentionally on old Next.js and React
+    ignore:
+      # Majors usually need code changes, so they're done by hand
+      - dependency-name: '*'
+        update-types: [version-update:semver-major]
