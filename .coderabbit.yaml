@@ -13,9 +13,6 @@ reviews:
   suggested_labels: false
   suggested_reviewers: false
   in_progress_fortune: false
-  poem: false
-  auto_review:
-    drafts: false
   finishing_touches:
     unit_tests:
       enabled: false
@@ -60,4 +57,3 @@ reviews:
       enabled: false
 chat:
   auto_reply: false
-  art: false
