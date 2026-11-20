@@ -1,0 +1,57 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+
+# Reviews only: no summaries, walkthrough extras, chat auto-replies or
+# commits pushed by CodeRabbit.
+reviews:
+  high_level_summary: false
+  changed_files_summary: false
+  sequence_diagrams: false
+  estimate_code_review_effort: false
+  assess_linked_issues: false
+  related_issues: false
+  related_prs: false
+  suggested_labels: false
+  suggested_reviewers: false
+  in_progress_fortune: false
+  finishing_touches:
+    unit_tests:
+      enabled: false
+    autofix:
+      enabled: false
+    fix_ci:
+      enabled: false
+    resolve_merge_conflict:
+      enabled: false
+  pre_merge_checks:
+    title:
+      mode: 'off'
+    description:
+      mode: 'off'
+    issue_assessment:
+      mode: 'off'
+  path_instructions:
+    - path: 'packages/**'
+      instructions: >-
+        These packages are published to npm. Flag changes that affect users
+        but have no changeset in `.changeset/`, and breaking changes to public
+        exports or types. Breaking changes to packages below 1.0 need a minor
+        bump in their changeset.
+  # CodeRabbit runs these by default (mostly with its own config), CI lints
+  # with ours.
+  tools:
+    eslint:
+      enabled: false
+    biome:
+      enabled: false
+    markdownlint:
+      enabled: false
+    stylelint:
+      enabled: false
+    languagetool:
+      enabled: false
+    yamllint:
+      enabled: false
+    zizmor:
+      enabled: false
+chat:
+  auto_reply: false
