@@ -159,7 +159,7 @@
     "@types/webpack": "^5.28.5",
     "eslint": "9.11.1",
     "eslint-config-molindo": "^8.0.0",
-    "eslint-plugin-react-compiler": "0.0.0-experimental-8e3b87c-20240822",
+    "eslint-plugin-react-compiler": "0.0.0-experimental-9627644-20250520",
     "next": "^16.4.6",
     "path-to-regexp": "^6.3.0",
     "po-parser": "^2.2.0",
