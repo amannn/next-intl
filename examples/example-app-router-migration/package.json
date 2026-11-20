@@ -15,13 +15,13 @@
     "react-dom": "^19.3.1"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.7",
     "@types/lodash": "^4.17.27",
     "@types/node": "^20.19.43",
     "@types/react": "^19.3.0",
     "eslint": "^9.39.5",
     "eslint-config-next": "^16.4.6",
-    "@eslint/eslintrc": "^3.3.7",
-    "prettier": "^3.9.10",
+    "prettier": "^3.10.1",
     "typescript": "^6.0.3"
   },
   "prettier": {
