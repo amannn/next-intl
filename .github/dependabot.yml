@@ -4,7 +4,7 @@ updates:
   - package-ecosystem: github-actions
     directory: /
     schedule:
-      interval: monthly
+      interval: quarterly
     commit-message:
       prefix: chore
       include: scope
@@ -17,7 +17,7 @@ updates:
   - package-ecosystem: npm
     directory: /
     schedule:
-      interval: monthly
+      interval: quarterly
     commit-message:
       prefix: chore
       include: scope
@@ -25,12 +25,14 @@ updates:
       default-days: 7 # At least `minimumReleaseAge` in `pnpm-workspace.yaml`
       exclude: ['@eloqnt/*']
     groups:
-      npm:
+      npm-minor-patch:
         patterns: ['*']
         update-types: [minor, patch]
+      npm-major:
+        patterns: ['*']
+        update-types: [major]
     exclude-paths:
       - examples/example-pages-router-legacy/** # Intentionally on old Next.js and React
     ignore:
-      # Majors usually need code changes, so they're done by hand
-      - dependency-name: '*'
+      - dependency-name: '@types/node' # Follows the lowest supported Node.js version
         update-types: [version-update:semver-major]
