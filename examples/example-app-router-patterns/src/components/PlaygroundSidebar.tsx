@@ -31,7 +31,12 @@ export function PlaygroundSidebar() {
   ];
 
   return (
-    <div className="fixed top-0 z-10 flex w-full flex-col border-b border-gray-200 bg-gray-50 lg:bottom-0 lg:z-auto lg:w-72 lg:border-r lg:border-b-0 dark:border-gray-700 dark:bg-gray-900">
+    <div
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) close();
+      }}
+      className="fixed top-0 z-10 flex w-full flex-col border-b border-gray-200 bg-gray-50 lg:bottom-0 lg:z-auto lg:w-72 lg:border-r lg:border-b-0 dark:border-gray-700 dark:bg-gray-900"
+    >
       <div className="flex h-14 items-center gap-2.5 px-5">
         <Link
           href="/"
