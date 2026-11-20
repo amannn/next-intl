@@ -10,7 +10,7 @@
     "test": "vitest"
   },
   "dependencies": {
-    "next": "^16.4.6",
+    "next": "^15.5.29",
     "next-intl": "^4.0.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"

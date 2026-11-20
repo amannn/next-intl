@@ -11,7 +11,7 @@
   "dependencies": {
     "@tailwindcss/postcss": "^4.3.5",
     "e2e-shared-ui": "workspace:*",
-    "next": "^16.4.6",
+    "next": "^15.5.29",
     "next-intl": "workspace:*",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
@@ -23,7 +23,7 @@
     "@types/react-dom": "^19.3.0",
     "eslint": "^9.39.5",
     "eslint-config-next": "^16.4.6",
-    "postcss": "^8.5.32",
+    "postcss": "^8.5.33",
     "prettier": "^3.9.10",
     "typescript": "^6.0.3"
   },
