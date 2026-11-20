@@ -64,9 +64,11 @@ pnpm prettier src --write
 
 This repository uses [action-semantic-pull-request](https://github.com/amannn/action-semantic-pull-request) to ensure that pull request titles match the [Conventional Commits spec](https://www.conventionalcommits.org/en/v1.0.0/). PR titles become the commit messages on `main`, and use sentence case after the type prefix.
 
+If your PR changes a published package, add a changeset with `pnpm changeset` (see [releases](#stable-releases)).
+
 ## Repository workflows
 
-- New issues receive the `unconfirmed` label upon creation and should be regularly triaged. If the issue is actionable, the `unconfirmed` label should be removed. If this is not the case, the issue will be closed after 30 days.
+- New issues receive the `unconfirmed` label upon creation and should be regularly triaged. If the issue is actionable, the `unconfirmed` label should be removed. If this is not the case, the issue will be closed automatically (see [`close-stale.yml`](./.github/workflows/close-stale.yml)).
 - Add the `reproduction-missing` label to an issue to automatically add a comment and to mark it for being automatically closed in the future in case no reproduction gets added.
 - Add the `needs-isolation` label to issues that require further isolation since they might contain extraneous code or 3rd party libraries that make it hard to understand if an issue is caused by `next-intl`.
 
