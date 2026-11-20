@@ -10,7 +10,7 @@
     "test": "playwright test"
   },
   "dependencies": {
-    "next": "^16.4.6",
+    "next": "^15.5.29",
     "next-intl": "workspace:*",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
