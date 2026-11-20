@@ -53,7 +53,7 @@
     "minify"
   ],
   "dependencies": {
-    "@formatjs/icu-messageformat-parser": "^3.4.0"
+    "@formatjs/icu-messageformat-parser": "^3.5.23"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",

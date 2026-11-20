@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@eloqnt/messages": "workspace:~",
-    "@swc/core": "~1.16.0",
+    "@swc/core": "~1.16.22",
     "next-intl-swc-plugin-extractor": "workspace:*"
   },
   "devDependencies": {
@@ -47,7 +47,7 @@
     "prettier": "^3.10.1",
     "publint": "^0.3.25",
     "typescript": "^6.0.3",
-    "vite-plus": "1.0.0"
+    "vite-plus": "1.6.0"
   },
   "prettier": "eslint-config-molindo/.prettierrc.json"
 }
