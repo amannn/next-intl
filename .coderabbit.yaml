@@ -3,7 +3,6 @@
 # Reviews only: no summaries, walkthrough extras, chat auto-replies or
 # commits pushed by CodeRabbit.
 reviews:
-  profile: chill
   high_level_summary: false
   changed_files_summary: false
   sequence_diagrams: false
