@@ -208,10 +208,14 @@ const router = useRouter();
 // When the user is on `/en`, the router will navigate to `/en/about`
 router.push('/about');
 
-// Search params can be added via `query`
+// Search params can be added via `query` (as an object or string)
 router.push({
   pathname: '/users',
   query: {sortBy: 'name'}
+});
+router.push({
+  pathname: '/users',
+  query: 'sortBy=name'
 });
 
 // You can override the `locale` to switch to another language

@@ -137,8 +137,7 @@ export default function createSharedNavigationFns<
       ? | string
         | {
             pathname: string;
-            query?: QueryParams;
-            search?: string;
+            query?: QueryParams | string;
           }
       : HrefOrHrefWithParams<keyof AppPathnames>;
     /** The locale to compute the pathname for. */
@@ -152,9 +151,7 @@ export default function createSharedNavigationFns<
     if (pathnames == null) {
       if (typeof href === 'object') {
         pathname = href.pathname as string;
-        if (href.search) {
-          pathname += serializeSearchParams(href.search);
-        } else if (href.query) {
+        if (href.query) {
           pathname += serializeSearchParams(href.query);
         }
       } else {

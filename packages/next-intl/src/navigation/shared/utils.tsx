@@ -39,13 +39,12 @@ export type HrefOrUrlObjectWithParams<Pathname> = HrefOrHrefWithParamsImpl<
   Omit<UrlObject, 'pathname'>
 >;
 
-export type QueryParams =
-  Record<string, SearchParamValue> | URLSearchParams | string;
+export type QueryParams = Record<string, SearchParamValue>;
 
 // For `getPathname` (hence also its consumers: `redirect`, `useRouter`, …)
 export type HrefOrHrefWithParams<Pathname> = HrefOrHrefWithParamsImpl<
   Pathname,
-  {query?: QueryParams; search?: string}
+  {query?: QueryParams | string}
 >;
 
 export function normalizeNameOrNameWithParams<Pathname>(
@@ -58,30 +57,23 @@ export function normalizeNameOrNameWithParams<Pathname>(
 ): {
   pathname: Pathname;
   params?: StrictParams<Pathname>;
-  query?: QueryParams;
-  search?: string;
+  query?: QueryParams | string;
 } {
   return typeof href === 'string'
     ? {pathname: href as Pathname}
     : (href as {
         pathname: Pathname;
         params?: StrictParams<Pathname>;
-        query?: QueryParams;
-        search?: string;
+        query?: QueryParams | string;
       });
 }
 
-export function serializeSearchParams(searchParams: QueryParams) {
+export function serializeSearchParams(searchParams: QueryParams | string) {
   if (typeof searchParams === 'string') {
     if (!searchParams || searchParams === '?') {
       return '';
     }
     return searchParams.startsWith('?') ? searchParams : '?' + searchParams;
-  }
-
-  if (searchParams instanceof URLSearchParams) {
-    const str = searchParams.toString();
-    return str ? '?' + str : '';
   }
 
   function serializeValue(value: SearchParamValue) {
@@ -114,8 +106,7 @@ export function compileLocalizedPathname<
   pathname: Pathname;
   params?: StrictParams<Pathname>;
   pathnames: Pathnames<AppLocales>;
-  query?: QueryParams;
-  search?: string;
+  query?: QueryParams | string;
 }): string;
 export function compileLocalizedPathname<
   AppLocales extends Locales,
@@ -125,23 +116,20 @@ export function compileLocalizedPathname<
   pathname: StrictUrlObject<Pathname>;
   params?: StrictParams<Pathname>;
   pathnames: Pathnames<AppLocales>;
-  query?: QueryParams;
-  search?: string;
+  query?: QueryParams | string;
 }): UrlObject;
 export function compileLocalizedPathname<AppLocales extends Locales, Pathname>({
   pathname,
   locale,
   params,
   pathnames,
-  query,
-  search
+  query
 }: {
   locale: AppLocales[number];
   pathname: keyof typeof pathnames | StrictUrlObject<keyof typeof pathnames>;
   params?: StrictParams<Pathname>;
   pathnames: Pathnames<AppLocales>;
-  query?: QueryParams;
-  search?: string;
+  query?: QueryParams | string;
 }) {
   function compilePath(value: string) {
     const pathnameConfig = pathnames[value];
@@ -186,9 +174,7 @@ export function compileLocalizedPathname<AppLocales extends Locales, Pathname>({
 
     compiled = normalizeTrailingSlash(compiled);
 
-    if (search) {
-      compiled += serializeSearchParams(search);
-    } else if (query) {
+    if (query) {
       // This also encodes non-ASCII characters by
       // using `new URLSearchParams()` internally
       compiled += serializeSearchParams(query);
