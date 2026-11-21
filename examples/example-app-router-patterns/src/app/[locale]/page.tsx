@@ -27,7 +27,7 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="pb-12">
+    <div>
       <div className="mb-12 pt-8 text-center sm:mb-16 sm:pt-12">
         <h1 className="text-[34px] font-semibold tracking-tight text-gray-900 sm:text-5xl dark:text-gray-50">
           {t('next-intl playground')}

@@ -25,7 +25,7 @@ export default function ServerComponentsPage() {
   const t = useExtracted();
 
   return (
-    <div className="pb-12">
+    <div>
       <header className="mb-6">
         <p className="font-mono text-[10px] font-semibold tracking-[0.18em] text-gray-600 uppercase dark:text-gray-300">
           {t('Translations')}
