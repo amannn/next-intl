@@ -12,7 +12,7 @@ export function PlaygroundByline() {
       Icon: Github
     },
     {
-      href: docsUrl,
+      href: `${docsUrl}/getting-started`,
       label: t('Docs'),
       Icon: BookOpen
     }

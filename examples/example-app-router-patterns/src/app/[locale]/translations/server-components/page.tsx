@@ -1,3 +1,4 @@
+import {docsUrl} from '@/config';
 import {Code} from '@/components/Code';
 import {GitHubLink} from '@/components/GitHubLink';
 import {PlaygroundBoundary} from '@/components/PlaygroundBoundary';
@@ -44,7 +45,15 @@ export default function ServerComponentsPage() {
         <p>
           {t.rich(
             'In async Server Components, use <code>await getTranslations</code> to read messages.',
-            {code: (chunks) => <code>{chunks}</code>}
+            {
+              code: (chunks) => (
+                <a
+                  href={`${docsUrl}/environments/server-client-components#async-components`}
+                >
+                  <code>{chunks}</code>
+                </a>
+              )
+            }
           )}
         </p>
         <Code value={asyncSample} label={t('Code')} />
@@ -53,7 +62,15 @@ export default function ServerComponentsPage() {
         <p>
           {t.rich(
             'In non-async Server Components, call <code>useTranslations</code> directly.',
-            {code: (chunks) => <code>{chunks}</code>}
+            {
+              code: (chunks) => (
+                <a
+                  href={`${docsUrl}/environments/server-client-components#shared-components`}
+                >
+                  <code>{chunks}</code>
+                </a>
+              )
+            }
           )}
         </p>
         <Code value={nonAsyncSample} label={t('Code')} />

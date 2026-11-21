@@ -3,4 +3,4 @@ export const repositoryTreeUrl =
 
 export const exampleSourcePath = 'examples/example-app-router-patterns';
 
-export const docsUrl = 'https://next-intl.dev/docs/getting-started';
+export const docsUrl = 'https://next-intl.dev/docs';

@@ -1,3 +1,4 @@
+import {docsUrl} from '@/config';
 import {Code} from '@/components/Code';
 import {GitHubLink} from '@/components/GitHubLink';
 import {PlaygroundBoundary} from '@/components/PlaygroundBoundary';
@@ -40,13 +41,27 @@ export default function ClientComponentsPage() {
           <li>
             {t.rich(
               '<code>useTranslations</code> can be called in Client Components to incorporate client-side state.',
-              {code: (chunks) => <code>{chunks}</code>}
+              {
+                code: (chunks) => (
+                  <a
+                    href={`${docsUrl}/environments/server-client-components#using-internationalization-in-client-components`}
+                  >
+                    <code>{chunks}</code>
+                  </a>
+                )
+              }
             )}
           </li>
           <li>
             {t.rich(
               "ICU arguments like <code>'{name}'</code> are resolved in the browser as state changes.",
-              {code: (chunks) => <code>{chunks}</code>}
+              {
+                code: (chunks) => (
+                  <a href={`${docsUrl}/usage/translations#arguments`}>
+                    <code>{chunks}</code>
+                  </a>
+                )
+              }
             )}
           </li>
         </ul>
