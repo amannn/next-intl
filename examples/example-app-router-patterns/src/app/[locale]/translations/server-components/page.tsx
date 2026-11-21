@@ -35,7 +35,7 @@ export default function ServerComponentsPage() {
         </h1>
       </header>
 
-      <Prose className="max-w-2xl">
+      <Prose>
         <p>
           {t('Translations in Server Components are resolved on the server.')}
         </p>

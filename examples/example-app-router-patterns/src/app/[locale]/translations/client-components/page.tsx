@@ -35,7 +35,7 @@ export default function ClientComponentsPage() {
         </h1>
       </header>
 
-      <Prose className="max-w-2xl">
+      <Prose>
         <ul>
           <li>
             {t.rich(
