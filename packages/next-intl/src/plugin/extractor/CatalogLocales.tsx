@@ -1,0 +1,112 @@
+import fs from 'fs';
+import fsPromises from 'fs/promises';
+import path from 'path';
+import type {Locale} from '@eloqnt/messages/_internal';
+import getTargetLocales from './getTargetLocales.js';
+
+type LocaleChangeCallback = (params: {
+  added: Array<Locale>;
+  removed: Array<Locale>;
+}) => unknown;
+
+type CatalogLocalesParams = {
+  messagesDir: string;
+  sourceLocale: Locale;
+  extension: string;
+  locales: 'infer' | ReadonlyArray<Locale>;
+};
+
+export default class CatalogLocales {
+  private messagesDir: string;
+  private extension: string;
+  private sourceLocale: Locale;
+  private locales: 'infer' | ReadonlyArray<Locale>;
+  private watcher?: fs.FSWatcher;
+  private targetLocales?: Array<Locale>;
+  private onChangeCallbacks: Set<LocaleChangeCallback> = new Set();
+
+  public constructor(params: CatalogLocalesParams) {
+    this.messagesDir = params.messagesDir;
+    this.sourceLocale = params.sourceLocale;
+    this.extension = params.extension;
+    this.locales = params.locales;
+  }
+
+  public async getTargetLocales(): Promise<Array<Locale>> {
+    this.targetLocales ??= await this.readTargetLocales();
+    return this.targetLocales;
+  }
+
+  private readTargetLocales(): Promise<Array<Locale>> {
+    return getTargetLocales({
+      messagesDir: this.messagesDir,
+      extension: this.extension,
+      locales: this.locales,
+      sourceLocale: this.sourceLocale
+    });
+  }
+
+  public subscribeLocalesChange(callback: LocaleChangeCallback): void {
+    this.onChangeCallbacks.add(callback);
+
+    if (this.locales === 'infer' && !this.watcher) {
+      void this.startWatcher();
+    }
+  }
+
+  public unsubscribeLocalesChange(callback: LocaleChangeCallback): void {
+    this.onChangeCallbacks.delete(callback);
+    if (this.onChangeCallbacks.size === 0) {
+      this.stopWatcher();
+    }
+  }
+
+  private async startWatcher(): Promise<void> {
+    if (this.watcher) {
+      return;
+    }
+
+    await fsPromises.mkdir(this.messagesDir, {recursive: true});
+
+    this.watcher = fs.watch(
+      this.messagesDir,
+      {persistent: false, recursive: false},
+      (event, filename) => {
+        const isCatalogFile =
+          filename != null &&
+          filename.endsWith(this.extension) &&
+          !filename.includes(path.sep);
+
+        if (isCatalogFile) {
+          void this.onChange();
+        }
+      }
+    );
+  }
+
+  private stopWatcher(): void {
+    if (this.watcher) {
+      this.watcher.close();
+      this.watcher = undefined;
+    }
+  }
+
+  private async onChange(): Promise<void> {
+    const oldLocales = new Set(this.targetLocales || []);
+    this.targetLocales = await this.readTargetLocales();
+    const newLocalesSet = new Set(this.targetLocales);
+
+    const added = this.targetLocales.filter(
+      (locale) => !oldLocales.has(locale)
+    );
+    const removed = Array.from(oldLocales).filter(
+      (locale) => !newLocalesSet.has(locale)
+    );
+
+    if (added.length > 0 || removed.length > 0) {
+      for (const callback of this.onChangeCallbacks) {
+        callback({added, removed});
+      }
+    }
+  }
+}

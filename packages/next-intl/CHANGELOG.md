@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.15.3
+
+### Patch Changes
+
+- Update `@parcel/watcher` to 2.6.0. This also updates its `picomatch` dependency, which resolves audit warnings for CVE-2026-33671 and CVE-2026-33672. next-intl isn't affected by these, since it only passes fixed ignore patterns to the watcher. ([#2495](https://github.com/amannn/next-intl/pull/2495), [`e123522`](https://github.com/amannn/next-intl/commit/e12352252da8598bd28117229fba4632fe90a50d), [@Mohsan1995](https://github.com/Mohsan1995))
+
+## 4.15.2
+
+### Patch Changes
+
+- Extract messages from `.mts`, `.cts`, `.mjs` and `.cjs` files, and parse `.ts` files without JSX so type assertions like `<string>value` and generic arrow functions no longer fail. ([#2487](https://github.com/amannn/next-intl/pull/2487), [`3be6ee1`](https://github.com/amannn/next-intl/commit/3be6ee1a543980e1f5f4bfcc2bc548551b8614cf), [@amannn](https://github.com/amannn))
+
+- Fail `next build` and `unstable_extractMessages` with the file name when a source file can't be parsed, instead of writing messages files without that file's messages. During `next dev`, messages files stay unchanged until the file parses again. ([#2487](https://github.com/amannn/next-intl/pull/2487), [`3be6ee1`](https://github.com/amannn/next-intl/commit/3be6ee1a543980e1f5f4bfcc2bc548551b8614cf), [@amannn](https://github.com/amannn))
+
+- Move the message extraction internals into the new `@eloqnt/messages` and `@eloqnt/extractor` packages, so next-intl and the eloqnt CLI share one implementation. No change in behavior. ([#2489](https://github.com/amannn/next-intl/pull/2489), [`cb1b77e`](https://github.com/amannn/next-intl/commit/cb1b77e218606450fcd219f0ad2a7cad994f1d73), [@amannn](https://github.com/amannn))
+- Updated dependencies [[`3be6ee1`](https://github.com/amannn/next-intl/commit/3be6ee1a543980e1f5f4bfcc2bc548551b8614cf), [`3be6ee1`](https://github.com/amannn/next-intl/commit/3be6ee1a543980e1f5f4bfcc2bc548551b8614cf), [`cb1b77e`](https://github.com/amannn/next-intl/commit/cb1b77e218606450fcd219f0ad2a7cad994f1d73)]:
+  - @eloqnt/extractor@0.1.0
+  - @eloqnt/messages@0.1.0
+
 ## 4.15.1 (2026-11-12)
 
 ### Bug Fixes

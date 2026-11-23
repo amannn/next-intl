@@ -1,0 +1,2616 @@
+// @vitest-environment node
+import fs from 'fs/promises';
+import path from 'path';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
+import BaseExtractionCompiler from './ExtractionCompiler.js';
+
+// Stands in for `SourceFileWatcher`, which forwards watcher events to `update`
+class ExtractionCompiler extends BaseExtractionCompiler {
+  public constructor(
+    ...args: ConstructorParameters<typeof BaseExtractionCompiler>
+  ) {
+    super(...args);
+    for (const srcPath of this.getSrcPaths()) {
+      watcherCallbacks.set(srcPath, (err, events) => this.update(events));
+    }
+  }
+
+  public [Symbol.dispose](): void {
+    watcherCallbacks.clear();
+    super[Symbol.dispose]();
+  }
+}
+
+const filesystem: {
+  project: {
+    src: Record<string, string>;
+    messages: Record<string, string> | undefined;
+    node_modules?: Record<'@acme', Record<'ui', Record<string, string>>>;
+    '.next'?: Record<string, Record<string, string>>;
+    '.git'?: Record<string, Record<string, string>>;
+  };
+} = {
+  project: {
+    src: {},
+    messages: undefined
+  }
+};
+
+beforeEach(() => {
+  filesystem.project = {
+    src: {},
+    messages: {}
+  };
+  delete (filesystem as Record<string, unknown>).ui;
+  fileTimestamps.clear();
+  watchCallbacks.clear();
+  mockWatchers.clear();
+  readFileInterceptors.clear();
+  watcherCallbacks.clear();
+  vi.clearAllMocks();
+});
+
+describe('json format', {timeout: 20_000}, () => {
+  function createCompiler() {
+    return new ExtractionCompiler(
+      {
+        extract: {
+          locales: 'infer',
+          path: './messages',
+          sourceLocale: 'en',
+          srcPath: './src'
+        },
+        messages: {
+          format: 'json',
+          path: ['./messages']
+        }
+      },
+      {
+        projectRoot: '/project',
+        saveDebounceMs: 0
+      }
+    );
+  }
+
+  it('creates the messages directory and source catalog when they do not exist initially', async () => {
+    filesystem.project.messages = undefined;
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hey!')}</div>;
+    }
+    `;
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+
+    expect(vi.mocked(fs.mkdir)).toHaveBeenCalledWith('messages', {
+      recursive: true
+    });
+    expect(vi.mocked(fs.writeFile)).toHaveBeenCalledWith(
+      'messages/en.json',
+      expect.any(String)
+    );
+    expect(JSON.parse(filesystem.project.messages!['en.json'])).toEqual({
+      '-YJVTi': 'Hey!'
+    });
+  });
+
+  it('extracts from all supported file extensions', async () => {
+    filesystem.project.src['a.mts'] = `
+    import {useExtracted} from 'next-intl';
+    const t = useExtracted();
+    t('From mts');
+    `;
+    filesystem.project.src['b.cts'] = `
+    import {useExtracted} from 'next-intl';
+    const t = useExtracted();
+    t('From cts');
+    `;
+    filesystem.project.src['c.mjs'] = `
+    import {useExtracted} from 'next-intl';
+    const t = useExtracted();
+    t('From mjs');
+    `;
+    filesystem.project.src['d.cjs'] = `
+    import {useExtracted} from 'next-intl';
+    const t = useExtracted();
+    t('From cjs');
+    `;
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+
+    expect(
+      Object.values(JSON.parse(filesystem.project.messages!['en.json']))
+    ).toEqual(['From mts', 'From cts', 'From mjs', 'From cjs']);
+  });
+
+  it('does not rewrite catalogs whose content is unchanged', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hey!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {'de.json': '{}'};
+
+    {
+      using compiler = createCompiler();
+      await compiler.extractAll();
+      await waitForWriteFileCalls(2);
+    }
+    vi.mocked(fs.writeFile).mockClear();
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+
+    expect(vi.mocked(fs.writeFile)).not.toHaveBeenCalled();
+    expect(JSON.parse(filesystem.project.messages!['de.json'])).toEqual({
+      '-YJVTi': ''
+    });
+  });
+
+  it('creates all locale files immediately when explicit locales are provided', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+    filesystem.project.messages = undefined;
+
+    using compiler = new ExtractionCompiler(
+      {
+        extract: {
+          locales: ['de', 'fr'],
+          path: './messages',
+          sourceLocale: 'en',
+          srcPath: './src'
+        },
+        messages: {
+          format: 'json',
+          path: ['./messages']
+        }
+      },
+      {
+        projectRoot: '/project',
+        saveDebounceMs: 0
+      }
+    );
+
+    await compiler.extractAll();
+
+    await waitForWriteFileCalls(3);
+
+    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.json",
+          "{
+        "OpKKos": "Hello!"
+      }
+      ",
+        ],
+        [
+          "messages/de.json",
+          "{
+        "OpKKos": ""
+      }
+      ",
+        ],
+        [
+          "messages/fr.json",
+          "{
+        "OpKKos": ""
+      }
+      ",
+        ],
+      ]
+    `);
+
+    expect(watchCallbacks.size).toBe(0);
+  });
+
+  it('avoids a race condition when compiling while a new locale is added', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.json': '{"OpKKos": "Hello!"}'
+    };
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+
+    // Prepare the new locale file
+    filesystem.project.messages!['fr.json'] = '{"OpKKos": "Bonjour!"}';
+
+    let resolveReadFile: (() => void) | undefined;
+    const readFilePromise = new Promise<void>((resolve) => {
+      resolveReadFile = resolve;
+    });
+
+    let frReadEnteredInterceptor = false;
+    // Intercept reading of fr.json
+    readFileInterceptors.set('fr.json', async () => {
+      frReadEnteredInterceptor = true;
+      await readFilePromise;
+    });
+
+    // Trigger the file change (this starts the loading process)
+    simulateFileEvent('/project/messages', 'rename', 'fr.json');
+
+    // Do not await yet: must resolve read while this is blocked on loadCatalogsPromise
+    const updateDone = simulateSourceFileUpdate(
+      '/project/src/Greeting.tsx',
+      filesystem.project.src['Greeting.tsx'] +
+        `
+        function Other() {
+          const t = useExtracted();
+          return <div>{t('Hi!')}</div>;
+        }`
+    );
+
+    await vi.waitFor(() => expect(frReadEnteredInterceptor).toBe(true));
+
+    // Allow loading to finish
+    resolveReadFile?.();
+
+    await updateDone;
+
+    await vi.waitFor(() => {
+      expect(JSON.parse(filesystem.project.messages!['fr.json'])).toEqual({
+        OpKKos: 'Bonjour!',
+        nm_7yQ: ''
+      });
+    });
+  });
+
+  it('avoids race condition when watcher processes files during initial scan', async () => {
+    // Create multiple files to make the initial scan take time
+    filesystem.project.src['File1.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function File1() {
+      const t = useExtracted();
+      return <div>{t('Message1')}</div>;
+    }
+    `;
+    filesystem.project.src['File2.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function File2() {
+      const t = useExtracted();
+      return <div>{t('Message2')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.json': '{}',
+      'de.json': '{}'
+    };
+
+    using compiler = createCompiler();
+
+    let file2ReadEnteredInterceptor = false;
+    // Delay processing of File2 during the initial scan
+    let resolveFile2: (() => void) | undefined;
+    const file2Promise = new Promise<void>((resolve) => {
+      resolveFile2 = resolve;
+    });
+    readFileInterceptors.set('File2.tsx', async () => {
+      file2ReadEnteredInterceptor = true;
+      await file2Promise;
+    });
+
+    // Start extractAll() - this will begin the initial scan
+    const extractAllPromise = compiler.extractAll();
+
+    await vi.waitFor(() => expect(file2ReadEnteredInterceptor).toBe(true));
+
+    // While the scan is still processing File2, trigger a file watcher event
+    // This simulates the race condition: watcher should wait for scan to complete
+    const updateDone = simulateSourceFileUpdate(
+      '/project/src/File1.tsx',
+      `
+      import {useExtracted} from 'next-intl';
+      function File1() {
+        const t = useExtracted();
+        return <div>{t('Message1')} {t('Message3')}</div>;
+      }
+      `
+    );
+
+    // Now allow File2 processing to complete (scan finishes)
+    resolveFile2?.();
+
+    // Wait for extractAll to complete
+    await extractAllPromise;
+    await waitForWriteFileCalls(2);
+
+    await updateDone;
+    await waitForWriteFileCalls(4);
+
+    // Verify that both messages from the initial scan and the watcher update are present
+    // If there was a race condition, we might lose messages or have inconsistent state
+    // Check the final write to en.json (should contain all 3 messages)
+    const enWrites = vi
+      .mocked(fs.writeFile)
+      .mock.calls.filter((call) => call[0] === 'messages/en.json');
+    const finalEnWrite = enWrites[enWrites.length - 1];
+    const finalEnContent = JSON.parse(finalEnWrite[1] as string);
+    const messageValues = Object.values(finalEnContent) as Array<string>;
+
+    // Should have 3 messages: Message1, Message2 (from initial scan), and Message3 (from watcher update)
+    expect(messageValues.length).toBe(3);
+    expect(messageValues).toContain('Message1');
+    expect(messageValues).toContain('Message2');
+    expect(messageValues).toContain('Message3');
+  });
+
+  it('resets target-locale translation when source message id changes (was e2e; covered here to avoid dev-server flake)', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hey!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.json': '{"-YJVTi": "Hey!"}'
+    };
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+    await waitForWriteFileCalls(1);
+
+    filesystem.project.messages!['de.json'] = '{"-YJVTi": "Hallo"}';
+    const readCallsBeforeRename = vi.mocked(fs.readFile).mock.calls.length;
+    simulateFileEvent('/project/messages', 'rename', 'de.json');
+    await vi.waitFor(() =>
+      expect(vi.mocked(fs.readFile).mock.calls.length).toBeGreaterThan(
+        readCallsBeforeRename
+      )
+    );
+
+    await simulateSourceFileUpdate(
+      '/project/src/Greeting.tsx',
+      `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    `
+    );
+
+    await vi.waitFor(() => {
+      const en = JSON.parse(filesystem.project.messages!['en.json']);
+      expect(en).toMatchObject({OpKKos: 'Hello!'});
+      const de = JSON.parse(filesystem.project.messages!['de.json']);
+      const reset =
+        de.OpKKos === '' ||
+        de.OpKKos === undefined ||
+        Object.prototype.hasOwnProperty.call(de, 'OpKKos') === false;
+      expect(reset).toBe(true);
+    });
+  });
+
+  it('keeps messages files unchanged while a file fails to parse during the initial scan (dev)', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    filesystem.project.src['Valid.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Valid() {
+      const t = useExtracted();
+      return <div>{t('Valid message')}</div>;
+    }
+    `;
+    filesystem.project.src['Invalid.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Invalid() {
+      const t = useExtracted();
+      return <div>{t('Initially invalid')}</div>;
+    
+    // Missing closing brace for function - parse error
+    `;
+    filesystem.project.messages = {
+      'en.json': '{}'
+    };
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+
+    expect(vi.mocked(fs.writeFile)).not.toHaveBeenCalled();
+    expect(warn).toHaveBeenCalledTimes(1);
+    expect(warn.mock.calls[0][0]).toContain('src/Invalid.tsx');
+
+    await simulateSourceFileUpdate(
+      '/project/src/Invalid.tsx',
+      `
+    import {useExtracted} from 'next-intl';
+    function Invalid() {
+      const t = useExtracted();
+      return <div>{t('Now valid')}</div>;
+    }
+    `
+    );
+    await waitForWriteFileCalls(1);
+
+    expect(vi.mocked(fs.writeFile).mock.calls.at(-1)).toMatchInlineSnapshot(`
+      [
+        "messages/en.json",
+        "{
+        "KvzhZT": "Now valid",
+        "HovSZ7": "Valid message"
+      }
+      ",
+      ]
+    `);
+    warn.mockRestore();
+  });
+
+  it('waits for the initial scan when a file changes before the messages files are read', async () => {
+    filesystem.project.src['File1.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function File1() {
+      const t = useExtracted();
+      return <div>{t('Message1')}</div>;
+    }
+    `;
+    filesystem.project.src['File2.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function File2() {
+      const t = useExtracted();
+      return <div>{t('Message2')}</div>;
+    }
+    `;
+    filesystem.project.messages = {'en.json': '{}', 'de.json': '{}'};
+
+    using compiler = createCompiler();
+
+    let resolveFile2: (() => void) | undefined;
+    const file2Promise = new Promise<void>((resolve) => {
+      resolveFile2 = resolve;
+    });
+    readFileInterceptors.set('File2.tsx', () => file2Promise);
+
+    // The watcher subscribes before the initial scan starts, so an event can
+    // arrive before any messages file is read
+    const extractAllPromise = compiler.extractAll();
+    const updateDone = simulateSourceFileUpdate(
+      '/project/src/File1.tsx',
+      filesystem.project.src['File1.tsx']
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    resolveFile2?.();
+    await extractAllPromise;
+    await updateDone;
+    await waitForWriteFileCalls(2);
+
+    for (const [, content] of vi.mocked(fs.writeFile).mock.calls) {
+      expect(Object.keys(JSON.parse(content as string))).toHaveLength(2);
+    }
+  });
+
+  it('resumes saving when a folder with a file that fails to parse is removed', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    filesystem.project.src = {
+      'Valid.tsx': `
+      import {useExtracted} from 'next-intl';
+      function Valid() {
+        const t = useExtracted();
+        return <div>{t('Valid message')}</div>;
+      }
+      `,
+      legacy: {
+        'Invalid.tsx': `
+        import {useExtracted} from 'next-intl';
+        function Invalid() {
+          const t = useExtracted();
+          return <div>{t('Invalid')}</div>;
+        `
+      }
+    } as any;
+    filesystem.project.messages = {'en.json': '{}'};
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+    expect(vi.mocked(fs.writeFile)).not.toHaveBeenCalled();
+
+    delete (filesystem.project.src as any).legacy;
+    fileTimestamps.delete('/project/src/legacy/Invalid.tsx');
+    const callback = watcherCallbacks.get('/project/src')!;
+    await Promise.resolve(
+      callback(null, [{type: 'delete', path: '/project/src/legacy'}])
+    );
+    await waitForWriteFileCalls(1);
+
+    expect(JSON.parse(filesystem.project.messages['en.json'])).toEqual({
+      HovSZ7: 'Valid message'
+    });
+    warn.mockRestore();
+  });
+
+  it('does not write an added locale while a file fails to parse', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    filesystem.project.src['Valid.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Valid() {
+      const t = useExtracted();
+      return <div>{t('Valid message')}</div>;
+    }
+    `;
+    filesystem.project.src['Invalid.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Invalid() {
+      const t = useExtracted();
+      return <div>{t('Invalid')}</div>;
+    `;
+    filesystem.project.messages = {'en.json': '{}'};
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+
+    const readCallsBefore = vi.mocked(fs.readFile).mock.calls.length;
+    filesystem.project.messages['fr.json'] = '{"HovSZ7": "Message valide"}';
+    simulateFileEvent('/project/messages', 'rename', 'fr.json');
+    await vi.waitFor(() =>
+      expect(vi.mocked(fs.readFile).mock.calls.length).toBeGreaterThan(
+        readCallsBefore
+      )
+    );
+    expect(vi.mocked(fs.writeFile)).not.toHaveBeenCalled();
+
+    await simulateSourceFileUpdate(
+      '/project/src/Invalid.tsx',
+      `
+    import {useExtracted} from 'next-intl';
+    function Invalid() {
+      const t = useExtracted();
+      return <div>{t('Now valid')}</div>;
+    }
+    `
+    );
+    await waitForWriteFileCalls(2);
+
+    await vi.waitFor(() =>
+      expect(JSON.parse(filesystem.project.messages!['fr.json'])).toEqual({
+        HovSZ7: 'Message valide',
+        KvzhZT: ''
+      })
+    );
+    warn.mockRestore();
+  });
+});
+
+describe('po format', {timeout: 20_000}, () => {
+  function createCompiler() {
+    return new ExtractionCompiler(
+      {
+        extract: {
+          locales: 'infer',
+          path: './messages',
+          sourceLocale: 'en',
+          srcPath: './src'
+        },
+        messages: {
+          format: 'po',
+          path: ['./messages']
+        }
+      },
+      {
+        projectRoot: '/project',
+        saveDebounceMs: 0
+      }
+    );
+  }
+
+  it('normalizes Windows path separators in references', async () => {
+    filesystem.project.src['Greeting.tsx'] =
+      `import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hey!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {};
+
+    using relativeSpy = (() => {
+      const originalRelative = path.relative;
+      const spy = vi.spyOn(path, 'relative').mockImplementation((from, to) => {
+        if (from === '/project' && to === '/project/src/Greeting.tsx') {
+          return 'src\\Greeting.tsx';
+        }
+        return originalRelative(from, to);
+      });
+
+      (spy as typeof spy & {[Symbol.dispose](): void})[Symbol.dispose] =
+        function restoreRelativeSpy() {
+          spy.mockRestore();
+        };
+
+      return spy as typeof spy & {[Symbol.dispose](): void};
+    })();
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+    await waitForWriteFileCalls(1);
+    const output = vi.mocked(fs.writeFile).mock.calls[0][1] as string;
+
+    expect(output).toContain('#: src/Greeting.tsx');
+    expect(output).not.toContain('src\\Greeting.tsx');
+    expect(relativeSpy).toHaveBeenCalled();
+  });
+
+  it('stacks descriptions when the same message appears in multiple files', async () => {
+    filesystem.project.src['A.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function A() {
+      const t = useExtracted();
+      return <div>{t({message: 'Message', description: 'Zebra sorts after Apple alphabetically'})}</div>;
+    }
+    `;
+    filesystem.project.src['Z.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Z() {
+      const t = useExtracted();
+      return <div>{t({message: 'Message', description: 'Apple sorts first alphabetically'})}</div>;
+    }
+    `;
+    filesystem.project.messages = {};
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+    await waitForWriteFileCalls(1);
+
+    expect(vi.mocked(fs.writeFile).mock.calls[0][1]).toContain(`
+#. Zebra sorts after Apple alphabetically
+#. Apple sorts first alphabetically
+`);
+  });
+
+  it('stacks descriptions when the same message appears multiple times in one file', async () => {
+    filesystem.project.src['FileA.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function FileA() {
+      const t = useExtracted();
+      return (
+        <div>
+          {t({message: 'Message', description: 'Second line second alphabetically'})}
+          {t({message: 'Message', description: 'First line first alphabetically'})}
+        </div>
+      );
+    }
+    `;
+    filesystem.project.messages = {};
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+    await waitForWriteFileCalls(1);
+
+    expect(vi.mocked(fs.writeFile).mock.calls[0][1]).toContain(`
+#. Second line second alphabetically
+#. First line first alphabetically
+`);
+  });
+
+  it('removes stale descriptions when a source occurrence changes', async () => {
+    filesystem.project.src['A.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function A() {
+      const t = useExtracted();
+      return <div>{t({message: 'Message', description: 'Zebra from earlier path'})}</div>;
+    }
+    `;
+    filesystem.project.src['Z.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Z() {
+      const t = useExtracted();
+      return <div>{t({message: 'Message', description: 'Apple from later path'})}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.po': '',
+      'de.po': ''
+    };
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+    await waitForWriteFileCalls(2);
+
+    await simulateSourceFileUpdate(
+      '/project/src/A.tsx',
+      `
+      import {useExtracted} from 'next-intl';
+      function A() {
+        const t = useExtracted();
+        return <div>{t('Message')}</div>;
+      }
+      `
+    );
+    await waitForWriteFileCalls(4);
+
+    const lastSourceWrite = vi
+      .mocked(fs.writeFile)
+      .mock.calls.filter((call) => call[0] === 'messages/en.po')
+      .at(-1)?.[1] as string;
+    expect(lastSourceWrite).not.toContain('Zebra from earlier path');
+    expect(lastSourceWrite).toContain('#. Apple from later path');
+  });
+
+  it('removes obsolete references after a file rename during dev if create fires before delete', async () => {
+    const file = `
+    import {useExtracted} from 'next-intl';
+    function Component() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+    filesystem.project.src['component-a.tsx'] = file;
+    filesystem.project.messages = {
+      'en.po': '',
+      'de.po': ''
+    };
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+
+    // Reference to component-a.tsx is written
+    await waitForWriteFileCalls(2);
+    expect(vi.mocked(fs.writeFile).mock.calls.at(-1)?.[1]).toContain(
+      'src/component-a.tsx'
+    );
+
+    await simulateSourceFileCreate('/project/src/component-b.tsx', file);
+    await simulateSourceFileDelete('/project/src/component-a.tsx');
+
+    await waitForWriteFileCalls(6);
+
+    expect(vi.mocked(fs.writeFile).mock.calls.slice(4)).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.po",
+          "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: @eloqnt/format-po\\n"
+      "X-Message-Key: msgctxt\\n"
+
+      #: src/component-b.tsx
+      msgctxt "OpKKos"
+      msgid "Hello!"
+      msgstr "Hello!"
+      ",
+        ],
+        [
+          "messages/de.po",
+          "msgid ""
+      msgstr ""
+      "Language: de\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: @eloqnt/format-po\\n"
+      "X-Message-Key: msgctxt\\n"
+
+      #: src/component-b.tsx
+      msgctxt "OpKKos"
+      msgid "Hello!"
+      msgstr ""
+      ",
+        ],
+      ]
+    `);
+  });
+
+  it('removes obsolete references after a file rename during dev if delete fires before create', async () => {
+    const file = `
+    import {useExtracted} from 'next-intl';
+    function Component() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+    filesystem.project.src['component-a.tsx'] = file;
+    filesystem.project.messages = {
+      'en.po': '',
+      'de.po': ''
+    };
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+
+    // Reference to component-a.tsx is written
+    await waitForWriteFileCalls(2);
+    expect(vi.mocked(fs.writeFile).mock.calls.at(-1)?.[1]).toContain(
+      'src/component-a.tsx'
+    );
+
+    await simulateSourceFileDelete('/project/src/component-a.tsx');
+    await simulateSourceFileCreate('/project/src/component-b.tsx', file);
+
+    await waitForWriteFileCalls(6);
+
+    expect(vi.mocked(fs.writeFile).mock.calls.slice(4)).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.po",
+          "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: @eloqnt/format-po\\n"
+      "X-Message-Key: msgctxt\\n"
+
+      #: src/component-b.tsx
+      msgctxt "OpKKos"
+      msgid "Hello!"
+      msgstr "Hello!"
+      ",
+        ],
+        [
+          "messages/de.po",
+          "msgid ""
+      msgstr ""
+      "Language: de\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: @eloqnt/format-po\\n"
+      "X-Message-Key: msgctxt\\n"
+
+      #: src/component-b.tsx
+      msgctxt "OpKKos"
+      msgid "Hello!"
+      msgstr ""
+      ",
+        ],
+      ]
+    `);
+  });
+
+  it('sorts messages by reference path', async () => {
+    filesystem.project.src['components/Header.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    export default function Header() {
+      const t = useExtracted();
+      return <div>{t('Welcome')}</div>;
+    }
+    `;
+    filesystem.project.src['app/page.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    export default function Page() {
+      const t = useExtracted();
+      return <div>{t('Hello')}</div>;
+    }
+    `;
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+    await waitForWriteFileCalls(1);
+
+    expect(vi.mocked(fs.writeFile).mock.calls.at(-1)).toMatchInlineSnapshot(`
+      [
+        "messages/en.po",
+        "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: @eloqnt/format-po\\n"
+      "X-Message-Key: msgctxt\\n"
+
+      #: src/app/page.tsx
+      msgctxt "NhX4DJ"
+      msgid "Hello"
+      msgstr "Hello"
+
+      #: src/components/Header.tsx
+      msgctxt "PwaN2o"
+      msgid "Welcome"
+      msgstr "Welcome"
+      ",
+      ]
+    `);
+  });
+
+  it('preserves flags', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hey!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.po': `
+      msgid ""
+      msgstr ""
+      "X-Message-Key: msgctxt\\n"
+
+      #: src/Greeting.tsx
+      #, fuzzy
+      msgctxt "-YJVTi"
+      msgid "Hey!"
+      msgstr "Hey!"
+      `,
+      'de.po': `
+      msgid ""
+      msgstr ""
+      "X-Message-Key: msgctxt\\n"
+
+      #: src/Greeting.tsx
+      #, c-format
+      msgctxt "-YJVTi"
+      msgid "Hey!"
+      msgstr "Hallo!"
+      `
+    };
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+
+    await waitForWriteFileCalls(2);
+    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.po",
+          "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: @eloqnt/format-po\\n"
+      "X-Message-Key: msgctxt\\n"
+
+      #: src/Greeting.tsx
+      #, fuzzy
+      msgctxt "-YJVTi"
+      msgid "Hey!"
+      msgstr "Hey!"
+      ",
+        ],
+        [
+          "messages/de.po",
+          "msgid ""
+      msgstr ""
+      "Language: de\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: @eloqnt/format-po\\n"
+      "X-Message-Key: msgctxt\\n"
+
+      #: src/Greeting.tsx
+      #, c-format
+      msgctxt "-YJVTi"
+      msgid "Hey!"
+      msgstr "Hallo!"
+      ",
+        ],
+      ]
+    `);
+  });
+
+  it('sorts messages by reference path when files are compiled out of order', async () => {
+    using compiler = createCompiler();
+
+    filesystem.project.src['a.tsx'] = createFile('A', 'Message A');
+    await compiler.extractAll();
+    filesystem.project.src['d.tsx'] = createFile('D', 'Message B');
+    await compiler.extractAll();
+    filesystem.project.src['c.tsx'] = createFile('C', 'Message C');
+    await compiler.extractAll();
+    filesystem.project.src['b.tsx'] = createFile('B', 'Message B');
+    await compiler.extractAll();
+    await waitForWriteFileCalls(4);
+
+    expect(vi.mocked(fs.writeFile).mock.calls.at(-1)).toMatchInlineSnapshot(`
+      [
+        "messages/en.po",
+        "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: @eloqnt/format-po\\n"
+      "X-Message-Key: msgctxt\\n"
+
+      #: src/a.tsx
+      msgctxt "PmvAXH"
+      msgid "Message A"
+      msgstr "Message A"
+
+      #: src/b.tsx
+      #: src/d.tsx
+      msgctxt "5bb321"
+      msgid "Message B"
+      msgstr "Message B"
+
+      #: src/c.tsx
+      msgctxt "c3UbA2"
+      msgid "Message C"
+      msgstr "Message C"
+      ",
+      ]
+    `);
+  });
+
+  describe('same-line messages', () => {
+    // Source order is deliberately the reverse of id order
+    // ("Save" → `jvo0vs`, "Cancel" → `47FYwb`)
+    function createDialog(first: string, second: string) {
+      return `
+      import {useExtracted} from 'next-intl';
+      export default function Dialog() {
+        const t = useExtracted();
+        return <Dialog confirm={t('${first}')} cancel={t('${second}')} />;
+      }
+      `;
+    }
+
+    function getLastWrite() {
+      return vi.mocked(fs.writeFile).mock.calls.at(-1)?.[1] as string;
+    }
+
+    function getMsgids(content: string) {
+      return Array.from(content.matchAll(/^msgid "(.+)"$/gm), (m) => m[1]);
+    }
+
+    it('keeps source order when a message is removed and added back', async () => {
+      filesystem.project.src['Dialog.tsx'] = createDialog('Save', 'Cancel');
+
+      using compiler = createCompiler();
+      await compiler.extractAll();
+      await waitForWriteFileCalls(1);
+      const initial = getLastWrite();
+      expect(getMsgids(initial)).toEqual(['Save', 'Cancel']);
+
+      await simulateSourceFileUpdate(
+        '/project/src/Dialog.tsx',
+        createDialog('Save!', 'Cancel')
+      );
+      await waitForWriteFileCalls(2);
+      expect(getMsgids(getLastWrite())).toEqual(['Save!', 'Cancel']);
+
+      await simulateSourceFileUpdate(
+        '/project/src/Dialog.tsx',
+        createDialog('Save', 'Cancel')
+      );
+      await waitForWriteFileCalls(3);
+      expect(getLastWrite()).toEqual(initial);
+    });
+
+    it('updates the order when messages on the same line are swapped', async () => {
+      filesystem.project.src['Dialog.tsx'] = createDialog('Save', 'Cancel');
+
+      using compiler = createCompiler();
+      await compiler.extractAll();
+      await waitForWriteFileCalls(1);
+      expect(getMsgids(getLastWrite())).toEqual(['Save', 'Cancel']);
+
+      await simulateSourceFileUpdate(
+        '/project/src/Dialog.tsx',
+        createDialog('Cancel', 'Save')
+      );
+      await waitForWriteFileCalls(2);
+      expect(getMsgids(getLastWrite())).toEqual(['Cancel', 'Save']);
+    });
+  });
+
+  it('orders same-reference messages independently of file processing order', async () => {
+    async function extractWithDelayedFile(delayedFileName: string) {
+      filesystem.project = {
+        src: {
+          'A.tsx': `
+          import {useExtracted} from 'next-intl';
+          export default function A() {
+            const t = useExtracted();
+            return <div>{t('apple')}{t('banana')}</div>;
+          }
+          `,
+          'B.tsx': `
+          import {useExtracted} from 'next-intl';
+          export default function B() {
+            const t = useExtracted();
+            return <div>{t('banana')}{t('apple')}</div>;
+          }
+          `
+        },
+        messages: {}
+      };
+      fileTimestamps.clear();
+      readFileInterceptors.clear();
+      vi.mocked(fs.writeFile).mockClear();
+
+      let delayedFileReadStarted = false;
+      let resolveDelayedFile: (() => void) | undefined;
+      const delayedFilePromise = new Promise<void>((resolve) => {
+        resolveDelayedFile = resolve;
+      });
+      readFileInterceptors.set(delayedFileName, async () => {
+        delayedFileReadStarted = true;
+        await delayedFilePromise;
+      });
+
+      using compiler = createCompiler();
+      const extractAllPromise = compiler.extractAll();
+
+      await vi.waitFor(() => expect(delayedFileReadStarted).toBe(true));
+      resolveDelayedFile?.();
+      await extractAllPromise;
+      await waitForWriteFileCalls(1);
+
+      return filesystem.project.messages!['en.po'];
+    }
+
+    const aDelayedContent = await extractWithDelayedFile('A.tsx');
+    const bDelayedContent = await extractWithDelayedFile('B.tsx');
+
+    expect(aDelayedContent).toEqual(bDelayedContent);
+  });
+
+  it('removes flags when externally deleted', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hey!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.po': `
+      msgid ""
+      msgstr ""
+      "X-Message-Key: msgctxt\\n"
+
+      #: src/Greeting.tsx
+      #, fuzzy, c-format
+      msgctxt "-YJVTi"
+      msgid "Hey!"
+      msgstr "Hey!"
+      `,
+      'de.po': `
+      msgid ""
+      msgstr ""
+      "X-Message-Key: msgctxt\\n"
+
+      #: src/Greeting.tsx
+      #, fuzzy, no-wrap
+      msgctxt "-YJVTi"
+      msgid "Hey!"
+      msgstr "Hallo!"
+      `
+    };
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+
+    await waitForWriteFileCalls(2);
+
+    // Remove fuzzy flag from source locale, keep c-format
+    simulateManualFileEdit(
+      'messages/en.po',
+      `msgid ""
+msgstr ""
+"Language: en\\n"
+"X-Message-Key: msgctxt\\n"
+
+#: src/Greeting.tsx
+#, c-format
+msgctxt "-YJVTi"
+msgid "Hey!"
+msgstr "Hey!"
+`
+    );
+
+    await simulateSourceFileUpdate(
+      '/project/src/Greeting.tsx',
+      `
+      import {useExtracted} from 'next-intl';
+      function Greeting() {
+        const t = useExtracted();
+        return <div>{t('Hey!')} {t('World')}</div>;
+      }
+      `
+    );
+
+    await waitForWriteFileCalls(4);
+    expect(
+      vi
+        .mocked(fs.writeFile)
+        .mock.calls.filter((call) => call[0] === 'messages/en.po')
+        .at(-1)
+    ).toMatchInlineSnapshot(`
+      [
+        "messages/en.po",
+        "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: @eloqnt/format-po\\n"
+      "X-Message-Key: msgctxt\\n"
+
+      #: src/Greeting.tsx
+      #, c-format
+      msgctxt "-YJVTi"
+      msgid "Hey!"
+      msgstr "Hey!"
+
+      #: src/Greeting.tsx
+      msgctxt "jqdzk6"
+      msgid "World"
+      msgstr "World"
+      ",
+      ]
+    `);
+
+    // Remove remaining c-format flag from source locale
+    simulateManualFileEdit(
+      'messages/en.po',
+      `msgid ""
+msgstr ""
+"Language: en\\n"
+"X-Message-Key: msgctxt\\n"
+
+#: src/Greeting.tsx
+msgctxt "-YJVTi"
+msgid "Hey!"
+msgstr "Hey!"
+
+#: src/Greeting.tsx
+msgctxt "jqdzk6"
+msgid "World"
+msgstr "World"
+`
+    );
+
+    await simulateSourceFileUpdate(
+      '/project/src/Greeting.tsx',
+      `
+      import {useExtracted} from 'next-intl';
+      function Greeting() {
+        const t = useExtracted();
+        return <div>{t('Hey!')} {t('World')} {t('!')}</div>;
+      }
+      `
+    );
+
+    await waitForWriteFileCalls(6);
+    expect(
+      vi
+        .mocked(fs.writeFile)
+        .mock.calls.filter((call) => call[0] === 'messages/en.po')
+        .at(-1)
+    ).toMatchInlineSnapshot(`
+      [
+        "messages/en.po",
+        "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: @eloqnt/format-po\\n"
+      "X-Message-Key: msgctxt\\n"
+
+      #: src/Greeting.tsx
+      msgctxt "-YJVTi"
+      msgid "Hey!"
+      msgstr "Hey!"
+
+      #: src/Greeting.tsx
+      msgctxt "jqdzk6"
+      msgid "World"
+      msgstr "World"
+
+      #: src/Greeting.tsx
+      msgctxt "ODGmph"
+      msgid "!"
+      msgstr "!"
+      ",
+      ]
+    `);
+
+    // Now remove flags from target locale (remove fuzzy, keep no-wrap)
+    simulateManualFileEdit(
+      'messages/de.po',
+      `msgid ""
+msgstr ""
+"Language: de\\n"
+"X-Message-Key: msgctxt\\n"
+
+#: src/Greeting.tsx
+#, no-wrap
+msgctxt "-YJVTi"
+msgid "Hey!"
+msgstr "Hallo!"
+
+#: src/Greeting.tsx
+msgctxt "jqdzk6"
+msgid "World"
+msgstr ""
+
+#: src/Greeting.tsx
+msgctxt "ODGmph"
+msgid "!"
+msgstr ""
+`
+    );
+
+    await simulateSourceFileUpdate(
+      '/project/src/Greeting.tsx',
+      `
+      import {useExtracted} from 'next-intl';
+      function Greeting() {
+        const t = useExtracted();
+        return <div>{t('Hey!')} {t('World')} {t('!')} {t('Extra')}</div>;
+      }
+      `
+    );
+
+    await waitForWriteFileCalls(8);
+    expect(
+      vi
+        .mocked(fs.writeFile)
+        .mock.calls.filter((call) => call[0] === 'messages/de.po')
+        .at(-1)
+    ).toMatchInlineSnapshot(`
+      [
+        "messages/de.po",
+        "msgid ""
+      msgstr ""
+      "Language: de\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: @eloqnt/format-po\\n"
+      "X-Message-Key: msgctxt\\n"
+
+      #: src/Greeting.tsx
+      #, no-wrap
+      msgctxt "-YJVTi"
+      msgid "Hey!"
+      msgstr "Hallo!"
+
+      #: src/Greeting.tsx
+      msgctxt "jqdzk6"
+      msgid "World"
+      msgstr ""
+
+      #: src/Greeting.tsx
+      msgctxt "ODGmph"
+      msgid "!"
+      msgstr ""
+
+      #: src/Greeting.tsx
+      msgctxt "pE58D7"
+      msgid "Extra"
+      msgstr ""
+      ",
+      ]
+    `);
+
+    // Remove all flags from target locale
+    simulateManualFileEdit(
+      'messages/de.po',
+      `msgid ""
+msgstr ""
+"Language: de\\n"
+"X-Message-Key: msgctxt\\n"
+
+#: src/Greeting.tsx
+msgctxt "-YJVTi"
+msgid "Hey!"
+msgstr "Hallo!"
+
+#: src/Greeting.tsx
+msgctxt "jqdzk6"
+msgid "World"
+msgstr ""
+
+#: src/Greeting.tsx
+msgctxt "ODGmph"
+msgid "!"
+msgstr ""
+
+#: src/Greeting.tsx
+msgctxt "pE58D7"
+msgid "Extra"
+msgstr ""
+`
+    );
+
+    await simulateSourceFileUpdate(
+      '/project/src/Greeting.tsx',
+      `
+      import {useExtracted} from 'next-intl';
+      function Greeting() {
+        const t = useExtracted();
+        return <div>{t('Hey!')} {t('World')} {t('!')} {t('Extra')} {t('More')}</div>;
+      }
+      `
+    );
+
+    await waitForWriteFileCalls(10);
+    expect(
+      vi
+        .mocked(fs.writeFile)
+        .mock.calls.filter((call) => call[0] === 'messages/de.po')
+        .at(-1)
+    ).toMatchInlineSnapshot(`
+      [
+        "messages/de.po",
+        "msgid ""
+      msgstr ""
+      "Language: de\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: @eloqnt/format-po\\n"
+      "X-Message-Key: msgctxt\\n"
+
+      #: src/Greeting.tsx
+      msgctxt "-YJVTi"
+      msgid "Hey!"
+      msgstr "Hallo!"
+
+      #: src/Greeting.tsx
+      msgctxt "jqdzk6"
+      msgid "World"
+      msgstr ""
+
+      #: src/Greeting.tsx
+      msgctxt "ODGmph"
+      msgid "!"
+      msgstr ""
+
+      #: src/Greeting.tsx
+      msgctxt "pE58D7"
+      msgid "Extra"
+      msgstr ""
+
+      #: src/Greeting.tsx
+      msgctxt "I5NMJ8"
+      msgid "More"
+      msgstr ""
+      ",
+      ]
+    `);
+  });
+
+  it('avoids a race condition when saving while loading locale catalogs with metadata', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.po': `
+      #: src/Greeting.tsx
+      #, c-format
+      msgctxt "OpKKos"
+      msgid "Hello!"
+      msgstr "Hello!"
+      `,
+      'de.po': `
+      #: src/Greeting.tsx
+      #, fuzzy
+      msgctxt "OpKKos"
+      msgid "Hello!"
+      msgstr "Hallo!"
+      `
+    };
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+
+    let resolveReadFile: (() => void) | undefined;
+    const readFilePromise = new Promise<void>((resolve) => {
+      resolveReadFile = resolve;
+    });
+
+    readFileInterceptors.set('de.po', async () => readFilePromise);
+    readFileInterceptors.set('en.po', async () => readFilePromise);
+
+    simulateFileEvent('/project/messages', 'rename', 'de.po');
+    simulateFileEvent('/project/messages', 'rename', 'en.po');
+
+    const updateDone = simulateSourceFileUpdate(
+      '/project/src/Greeting.tsx',
+      filesystem.project.src['Greeting.tsx'] +
+        `
+        function Other() {
+          const t = useExtracted();
+          return <div>{t('Hi!')}</div>;
+        }`
+    );
+
+    // Renames may not schedule locale reload immediately; yield like slow CI.
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    resolveReadFile?.();
+
+    await updateDone;
+
+    await waitForWriteFileCalls(4);
+
+    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.po",
+          "msgid ""
+      msgstr ""
+      "Language: en\\n"
+
+      #: src/Greeting.tsx
+      msgid "Hello!"
+      msgstr "Hello!"
+      ",
+        ],
+        [
+          "messages/de.po",
+          "msgid ""
+      msgstr ""
+      "Language: de\\n"
+
+      #: src/Greeting.tsx
+      msgid "Hello!"
+      msgstr ""
+      ",
+        ],
+        [
+          "messages/en.po",
+          "msgid ""
+      msgstr ""
+      "Language: en\\n"
+
+      #: src/Greeting.tsx
+      msgid "Hello!"
+      msgstr "Hello!"
+
+      #: src/Greeting.tsx
+      msgid "Hi!"
+      msgstr "Hi!"
+      ",
+        ],
+        [
+          "messages/de.po",
+          "msgid ""
+      msgstr ""
+      "Language: de\\n"
+
+      #: src/Greeting.tsx
+      msgid "Hello!"
+      msgstr ""
+
+      #: src/Greeting.tsx
+      msgid "Hi!"
+      msgstr ""
+      ",
+        ],
+      ]
+    `);
+  });
+
+  it('propagates read errors instead of silently returning empty (prevents translation wipes)', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.po': `
+      #: src/Greeting.tsx
+      msgctxt "OpKKos"
+      msgid "Hello!"
+      msgstr "Hello!"
+      `,
+      'de.po': `
+      #: src/Greeting.tsx
+      msgctxt "OpKKos"
+      msgid "Hello!"
+      msgstr "Hallo!"
+      `
+    };
+
+    // Intercept reading to simulate a corruption/I/O error
+    // (not ENOENT - file exists but can't be read)
+    let rejectReadFile: ((error: Error) => void) | undefined;
+    const readFilePromise = new Promise<void>((_, reject) => {
+      rejectReadFile = reject;
+    });
+
+    readFileInterceptors.set('de.po', () => readFilePromise);
+
+    using compiler = createCompiler();
+    await vi.waitFor(() =>
+      expect(watcherCallbacks.has('/project/src')).toBe(true)
+    );
+
+    const ioError = new Error('EACCES: permission denied');
+    (ioError as NodeJS.ErrnoException).code = 'EACCES';
+    rejectReadFile?.(ioError);
+
+    await expect(compiler.extractAll()).rejects.toThrow(
+      'Error while reading messages/de.po:\n> Error: EACCES: permission denied'
+    );
+  });
+
+  it('returns empty array only for ENOENT (file not found) errors', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+
+    // Only source locale exists, target locale doesn't exist yet
+    filesystem.project.messages = {
+      'en.po': `
+      #: src/Greeting.tsx
+      msgctxt "OpKKos"
+      msgid "Hello!"
+      msgstr "Hello!"
+      `
+    };
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+
+    // Should succeed and create empty target locale
+    await waitForWriteFileCalls(1);
+    expect(vi.mocked(fs.writeFile).mock.calls[0][0]).toBe('messages/en.po');
+  });
+
+  it('propagates parser errors from corrupted/truncated files (prevents translation wipes)', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.po': `
+      #: src/Greeting.tsx
+      msgctxt "OpKKos"
+      msgid "Hello!"
+      msgstr "Hello!"
+      `,
+      // Simulates a truncated file read during concurrent write
+      // (file was truncated but read succeeded with partial content)
+      'de.po': `
+      #: src/Greeting.tsx
+      msgid "OpKKos"
+      msgstr "Hal`
+      // ↑ Truncated mid-write, parser will fail
+    };
+
+    using compiler = createCompiler();
+
+    await expect(compiler.extractAll()).rejects.toThrow(
+      'Error while decoding messages/de.po:\n> Error: Incomplete quoted string:\n> "Hal'
+    );
+  });
+
+  it('preserves existing translations when reload reads empty file during external write', async () => {
+    // This test reproduces a race condition where:
+    // 1. We have existing translations in memory for a locale
+    // 2. An external process (translation tool) writes to the catalog file
+    // 3. File watcher detects the change and triggers reloadLocaleCatalog()
+    // 4. The reload reads the file while it's being written (empty/truncated)
+
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.po': `msgid ""
+msgstr ""
+"Language: en\\n"
+"X-Message-Key: msgctxt\\n"
+
+#: src/Greeting.tsx
+msgctxt "OpKKos"
+msgid "Hello!"
+msgstr "Hello!"`,
+      'de.po': `msgid ""
+msgstr ""
+"Language: de\\n"
+"X-Message-Key: msgctxt\\n"
+
+#: src/Greeting.tsx
+msgctxt "OpKKos"
+msgid "Hello!"
+msgstr "Hallo!"`
+    };
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+    await waitForWriteFileCalls(2);
+
+    const initialDeWrites = vi
+      .mocked(fs.writeFile)
+      .mock.calls.filter((call) => call[0] === 'messages/de.po');
+    expect(initialDeWrites[0][1]).toContain('msgstr "Hallo!"');
+
+    let reloadReadCount = 0;
+    readFileInterceptors.set('de.po', async () => {
+      reloadReadCount++;
+      filesystem.project.messages!['de.po'] = '';
+    });
+
+    // Simulate external file modification (translation tool writes to file)
+    simulateManualFileEdit(
+      'messages/de.po',
+      filesystem.project.messages!['de.po']
+    );
+
+    // Trigger a source file update to ensure save happens
+    await simulateSourceFileUpdate(
+      '/project/src/Greeting.tsx',
+      `
+      import {useExtracted} from 'next-intl';
+      function Greeting() {
+        const t = useExtracted();
+        return <div>{t('Hello!')} {t('World!')}</div>;
+      }
+      `
+    );
+
+    await waitForWriteFileCalls(4);
+    expect(reloadReadCount).toBeGreaterThan(0);
+
+    const deWrites = vi
+      .mocked(fs.writeFile)
+      .mock.calls.filter((call) => call[0] === 'messages/de.po');
+    const lastDeWrite = deWrites.at(-1)?.[1] as string;
+    expect(lastDeWrite).toContain('msgstr "Hallo!"');
+  });
+
+  describe('folder operations', () => {
+    it('removes messages when a folder is deleted', async () => {
+      filesystem.project.src = {
+        components: {
+          'Button.tsx': `
+          import {useExtracted} from 'next-intl';
+          function Button() {
+            const t = useExtracted();
+            return <div>{t('Click me')}</div>;
+          }
+        `
+        }
+      } as any;
+
+      filesystem.project.messages = {
+        'en.po': `
+      #: src/components/Button.tsx
+      msgid "OpKKos"
+      msgstr "Click me"
+      `
+      };
+
+      using compiler = createCompiler();
+      await compiler.extractAll();
+      await waitForWriteFileCalls(1);
+
+      // Simulate deleting the directory
+      delete (filesystem.project.src as any).components;
+      fileTimestamps.delete('/project/src/components/Button.tsx');
+
+      const callback = watcherCallbacks.get('/project/src')!;
+      await Promise.resolve(
+        callback(null, [{type: 'delete', path: '/project/src/components'}])
+      );
+
+      await waitForWriteFileCalls(2);
+      expect(vi.mocked(fs.writeFile).mock.calls.at(-1)).toMatchInlineSnapshot(`
+        [
+          "messages/en.po",
+          "msgid ""
+        msgstr ""
+        "Language: en\\n"
+        ",
+        ]
+      `);
+    });
+
+    it('updates messages when a folder is renamed', async () => {
+      filesystem.project.src = {
+        old: {
+          'Button.tsx': `
+          import {useExtracted} from 'next-intl';
+          function Button() {
+            const t = useExtracted();
+            return <div>{t('Click me')}</div>;
+          }
+        `
+        }
+      } as any;
+
+      filesystem.project.messages = {
+        'en.po': `
+      #: src/old/Button.tsx
+      msgid "OpKKos"
+      msgstr "Click me"
+      `
+      };
+
+      using compiler = createCompiler();
+      await compiler.extractAll();
+      await waitForWriteFileCalls(1);
+
+      // Simulate rename: create new (with updated message), delete old
+      setNestedValue(
+        filesystem,
+        '/project/src/new/Button.tsx',
+        `
+      import {useExtracted} from 'next-intl';
+      function Button() {
+        const t = useExtracted();
+        return <div>{t('Click me updated')}</div>;
+      }
+    `
+      );
+      fileTimestamps.set('/project/src/new/Button.tsx', new Date());
+
+      delete (filesystem.project.src as any).old;
+      fileTimestamps.delete('/project/src/old/Button.tsx');
+
+      const callback = watcherCallbacks.get('/project/src')!;
+      await Promise.resolve(
+        callback(null, [
+          {type: 'create', path: '/project/src/new'},
+          {type: 'delete', path: '/project/src/old'}
+        ])
+      );
+
+      await waitForWriteFileCalls(2);
+
+      expect(vi.mocked(fs.writeFile).mock.calls.at(-1)).toMatchInlineSnapshot(`
+        [
+          "messages/en.po",
+          "msgid ""
+        msgstr ""
+        "Language: en\\n"
+
+        #: src/new/Button.tsx
+        msgid "Click me updated"
+        msgstr "Click me updated"
+        ",
+        ]
+      `);
+    });
+  });
+});
+
+describe('`srcPath` filtering', () => {
+  beforeEach(() => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    import Panel from '@acme/ui/panel';
+    function Greeting() {
+      const t = useExtracted();
+      return <Panel>{t('Hey!')}</Panel>;
+    }
+    `;
+
+    function createNodeModule(moduleName: string) {
+      return `
+      import {useExtracted} from 'next-intl';
+      export default function Module({children}) {
+        const t = useExtracted();
+        return (
+          <div>
+            <h1>{t('${moduleName}')}</h1>
+            {children}
+          </div>
+        )
+      }
+      `;
+    }
+
+    filesystem.project.node_modules = {
+      '@acme': {
+        ui: {
+          'panel.tsx': createNodeModule('panel.source')
+        }
+      }
+    };
+    filesystem.project['.next'] = {
+      build: {
+        'panel.tsx': createNodeModule('panel.compiled')
+      }
+    };
+    filesystem.project['.git'] = {
+      config: {
+        'panel.tsx': createNodeModule('panel.config')
+      }
+    };
+  });
+
+  function createCompiler(srcPath: string | Array<string>) {
+    return new ExtractionCompiler(
+      {
+        extract: {
+          locales: 'infer',
+          path: './messages',
+          sourceLocale: 'en',
+          srcPath
+        },
+        messages: {
+          format: 'json',
+          path: ['./messages']
+        }
+      },
+      {
+        projectRoot: '/project',
+        saveDebounceMs: 0
+      }
+    );
+  }
+
+  it('skips node_modules, .next and .git by default', async () => {
+    using compiler = createCompiler('./');
+    await compiler.extractAll();
+    await waitForWriteFileCalls(1);
+    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.json",
+          "{
+        "-YJVTi": "Hey!"
+      }
+      ",
+        ],
+      ]
+    `);
+  });
+
+  it('includes node_modules if explicitly requested', async () => {
+    using compiler = createCompiler(['./', './node_modules/@acme/ui']);
+    await compiler.extractAll();
+    await waitForWriteFileCalls(1);
+    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.json",
+          "{
+        "JwjlWH": "panel.source",
+        "-YJVTi": "Hey!"
+      }
+      ",
+        ],
+      ]
+    `);
+  });
+});
+
+describe('custom format', () => {
+  it('keeps the previous key-based PO layout via the legacy codec', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hello!')} {t('World')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.po': `
+      msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Greeting.tsx
+      msgid "OpKKos"
+      msgstr "Hello!"
+      `,
+      'de.po': `
+      msgid ""
+      msgstr ""
+      "Language: de\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Greeting.tsx
+      msgid "OpKKos"
+      msgstr "Hallo!"
+      `
+    };
+
+    using compiler = new ExtractionCompiler(
+      {
+        extract: {
+          locales: 'infer',
+          path: './messages',
+          sourceLocale: 'en',
+          srcPath: './src'
+        },
+        messages: {
+          format: {
+            codec: path.resolve(__dirname, 'fixtures/POCodecLegacy.tsx'),
+            extension: '.po'
+          },
+          path: ['./messages']
+        }
+      },
+      {
+        projectRoot: '/project',
+        saveDebounceMs: 0
+      }
+    );
+
+    await compiler.extractAll();
+    await waitForWriteFileCalls(2);
+
+    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.po",
+          "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: @eloqnt/format-po\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Greeting.tsx
+      msgid "OpKKos"
+      msgstr "Hello!"
+
+      #: src/Greeting.tsx
+      msgid "jqdzk6"
+      msgstr "World"
+      ",
+        ],
+        [
+          "messages/de.po",
+          "msgid ""
+      msgstr ""
+      "Language: de\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: @eloqnt/format-po\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Greeting.tsx
+      msgid "OpKKos"
+      msgstr "Hallo!"
+
+      #: src/Greeting.tsx
+      msgid "jqdzk6"
+      msgstr ""
+      ",
+        ],
+      ]
+    `);
+  });
+
+  it('supports a structured json custom format with codecs', async () => {
+    filesystem.project.messages = {
+      'en.json': JSON.stringify(
+        {
+          'ui.wESdnU': {message: 'Click me', description: ['Button label']}
+        },
+        null,
+        2
+      )
+    };
+    filesystem.project.src['Button.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Button() {
+      const t = useExtracted('ui');
+      return (
+        <button>
+          {t({message: 'Click me', description: 'Button label'})}
+          {t('Submit')}
+        </button>
+      );
+    }
+    `;
+
+    using compiler = new ExtractionCompiler(
+      {
+        extract: {
+          locales: 'infer',
+          path: './messages',
+          sourceLocale: 'en',
+          srcPath: './src'
+        },
+        messages: {
+          format: {
+            codec: path.resolve(__dirname, 'fixtures/JSONCodecStructured.tsx'),
+            extension: '.json'
+          },
+          path: ['./messages']
+        }
+      },
+      {
+        projectRoot: '/project',
+        saveDebounceMs: 0
+      }
+    );
+
+    await compiler.extractAll();
+    await waitForWriteFileCalls(1);
+
+    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.json",
+          "{
+        "ui.wESdnU": {
+          "message": "Click me",
+          "description": [
+            "Button label"
+          ]
+        },
+        "ui.wSZR47": {
+          "message": "Submit"
+        }
+      }
+      ",
+        ],
+      ]
+    `);
+  });
+});
+
+/**
+ * Test utils
+ ****************************************************************/
+
+function createFile(componentName: string, message: string) {
+  return `
+    import {useExtracted} from 'next-intl';
+    export default function ${componentName}() {
+      const t = useExtracted();
+      return <div>{t('${message}')}</div>;
+    }
+    `;
+}
+
+function waitForWriteFileCalls(
+  length: number,
+  opts: {atLeast?: boolean; timeout?: number} = {}
+) {
+  return vi.waitFor(
+    () => {
+      if (opts.atLeast) {
+        expect(
+          vi.mocked(fs.writeFile).mock.calls.length
+        ).toBeGreaterThanOrEqual(length);
+      } else {
+        expect(vi.mocked(fs.writeFile).mock.calls.length).toBe(length);
+      }
+    },
+    {interval: 10, timeout: opts.timeout ?? 15_000}
+  );
+}
+
+function simulateManualFileEdit(filePath: string, content: string) {
+  setNestedValue(filesystem, filePath, content);
+  const futureTime = new Date(Date.now() + 1000);
+  fileTimestamps.set(filePath, futureTime);
+}
+
+function getNestedValue(obj: any, pathname: string): any {
+  // Handle both absolute and relative paths
+  let pathParts: Array<string>;
+
+  if (pathname.startsWith('/')) {
+    // Absolute path: /project/messages/en.json -> project/messages/en.json
+    pathParts = pathname.replace(/^\//, '').split('/');
+  } else {
+    // Relative path: messages/en.json -> project/messages/en.json
+    pathParts = ['project', ...pathname.split('/')];
+  }
+
+  // Try nested structure first
+  const result = pathParts.reduce((current, key) => current?.[key], obj);
+  if (result !== undefined) {
+    return result;
+  }
+
+  // Fallback: check for flat keys with slashes (e.g., filesystem.project.src['components/Header.tsx'])
+  // This handles cases where readdir returns keys with slashes but readFile expects nested structure
+  // We need to check parents at different levels to find where the flat key might be stored
+  for (let i = pathParts.length - 1; i >= 1; i--) {
+    const parentPath = pathParts.slice(0, i);
+    const remainingPath = pathParts.slice(i);
+    const parent = parentPath.reduce((current, key) => current?.[key], obj);
+    if (parent && typeof parent === 'object') {
+      const flatKey = remainingPath.join('/');
+      // Check for exact match or key ending with the remaining path
+      for (const key of Object.keys(parent)) {
+        if (key === flatKey || key.endsWith('/' + flatKey)) {
+          return parent[key];
+        }
+      }
+    }
+  }
+
+  return undefined;
+}
+
+function setNestedValue(obj: any, pathname: string, value: string): void {
+  // Handle both absolute and relative paths
+  let pathParts: Array<string>;
+
+  if (pathname.startsWith('/')) {
+    // Absolute path: /project/messages/en.json -> project/messages/en.json
+    pathParts = pathname.replace(/^\//, '').split('/');
+  } else {
+    // Relative path: messages/en.json -> project/messages/en.json
+    pathParts = ['project', ...pathname.split('/')];
+  }
+
+  let current = obj;
+  for (let i = 0; i < pathParts.length - 1; i++) {
+    const key = pathParts[i];
+    if (!current[key]) {
+      current[key] = {};
+    }
+    current = current[key];
+  }
+
+  current[pathParts[pathParts.length - 1]] = value;
+}
+
+function checkDirectoryExists(obj: any, dirPath: string): boolean {
+  // Handle both absolute and relative paths
+  let pathParts: Array<string>;
+
+  if (dirPath.startsWith('/')) {
+    // Absolute path: /project/messages -> project/messages
+    pathParts = dirPath.replace(/^\//, '').split('/').filter(Boolean);
+  } else {
+    // Relative path: messages -> project/messages
+    pathParts = ['project', ...dirPath.split('/').filter(Boolean)];
+  }
+
+  let current = obj;
+
+  for (const part of pathParts) {
+    if (current && typeof current === 'object' && part in current) {
+      current = current[part];
+    } else {
+      return false;
+    }
+  }
+
+  // Directory exists if we successfully traversed the path
+  return current !== undefined && typeof current === 'object';
+}
+
+function getDirectoryContents(obj: any, dirPath: string): Array<string> {
+  // Handle both absolute and relative paths
+  let pathParts: Array<string>;
+
+  if (dirPath.startsWith('/')) {
+    // Absolute path: /project/messages -> project/messages
+    pathParts = dirPath.replace(/^\//, '').split('/').filter(Boolean);
+  } else {
+    // Relative path: messages -> project/messages
+    pathParts = ['project', ...dirPath.split('/').filter(Boolean)];
+  }
+
+  let current = obj;
+
+  for (const part of pathParts) {
+    if (current && typeof current === 'object') {
+      if (part in current) {
+        current = current[part];
+      } else {
+        return [];
+      }
+    } else {
+      return [];
+    }
+  }
+
+  // If current exists and is an object, return its keys (even if empty)
+  if (current && typeof current === 'object') {
+    return Object.keys(current);
+  }
+
+  return [];
+}
+
+const fileTimestamps = new Map<string, Date>();
+const watchCallbacks: Map<string, (event: string, filename: string) => void> =
+  new Map();
+const mockWatchers: Map<string, {close(): void}> = new Map();
+const readFileInterceptors = new Map<string, () => Promise<void>>();
+const pendingWrites = new Map<string, string>();
+const watcherCallbacks: Map<
+  string,
+  (
+    err: Error | null,
+    events: Array<{type: 'create' | 'update' | 'delete'; path: string}>
+  ) => Promise<void>
+> = new Map();
+
+function simulateFileEvent(
+  dirPath: string,
+  event: 'rename',
+  filename: string
+): void {
+  // Try multiple path variations
+  const pathsToTry = [
+    dirPath,
+    path.resolve(dirPath),
+    path.join(process.cwd(), dirPath),
+    dirPath.replace(/\/$/, ''), // Remove trailing slash
+    path.resolve(dirPath).replace(/\/$/, '')
+  ];
+
+  let callback;
+  for (const testPath of pathsToTry) {
+    callback = watchCallbacks.get(testPath);
+    if (callback) break;
+  }
+
+  // If still not found, try to match by directory name
+  if (!callback && watchCallbacks.size > 0) {
+    const dirName = path.basename(dirPath);
+    for (const [key, cb] of watchCallbacks.entries()) {
+      if (
+        key.includes(dirName) ||
+        key.endsWith(dirPath) ||
+        dirPath.includes(key)
+      ) {
+        callback = cb;
+        break;
+      }
+    }
+  }
+
+  if (callback) {
+    callback(event, filename);
+  } else if (watchCallbacks.size > 0) {
+    throw new Error(
+      `No watcher found for ${dirPath}. Available: ${Array.from(watchCallbacks.keys()).join(', ')}`
+    );
+  }
+}
+
+async function simulateSourceFileCreate(
+  filePath: string,
+  content: string
+): Promise<void> {
+  setNestedValue(filesystem, filePath, content);
+  fileTimestamps.set(filePath, new Date());
+
+  // Find matching watcher callback
+  const normalizedPath = path.resolve(filePath);
+  const dirPath = path.dirname(normalizedPath);
+
+  const pathsToTry = [
+    dirPath,
+    path.resolve(dirPath),
+    path.join(process.cwd(), dirPath),
+    dirPath.replace(/\/$/, ''),
+    path.resolve(dirPath).replace(/\/$/, '')
+  ];
+
+  for (const testPath of pathsToTry) {
+    const callback = watcherCallbacks.get(testPath);
+    if (callback) {
+      await Promise.resolve(
+        callback(null, [{type: 'create', path: normalizedPath}])
+      );
+      return;
+    }
+  }
+}
+
+async function simulateSourceFileUpdate(
+  filePath: string,
+  content: string
+): Promise<void> {
+  setNestedValue(filesystem, filePath, content);
+  fileTimestamps.set(filePath, new Date());
+
+  // Find matching watcher callback
+  const normalizedPath = path.resolve(filePath);
+  const dirPath = path.dirname(normalizedPath);
+
+  const pathsToTry = [
+    dirPath,
+    path.resolve(dirPath),
+    path.join(process.cwd(), dirPath),
+    dirPath.replace(/\/$/, ''),
+    path.resolve(dirPath).replace(/\/$/, '')
+  ];
+
+  for (const testPath of pathsToTry) {
+    const callback = watcherCallbacks.get(testPath);
+    if (callback) {
+      await Promise.resolve(
+        callback(null, [{type: 'update', path: normalizedPath}])
+      );
+      return;
+    }
+  }
+}
+
+async function simulateSourceFileDelete(filePath: string): Promise<void> {
+  const normalizedPath = path.resolve(filePath);
+  const dirPath = path.dirname(normalizedPath);
+
+  // Remove from filesystem
+  const pathParts = normalizedPath
+    .replace(/^\//, '')
+    .split('/')
+    .filter(Boolean);
+  let current: any = filesystem;
+  for (let i = 0; i < pathParts.length - 1; i++) {
+    if (current[pathParts[i]]) {
+      current = current[pathParts[i]];
+    } else {
+      return; // Already deleted
+    }
+  }
+  delete current[pathParts[pathParts.length - 1]];
+  fileTimestamps.delete(normalizedPath);
+
+  // Find matching watcher callback
+  const pathsToTry = [
+    dirPath,
+    path.resolve(dirPath),
+    path.join(process.cwd(), dirPath),
+    dirPath.replace(/\/$/, ''),
+    path.resolve(dirPath).replace(/\/$/, '')
+  ];
+
+  for (const testPath of pathsToTry) {
+    const callback = watcherCallbacks.get(testPath);
+    if (callback) {
+      await Promise.resolve(
+        callback(null, [{type: 'delete', path: normalizedPath}])
+      );
+      return;
+    }
+  }
+}
+
+vi.mock('fs', () => ({
+  default: {
+    watch: vi.fn(
+      (
+        dirPath: string,
+        _options: {persistent: boolean; recursive: boolean},
+        callback: (event: string, filename: string) => void
+      ) => {
+        // Store callback with exact path as provided (for test matching)
+        // Also store normalized variants for flexibility
+        watchCallbacks.set(dirPath, callback);
+        if (dirPath.startsWith('/')) {
+          watchCallbacks.set(path.resolve(dirPath), callback);
+        } else {
+          watchCallbacks.set(path.join(process.cwd(), dirPath), callback);
+        }
+        const watcher = {
+          close: vi.fn(() => {
+            watchCallbacks.delete(dirPath);
+            if (dirPath.startsWith('/')) {
+              watchCallbacks.delete(path.resolve(dirPath));
+            } else {
+              watchCallbacks.delete(path.join(process.cwd(), dirPath));
+            }
+            mockWatchers.delete(dirPath);
+          })
+        };
+        mockWatchers.set(dirPath, watcher);
+        return watcher;
+      }
+    )
+  }
+}));
+
+function createENOENTError(filePath: string): NodeJS.ErrnoException {
+  const error = new Error(
+    `ENOENT: no such file or directory, open '${filePath}'`
+  ) as NodeJS.ErrnoException;
+  error.code = 'ENOENT';
+  error.errno = -2;
+  error.syscall = 'open';
+  error.path = filePath;
+  return error;
+}
+
+vi.mock('fs/promises', () => ({
+  default: {
+    readFile: vi.fn(async (filePath: string) => {
+      for (const [key, interceptor] of readFileInterceptors) {
+        if (filePath.endsWith(key)) {
+          await interceptor();
+        }
+      }
+      const content = getNestedValue(filesystem, filePath);
+      if (typeof content === 'string') {
+        return content;
+      }
+      throw createENOENTError(filePath);
+    }),
+    readdir: vi.fn(async (dir: string, opts?: {withFileTypes?: boolean}) => {
+      const dirExists = checkDirectoryExists(filesystem, dir);
+      if (!dirExists) {
+        throw new Error('Directory not found: ' + dir);
+      }
+
+      const contents = getDirectoryContents(filesystem, dir);
+      const pathParts = dir.startsWith('/')
+        ? dir.replace(/^\//, '').split('/').filter(Boolean)
+        : ['project', ...dir.split('/').filter(Boolean)];
+
+      let current: any = filesystem;
+      for (const part of pathParts) {
+        if (typeof current === 'object' && part in current) {
+          current = current[part];
+        }
+      }
+
+      if (opts?.withFileTypes) {
+        return contents.map((name) => {
+          const value = current?.[name];
+          const isDir = value && typeof value === 'object';
+          return {
+            name,
+            isDirectory: () => isDir,
+            isFile: () => !isDir
+          };
+        });
+      }
+
+      return contents;
+    }),
+    mkdir: vi.fn(async () => {}),
+    // Catalogs are written to a temporary file that is then renamed
+    writeFile: vi.fn(async (filePath: string, content: string) => {
+      pendingWrites.set(filePath, content);
+    }),
+    rename: vi.fn(async (fromPath: string, toPath: string) => {
+      const content = pendingWrites.get(fromPath);
+      pendingWrites.delete(fromPath);
+      if (content === undefined) throw createENOENTError(fromPath);
+      // Report the write under its final path to keep assertions readable
+      const call = vi
+        .mocked(fs.writeFile)
+        .mock.calls.find((args) => args[0] === fromPath);
+      if (call) call[0] = toPath;
+      setNestedValue(filesystem, toPath, content);
+      fileTimestamps.set(toPath, new Date());
+    }),
+    rm: vi.fn(async (filePath: string) => {
+      pendingWrites.delete(filePath);
+    }),
+    stat: vi.fn(async (filePath: string) => {
+      const content = getNestedValue(filesystem, filePath);
+      if (content !== undefined) {
+        const isDir = typeof content === 'object';
+        return {
+          mtime: fileTimestamps.get(filePath) || new Date(),
+          isDirectory: () => isDir,
+          isFile: () => !isDir
+        };
+      }
+      throw new Error('File not found: ' + filePath);
+    })
+  }
+}));
