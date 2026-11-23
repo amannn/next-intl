@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.15.3
+
+### Patch Changes
+
+- Fall back to `other` in a `select` of a precompiled message when the value matches an inherited object key like `constructor` or `toString`, instead of throwing an error. ([#2531](https://github.com/amannn/next-intl/pull/2531), [`38bb1ba`](https://github.com/amannn/next-intl/commit/38bb1ba8e21a2be4c37badc0e8abfd496dfb54a2), [@amannn](https://github.com/amannn))
+
 ## 4.15.2
 
 ### Patch Changes

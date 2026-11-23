@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.16.0
+
+### Minor Changes
+
+- Allow passing a query string in `query` to `useRouter` methods, `redirect` and `getPathname`. ([#2537](https://github.com/amannn/next-intl/pull/2537), [`ad1f75a`](https://github.com/amannn/next-intl/commit/ad1f75a9a6f748430221b1101a24f0ed677c20ab), [@amannn](https://github.com/amannn))
+
+### Patch Changes
+
+- Fall back to `other` in a `select` of a precompiled message when the value matches an inherited object key like `constructor` or `toString`, instead of throwing an error. ([#2531](https://github.com/amannn/next-intl/pull/2531), [`38bb1ba`](https://github.com/amannn/next-intl/commit/38bb1ba8e21a2be4c37badc0e8abfd496dfb54a2), [@amannn](https://github.com/amannn))
+- Updated dependencies [[`38bb1ba`](https://github.com/amannn/next-intl/commit/38bb1ba8e21a2be4c37badc0e8abfd496dfb54a2)]:
+  - icu-minify@4.15.3
+
 ## 4.15.3
 
 ### Patch Changes
