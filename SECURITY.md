@@ -18,7 +18,7 @@ You can expect a reply within a week. If the report is confirmed, the fix is dev
 
 ## Scope
 
-This policy covers the packages published from this repository: `next-intl`, `use-intl`, `icu-minify`, `next-intl-swc-plugin-extractor` and the `@eloqnt/*` packages. Examples, the docs site and repository tooling are out of scope.
+This policy covers all packages published from this repository. Examples, the docs site and repository tooling are out of scope.
 
 A vulnerability lets an attacker cross one of these trust boundaries:
 
@@ -38,5 +38,5 @@ The following are out of scope:
 - Spoofed `Host` or `X-Forwarded-*` headers: these need to be set by the proxy in front of the app
 - Behavior that only occurs when calling internals directly and can't be reproduced in a real app (e.g. a path that Next.js normalizes before the middleware runs)
 - HTML returned by `t.raw` or `t.markup` that the app renders without sanitizing, e.g. via `dangerouslySetInnerHTML`
-- Vulnerabilities in dependencies without a way to exploit them through `next-intl`
+- Vulnerabilities in dependencies without a way to exploit them through these packages
 - Unverified output of scanners or AI tools
