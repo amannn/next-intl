@@ -14,7 +14,7 @@ A report should include:
 - A minimal reproduction in a real app that uses the package's public API
 - What an attacker controls and what they gain
 
-You can expect a reply within a week. If the report is confirmed, the fix is developed in the advisory's temporary private fork and released as a patch. The advisory is published with a CVE once the patch is available, usually within 90 days of the report. Reporters are credited in the advisory unless they prefer not to be.
+You can expect a reply within a week. If the report is confirmed, the fix is developed in the advisory's temporary private fork and released as a patch. The advisory is published with a CVE once the patch is available. Reporters are credited in the advisory unless they prefer not to be.
 
 ## Scope
 
