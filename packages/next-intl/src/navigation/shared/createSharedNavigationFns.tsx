@@ -134,7 +134,11 @@ export default function createSharedNavigationFns<
   function getPathname(args: {
     /** @see https://next-intl.dev/docs/routing/navigation#getpathname */
     href: [AppPathnames] extends [never]
-      ? string | {pathname: string; query?: QueryParams}
+      ? | string
+        | {
+            pathname: string;
+            query?: QueryParams | string;
+          }
       : HrefOrHrefWithParams<keyof AppPathnames>;
     /** The locale to compute the pathname for. */
     locale: Locale;
