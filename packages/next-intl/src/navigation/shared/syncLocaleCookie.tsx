@@ -26,8 +26,10 @@ export default function syncLocaleCookie(
 
   let localeCookieString = `${name}=${nextLocale};`;
   for (const [key, value] of Object.entries(rest)) {
-    // A flag like `secure` is set by its presence alone
-    if (value === false) continue;
+    // Browsers enable e.g. `Secure` by its name alone, so
+    // `false` (and unset values) have to be omitted entirely
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (value == null || value === false) continue;
 
     // Map object properties to cookie properties.
     // Interestingly, `maxAge` corresponds to `max-age`,
