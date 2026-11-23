@@ -2,19 +2,19 @@
 
 ## Supported versions
 
-Only the latest version of each package receives security fixes (for `next-intl`, the latest 4.x release).
+Only the latest version of each package receives security fixes.
 
 ## Reporting a vulnerability
 
-Please report vulnerabilities privately via [GitHub](https://github.com/amannn/next-intl/security/advisories/new), not in public issues, discussions or pull requests.
+Please [report vulnerabilities privately](https://github.com/amannn/next-intl/security/advisories/new), not in public issues, discussions or pull requests, and keep them private until the advisory is published.
 
 A report should include:
 
 - The affected package and version
-- A minimal reproduction in a real Next.js app, e.g. a repository or a sequence of requests against `next start`
+- A minimal reproduction in a real app that uses the package's public API, e.g. a repository or a sequence of requests against `next start`
 - What an attacker controls and what they gain
 
-You can expect a reply within a week. If the report is confirmed, the fix is developed in a private fork of the advisory and released as a patch. The advisory is published with a CVE once the patch is available, usually within 90 days of the report. Reporters are credited in the advisory unless they prefer not to be.
+You can expect a reply within a week. If the report is confirmed, the fix is developed in the advisory's temporary private fork and released as a patch. The advisory is published with a CVE once the patch is available, usually within 90 days of the report. Reporters are credited in the advisory unless they prefer not to be.
 
 ## Scope
 
@@ -32,10 +32,11 @@ A vulnerability lets an attacker cross one of these trust boundaries:
 
 Semi-trusted means that messages must not be able to run code or pollute prototypes, but they can render any text.
 
-The following are not vulnerabilities in `next-intl`:
+The following are out of scope:
 
 - Issues that require control over trusted input, e.g. a malicious routing config
 - Spoofed `Host` or `X-Forwarded-*` headers: these need to be set by the proxy in front of the app
-- Behavior that only occurs when calling internals directly and can't be reproduced in a Next.js app (e.g. a path that Next.js normalizes before the middleware runs)
+- Behavior that only occurs when calling internals directly and can't be reproduced in a real app (e.g. a path that Next.js normalizes before the middleware runs)
+- HTML returned by `t.raw` or `t.markup` that the app renders without sanitizing, e.g. via `dangerouslySetInnerHTML`
 - Vulnerabilities in dependencies without a way to exploit them through `next-intl`
 - Unverified output of scanners or AI tools
