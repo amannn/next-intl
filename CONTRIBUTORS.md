@@ -89,15 +89,6 @@ Nothing is installable until a maintainer approves the staged versions with 2FA:
 
 To abandon a release, reject the staged versions and delete the draft release.
 
-### Security fixes
-
-Vulnerabilities (see [`SECURITY.md`](./SECURITY.md)) are fixed in private, so that nothing becomes public before a patch is available:
-
-1. Accept the report, or create a draft advisory for an issue found by a maintainer, and request a CVE on the advisory page.
-2. Develop the fix in the advisory's temporary private fork, never in a public branch or PR, and add a patch changeset. CI, branch protection and the PR title check don't run in private forks, so run the tests and linting locally and squash the fix into one commit with a conventional commit message.
-3. Merge the fix on the advisory page. This lands it on `main`, which releases it as a patch: approve it right away.
-4. Once the patch is live, enter its version as the patched version and publish the advisory.
-
 ### Preview packages
 
 Every PR with the `preview` label publishes its packages to [pkg.pr.new](https://pkg.pr.new), so a change can be tried before it's released, e.g. `npm i https://pkg.pr.new/next-intl@<pr-number>`. The pkg.pr.new bot comments the install commands on the PR. Previews aren't published to npm and include all packages except the SWC plugin, which resolves to its version on npm.

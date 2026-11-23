@@ -40,3 +40,12 @@ The following are out of scope:
 - HTML returned by `t.raw` or `t.markup` that the app renders without sanitizing, e.g. via `dangerouslySetInnerHTML`
 - Vulnerabilities in dependencies without a way to exploit them through these packages
 - Unverified output of scanners or AI tools
+
+## Fixing a vulnerability
+
+Maintainers fix confirmed vulnerabilities without a public branch or pull request:
+
+1. Accept the report, or open a draft advisory for an issue found by a maintainer, and request a CVE on the advisory.
+2. Open a pull request with the fix and a patch changeset in the advisory's temporary private fork. CI, branch protection and the PR title check don't run there, so run the tests and linting locally and use a single commit with a conventional commit message.
+3. Merge the pull request on the advisory page. This lands the fix on `main`, where it's public, and stages a patch release: approve it right away to keep that gap short.
+4. Once the patch is live, enter its version as the patched version and publish the advisory.
