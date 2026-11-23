@@ -26,6 +26,9 @@ export default function syncLocaleCookie(
 
   let localeCookieString = `${name}=${nextLocale};`;
   for (const [key, value] of Object.entries(rest)) {
+    // A flag like `secure` is set by its presence alone
+    if (value === false) continue;
+
     // Map object properties to cookie properties.
     // Interestingly, `maxAge` corresponds to `max-age`,
     // while `sameSite` corresponds to `SameSite`.

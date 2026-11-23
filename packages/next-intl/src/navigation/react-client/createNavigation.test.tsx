@@ -362,6 +362,48 @@ describe("localePrefix: 'always', with `localeCookie`", () => {
   });
 });
 
+describe("localePrefix: 'always', with `localeCookie` flags set to `false`", () => {
+  const {Link, useRouter} = createNavigation({
+    locales,
+    defaultLocale,
+    localePrefix: 'always',
+    localeCookie: {
+      partitioned: false,
+      secure: false
+    }
+  });
+
+  it('omits the flags when switching the locale with `Link`', () => {
+    global.document.cookie = 'NEXT_LOCALE=en';
+    const cookieSpy = vi.spyOn(global.document, 'cookie', 'set');
+
+    render(
+      <Link href="/" locale="de">
+        Test
+      </Link>
+    );
+    fireEvent.click(screen.getByRole('link', {name: 'Test'}));
+
+    expect(cookieSpy).toHaveBeenCalledWith(
+      'NEXT_LOCALE=de;sameSite=lax;path=/;'
+    );
+    cookieSpy.mockRestore();
+  });
+
+  it('omits the flags when switching the locale with `useRouter`', () => {
+    const cookieSpy = vi.spyOn(global.document, 'cookie', 'set');
+
+    getInvokeRouter(useRouter)((router) =>
+      router.push('/about', {locale: 'de'})
+    );
+
+    expect(cookieSpy).toHaveBeenCalledWith(
+      'NEXT_LOCALE=de;sameSite=lax;path=/;'
+    );
+    cookieSpy.mockRestore();
+  });
+});
+
 describe("localePrefix: 'always', with `basePath`", () => {
   const {useRouter} = createNavigation({
     locales,
