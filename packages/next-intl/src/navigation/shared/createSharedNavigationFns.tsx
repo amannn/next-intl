@@ -72,12 +72,7 @@ export default function createSharedNavigationFns<
     Omit<NextLinkBaseProps, 'locale'>;
   type LinkProps<Pathname extends keyof AppPathnames = never> = Omit<
     NextLinkProps,
-    | 'href'
-    | 'localePrefix'
-    | 'unprefixed'
-    | 'defaultLocale'
-    | 'localeCookie'
-    | keyof DOMAttributes<HTMLAnchorElement>
+    'href' | keyof DOMAttributes<HTMLAnchorElement>
   > & {
     /** @see https://next-intl.dev/docs/routing/navigation#link */
     href: [AppPathnames] extends [never]
