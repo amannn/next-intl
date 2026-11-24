@@ -24,6 +24,8 @@ jobs:
     permissions:
       contents: write # Push version commits and tags, create GitHub releases
       id-token: write # npm trusted publishing
+    # Enforced by GitHub, so no step or action can restore a poisoned cache here
+    cache-mode: none
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
