@@ -95,7 +95,7 @@ When several changes are known to be coming, they can optionally be collected on
 
 1. Create `canary` from `main` and target PRs at it.
 2. Open a draft PR from `canary` to `main` that lists the merged PRs. Repeat `Closes #…` there for each fixed issue, since issues are only closed by merges into `main`.
-3. To release, merge that PR with a merge commit (keeping changes from PRs as individual commits).
+3. To release, merge that PR with a merge commit (keeping changes from PRs as individual commits)
 
 ### Preview packages
 
