@@ -1,4 +1,4 @@
-import type {LinkProps as NextLinkBaseProps} from 'next/link.js';
+import type {LinkProps as NextLinkProps} from 'next/link.js';
 import {
   permanentRedirect as nextPermanentRedirect,
   redirect as nextRedirect
@@ -67,20 +67,25 @@ export default function createSharedNavigationFns<
     : AppPathnames;
 
   // Only built from public types, so apps with `declaration: true` can name
-  // the inferred type of `Link` (the props of `BaseLink` are internal)
-  type NextLinkProps = Omit<ComponentProps<'a'>, keyof NextLinkBaseProps> &
-    Omit<NextLinkBaseProps, 'locale'>;
+  // the inferred type of `Link`. The event handlers come from `DOMAttributes`
+  // since `next/link` declares them without `| undefined`, which breaks
+  // spreading `<a>` props with `exactOptionalPropertyTypes`.
   type LinkProps<Pathname extends keyof AppPathnames = never> = Omit<
-    NextLinkProps,
-    'href' | keyof DOMAttributes<HTMLAnchorElement>
-  > & {
-    /** @see https://next-intl.dev/docs/routing/navigation#link */
-    href: [AppPathnames] extends [never]
-      ? NextLinkProps['href']
-      : HrefOrUrlObjectWithParams<Pathname>;
-    /** @see https://next-intl.dev/docs/routing/navigation#link */
-    locale?: Locale;
-  } & DOMAttributes<HTMLAnchorElement>;
+    ComponentProps<'a'>,
+    keyof NextLinkProps
+  > &
+    Omit<
+      NextLinkProps,
+      'href' | 'locale' | keyof DOMAttributes<HTMLAnchorElement>
+    > &
+    DOMAttributes<HTMLAnchorElement> & {
+      /** @see https://next-intl.dev/docs/routing/navigation#link */
+      href: [AppPathnames] extends [never]
+        ? NextLinkProps['href']
+        : HrefOrUrlObjectWithParams<Pathname>;
+      /** @see https://next-intl.dev/docs/routing/navigation#link */
+      locale?: Locale;
+    };
   function Link<Pathname extends keyof AppPathnames = never>(
     {href, locale, ...rest}: LinkProps<Pathname>,
     ref: ComponentProps<typeof BaseLink>['ref']
