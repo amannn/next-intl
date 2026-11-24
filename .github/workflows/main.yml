@@ -3,6 +3,9 @@ name: main
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+  # Caches saved on main can be restored by every PR, so a new PR doesn't start cold
+  push:
+    branches: [main]
 
 permissions: {}
 
@@ -15,7 +18,7 @@ jobs:
     env:
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ vars.TURBO_TEAM }}
-      TURBO_SCM_BASE: ${{ github.event_name == 'pull_request' && (github.event.pull_request.base.sha || github.event.before) }}
+      TURBO_SCM_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
     steps:
       # General setup
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -26,7 +29,8 @@ jobs:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 22.x
-          cache: 'pnpm'
+          # Installing from the registry is faster than restoring the store from the cache
+          package-manager-cache: false
       - run: pnpm install
 
       # Next.js caching
@@ -34,6 +38,7 @@ jobs:
         with:
           path: |
             ${{ github.workspace }}/examples/*/.next/cache
+            ${{ github.workspace }}/e2e/*/.next/cache
             ${{ github.workspace }}/docs/.next/cache
           key: ${{ runner.os }}-nextjs-${{ hashFiles('pnpm-lock.yaml') }}
 
