@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.16.1
+
+### Patch Changes
+
+- Resolve the HTML attributes of `Link` from your project's React types instead of shipping a copy from the build of `next-intl`. This removes a stray `tw` prop that leaked into the declarations of 4.16.0 and fixes type errors when your `@types/react` version differs from the one `next-intl` was built with. ([#2540](https://github.com/amannn/next-intl/pull/2540), [`8a10889`](https://github.com/amannn/next-intl/commit/8a10889a6a702dee514fa477eadb356dca966041), [@amannn](https://github.com/amannn))
+
+- Leave `localeCookie` flags that are set to `false` (e.g. `secure: false`, `partitioned: false`) out of the cookie that `Link` and `useRouter` write when switching the locale, instead of writing them as if they were `true`. ([#2538](https://github.com/amannn/next-intl/pull/2538), [`7a3265f`](https://github.com/amannn/next-intl/commit/7a3265f38ff8df2b5c5aade4cdc0de27b5001557), [@burrows99](https://github.com/burrows99))
+
 ## 4.16.0
 
 ### Minor Changes
