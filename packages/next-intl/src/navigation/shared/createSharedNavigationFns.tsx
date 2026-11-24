@@ -1,3 +1,4 @@
+import type {LinkProps as NextLinkBaseProps} from 'next/link.js';
 import {
   permanentRedirect as nextPermanentRedirect,
   redirect as nextRedirect
@@ -65,8 +66,12 @@ export default function createSharedNavigationFns<
     ? undefined
     : AppPathnames;
 
+  // Only built from public types, so apps with `declaration: true` can name
+  // the inferred type of `Link` (the props of `BaseLink` are internal)
+  type NextLinkProps = Omit<ComponentProps<'a'>, keyof NextLinkBaseProps> &
+    Omit<NextLinkBaseProps, 'locale'>;
   type LinkProps<Pathname extends keyof AppPathnames = never> = Omit<
-    ComponentProps<typeof BaseLink>,
+    NextLinkProps,
     | 'href'
     | 'localePrefix'
     | 'unprefixed'
@@ -76,7 +81,7 @@ export default function createSharedNavigationFns<
   > & {
     /** @see https://next-intl.dev/docs/routing/navigation#link */
     href: [AppPathnames] extends [never]
-      ? ComponentProps<typeof BaseLink>['href']
+      ? NextLinkProps['href']
       : HrefOrUrlObjectWithParams<Pathname>;
     /** @see https://next-intl.dev/docs/routing/navigation#link */
     locale?: Locale;
