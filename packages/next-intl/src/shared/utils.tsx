@@ -124,7 +124,13 @@ export function getLocaleAsPrefix(locale: string) {
   return '/' + locale;
 }
 
+// Templates come from the `pathnames` config, therefore the cache is bounded
+const templateRegexCache = new Map<string, RegExp>();
+
 export function templateToRegex(template: string): RegExp {
+  const cached = templateRegexCache.get(template);
+  if (cached) return cached;
+
   const regexPattern = template
     // Replace optional catchall ('[[...slug]]')
     .replace(/\/\[\[(\.\.\.[^\]]+)\]\]/g, '(?:/(.*))?') // With leading slash
@@ -134,7 +140,9 @@ export function templateToRegex(template: string): RegExp {
     // Replace regular parameter ('[slug]')
     .replace(/\[([^\]]+)\]/g, '([^/]+)');
 
-  return new RegExp(`^${regexPattern}$`);
+  const regex = new RegExp(`^${regexPattern}$`);
+  templateRegexCache.set(template, regex);
+  return regex;
 }
 
 function isOptionalCatchAllSegment(pathname: string) {
