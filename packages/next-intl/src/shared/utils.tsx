@@ -72,8 +72,9 @@ export function getLocalizedTemplate<AppLocales extends Locales>(
 export function normalizeTrailingSlash(pathname: string) {
   const trailingSlash = hasTrailingSlash();
 
-  const [path, ...hashParts] = pathname.split('#');
-  const hash = hashParts.join('#');
+  const hashIndex = pathname.indexOf('#');
+  const path = hashIndex === -1 ? pathname : pathname.slice(0, hashIndex);
+  const hash = hashIndex === -1 ? '' : pathname.slice(hashIndex + 1);
 
   let normalizedPath = path;
   if (normalizedPath !== '/') {
@@ -211,7 +212,6 @@ export function getSortedPathnames(pathnames: Record<string, unknown>) {
   }
   return sorted;
 }
-
 
 export function isPromise<Value>(
   value: Value | Promise<Value>
