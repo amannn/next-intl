@@ -222,7 +222,7 @@ export function getRoute<AppLocales extends Locales>(
   pathname: string,
   pathnames: Pathnames<AppLocales>
 ): keyof Pathnames<AppLocales> {
-  const sortedPathnames = getSortedPathnames(Object.keys(pathnames));
+  const sortedPathnames = getSortedPathnames(pathnames);
   const decoded = decodeURI(pathname);
 
   for (const internalPathname of sortedPathnames) {

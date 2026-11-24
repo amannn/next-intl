@@ -193,9 +193,17 @@ function comparePathnamePairs(a: string, b: string): number {
   return 0;
 }
 
-export function getSortedPathnames(pathnames: Array<string>) {
-  return pathnames.sort(comparePathnamePairs);
+const sortedPathnamesCache = new WeakMap<object, Array<string>>();
+
+export function getSortedPathnames(pathnames: Record<string, unknown>) {
+  let sorted = sortedPathnamesCache.get(pathnames);
+  if (!sorted) {
+    sorted = Object.keys(pathnames).sort(comparePathnamePairs);
+    sortedPathnamesCache.set(pathnames, sorted);
+  }
+  return sorted;
 }
+
 
 export function isPromise<Value>(
   value: Value | Promise<Value>
