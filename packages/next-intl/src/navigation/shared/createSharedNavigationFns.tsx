@@ -15,7 +15,7 @@ import type {
   Locales,
   Pathnames
 } from '../../routing/types.js';
-import type {ParametersExceptFirst, Prettify} from '../../shared/types.js';
+import type {ParametersExceptFirst} from '../../shared/types.js';
 import use from '../../shared/use.js';
 import {isLocalizableHref, isPromise} from '../../shared/utils.js';
 import BaseLink from './BaseLink.js';
@@ -65,24 +65,22 @@ export default function createSharedNavigationFns<
     ? undefined
     : AppPathnames;
 
-  type LinkProps<Pathname extends keyof AppPathnames = never> = Prettify<
-    Omit<
-      ComponentProps<typeof BaseLink>,
-      | 'href'
-      | 'localePrefix'
-      | 'unprefixed'
-      | 'defaultLocale'
-      | 'localeCookie'
-      | keyof DOMAttributes<HTMLAnchorElement>
-    > & {
-      /** @see https://next-intl.dev/docs/routing/navigation#link */
-      href: [AppPathnames] extends [never]
-        ? ComponentProps<typeof BaseLink>['href']
-        : HrefOrUrlObjectWithParams<Pathname>;
-      /** @see https://next-intl.dev/docs/routing/navigation#link */
-      locale?: Locale;
-    } & DOMAttributes<HTMLAnchorElement>
-  >;
+  type LinkProps<Pathname extends keyof AppPathnames = never> = Omit<
+    ComponentProps<typeof BaseLink>,
+    | 'href'
+    | 'localePrefix'
+    | 'unprefixed'
+    | 'defaultLocale'
+    | 'localeCookie'
+    | keyof DOMAttributes<HTMLAnchorElement>
+  > & {
+    /** @see https://next-intl.dev/docs/routing/navigation#link */
+    href: [AppPathnames] extends [never]
+      ? ComponentProps<typeof BaseLink>['href']
+      : HrefOrUrlObjectWithParams<Pathname>;
+    /** @see https://next-intl.dev/docs/routing/navigation#link */
+    locale?: Locale;
+  } & DOMAttributes<HTMLAnchorElement>;
   function Link<Pathname extends keyof AppPathnames = never>(
     {href, locale, ...rest}: LinkProps<Pathname>,
     ref: ComponentProps<typeof BaseLink>['ref']
