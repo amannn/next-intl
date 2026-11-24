@@ -80,7 +80,7 @@ Releases are automated with [changesets](https://github.com/changesets/changeset
 
 A PR that changes a published package adds a changeset with `pnpm changeset`, which asks for the packages, the bump type (patch, minor, major) and a summary for the changelog. PRs without changes to published packages (docs, CI, tests) don't need one.
 
-When a PR with changesets is merged to `main`, CI consumes them right away: it bumps the versions, updates the changelogs, pushes a version commit and a tag per package, uploads the new versions with `pnpm stage publish` and, if `next-intl` was released, creates a draft GitHub release for it. The other packages only have their `CHANGELOG.md`, so the repo's "Latest" release is always `next-intl`. To batch several changes into one release, collect them on a branch and merge that.
+When a PR with changesets is merged to `main`, CI consumes them right away: it bumps the versions, updates the changelogs, pushes a version commit and a tag per package, uploads the new versions with `pnpm stage publish` and, if `next-intl` was released, creates a draft GitHub release for it. The other packages only have their `CHANGELOG.md`, so the repo's "Latest" release is always `next-intl`.
 
 Nothing is installable until a maintainer approves the staged versions with 2FA:
 
@@ -88,6 +88,14 @@ Nothing is installable until a maintainer approves the staged versions with 2FA:
 - Alternatively, approve them on npmjs.com ("Staged Packages") and publish the draft release on GitHub.
 
 To abandon a release, reject the staged versions and delete the draft release.
+
+### Batching changes
+
+When several changes are known to be coming, they can optionally be collected on a `canary` branch, so they're released together instead of one release each:
+
+1. Create `canary` from `main` and target PRs at it.
+2. Open a draft PR from `canary` to `main` that lists the merged PRs. Repeat `Closes #…` there for each fixed issue, since issues are only closed by merges into `main`.
+3. To release, merge that PR with a merge commit.
 
 ### Preview packages
 
