@@ -3,6 +3,7 @@
 ## Always
 
 - If running a test with vitest, use "run" to avoid being stuck in watch mode.
+- For security research or reports, follow SECURITY.md.
 
 ## When committing
 
