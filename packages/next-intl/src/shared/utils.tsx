@@ -72,8 +72,9 @@ export function getLocalizedTemplate<AppLocales extends Locales>(
 export function normalizeTrailingSlash(pathname: string) {
   const trailingSlash = hasTrailingSlash();
 
-  const [path, ...hashParts] = pathname.split('#');
-  const hash = hashParts.join('#');
+  const hashIndex = pathname.indexOf('#');
+  const path = hashIndex === -1 ? pathname : pathname.slice(0, hashIndex);
+  const hash = hashIndex === -1 ? '' : pathname.slice(hashIndex + 1);
 
   let normalizedPath = path;
   if (normalizedPath !== '/') {
@@ -124,7 +125,13 @@ export function getLocaleAsPrefix(locale: string) {
   return '/' + locale;
 }
 
+// Templates come from the `pathnames` config, therefore the cache is bounded
+const templateRegexCache = new Map<string, RegExp>();
+
 export function templateToRegex(template: string): RegExp {
+  const cached = templateRegexCache.get(template);
+  if (cached) return cached;
+
   const regexPattern = template
     // Replace optional catchall ('[[...slug]]')
     .replace(/\/\[\[(\.\.\.[^\]]+)\]\]/g, '(?:/(.*))?') // With leading slash
@@ -134,7 +141,9 @@ export function templateToRegex(template: string): RegExp {
     // Replace regular parameter ('[slug]')
     .replace(/\[([^\]]+)\]/g, '([^/]+)');
 
-  return new RegExp(`^${regexPattern}$`);
+  const regex = new RegExp(`^${regexPattern}$`);
+  templateRegexCache.set(template, regex);
+  return regex;
 }
 
 function isOptionalCatchAllSegment(pathname: string) {
@@ -193,8 +202,15 @@ function comparePathnamePairs(a: string, b: string): number {
   return 0;
 }
 
-export function getSortedPathnames(pathnames: Array<string>) {
-  return pathnames.sort(comparePathnamePairs);
+const sortedPathnamesCache = new WeakMap<object, Array<string>>();
+
+export function getSortedPathnames(pathnames: Record<string, unknown>) {
+  let sorted = sortedPathnamesCache.get(pathnames);
+  if (!sorted) {
+    sorted = Object.keys(pathnames).sort(comparePathnamePairs);
+    sortedPathnamesCache.set(pathnames, sorted);
+  }
+  return sorted;
 }
 
 export function isPromise<Value>(
