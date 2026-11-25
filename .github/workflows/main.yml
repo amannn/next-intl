@@ -33,8 +33,8 @@ jobs:
           package-manager-cache: false
       - run: pnpm install
 
-      # Next.js caching: every run restores the latest cache from main, only main saves one.
-      # The key is per commit, since an existing key is never overwritten.
+      # Next.js caching: restore the latest cache of this PR (or main) and save a new one after
+      # the build. The key is per commit, since an existing key is never overwritten.
       - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: |
@@ -60,7 +60,6 @@ jobs:
       # Main tasks
       - run: pnpm turbo run lint build test size --affected
       - uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        if: github.event_name == 'push'
         with:
           path: |
             ${{ github.workspace }}/examples/*/.next/cache
