@@ -43,14 +43,14 @@ The following are out of scope:
 
 ## Audits
 
-Maintainers audit the packages from time to time with static analysis, fuzzing and AI agents, e.g. after larger changes to request handling or message parsing, or when markedly better tools become available. Audits use the scope and trust boundaries above, skip issues covered by published or closed advisories, and confirm every finding in a real app before treating it as a vulnerability.
+Changes are reviewed as pull requests come in. Maintainers also re-review the codebase from time to time, e.g. with fuzzing and AI agents as models improve. Findings are checked against the scope and trust boundaries above and against previous advisories, and only count as vulnerabilities once confirmed against the current release in a real app.
 
 ## Fixing a vulnerability
 
 Maintainers fix confirmed vulnerabilities without a public branch or pull request:
 
 1. Accept the report, or open a draft advisory for an issue found by a maintainer. Once the issue is confirmed, request a CVE on the advisory.
-2. Develop the fix with a patch changeset in the advisory's temporary private fork. Several vulnerabilities can share one fork and release, with one advisory each. CI doesn't run in the fork, so run the checks locally. Keep commit messages factual, since they're public before the advisory. The advisory page merges only one pull request into `main`, so fixes reviewed separately are combined into one pull request.
+2. Develop the fix with a patch changeset in the advisory's temporary private fork. Several vulnerabilities can share one fork and release, with one advisory each. CI doesn't run in the fork, so run the checks locally. Keep commit messages factual, since they're public before the advisory. The advisory page merges only one pull request into `main`, so fixes reviewed separately are combined into one pull request and the others are closed.
 3. Merge that pull request on the advisory page. This lands the fix on `main`, where it's public, and stages a patch release. Approve it as soon as CI on `main` passes, to keep that gap short.
 4. Once the patch is live, enter its version as the patched version and publish the advisories the same day.
 
