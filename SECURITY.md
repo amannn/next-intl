@@ -50,8 +50,8 @@ Changes are reviewed as pull requests come in. Maintainers also re-review the co
 Maintainers fix confirmed vulnerabilities without a public branch or pull request:
 
 1. Accept the report, or open a draft advisory for an issue found by a maintainer. Once the issue is confirmed, request a CVE on the advisory.
-2. Develop the fix with a patch changeset in the advisory's temporary private fork. Several vulnerabilities can share one fork and release, with one advisory each. CI doesn't run in the fork, so run the checks locally. Keep commit messages factual, since they're public before the advisory. The advisory page merges only one pull request into `main`, so fixes reviewed separately are combined into one pull request and the others are closed.
-3. Merge that pull request on the advisory page. This lands the fix on `main`, where it's public, and stages a patch release. Approve it as soon as CI on `main` passes, to keep that gap short.
+2. Develop the fix with a patch changeset privately, in the advisory's temporary private fork. CI doesn't run there, so run the checks locally. Keep commit messages factual, since they're public before the advisory. Several vulnerabilities can ship in one release, with one advisory each.
+3. Merge the fix on the advisory page. This lands the fix on `main`, where it's public, and stages a patch release. Approve it as soon as CI on `main` passes, to keep that gap short.
 4. Once the patch is live, enter its version as the patched version and publish the advisories the same day.
 
 Issues that can't be exploited in practice are fixed as hardening, without an advisory.
