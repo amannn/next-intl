@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.16.2
+
+### Patch Changes
+
+- Speed up matching requests against `pathnames` in the middleware and in `usePathname` by sorting the templates and compiling their regexes only once, instead of on every call. ([#2548](https://github.com/amannn/next-intl/pull/2548), [`e12b1e4`](https://github.com/amannn/next-intl/commit/e12b1e40eec4ef1150d3ffd670d2ec39fba2ea5f), [@amannn](https://github.com/amannn))
+
 ## 4.16.1
 
 ### Patch Changes
