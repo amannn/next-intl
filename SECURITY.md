@@ -41,11 +41,17 @@ The following are out of scope:
 - Vulnerabilities in dependencies without a way to exploit them through these packages
 - Unverified output of scanners or AI tools
 
+## Audits
+
+Maintainers audit the packages from time to time with static analysis, fuzzing and AI agents, e.g. after larger changes to request handling or message parsing, or when markedly better tools become available. Audits use the scope and trust boundaries above, skip issues covered by published or closed advisories, and confirm every finding in a real app before treating it as a vulnerability.
+
 ## Fixing a vulnerability
 
 Maintainers fix confirmed vulnerabilities without a public branch or pull request:
 
-1. Accept the report, or open a draft advisory for an issue found by a maintainer, and request a CVE on the advisory.
-2. Open a pull request with the fix and a patch changeset in the advisory's temporary private fork. CI, branch protection and the PR title check don't run there, so run the tests and linting locally and use a single commit with a conventional commit message.
-3. Merge the pull request on the advisory page. This lands the fix on `main`, where it's public, and stages a patch release: approve it right away to keep that gap short.
-4. Once the patch is live, enter its version as the patched version and publish the advisory.
+1. Accept the report, or open a draft advisory for an issue found by a maintainer. Once the issue is confirmed, request a CVE on the advisory.
+2. Develop the fix with a patch changeset in the advisory's temporary private fork. Several vulnerabilities can share one fork and release, with one advisory each. CI doesn't run in the fork, so run the checks locally. Keep commit messages factual, since they're public before the advisory. The advisory page merges only one pull request into `main`, so fixes reviewed separately are combined into one pull request.
+3. Merge that pull request on the advisory page. This lands the fix on `main`, where it's public, and stages a patch release. Approve it as soon as CI on `main` passes, to keep that gap short.
+4. Once the patch is live, enter its version as the patched version and publish the advisories the same day.
+
+Issues that can't be exploited in practice are fixed as hardening, without an advisory.
