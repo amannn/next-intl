@@ -29,7 +29,7 @@ export function getInternalTemplate<
   pathname: string,
   locale: AppLocales[number]
 ): [AppLocales[number] | undefined, keyof AppPathnames | undefined] {
-  const sortedPathnames = getSortedPathnames(Object.keys(pathnames));
+  const sortedPathnames = getSortedPathnames(pathnames);
 
   // Try to find a localized pathname that matches
   for (const internalPathname of sortedPathnames) {
