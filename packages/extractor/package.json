@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@eloqnt/messages": "workspace:~",
-    "@swc/core": "~1.16.0",
+    "@swc/core": "~1.16.22",
     "next-intl-swc-plugin-extractor": "workspace:*"
   },
   "devDependencies": {
