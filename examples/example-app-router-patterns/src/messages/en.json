@@ -1,0 +1,9 @@
+{
+  "IndexPage": {
+    "title": "Hello world!"
+  },
+  "Greeting": {
+    "name": "Name",
+    "greeting": "Hello, {name}!"
+  }
+}
