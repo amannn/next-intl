@@ -1,5 +1,5 @@
-import {PlaygroundByline} from '@/components/PlaygroundByline';
-import {PlaygroundSidebar} from '@/components/PlaygroundSidebar';
+import PlaygroundByline from '@/components/PlaygroundByline';
+import PlaygroundSidebar from '@/components/PlaygroundSidebar';
 import {routing} from '@/i18n/routing';
 import clsx from 'clsx';
 import {NextIntlClientProvider} from 'next-intl';
@@ -49,8 +49,8 @@ export default async function LocaleLayout({
           >
             <PlaygroundSidebar />
             <div className="lg:pl-72">
-              <div className="mx-auto mt-16 mb-24 max-w-4xl px-4 sm:px-6 lg:mt-0 lg:px-8 lg:py-10">
-                {children}
+              <div className="mx-auto flex min-h-dvh max-w-4xl flex-col px-4 pt-16 pb-10 sm:px-6 lg:px-8 lg:pt-10">
+                <div className="flex-1">{children}</div>
                 <PlaygroundByline />
               </div>
             </div>

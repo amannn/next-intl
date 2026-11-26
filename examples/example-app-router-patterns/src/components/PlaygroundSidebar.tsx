@@ -1,34 +1,22 @@
 'use client';
 
-import {Logo} from '@/assets/Logo';
+import Logo from '@/assets/Logo';
 import {Link, usePathname} from '@/i18n/navigation';
-import type {NavSection} from '@/types';
 import clsx from 'clsx';
-import {Languages, Menu, X} from 'lucide-react';
+import useNavSections from '@/hooks/useNavSections';
+import {Menu, X} from 'lucide-react';
 import {useExtracted} from 'next-intl';
 import {useState} from 'react';
-import {LocaleSwitcher} from './LocaleSwitcher';
-import {ThemeToggle} from './ThemeToggle';
+import LocaleSwitcher from './LocaleSwitcher';
+import ThemeToggle from './ThemeToggle';
 
-export function PlaygroundSidebar() {
+export default function PlaygroundSidebar() {
   const t = useExtracted();
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const close = () => setIsOpen(false);
 
-  const sections: Array<NavSection> = [
-    {
-      title: t('Translations'),
-      icon: Languages,
-      items: [
-        {
-          slug: '/translations/server-components',
-          title: t('Server Components')
-        },
-        {slug: '/translations/client-components', title: t('Client Components')}
-      ]
-    }
-  ];
+  const sections = useNavSections();
 
   return (
     <div

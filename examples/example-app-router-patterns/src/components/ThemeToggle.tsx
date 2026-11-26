@@ -4,7 +4,7 @@ import {Moon, Sun} from 'lucide-react';
 import {useExtracted} from 'next-intl';
 import {useTheme} from 'next-themes';
 
-export function ThemeToggle() {
+export default function ThemeToggle() {
   const t = useExtracted();
   const {resolvedTheme, setTheme} = useTheme();
 

@@ -7,7 +7,7 @@ import {type Locale, useExtracted, useLocale} from 'next-intl';
 import {useParams} from 'next/navigation';
 import {useTransition} from 'react';
 
-export function LocaleSwitcher() {
+export default function LocaleSwitcher() {
   const t = useExtracted();
   const locale = useLocale();
   const router = useRouter();
@@ -29,7 +29,7 @@ export function LocaleSwitcher() {
     <div
       role="group"
       aria-label={t('Switch language')}
-      className="flex items-center gap-0.5"
+      className="me-2 flex items-center"
     >
       {routing.locales.map((loc) => (
         <button
@@ -39,7 +39,7 @@ export function LocaleSwitcher() {
           disabled={isPending}
           aria-current={loc === locale ? 'true' : undefined}
           className={clsx(
-            'rounded-md px-2 py-1 text-xs font-medium uppercase transition-colors',
+            'rounded-md px-1.5 py-1 text-xs font-medium uppercase transition-colors',
             loc === locale
               ? 'text-gray-900 dark:text-gray-50'
               : 'text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-50'

@@ -10,7 +10,7 @@ const withNextIntl = createNextIntlPlugin({
       format: 'po',
       locales: 'infer',
       sourceLocale: 'en',
-      precompile: true
+      precompile: false
     }
   }
 });

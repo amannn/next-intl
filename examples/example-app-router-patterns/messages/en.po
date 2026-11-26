@@ -18,38 +18,6 @@ msgid "Explore translations, formatting, routing and patterns with next-intl."
 msgstr "Explore translations, formatting, routing and patterns with next-intl."
 
 #: src/app/[locale]/page.tsx
-#: src/app/[locale]/translations/client-components/page.tsx
-#: src/app/[locale]/translations/server-components/page.tsx
-#: src/components/PlaygroundSidebar.tsx
-msgctxt "aFyu8N"
-msgid "Translations"
-msgstr "Translations"
-
-#: src/app/[locale]/page.tsx
-#: src/app/[locale]/translations/server-components/page.tsx
-#: src/components/PlaygroundSidebar.tsx
-msgctxt "Jm_gm4"
-msgid "Server Components"
-msgstr "Server Components"
-
-#: src/app/[locale]/page.tsx
-msgctxt "kka9Id"
-msgid "Read translated strings inside Server Components."
-msgstr "Read translated strings inside Server Components."
-
-#: src/app/[locale]/page.tsx
-#: src/app/[locale]/translations/client-components/page.tsx
-#: src/components/PlaygroundSidebar.tsx
-msgctxt "qwpdfx"
-msgid "Client Components"
-msgstr "Client Components"
-
-#: src/app/[locale]/page.tsx
-msgctxt "5oEQPR"
-msgid "Use translations in interactive Client Components."
-msgstr "Use translations in interactive Client Components."
-
-#: src/app/[locale]/page.tsx
 msgctxt "zllk1P"
 msgid "Translations, formatting, routing and patterns with Next.js."
 msgstr "Translations, formatting, routing and patterns with Next.js."
@@ -59,30 +27,23 @@ msgctxt "CxfKLC"
 msgid "Pages"
 msgstr "Pages"
 
-#: src/app/[locale]/translations/client-components/ClientExample.tsx
-msgctxt "vlKhIl"
-msgid "Your name"
-msgstr "Your name"
-
-#: src/app/[locale]/translations/client-components/ClientExample.tsx
-msgctxt "nCfqYd"
-msgid "Frodo"
-msgstr "Frodo"
-
-#: src/app/[locale]/translations/client-components/ClientExample.tsx
-msgctxt "tBFOH1"
-msgid "Hello, {name}!"
-msgstr "Hello, {name}!"
+#: src/app/[locale]/translations/client-components/page.tsx
+#: src/app/[locale]/translations/server-components/page.tsx
+#: src/hooks/useNavSections.ts
+msgctxt "aFyu8N"
+msgid "Translations"
+msgstr "Translations"
 
 #: src/app/[locale]/translations/client-components/page.tsx
-msgctxt "5tbib9"
-msgid "<code>useTranslations</code> can be called in Client Components to incorporate client-side state."
-msgstr "<code>useTranslations</code> can be called in Client Components to incorporate client-side state."
+#: src/hooks/useNavSections.ts
+msgctxt "qwpdfx"
+msgid "Client Components"
+msgstr "Client Components"
 
 #: src/app/[locale]/translations/client-components/page.tsx
-msgctxt "Kn9KsD"
-msgid "ICU arguments like <code>'{name}'</code> are resolved in the browser as state changes."
-msgstr "ICU arguments like <code>'{name}'</code> are resolved in the browser as state changes."
+msgctxt "HVi8kk"
+msgid "In Client Components, <code>useTranslations</code> can format messages with client-side state, like the name below."
+msgstr "In Client Components, <code>useTranslations</code> can format messages with client-side state, like the name below."
 
 #: src/app/[locale]/translations/client-components/page.tsx
 #: src/app/[locale]/translations/server-components/page.tsx
@@ -97,9 +58,15 @@ msgid "Output"
 msgstr "Output"
 
 #: src/app/[locale]/translations/server-components/page.tsx
-msgctxt "felJxe"
-msgid "Translations in Server Components are resolved on the server."
-msgstr "Translations in Server Components are resolved on the server."
+#: src/hooks/useNavSections.ts
+msgctxt "Jm_gm4"
+msgid "Server Components"
+msgstr "Server Components"
+
+#: src/app/[locale]/translations/server-components/page.tsx
+msgctxt "Oyo2qi"
+msgid "Translations in Server Components are resolved on the server side."
+msgstr "Translations in Server Components are resolved on the server side."
 
 #: src/app/[locale]/translations/server-components/page.tsx
 msgctxt "fZd-wY"
@@ -117,14 +84,9 @@ msgid "Non-async components"
 msgstr "Non-async components"
 
 #: src/app/[locale]/translations/server-components/page.tsx
-msgctxt "2RUxZT"
-msgid "In non-async Server Components, call <code>useTranslations</code> directly."
-msgstr "In non-async Server Components, call <code>useTranslations</code> directly."
-
-#: src/app/[locale]/translations/server-components/ServerExample.tsx
-msgctxt "wVJ82J"
-msgid "Hello, world!"
-msgstr "Hello, world!"
+msgctxt "ZR_nrN"
+msgid "In non-async Server Components, <code>useTranslations</code> can be called as a hook."
+msgstr "In non-async Server Components, <code>useTranslations</code> can be called as a hook."
 
 #: src/components/GitHubLink.tsx
 msgctxt "80g19N"
@@ -165,3 +127,13 @@ msgstr "Open navigation"
 msgctxt "EQpyb8"
 msgid "Toggle theme"
 msgstr "Toggle theme"
+
+#: src/hooks/useNavSections.ts
+msgctxt "kka9Id"
+msgid "Read translated strings inside Server Components."
+msgstr "Read translated strings inside Server Components."
+
+#: src/hooks/useNavSections.ts
+msgctxt "5oEQPR"
+msgid "Use translations in interactive Client Components."
+msgstr "Use translations in interactive Client Components."

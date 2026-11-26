@@ -1,4 +1,4 @@
-export function Logo({className}: {className?: string}) {
+export default function Logo({className}: {className?: string}) {
   return (
     <svg
       aria-hidden
@@ -18,6 +18,7 @@ export function Logo({className}: {className?: string}) {
           cy="99.0973577"
           r="2.69856647"
           fill="currentColor"
+          stroke="none"
         />
         <path
           d="M8.84665914,28.784709 C25.094786,26.8106231 41.1652556,25.8362538 57.058068,25.8616012 C72.9508804,25.8869486 88.2137659,26.9112913 102.846725,28.9346294"

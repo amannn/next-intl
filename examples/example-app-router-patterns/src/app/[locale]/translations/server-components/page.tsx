@@ -1,25 +1,26 @@
+import Code from '@/components/Code';
+import GitHubLink from '@/components/GitHubLink';
+import PlaygroundBoundary from '@/components/PlaygroundBoundary';
+import Prose from '@/components/Prose';
 import {docsUrl} from '@/config';
-import {Code} from '@/components/Code';
-import {GitHubLink} from '@/components/GitHubLink';
-import {PlaygroundBoundary} from '@/components/PlaygroundBoundary';
-import {Prose} from '@/components/Prose';
 import {useExtracted} from 'next-intl';
-import {ServerExample} from './ServerExample';
+import AsyncIndexPage from './AsyncIndexPage';
+import IndexPage from './IndexPage';
 
 const asyncSample = `import {getTranslations} from 'next-intl/server';
 
-export default async function Page() {
+export default async function IndexPage() {
   // !mark
-  const t = await getTranslations('ServerComponentsPage');
-  return <h1>{t('greeting')}</h1>;
+  const t = await getTranslations('IndexPage');
+  return <h1>{t('title')}</h1>;
 }`;
 
 const nonAsyncSample = `import {useTranslations} from 'next-intl';
 
-export default function Page() {
+export default function IndexPage() {
   // !mark
-  const t = useTranslations('ServerComponentsPage');
-  return <h1>{t('greeting')}</h1>;
+  const t = useTranslations('IndexPage');
+  return <h1>{t('title')}</h1>;
 }`;
 
 export default function ServerComponentsPage() {
@@ -38,7 +39,9 @@ export default function ServerComponentsPage() {
 
       <Prose>
         <p>
-          {t('Translations in Server Components are resolved on the server.')}
+          {t(
+            'Translations in Server Components are resolved on the server side.'
+          )}
         </p>
 
         <h3>{t('Async components')}</h3>
@@ -57,11 +60,14 @@ export default function ServerComponentsPage() {
           )}
         </p>
         <Code value={asyncSample} label={t('Code')} />
+        <PlaygroundBoundary label={t('Output')} variant="dotgrid">
+          <AsyncIndexPage />
+        </PlaygroundBoundary>
 
         <h3>{t('Non-async components')}</h3>
         <p>
           {t.rich(
-            'In non-async Server Components, call <code>useTranslations</code> directly.',
+            'In non-async Server Components, <code>useTranslations</code> can be called as a hook.',
             {
               code: (chunks) => (
                 <a
@@ -74,17 +80,10 @@ export default function ServerComponentsPage() {
           )}
         </p>
         <Code value={nonAsyncSample} label={t('Code')} />
+        <PlaygroundBoundary label={t('Output')} variant="dotgrid">
+          <IndexPage />
+        </PlaygroundBoundary>
       </Prose>
-
-      <PlaygroundBoundary
-        label={t('Output')}
-        variant="dotgrid"
-        className="mt-8"
-      >
-        <div className="flex min-h-[140px] items-center justify-center">
-          <ServerExample />
-        </div>
-      </PlaygroundBoundary>
 
       <div className="mt-6 flex justify-end">
         <GitHubLink path="src/app/[locale]/translations/server-components" />

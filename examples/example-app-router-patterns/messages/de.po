@@ -15,39 +15,7 @@ msgstr "next-intl Playground"
 #: src/app/[locale]/layout.tsx
 msgctxt "D5GN2J"
 msgid "Explore translations, formatting, routing and patterns with next-intl."
-msgstr "Übersetzungen, Formatierung, Routing und Muster mit next-intl entdecken."
-
-#: src/app/[locale]/page.tsx
-#: src/app/[locale]/translations/client-components/page.tsx
-#: src/app/[locale]/translations/server-components/page.tsx
-#: src/components/PlaygroundSidebar.tsx
-msgctxt "aFyu8N"
-msgid "Translations"
-msgstr "Übersetzungen"
-
-#: src/app/[locale]/page.tsx
-#: src/app/[locale]/translations/server-components/page.tsx
-#: src/components/PlaygroundSidebar.tsx
-msgctxt "Jm_gm4"
-msgid "Server Components"
-msgstr "Server-Komponenten"
-
-#: src/app/[locale]/page.tsx
-msgctxt "kka9Id"
-msgid "Read translated strings inside Server Components."
-msgstr "Übersetzte Strings in Server-Komponenten lesen."
-
-#: src/app/[locale]/page.tsx
-#: src/app/[locale]/translations/client-components/page.tsx
-#: src/components/PlaygroundSidebar.tsx
-msgctxt "qwpdfx"
-msgid "Client Components"
-msgstr "Client-Komponenten"
-
-#: src/app/[locale]/page.tsx
-msgctxt "5oEQPR"
-msgid "Use translations in interactive Client Components."
-msgstr "Übersetzungen in interaktiven Client-Komponenten nutzen."
+msgstr "Übersetzungen, Formatierung, Routing und Patterns mit next-intl im Überblick."
 
 #: src/app/[locale]/page.tsx
 msgctxt "zllk1P"
@@ -59,30 +27,23 @@ msgctxt "CxfKLC"
 msgid "Pages"
 msgstr "Seiten"
 
-#: src/app/[locale]/translations/client-components/ClientExample.tsx
-msgctxt "vlKhIl"
-msgid "Your name"
-msgstr "Dein Name"
-
-#: src/app/[locale]/translations/client-components/ClientExample.tsx
-msgctxt "nCfqYd"
-msgid "Frodo"
-msgstr "Frodo"
-
-#: src/app/[locale]/translations/client-components/ClientExample.tsx
-msgctxt "tBFOH1"
-msgid "Hello, {name}!"
-msgstr "Hallo, {name}!"
+#: src/app/[locale]/translations/client-components/page.tsx
+#: src/app/[locale]/translations/server-components/page.tsx
+#: src/hooks/useNavSections.ts
+msgctxt "aFyu8N"
+msgid "Translations"
+msgstr "Übersetzungen"
 
 #: src/app/[locale]/translations/client-components/page.tsx
-msgctxt "5tbib9"
-msgid "<code>useTranslations</code> can be called in Client Components to incorporate client-side state."
-msgstr "<code>useTranslations</code> kann in Client-Komponenten aufgerufen werden, um clientseitigen State einzubeziehen."
+#: src/hooks/useNavSections.ts
+msgctxt "qwpdfx"
+msgid "Client Components"
+msgstr "Client Components"
 
 #: src/app/[locale]/translations/client-components/page.tsx
-msgctxt "Kn9KsD"
-msgid "ICU arguments like <code>'{name}'</code> are resolved in the browser as state changes."
-msgstr "ICU-Argumente wie <code>'{name}'</code> werden im Browser aufgelöst, wenn sich der State ändert."
+msgctxt "HVi8kk"
+msgid "In Client Components, <code>useTranslations</code> can format messages with client-side state, like the name below."
+msgstr "In Client Components kann <code>useTranslations</code> Messages mit clientseitigem State formatieren, etwa mit dem Namen unten."
 
 #: src/app/[locale]/translations/client-components/page.tsx
 #: src/app/[locale]/translations/server-components/page.tsx
@@ -97,9 +58,15 @@ msgid "Output"
 msgstr "Ausgabe"
 
 #: src/app/[locale]/translations/server-components/page.tsx
-msgctxt "felJxe"
-msgid "Translations in Server Components are resolved on the server."
-msgstr "Übersetzungen in Server-Komponenten werden auf dem Server aufgelöst."
+#: src/hooks/useNavSections.ts
+msgctxt "Jm_gm4"
+msgid "Server Components"
+msgstr "Server Components"
+
+#: src/app/[locale]/translations/server-components/page.tsx
+msgctxt "Oyo2qi"
+msgid "Translations in Server Components are resolved on the server side."
+msgstr "Übersetzungen in Server Components werden auf dem Server aufgelöst."
 
 #: src/app/[locale]/translations/server-components/page.tsx
 msgctxt "fZd-wY"
@@ -109,22 +76,17 @@ msgstr "Async-Komponenten"
 #: src/app/[locale]/translations/server-components/page.tsx
 msgctxt "l0zq_M"
 msgid "In async Server Components, use <code>await getTranslations</code> to read messages."
-msgstr "In async Server-Komponenten <code>await getTranslations</code> verwenden, um Nachrichten zu lesen."
+msgstr "In async Server Components werden Messages mit <code>await getTranslations</code> gelesen."
 
 #: src/app/[locale]/translations/server-components/page.tsx
 msgctxt "xh8Irc"
 msgid "Non-async components"
-msgstr "Nicht-async-Komponenten"
+msgstr "Komponenten ohne async"
 
 #: src/app/[locale]/translations/server-components/page.tsx
-msgctxt "2RUxZT"
-msgid "In non-async Server Components, call <code>useTranslations</code> directly."
-msgstr "In nicht-async Server-Komponenten <code>useTranslations</code> direkt aufrufen."
-
-#: src/app/[locale]/translations/server-components/ServerExample.tsx
-msgctxt "wVJ82J"
-msgid "Hello, world!"
-msgstr "Hallo, Welt!"
+msgctxt "ZR_nrN"
+msgid "In non-async Server Components, <code>useTranslations</code> can be called as a hook."
+msgstr "In Server Components ohne async lässt sich <code>useTranslations</code> als Hook aufrufen."
 
 #: src/components/GitHubLink.tsx
 msgctxt "80g19N"
@@ -144,7 +106,7 @@ msgstr "Quellcode"
 #: src/components/PlaygroundByline.tsx
 msgctxt "_6_sPX"
 msgid "Docs"
-msgstr "Dokumentation"
+msgstr "Doku"
 
 #: src/components/PlaygroundSidebar.tsx
 msgctxt "XqRXu6"
@@ -164,4 +126,14 @@ msgstr "Navigation öffnen"
 #: src/components/ThemeToggle.tsx
 msgctxt "EQpyb8"
 msgid "Toggle theme"
-msgstr "Design wechseln"
+msgstr "Farbschema wechseln"
+
+#: src/hooks/useNavSections.ts
+msgctxt "kka9Id"
+msgid "Read translated strings inside Server Components."
+msgstr "Übersetzungen in Server Components verwenden."
+
+#: src/hooks/useNavSections.ts
+msgctxt "5oEQPR"
+msgid "Use translations in interactive Client Components."
+msgstr "Übersetzungen in interaktiven Client Components."

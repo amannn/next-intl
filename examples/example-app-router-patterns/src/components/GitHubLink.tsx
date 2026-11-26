@@ -2,7 +2,7 @@ import {exampleSourcePath, repositoryTreeUrl} from '@/config';
 import {ArrowUpRight, Github} from 'lucide-react';
 import {useExtracted} from 'next-intl';
 
-export function GitHubLink({path}: {path: string}) {
+export default function GitHubLink({path}: {path: string}) {
   const t = useExtracted();
   const href = `${repositoryTreeUrl}/${exampleSourcePath}/${path
     .split('/')

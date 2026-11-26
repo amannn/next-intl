@@ -2,7 +2,7 @@ import {docsUrl, exampleSourcePath, repositoryTreeUrl} from '@/config';
 import {BookOpen, Github} from 'lucide-react';
 import {useExtracted} from 'next-intl';
 
-export function PlaygroundByline() {
+export default function PlaygroundByline() {
   const t = useExtracted();
 
   const links = [
