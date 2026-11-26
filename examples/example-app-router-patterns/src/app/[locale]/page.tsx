@@ -1,6 +1,6 @@
 import PlaygroundBoundary from '@/components/PlaygroundBoundary';
 import {Link} from '@/i18n/navigation';
-import useNavSections from '@/hooks/useNavSections';
+import useNavSections from '@/components/useNavSections';
 import {ArrowRight} from 'lucide-react';
 import {useExtracted} from 'next-intl';
 

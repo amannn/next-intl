@@ -3,7 +3,7 @@
 import Logo from '@/assets/Logo';
 import {Link, usePathname} from '@/i18n/navigation';
 import clsx from 'clsx';
-import useNavSections from '@/hooks/useNavSections';
+import useNavSections from './useNavSections';
 import {Menu, X} from 'lucide-react';
 import {useExtracted} from 'next-intl';
 import {useState} from 'react';

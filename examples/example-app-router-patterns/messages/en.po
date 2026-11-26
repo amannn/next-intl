@@ -29,13 +29,13 @@ msgstr "Pages"
 
 #: src/app/[locale]/translations/client-components/page.tsx
 #: src/app/[locale]/translations/server-components/page.tsx
-#: src/hooks/useNavSections.ts
+#: src/components/useNavSections.tsx
 msgctxt "aFyu8N"
 msgid "Translations"
 msgstr "Translations"
 
 #: src/app/[locale]/translations/client-components/page.tsx
-#: src/hooks/useNavSections.ts
+#: src/components/useNavSections.tsx
 msgctxt "qwpdfx"
 msgid "Client Components"
 msgstr "Client Components"
@@ -58,7 +58,7 @@ msgid "Output"
 msgstr "Output"
 
 #: src/app/[locale]/translations/server-components/page.tsx
-#: src/hooks/useNavSections.ts
+#: src/components/useNavSections.tsx
 msgctxt "Jm_gm4"
 msgid "Server Components"
 msgstr "Server Components"
@@ -128,12 +128,12 @@ msgctxt "EQpyb8"
 msgid "Toggle theme"
 msgstr "Toggle theme"
 
-#: src/hooks/useNavSections.ts
+#: src/components/useNavSections.tsx
 msgctxt "kka9Id"
 msgid "Read translated strings inside Server Components."
 msgstr "Read translated strings inside Server Components."
 
-#: src/hooks/useNavSections.ts
+#: src/components/useNavSections.tsx
 msgctxt "5oEQPR"
 msgid "Use translations in interactive Client Components."
 msgstr "Use translations in interactive Client Components."
