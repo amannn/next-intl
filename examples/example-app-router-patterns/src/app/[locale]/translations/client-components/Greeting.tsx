@@ -8,7 +8,11 @@ export default function Greeting() {
   const [name, setName] = useState('Frodo');
   return (
     <>
-      <input value={name} onChange={(e) => setName(e.target.value)} />
+      <input
+        aria-label={t('name')}
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+      />
       <p>{t('greeting', {name})}</p>
     </>
   );

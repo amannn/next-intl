@@ -3,6 +3,7 @@
     "title": "Hallo Welt!"
   },
   "Greeting": {
+    "name": "Name",
     "greeting": "Hallo, {name}!"
   }
 }
