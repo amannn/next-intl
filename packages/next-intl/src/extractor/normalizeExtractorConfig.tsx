@@ -84,7 +84,10 @@ export default function normalizeExtractorConfig(
       locales,
       path: extractPath,
       sourceLocale,
-      srcPath
+      srcPath,
+      ...(typeof extract === 'object' && extract.mdx !== undefined
+        ? {mdx: extract.mdx}
+        : {})
     },
     messages: {
       format: input.messages.format,

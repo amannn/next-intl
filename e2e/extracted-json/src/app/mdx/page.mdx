@@ -1,0 +1,13 @@
+export const metadata = {
+  title: t({id: 'mdxTitle', message: 'MDX title'})
+};
+
+# {t({id: 'mdxHeading', message: 'MDX heading'})}
+
+{t.rich({
+id: 'mdxRich',
+message: 'Read the <strong>documentation</strong>.',
+values: {strong: (chunks) => <strong>{chunks}</strong>}
+})}
+
+This text is not translated.

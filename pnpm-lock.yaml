@@ -174,6 +174,8 @@ settings:
 overrides:
   '@babel/parser': 7.21.9
 
+packageExtensionsChecksum: sha256-Taks3biLlXkspg5aHDz5PcNQyLqELvePRNlhe/IM3sE=
+
 patchedDependencies:
   nextra-theme-docs: c2aeac89d5e5b8dd66566232f0a6fbe91a248914e51308fa9cbf3c8c64d470ba
 
@@ -225,10 +227,10 @@ importers:
         version: 15.5.29(@babel/core@7.29.13(supports-color@8.1.1))(@opentelemetry/api@1.9.0)(@playwright/test@1.65.1)(@types/node@20.19.43)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       nextra:
         specifier: ^3.3.1
-        version: 3.3.1(@types/react@19.3.0)(acorn@8.15.0)(next@15.5.29(@babel/core@7.29.13(supports-color@8.1.1))(@opentelemetry/api@1.9.0)(@playwright/test@1.65.1)(@types/node@20.19.43)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(supports-color@8.1.1)(typescript@6.0.2)
+        version: 3.3.1(@types/react@19.3.0)(next@15.5.29(@babel/core@7.29.13(supports-color@8.1.1))(@opentelemetry/api@1.9.0)(@playwright/test@1.65.1)(@types/node@20.19.43)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(supports-color@8.1.1)(typescript@6.0.2)
       nextra-theme-docs:
         specifier: ^3.3.1
-        version: 3.3.1(patch_hash=c2aeac89d5e5b8dd66566232f0a6fbe91a248914e51308fa9cbf3c8c64d470ba)(next@15.5.29(@babel/core@7.29.13(supports-color@8.1.1))(@opentelemetry/api@1.9.0)(@playwright/test@1.65.1)(@types/node@20.19.43)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(nextra@3.3.1(@types/react@19.3.0)(acorn@8.15.0)(next@15.5.29(@babel/core@7.29.13(supports-color@8.1.1))(@opentelemetry/api@1.9.0)(@playwright/test@1.65.1)(@types/node@20.19.43)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(supports-color@8.1.1)(typescript@6.0.2))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 3.3.1(patch_hash=c2aeac89d5e5b8dd66566232f0a6fbe91a248914e51308fa9cbf3c8c64d470ba)(next@15.5.29(@babel/core@7.29.13(supports-color@8.1.1))(@opentelemetry/api@1.9.0)(@playwright/test@1.65.1)(@types/node@20.19.43)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(nextra@3.3.1(@types/react@19.3.0)(next@15.5.29(@babel/core@7.29.13(supports-color@8.1.1))(@opentelemetry/api@1.9.0)(@playwright/test@1.65.1)(@types/node@20.19.43)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(supports-color@8.1.1)(typescript@6.0.2))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -303,9 +305,21 @@ importers:
       '@eslint/eslintrc':
         specifier: ^3.3.7
         version: 3.3.7(supports-color@8.1.1)
+      '@mdx-js/loader':
+        specifier: ^3.1.1
+        version: 3.1.1(supports-color@8.1.1)(webpack@5.104.1(@swc/core@1.16.0(@swc/helpers@0.5.23))(esbuild@0.28.2)(uglify-js@3.19.3))
+      '@mdx-js/react':
+        specifier: ^3.1.1
+        version: 3.1.1(@types/react@19.3.0)(react@19.3.1)
+      '@next/mdx':
+        specifier: ^16.4.6
+        version: 16.4.6(@mdx-js/loader@3.1.1(supports-color@8.1.1)(webpack@5.104.1(@swc/core@1.16.0(@swc/helpers@0.5.23))(esbuild@0.28.2)(uglify-js@3.19.3)))(@mdx-js/react@3.1.1(@types/react@19.3.0)(react@19.3.1))(next@16.4.6(@babel/core@7.29.13(supports-color@8.1.1))(@opentelemetry/api@1.9.0)(@playwright/test@1.65.1)(@types/node@20.19.43)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))
       '@playwright/test':
         specifier: ^1.65.1
         version: 1.65.1
+      '@types/mdx':
+        specifier: ^2.0.14
+        version: 2.0.14
       '@types/react':
         specifier: ^19.3.0
         version: 19.3.0
@@ -657,6 +671,55 @@ importers:
         specifier: ^5.1.0
         version: 5.1.0(@edge-runtime/vm@5.0.0)(@opentelemetry/api@1.9.0)(@types/node@20.19.43)(@vitest/browser-preview@5.1.0)(@vitest/ui@5.1.0)(jsdom@20.0.3(supports-color@8.1.1))(vite@8.3.8(@types/node@20.19.43)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.45.0)(yaml@2.9.1))
 
+  examples/example-app-router-mdx:
+    dependencies:
+      next:
+        specifier: ^16.4.6
+        version: 16.4.6(@babel/core@7.29.13(supports-color@8.1.1))(@opentelemetry/api@1.9.0)(@playwright/test@1.65.1)(@types/node@20.19.43)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      next-intl:
+        specifier: workspace:*
+        version: link:../../packages/next-intl
+      react:
+        specifier: ^19.3.1
+        version: 19.3.1
+      react-dom:
+        specifier: ^19.3.1
+        version: 19.3.1(react@19.3.1)
+    devDependencies:
+      '@mdx-js/loader':
+        specifier: ^3.1.1
+        version: 3.1.1(supports-color@8.1.1)(webpack@5.104.1(@swc/core@1.16.0(@swc/helpers@0.5.23))(esbuild@0.28.2)(uglify-js@3.19.3))
+      '@mdx-js/react':
+        specifier: ^3.1.1
+        version: 3.1.1(@types/react@19.3.0)(react@19.3.1)
+      '@next/mdx':
+        specifier: ^16.4.6
+        version: 16.4.6(@mdx-js/loader@3.1.1(supports-color@8.1.1)(webpack@5.104.1(@swc/core@1.16.0(@swc/helpers@0.5.23))(esbuild@0.28.2)(uglify-js@3.19.3)))(@mdx-js/react@3.1.1(@types/react@19.3.0)(react@19.3.1))(next@16.4.6(@babel/core@7.29.13(supports-color@8.1.1))(@opentelemetry/api@1.9.0)(@playwright/test@1.65.1)(@types/node@20.19.43)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))
+      '@types/mdx':
+        specifier: ^2.0.14
+        version: 2.0.14
+      '@types/node':
+        specifier: ^20.19.43
+        version: 20.19.43
+      '@types/react':
+        specifier: ^19.3.0
+        version: 19.3.0
+      '@types/react-dom':
+        specifier: ^19.3.0
+        version: 19.3.0(@types/react@19.3.0)
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(jiti@2.7.0)(supports-color@8.1.1)
+      eslint-config-next:
+        specifier: ^16.4.6
+        version: 16.4.6(@typescript-eslint/parser@8.72.2(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)
+      prettier:
+        specifier: ^3.10.1
+        version: 3.10.1
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+
   examples/example-app-router-migration:
     dependencies:
       next:
@@ -741,7 +804,7 @@ importers:
         version: 16.4.6
       '@next/mdx':
         specifier: ^16.4.6
-        version: 16.4.6(@mdx-js/loader@3.1.1(supports-color@8.1.1)(webpack@5.104.1(@swc/core@1.16.0(@swc/helpers@0.5.23))(esbuild@0.25.1)(uglify-js@3.19.3)))(@mdx-js/react@3.1.1(@types/react@19.3.0)(react@19.3.1))
+        version: 16.4.6(@mdx-js/loader@3.1.1(supports-color@8.1.1)(webpack@5.104.1(@swc/core@1.16.0(@swc/helpers@0.5.23))(esbuild@0.25.1)(uglify-js@3.19.3)))(@mdx-js/react@3.1.1(@types/react@19.3.0)(react@19.3.1))(next@16.4.6(@babel/core@7.29.13(supports-color@8.1.1))(@opentelemetry/api@1.9.0)(@playwright/test@1.65.1)(@types/node@20.19.43)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))
       '@playwright/test':
         specifier: ^1.65.1
         version: 1.65.1
@@ -965,16 +1028,25 @@ importers:
       '@eloqnt/messages':
         specifier: workspace:~
         version: link:../messages
+      '@mdx-js/mdx':
+        specifier: ^3.1.1
+        version: 3.1.1(supports-color@8.1.1)
       '@swc/core':
         specifier: ~1.16.0
         version: 1.16.0(@swc/helpers@0.5.23)
       next-intl-swc-plugin-extractor:
         specifier: workspace:*
         version: link:../swc-plugin-extractor
+      source-map:
+        specifier: ^0.7.6
+        version: 0.7.6
     devDependencies:
       '@arethetypeswrong/cli':
         specifier: ^0.18.5
         version: 0.18.5
+      '@types/estree-jsx':
+        specifier: ^1.0.5
+        version: 1.0.5
       '@types/node':
         specifier: ^22.0.0
         version: 22.20.5
@@ -1162,6 +1234,9 @@ importers:
       '@formatjs/intl-localematcher':
         specifier: ^0.8.1
         version: 0.8.1
+      '@mdx-js/mdx':
+        specifier: ^3.1.1
+        version: 3.1.1(supports-color@8.1.1)
       '@parcel/watcher':
         specifier: ^2.6.0
         version: 2.6.0
@@ -1177,6 +1252,9 @@ importers:
       next-intl-swc-plugin-extractor:
         specifier: workspace:*
         version: link:../swc-plugin-extractor
+      source-map:
+        specifier: ^0.7.6
+        version: 0.7.6
       use-intl:
         specifier: workspace:^
         version: link:../use-intl
@@ -1207,7 +1285,7 @@ importers:
         version: 19.3.0(@types/react@19.3.0)
       '@types/webpack':
         specifier: ^5.28.5
-        version: 5.28.5(@swc/core@1.16.0(@swc/helpers@0.5.23))(esbuild@0.25.1)(uglify-js@3.19.3)
+        version: 5.28.5(@swc/core@1.16.0(@swc/helpers@0.5.23))(uglify-js@3.19.3)
       eslint:
         specifier: 9.11.1
         version: 9.11.1(jiti@2.7.0)(supports-color@8.1.1)
@@ -3712,11 +3790,8 @@ packages:
       webpack:
         optional: true
 
-  '@mdx-js/mdx@3.0.1':
-    resolution: {integrity: sha512-eIQ4QTrOWyL3LWEe/bu6Taqzq2HQvHcyTMaOrI95P2/LmJE7AsfPfgJGuFLPVqBUE1BC1rik3VIhU+s9u72arA==}
-
-  '@mdx-js/mdx@3.1.0':
-    resolution: {integrity: sha512-/QxEhPAvGwbQmy1Px8F899L5Uc2KZ6JtXwlCgJmjSTBedwOZkByYcBG4GceIGPXRDsmfxhHazuS+hlOShRLeDw==}
+  '@mdx-js/mdx@3.1.1':
+    resolution: {integrity: sha512-f6ZO2ifpwAQIpzGWaBQT2TXxPv6z3RBzQKpVftEWN78Vl/YweF1uwussDx8ECAXVtr3Rs89fKyG9YlzUs9DyGQ==}
 
   '@mdx-js/react@3.1.1':
     resolution: {integrity: sha512-f++rKLQgUVYDAtECQ6fn/is15GkEH9+nZPM3MS0RcxVqoTfawHvDlSCH7JbMhAM6uJ32v3eXLvLmLvjGu7PTQw==}
@@ -3851,6 +3926,7 @@ packages:
     peerDependencies:
       '@mdx-js/loader': '>=0.15.0'
       '@mdx-js/react': '>=0.15.0'
+      next: ^16.0.0
     peerDependenciesMeta:
       '@mdx-js/loader':
         optional: true
@@ -8627,9 +8703,6 @@ packages:
   is-potential-custom-element-name@1.0.1:
     resolution: {integrity: sha512-bCYeRA2rVibKZd+s2625gGnGF/t7DSqDs4dP7CrLA1m7jKWz6pps0LpYLJN8Q64HtmPKJ1hrN3nzPNKFEKOUiQ==}
 
-  is-reference@3.0.2:
-    resolution: {integrity: sha512-v3rht/LgVcsdZa3O2Nqs+NMowLOxeOm7Ay9+/ARQ2F+qEoANRcqrjAZKGN0v8ymUetZGgkp26LTnGT7H0Qo9Pg==}
-
   is-regex@1.2.1:
     resolution: {integrity: sha512-MjYsKHO5O7mCsmRGxWcLWheFqN9DJ/2TmngvjKXihe6efViPqc274+Fx/4fYj/r03+ESvBdTXK0V6tA3rgez1g==}
     engines: {node: '>= 0.4'}
@@ -9921,9 +9994,6 @@ packages:
     resolution: {integrity: sha512-nS4mvFgVwUrecPTRdpdseM2fwpdfnX0/HibA8DgBRQtihUAzHQYJFU2l+OlEtiXtpqkrMvCPDwyXMUnASDt6Qw==}
     engines: {node: '>= 0.10'}
 
-  periscopic@3.1.0:
-    resolution: {integrity: sha512-vKiQ8RRtkl9P+r/+oefh25C3fhybptkHKCZSPlcXiJux2tJF55GnEj3BVn4A5gKfq9NWWXXrxkHBwVPUfH0opw==}
-
   picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
 
@@ -10810,10 +10880,6 @@ packages:
   source-map@0.6.1:
     resolution: {integrity: sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==}
     engines: {node: '>=0.10.0'}
-
-  source-map@0.7.4:
-    resolution: {integrity: sha512-l3BikUxvPOcn5E74dZiq5BGsTb5yEwhaTSzccU6t4sDOH8NWJCstKO5QT2CvtFoK6F0saL7p9xHAqHOlCPJygA==}
-    engines: {node: '>= 8'}
 
   source-map@0.7.6:
     resolution: {integrity: sha512-i5uvt8C3ikiWeNZSVZNWcfZPItFQOsYTUAOkcUPGd8DqDy1uOUikjt5dG+uRlwyvR108Fb9DOd4GvXfT0N2/uQ==}
@@ -11911,10 +11977,12 @@ packages:
   yuku-core@0.19.0:
     resolution: {integrity: sha512-kYK9e1XdfirNhkipzW0wmMcSWcVF/CWnuugodfVYRCUwvoBefweL9HzB96OiKEhsx78V5WbUxbJqlizMX869Qg==}
     engines: {node: '>=14.18.0'}
+    deprecated: 'Yuku is now one package with one core. Use "yuku" instead: https://yuku.fyi/javascript/. Existing installs keep working but get no more fixes.'
 
   yuku-parser@0.19.0:
     resolution: {integrity: sha512-XrBh9ZiQK5mJVRxZBAvD6LwRyAYrK3MFtH3+onyuxFL5hFD44EC3QOmIC1FjTj6H2MMwq46/NAI+NZxLZPZgxg==}
     engines: {node: '>=14.18.0'}
+    deprecated: 'Yuku is now one package with one core. Use "yuku" instead: https://yuku.fyi/javascript/. Existing installs keep working but get no more fixes.'
 
   zod-validation-error@3.4.0:
     resolution: {integrity: sha512-ZOPR9SVY6Pb2qqO5XHt+MkkTRxGXb4EVtnjc9JpXUOtUB1T9Ru7mZOT361AN3MsetVe7R0a1KZshJDZdgp9miQ==}
@@ -14632,47 +14700,29 @@ snapshots:
 
   '@mdx-js/loader@3.1.1(supports-color@8.1.1)(webpack@5.104.1(@swc/core@1.16.0(@swc/helpers@0.5.23))(esbuild@0.25.1)(uglify-js@3.19.3))':
     dependencies:
-      '@mdx-js/mdx': 3.0.1(supports-color@8.1.1)
-      source-map: 0.7.4
+      '@mdx-js/mdx': 3.1.1(supports-color@8.1.1)
+      source-map: 0.7.6
     optionalDependencies:
       webpack: 5.104.1(@swc/core@1.16.0(@swc/helpers@0.5.23))(esbuild@0.25.1)(uglify-js@3.19.3)
     transitivePeerDependencies:
       - supports-color
 
-  '@mdx-js/mdx@3.0.1(supports-color@8.1.1)':
+  '@mdx-js/loader@3.1.1(supports-color@8.1.1)(webpack@5.104.1(@swc/core@1.16.0(@swc/helpers@0.5.23))(esbuild@0.28.2)(uglify-js@3.19.3))':
     dependencies:
-      '@types/estree': 1.0.8
-      '@types/estree-jsx': 1.0.5
-      '@types/hast': 3.0.4
-      '@types/mdx': 2.0.14
-      collapse-white-space: 2.1.0
-      devlop: 1.1.0
-      estree-util-build-jsx: 3.0.1
-      estree-util-is-identifier-name: 3.0.0
-      estree-util-to-js: 2.0.0
-      estree-walker: 3.0.3
-      hast-util-to-estree: 3.1.0(supports-color@8.1.1)
-      hast-util-to-jsx-runtime: 2.3.2(supports-color@8.1.1)
-      markdown-extensions: 2.0.0
-      periscopic: 3.1.0
-      remark-mdx: 3.1.1(supports-color@8.1.1)
-      remark-parse: 11.0.0(supports-color@8.1.1)
-      remark-rehype: 11.1.1
-      source-map: 0.7.4
-      unified: 11.0.5
-      unist-util-position-from-estree: 2.0.0
-      unist-util-stringify-position: 4.0.0
-      unist-util-visit: 5.0.0
-      vfile: 6.0.3
+      '@mdx-js/mdx': 3.1.1(supports-color@8.1.1)
+      source-map: 0.7.6
+    optionalDependencies:
+      webpack: 5.104.1(@swc/core@1.16.0(@swc/helpers@0.5.23))(esbuild@0.28.2)(uglify-js@3.19.3)
     transitivePeerDependencies:
       - supports-color
 
-  '@mdx-js/mdx@3.1.0(acorn@8.15.0)(supports-color@8.1.1)':
+  '@mdx-js/mdx@3.1.1(supports-color@8.1.1)':
     dependencies:
-      '@types/estree': 1.0.8
+      '@types/estree': 1.0.10
       '@types/estree-jsx': 1.0.5
       '@types/hast': 3.0.4
       '@types/mdx': 2.0.14
+      acorn: 8.15.0
       collapse-white-space: 2.1.0
       devlop: 1.1.0
       estree-util-is-identifier-name: 3.0.0
@@ -14694,7 +14744,6 @@ snapshots:
       unist-util-visit: 5.0.0
       vfile: 6.0.3
     transitivePeerDependencies:
-      - acorn
       - supports-color
 
   '@mdx-js/react@3.1.1(@types/react@19.3.0)(react@18.3.1)':
@@ -14801,11 +14850,20 @@ snapshots:
     transitivePeerDependencies:
       - eslint
 
-  '@next/mdx@16.4.6(@mdx-js/loader@3.1.1(supports-color@8.1.1)(webpack@5.104.1(@swc/core@1.16.0(@swc/helpers@0.5.23))(esbuild@0.25.1)(uglify-js@3.19.3)))(@mdx-js/react@3.1.1(@types/react@19.3.0)(react@19.3.1))':
+  '@next/mdx@16.4.6(@mdx-js/loader@3.1.1(supports-color@8.1.1)(webpack@5.104.1(@swc/core@1.16.0(@swc/helpers@0.5.23))(esbuild@0.25.1)(uglify-js@3.19.3)))(@mdx-js/react@3.1.1(@types/react@19.3.0)(react@19.3.1))(next@16.4.6(@babel/core@7.29.13(supports-color@8.1.1))(@opentelemetry/api@1.9.0)(@playwright/test@1.65.1)(@types/node@20.19.43)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))':
     dependencies:
+      next: 16.4.6(@babel/core@7.29.13(supports-color@8.1.1))(@opentelemetry/api@1.9.0)(@playwright/test@1.65.1)(@types/node@20.19.43)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       source-map: 0.7.6
     optionalDependencies:
       '@mdx-js/loader': 3.1.1(supports-color@8.1.1)(webpack@5.104.1(@swc/core@1.16.0(@swc/helpers@0.5.23))(esbuild@0.25.1)(uglify-js@3.19.3))
+      '@mdx-js/react': 3.1.1(@types/react@19.3.0)(react@19.3.1)
+
+  '@next/mdx@16.4.6(@mdx-js/loader@3.1.1(supports-color@8.1.1)(webpack@5.104.1(@swc/core@1.16.0(@swc/helpers@0.5.23))(esbuild@0.28.2)(uglify-js@3.19.3)))(@mdx-js/react@3.1.1(@types/react@19.3.0)(react@19.3.1))(next@16.4.6(@babel/core@7.29.13(supports-color@8.1.1))(@opentelemetry/api@1.9.0)(@playwright/test@1.65.1)(@types/node@20.19.43)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))':
+    dependencies:
+      next: 16.4.6(@babel/core@7.29.13(supports-color@8.1.1))(@opentelemetry/api@1.9.0)(@playwright/test@1.65.1)(@types/node@20.19.43)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      source-map: 0.7.6
+    optionalDependencies:
+      '@mdx-js/loader': 3.1.1(supports-color@8.1.1)(webpack@5.104.1(@swc/core@1.16.0(@swc/helpers@0.5.23))(esbuild@0.28.2)(uglify-js@3.19.3))
       '@mdx-js/react': 3.1.1(@types/react@19.3.0)(react@19.3.1)
 
   '@next/swc-android-arm-eabi@12.3.4':
@@ -16428,6 +16486,18 @@ snapshots:
       - esbuild
       - uglify-js
       - webpack-cli
+    optional: true
+
+  '@types/webpack@5.28.5(@swc/core@1.16.0(@swc/helpers@0.5.23))(uglify-js@3.19.3)':
+    dependencies:
+      '@types/node': 20.19.43
+      tapable: 2.2.3
+      webpack: 5.104.1(@swc/core@1.16.0(@swc/helpers@0.5.23))(esbuild@0.28.2)(uglify-js@3.19.3)
+    transitivePeerDependencies:
+      - '@swc/core'
+      - esbuild
+      - uglify-js
+      - webpack-cli
 
   '@types/yargs-parser@21.0.3': {}
 
@@ -17683,8 +17753,8 @@ snapshots:
       zod: 4.6.7
     optional: true
 
-  ajv-formats@2.1.1(ajv@8.20.0):
-    optionalDependencies:
+  ajv-formats@2.1.1:
+    dependencies:
       ajv: 8.20.0
 
   ajv-keywords@3.5.2(ajv@6.15.0):
@@ -20237,7 +20307,7 @@ snapshots:
 
   estree-util-scope@1.0.0:
     dependencies:
-      '@types/estree': 1.0.8
+      '@types/estree': 1.0.10
       devlop: 1.1.0
 
   estree-util-to-js@2.0.0:
@@ -20259,7 +20329,7 @@ snapshots:
 
   estree-walker@3.0.3:
     dependencies:
-      '@types/estree': 1.0.8
+      '@types/estree': 1.0.10
 
   esutils@2.0.3: {}
 
@@ -20765,7 +20835,7 @@ snapshots:
 
   hast-util-to-jsx-runtime@2.3.2(supports-color@8.1.1):
     dependencies:
-      '@types/estree': 1.0.8
+      '@types/estree': 1.0.10
       '@types/hast': 3.0.4
       '@types/unist': 3.0.3
       comma-separated-tokens: 2.0.3
@@ -20773,13 +20843,13 @@ snapshots:
       estree-util-is-identifier-name: 3.0.0
       hast-util-whitespace: 3.0.0
       mdast-util-mdx-expression: 2.0.1(supports-color@8.1.1)
-      mdast-util-mdx-jsx: 3.1.3(supports-color@8.1.1)
+      mdast-util-mdx-jsx: 3.2.0(supports-color@8.1.1)
       mdast-util-mdxjs-esm: 2.0.1(supports-color@8.1.1)
       property-information: 6.5.0
       space-separated-tokens: 2.0.2
       style-to-object: 1.0.8
       unist-util-position: 5.0.0
-      vfile-message: 4.0.2
+      vfile-message: 4.0.3
     transitivePeerDependencies:
       - supports-color
 
@@ -21096,10 +21166,6 @@ snapshots:
   is-plain-object@5.0.0: {}
 
   is-potential-custom-element-name@1.0.1: {}
-
-  is-reference@3.0.2:
-    dependencies:
-      '@types/estree': 1.0.8
 
   is-regex@1.2.1:
     dependencies:
@@ -22633,7 +22699,7 @@ snapshots:
       - '@types/node'
       - babel-plugin-macros
 
-  nextra-theme-docs@3.3.1(patch_hash=c2aeac89d5e5b8dd66566232f0a6fbe91a248914e51308fa9cbf3c8c64d470ba)(next@15.5.29(@babel/core@7.29.13(supports-color@8.1.1))(@opentelemetry/api@1.9.0)(@playwright/test@1.65.1)(@types/node@20.19.43)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(nextra@3.3.1(@types/react@19.3.0)(acorn@8.15.0)(next@15.5.29(@babel/core@7.29.13(supports-color@8.1.1))(@opentelemetry/api@1.9.0)(@playwright/test@1.65.1)(@types/node@20.19.43)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(supports-color@8.1.1)(typescript@6.0.2))(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  nextra-theme-docs@3.3.1(patch_hash=c2aeac89d5e5b8dd66566232f0a6fbe91a248914e51308fa9cbf3c8c64d470ba)(next@15.5.29(@babel/core@7.29.13(supports-color@8.1.1))(@opentelemetry/api@1.9.0)(@playwright/test@1.65.1)(@types/node@20.19.43)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(nextra@3.3.1(@types/react@19.3.0)(next@15.5.29(@babel/core@7.29.13(supports-color@8.1.1))(@opentelemetry/api@1.9.0)(@playwright/test@1.65.1)(@types/node@20.19.43)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(supports-color@8.1.1)(typescript@6.0.2))(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@headlessui/react': 2.2.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       clsx: 2.1.1
@@ -22641,17 +22707,17 @@ snapshots:
       flexsearch: 0.7.43
       next: 15.5.29(@babel/core@7.29.13(supports-color@8.1.1))(@opentelemetry/api@1.9.0)(@playwright/test@1.65.1)(@types/node@20.19.43)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       next-themes: 0.4.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      nextra: 3.3.1(@types/react@19.3.0)(acorn@8.15.0)(next@15.5.29(@babel/core@7.29.13(supports-color@8.1.1))(@opentelemetry/api@1.9.0)(@playwright/test@1.65.1)(@types/node@20.19.43)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(supports-color@8.1.1)(typescript@6.0.2)
+      nextra: 3.3.1(@types/react@19.3.0)(next@15.5.29(@babel/core@7.29.13(supports-color@8.1.1))(@opentelemetry/api@1.9.0)(@playwright/test@1.65.1)(@types/node@20.19.43)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(supports-color@8.1.1)(typescript@6.0.2)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       scroll-into-view-if-needed: 3.1.0
       zod: 3.25.76
 
-  nextra@3.3.1(@types/react@19.3.0)(acorn@8.15.0)(next@15.5.29(@babel/core@7.29.13(supports-color@8.1.1))(@opentelemetry/api@1.9.0)(@playwright/test@1.65.1)(@types/node@20.19.43)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(supports-color@8.1.1)(typescript@6.0.2):
+  nextra@3.3.1(@types/react@19.3.0)(next@15.5.29(@babel/core@7.29.13(supports-color@8.1.1))(@opentelemetry/api@1.9.0)(@playwright/test@1.65.1)(@types/node@20.19.43)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(supports-color@8.1.1)(typescript@6.0.2):
     dependencies:
       '@formatjs/intl-localematcher': 0.5.10
       '@headlessui/react': 2.2.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@mdx-js/mdx': 3.1.0(acorn@8.15.0)(supports-color@8.1.1)
+      '@mdx-js/mdx': 3.1.1(supports-color@8.1.1)
       '@mdx-js/react': 3.1.1(@types/react@19.3.0)(react@18.3.1)
       '@napi-rs/simple-git': 0.1.19
       '@shikijs/twoslash': 1.29.2(supports-color@8.1.1)(typescript@6.0.2)
@@ -22693,7 +22759,6 @@ snapshots:
       zod-validation-error: 3.4.0(zod@3.25.76)
     transitivePeerDependencies:
       - '@types/react'
-      - acorn
       - supports-color
       - typescript
 
@@ -23092,12 +23157,6 @@ snapshots:
       safe-buffer: 5.2.1
       sha.js: 2.4.12
       to-buffer: 1.2.2
-
-  periscopic@3.1.0:
-    dependencies:
-      '@types/estree': 1.0.8
-      estree-walker: 3.0.3
-      is-reference: 3.0.2
 
   picocolors@1.1.1: {}
 
@@ -23498,7 +23557,7 @@ snapshots:
 
   recma-build-jsx@1.0.0:
     dependencies:
-      '@types/estree': 1.0.8
+      '@types/estree': 1.0.10
       estree-util-build-jsx: 3.0.1
       vfile: 6.0.3
 
@@ -23514,14 +23573,14 @@ snapshots:
 
   recma-parse@1.0.0:
     dependencies:
-      '@types/estree': 1.0.8
+      '@types/estree': 1.0.10
       esast-util-from-js: 2.0.1
       unified: 11.0.5
       vfile: 6.0.3
 
   recma-stringify@1.0.0:
     dependencies:
-      '@types/estree': 1.0.8
+      '@types/estree': 1.0.10
       estree-util-to-js: 2.0.0
       unified: 11.0.5
       vfile: 6.0.3
@@ -23661,7 +23720,7 @@ snapshots:
 
   rehype-recma@1.0.0(supports-color@8.1.1):
     dependencies:
-      '@types/estree': 1.0.8
+      '@types/estree': 1.0.10
       '@types/hast': 3.0.4
       hast-util-to-estree: 3.1.0(supports-color@8.1.1)
     transitivePeerDependencies:
@@ -23983,7 +24042,7 @@ snapshots:
     dependencies:
       '@types/json-schema': 7.0.15
       ajv: 8.20.0
-      ajv-formats: 2.1.1(ajv@8.20.0)
+      ajv-formats: 2.1.1
       ajv-keywords: 5.1.0(ajv@8.20.0)
 
   scroll-into-view-if-needed@3.1.0:
@@ -24230,8 +24289,6 @@ snapshots:
       source-map: 0.6.1
 
   source-map@0.6.1: {}
-
-  source-map@0.7.4: {}
 
   source-map@0.7.6: {}
 
@@ -24534,6 +24591,19 @@ snapshots:
     optionalDependencies:
       '@swc/core': 1.16.0(@swc/helpers@0.5.23)
       esbuild: 0.25.1
+      uglify-js: 3.19.3
+
+  terser-webpack-plugin@5.3.16(@swc/core@1.16.0(@swc/helpers@0.5.23))(esbuild@0.28.2)(uglify-js@3.19.3)(webpack@5.104.1(@swc/core@1.16.0(@swc/helpers@0.5.23))(esbuild@0.28.2)(uglify-js@3.19.3)):
+    dependencies:
+      '@jridgewell/trace-mapping': 0.3.31
+      jest-worker: 27.5.1
+      schema-utils: 4.3.3
+      serialize-javascript: 6.0.2
+      terser: 5.45.0
+      webpack: 5.104.1(@swc/core@1.16.0(@swc/helpers@0.5.23))(esbuild@0.28.2)(uglify-js@3.19.3)
+    optionalDependencies:
+      '@swc/core': 1.16.0(@swc/helpers@0.5.23)
+      esbuild: 0.28.2
       uglify-js: 3.19.3
 
   terser@5.36.0:
@@ -25450,6 +25520,38 @@ snapshots:
       schema-utils: 4.3.3
       tapable: 2.3.3
       terser-webpack-plugin: 5.3.16(@swc/core@1.16.0(@swc/helpers@0.5.23))(esbuild@0.25.1)(uglify-js@3.19.3)(webpack@5.104.1(@swc/core@1.16.0(@swc/helpers@0.5.23))(esbuild@0.25.1)(uglify-js@3.19.3))
+      watchpack: 2.5.1
+      webpack-sources: 3.3.3
+    transitivePeerDependencies:
+      - '@swc/core'
+      - esbuild
+      - uglify-js
+
+  webpack@5.104.1(@swc/core@1.16.0(@swc/helpers@0.5.23))(esbuild@0.28.2)(uglify-js@3.19.3):
+    dependencies:
+      '@types/eslint-scope': 3.7.7
+      '@types/estree': 1.0.8
+      '@types/json-schema': 7.0.15
+      '@webassemblyjs/ast': 1.14.1
+      '@webassemblyjs/wasm-edit': 1.14.1
+      '@webassemblyjs/wasm-parser': 1.14.1
+      acorn: 8.15.0
+      acorn-import-phases: 1.0.4(acorn@8.15.0)
+      browserslist: 4.29.6
+      chrome-trace-event: 1.0.4
+      enhanced-resolve: 5.26.1
+      es-module-lexer: 2.0.0
+      eslint-scope: 5.1.1
+      events: 3.3.0
+      glob-to-regexp: 0.4.1
+      graceful-fs: 4.2.11
+      json-parse-even-better-errors: 2.3.1
+      loader-runner: 4.3.1
+      mime-types: 2.1.35
+      neo-async: 2.6.2
+      schema-utils: 4.3.3
+      tapable: 2.3.3
+      terser-webpack-plugin: 5.3.16(@swc/core@1.16.0(@swc/helpers@0.5.23))(esbuild@0.28.2)(uglify-js@3.19.3)(webpack@5.104.1(@swc/core@1.16.0(@swc/helpers@0.5.23))(esbuild@0.28.2)(uglify-js@3.19.3))
       watchpack: 2.5.1
       webpack-sources: 3.3.3
     transitivePeerDependencies:

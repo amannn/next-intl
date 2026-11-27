@@ -15,7 +15,7 @@ export default defineConfig({
     baseURL: `http://localhost:${port}`
   },
   webServer: {
-    command: `PORT=${port} pnpm dev`,
+    command: `PORT=${port} pnpm dev${process.env.E2E_WEBPACK ? ' --webpack' : ''}`,
     port,
     reuseExistingServer: !process.env.CI
   }

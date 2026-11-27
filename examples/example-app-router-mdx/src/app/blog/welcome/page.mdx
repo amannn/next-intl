@@ -1,0 +1,28 @@
+import Link from 'next/link';
+
+export const metadata = {
+  title: t('Welcome to the blog'),
+  description: t('A first post about writing and sharing ideas.')
+};
+
+# {t('Welcome to the blog')}
+
+{t('Every story starts with an idea. This is the first entry in our little blog.')}
+
+## {t('Write once, share everywhere')}
+
+{t('This article is available in {count} languages.', {count: 2})}
+
+- {t('Write your article in MDX.')}
+- {t('Keep the same structure in every language.')}
+- {t('Translate the messages in your catalog.')}
+
+**{t('One article, two languages.')}**
+
+## {t('A little code')}
+
+```js
+const greeting = 'Hello, world!';
+```
+
+<Link href="/">{t('Back to all posts')}</Link>

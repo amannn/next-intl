@@ -17,7 +17,10 @@ export default class ExtractionCompiler implements Disposable {
   ) {
     this.manager = new CatalogManager(config, {
       ...opts,
-      extractor: new MessageExtractor({projectRoot: opts.projectRoot})
+      extractor: new MessageExtractor({
+        projectRoot: opts.projectRoot,
+        mdx: config.extract.mdx
+      })
     });
     this[Symbol.dispose] = this[Symbol.dispose].bind(this);
   }

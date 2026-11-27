@@ -9,12 +9,30 @@ const TS_EXTENSIONS_WITHOUT_JSX = ['.ts', '.mts', '.cts'];
 
 export default class MessageExtractor {
   private projectRoot: string;
+  private mdx: boolean;
 
-  public constructor(opts: {projectRoot?: string} = {}) {
+  public constructor(opts: {projectRoot?: string; mdx?: boolean} = {}) {
     this.projectRoot = opts.projectRoot ?? getDefaultProjectRoot();
+    this.mdx = opts.mdx ?? false;
   }
 
   public async extract(
+    absoluteFilePath: string,
+    source: string
+  ): Promise<Array<SourceExtractedMessage>> {
+    if (path.extname(absoluteFilePath) === '.mdx') {
+      if (!this.mdx) return [];
+
+      const {default: extractMdx} = await import('../mdx/extractMdx.js');
+      return extractMdx(absoluteFilePath, source, (code) =>
+        this.extractJavaScript(absoluteFilePath, code)
+      );
+    }
+
+    return this.extractJavaScript(absoluteFilePath, source);
+  }
+
+  private async extractJavaScript(
     absoluteFilePath: string,
     source: string
   ): Promise<Array<SourceExtractedMessage>> {

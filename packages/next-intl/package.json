@@ -89,6 +89,10 @@
       "types": "./dist/types/extractor.d.ts",
       "default": "./dist/esm/production/extractor.js"
     },
+    "./extractor/mdx": {
+      "types": "./dist/types/extractor/mdx.d.ts",
+      "default": "./dist/esm/production/extractor/mdx.js"
+    },
     "./extractor/extractionLoader": {
       "types": "./dist/types/plugin/extractor/extractionLoader.d.ts",
       "default": "./dist/esm/production/extractor/extractionLoader.js"
@@ -130,11 +134,13 @@
     "@eloqnt/format-po": "workspace:~",
     "@eloqnt/messages": "workspace:~",
     "@formatjs/intl-localematcher": "^0.8.1",
+    "@mdx-js/mdx": "^3.1.1",
     "@parcel/watcher": "^2.6.0",
     "@swc/core": "~1.16.0",
     "icu-minify": "workspace:^",
     "negotiator": "^1.0.0",
     "next-intl-swc-plugin-extractor": "workspace:*",
+    "source-map": "^0.7.6",
     "use-intl": "workspace:^"
   },
   "peerDependencies": {

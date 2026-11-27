@@ -41,11 +41,17 @@ function initPlugin(
     });
   }
 
+  const nextIntlConfig = getNextConfig(
+    pluginConfig,
+    nextConfig,
+    extractorConfig
+  );
+
   if (!skipWatchers) {
     initExtractionCompiler(extractorConfig);
   }
 
-  return getNextConfig(pluginConfig, nextConfig, extractorConfig);
+  return nextIntlConfig;
 }
 
 export default function createNextIntlPlugin(

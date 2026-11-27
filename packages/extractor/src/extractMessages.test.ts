@@ -31,10 +31,11 @@ function extract(
   format: 'json' | 'po',
   {
     codes,
+    mdx,
     locales = 'infer',
     path: messagesPath = './messages'
   }: Partial<
-    Pick<ExtractorConfig['extract'], 'locales' | 'path'> &
+    Pick<ExtractorConfig['extract'], 'locales' | 'path' | 'mdx'> &
       Pick<ExtractorConfig['messages'], 'codes'>
   > = {}
 ) {
@@ -43,7 +44,8 @@ function extract(
       locales,
       path: messagesPath,
       sourceLocale: 'en',
-      srcPath: './src'
+      srcPath: './src',
+      mdx
     },
     messages: {format, path: ['./messages'], codes}
   };
@@ -333,4 +335,48 @@ it('rejects a path that splits messages by namespace', async () => {
   await expect(
     extract('json', {path: './locales/{locale}/{namespace}'})
   ).rejects.toThrowError(/doesn't support yet/);
+});
+
+it.each(['json', 'po'] as const)(
+  'extracts local MDX directly to %s catalogs',
+  async (format) => {
+    await writeFiles({
+      'src/content/page.mdx':
+        "export const metadata = {title: t({id: 'seo', message: 'Title', description: 'SEO'})};\n\n# {t('Hello!')}",
+      'src/Component.tsx':
+        "import {useExtracted} from 'next-intl'; function Component() {const t = useExtracted(); return t('Hello!');}",
+      ['messages/de.' + format]:
+        format === 'json'
+          ? '{"OpKKos": "Hallo!"}'
+          : `${poHeader('de')}
+msgctxt "OpKKos"
+msgid "Hello!"
+msgstr "Hallo!"
+`
+    });
+
+    const result = await extract(format, {mdx: true});
+    expect(result.messageCount).toBe(2);
+    const source = await readFile('messages/en.' + format);
+    const target = await readFile('messages/de.' + format);
+    if (format === 'json') {
+      expect(JSON.parse(source)).toEqual({seo: 'Title', OpKKos: 'Hello!'});
+      expect(JSON.parse(target)).toEqual({seo: '', OpKKos: 'Hallo!'});
+    } else {
+      expect(source).toContain('#: src/content/page.mdx');
+      expect(source).toContain('#. SEO');
+      expect(target).toContain('msgstr "Hallo!"');
+    }
+  }
+);
+
+it('ignores MDX by default and leaves catalogs untouched when enabled MDX cannot be parsed', async () => {
+  await writeFiles({
+    'src/page.mdx': "# {t('Hello!')}\n\n{invalid",
+    'messages/en.json': '{}'
+  });
+  expect((await extract('json')).messageCount).toBe(0);
+  const previous = await readFile('messages/en.json');
+  await expect(extract('json', {mdx: true})).rejects.toThrow('src/page.mdx');
+  expect(await readFile('messages/en.json')).toBe(previous);
 });

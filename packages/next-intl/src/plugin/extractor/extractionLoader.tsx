@@ -10,7 +10,8 @@ let transformer: SourceTransformer | undefined;
 
 export default function extractionLoader(
   this: TurbopackLoaderContext<ExtractorConfig>,
-  source: string
+  source: string,
+  inputSourceMap?: object | string
 ) {
   const callback = this.async();
   const projectRoot = this.rootContext;
@@ -27,7 +28,15 @@ export default function extractionLoader(
   }
 
   transformer
-    .transform(this.resourcePath, source)
+    .transform(
+      this.resourcePath,
+      source,
+      typeof inputSourceMap === 'string'
+        ? inputSourceMap
+        : inputSourceMap
+          ? JSON.stringify(inputSourceMap)
+          : undefined
+    )
     .then((result) => {
       // Webpack loaders conventionally pass source maps as objects (e.g.
       // `next-swc-loader` calls `JSON.stringify` on its input source map)
