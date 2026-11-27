@@ -174,7 +174,10 @@ export default class CatalogManager implements Disposable {
     await this.loadCatalogsPromise;
 
     const sourceFiles = Array.from(
-      await SourceFileScanner.getSourceFiles(this.getSrcPaths())
+      await SourceFileScanner.getSourceFiles(
+        this.getSrcPaths(),
+        this.config.extract.mdx
+      )
     )
       // Stable file order keeps catalog ties independent of processing timing
       .toSorted((a, b) => a.localeCompare(b, 'en'));
@@ -520,7 +523,10 @@ export default class CatalogManager implements Disposable {
   };
 
   public async update(events: Array<SourceFileEvent>) {
-    const normalizedEvents = await normalizeEvents(events);
+    const normalizedEvents = await normalizeEvents(
+      events,
+      this.config.extract.mdx
+    );
     if (normalizedEvents.length === 0) {
       return;
     }
@@ -530,12 +536,16 @@ export default class CatalogManager implements Disposable {
     await this.loadCatalogsPromise;
 
     let changed = false;
-    const expandedEvents = expandDirectoryDeleteEvents(normalizedEvents, [
-      ...this.sourceMessagesByFile.keys(),
-      // Unparsed files have no messages, but a moved folder must still
-      // clear them, otherwise saving stays paused
-      ...this.unparsedFiles
-    ]);
+    const expandedEvents = expandDirectoryDeleteEvents(
+      normalizedEvents,
+      [
+        ...this.sourceMessagesByFile.keys(),
+        // Unparsed files have no messages, but a moved folder must still
+        // clear them, otherwise saving stays paused
+        ...this.unparsedFiles
+      ],
+      this.config.extract.mdx
+    );
     // Stable file order keeps catalog ties independent of event timing.
     for (const event of expandedEvents.toSorted((a, b) =>
       a.path.localeCompare(b.path, 'en')

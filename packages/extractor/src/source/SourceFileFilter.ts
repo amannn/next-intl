@@ -20,9 +20,12 @@ export default class SourceFileFilter {
     '.git'
   ];
 
-  public static isSourceFile(filePath: string) {
+  public static isSourceFile(filePath: string, mdx = false) {
     const ext = path.extname(filePath);
-    return SourceFileFilter.EXTENSIONS.map((cur) => '.' + cur).includes(ext);
+    return (
+      (mdx && ext === '.mdx') ||
+      SourceFileFilter.EXTENSIONS.map((cur) => '.' + cur).includes(ext)
+    );
   }
 
   public static shouldEnterDirectory(

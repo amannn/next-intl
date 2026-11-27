@@ -51,14 +51,15 @@ beforeEach(() => {
 });
 
 describe('json format', {timeout: 20_000}, () => {
-  function createCompiler() {
+  function createCompiler(mdx = false) {
     return new ExtractionCompiler(
       {
         extract: {
           locales: 'infer',
           path: './messages',
           sourceLocale: 'en',
-          srcPath: './src'
+          srcPath: './src',
+          mdx
         },
         messages: {
           format: 'json',
@@ -71,6 +72,74 @@ describe('json format', {timeout: 20_000}, () => {
       }
     );
   }
+
+  it('extracts and watches MDX messages while retaining valid catalogs across syntax errors', async () => {
+    filesystem.project.src['page.mdx'] = "# {t('Hello!')}";
+    filesystem.project.messages = {'de.json': '{"OpKKos": "Hallo!"}'};
+    using compiler = createCompiler(true);
+    await compiler.extractAll();
+    expect(JSON.parse(filesystem.project.messages!['en.json'])).toEqual({
+      OpKKos: 'Hello!'
+    });
+
+    await simulateSourceFileCreate('/project/src/other.mdx', "# {t('Hey!')}");
+    expect(JSON.parse(filesystem.project.messages!['en.json'])).toEqual({
+      OpKKos: 'Hello!',
+      '-YJVTi': 'Hey!'
+    });
+
+    const previous = filesystem.project.messages!['en.json'];
+    await simulateSourceFileUpdate('/project/src/page.mdx', '{invalid');
+    expect(filesystem.project.messages!['en.json']).toBe(previous);
+    expect(JSON.parse(filesystem.project.messages!['de.json']).OpKKos).toBe(
+      'Hallo!'
+    );
+
+    await simulateSourceFileUpdate(
+      '/project/src/page.mdx',
+      "# {t('Hello!')}\n\n{t('New')}"
+    );
+    expect(
+      Object.values(JSON.parse(filesystem.project.messages!['en.json']))
+    ).toContain('New');
+    expect(JSON.parse(filesystem.project.messages!['de.json']).OpKKos).toBe(
+      'Hallo!'
+    );
+
+    await simulateSourceFileDelete('/project/src/other.mdx');
+    expect(
+      JSON.parse(filesystem.project.messages!['en.json'])['-YJVTi']
+    ).toBeUndefined();
+
+    setNestedValue(
+      filesystem,
+      '/project/src/moved/page.mdx',
+      "# {t('Hello!')}"
+    );
+    delete filesystem.project.src['page.mdx'];
+    await compiler.update([
+      {type: 'delete', path: '/project/src/page.mdx'},
+      {type: 'create', path: '/project/src/moved'}
+    ]);
+    expect(JSON.parse(filesystem.project.messages!['en.json'])).toEqual({
+      OpKKos: 'Hello!'
+    });
+    expect(JSON.parse(filesystem.project.messages!['de.json'])).toEqual({
+      OpKKos: 'Hallo!'
+    });
+
+    delete filesystem.project.src.moved;
+    await compiler.update([{type: 'delete', path: '/project/src/moved'}]);
+    expect(JSON.parse(filesystem.project.messages!['en.json'])).toEqual({});
+  });
+
+  it('does not scan or watch MDX without opting in', async () => {
+    filesystem.project.src['page.mdx'] = '{invalid';
+    using compiler = createCompiler();
+    await compiler.extractAll();
+    await simulateSourceFileCreate('/project/src/other.mdx', "# {t('Hello!')}");
+    expect(JSON.parse(filesystem.project.messages!['en.json'])).toEqual({});
+  });
 
   it('creates the messages directory and source catalog when they do not exist initially', async () => {
     filesystem.project.messages = undefined;

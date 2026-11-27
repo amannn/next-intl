@@ -20,6 +20,7 @@ export type ExtractorConfig = {
     path: MessagesPathEntry;
     sourceLocale: string;
     srcPath: string | Array<string>;
+    mdx?: boolean;
   };
   messages: {
     format: MessagesFormat;

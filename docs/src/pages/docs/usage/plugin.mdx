@@ -117,6 +117,18 @@ It's only required to configure this property when [`messages.path`](#messages-p
 
 See also: [Monorepos and external packages](/docs/usage/extraction#monorepos-external-packages).
 
+#### `extract.mdx` [#extract-mdx]
+
+Enables message extraction from local `.mdx` files within [`srcPath`](#src-path) (defaults to `false`):
+
+```tsx
+extract: {
+  mdx: true
+},
+```
+
+Also add `'next-intl/extractor/mdx'` to `recmaPlugins` in your `@next/mdx` configuration. See [MDX message extraction](/docs/usage/extraction#mdx) for setup and supported syntax.
+
 ### `messages` [#messages]
 
 This defines where messages for locales are stored and how they're loaded.

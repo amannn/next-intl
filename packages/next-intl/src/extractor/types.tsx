@@ -32,6 +32,8 @@ export type ExtractorConfigInput = {
     | {
         /** Defaults to `messages.path` when it is a single path. */
         path?: string;
+        /** Extract messages from local MDX files using `next-intl/extractor/mdx`. */
+        mdx?: boolean;
         /** @deprecated Prefer `messages.sourceLocale`. */
         sourceLocale?: string;
       };

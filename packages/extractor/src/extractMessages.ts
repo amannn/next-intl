@@ -71,9 +71,15 @@ export default async function extractMessages(
     )
   );
 
-  const extractor = new MessageExtractor({projectRoot});
+  const extractor = new MessageExtractor({
+    projectRoot,
+    mdx: config.extract.mdx
+  });
   const sourceFiles = Array.from(
-    await SourceFileScanner.getSourceFiles(getSrcPaths(config, projectRoot))
+    await SourceFileScanner.getSourceFiles(
+      getSrcPaths(config, projectRoot),
+      config.extract.mdx
+    )
   )
     // Stable file order keeps catalog ties independent of processing timing
     .toSorted(localeCompare);

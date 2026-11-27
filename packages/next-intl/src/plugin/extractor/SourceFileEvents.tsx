@@ -9,7 +9,8 @@ export type SourceFileEvent = {
 };
 
 export async function normalizeEvents(
-  events: Array<SourceFileEvent>
+  events: Array<SourceFileEvent>,
+  mdx = false
 ): Promise<Array<SourceFileEvent>> {
   const directoryCreatePaths: Array<string> = [];
   const otherEvents: Array<SourceFileEvent> = [];
@@ -38,8 +39,10 @@ export async function normalizeEvents(
   let expandedCreateEvents: Array<SourceFileEvent> = [];
   if (directoryCreatePaths.length > 0) {
     try {
-      const sourceFiles =
-        await SourceFileScanner.getSourceFiles(directoryCreatePaths);
+      const sourceFiles = await SourceFileScanner.getSourceFiles(
+        directoryCreatePaths,
+        mdx
+      );
       expandedCreateEvents = Array.from(sourceFiles).map(
         (filePath): SourceFileEvent => ({type: 'create', path: filePath})
       );
@@ -68,18 +71,22 @@ export async function normalizeEvents(
       return true;
     }
     // Keep source files
-    return SourceFileFilter.isSourceFile(event.path);
+    return SourceFileFilter.isSourceFile(event.path, mdx);
   });
 }
 
 export function expandDirectoryDeleteEvents(
   events: Array<SourceFileEvent>,
-  prevKnownFiles: Array<string>
+  prevKnownFiles: Array<string>,
+  mdx = false
 ): Array<SourceFileEvent> {
   const expanded: Array<SourceFileEvent> = [];
 
   for (const event of events) {
-    if (event.type === 'delete' && !SourceFileFilter.isSourceFile(event.path)) {
+    if (
+      event.type === 'delete' &&
+      !SourceFileFilter.isSourceFile(event.path, mdx)
+    ) {
       const dirPath = path.resolve(event.path);
       const filesInDirectory: Array<string> = [];
 

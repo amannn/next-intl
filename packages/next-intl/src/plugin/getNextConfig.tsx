@@ -117,6 +117,15 @@ export default function getNextConfig(
 
   const nextIntlConfig: Partial<NextConfig> = {};
 
+  const extractMdx =
+    typeof pluginConfig.experimental?.extract === 'object' &&
+    pluginConfig.experimental.extract.mdx;
+  if (extractMdx && nextConfig?.experimental?.mdxRs) {
+    throwError(
+      'MDX message extraction requires the JavaScript MDX compiler. Remove `experimental.mdxRs` from your Next.js config.'
+    );
+  }
+
   let messageLoadPaths: Array<string> = [];
 
   if (pluginConfig.experimental?.messages) {
@@ -321,6 +330,16 @@ export default function getNextConfig(
             getExtractMessagesLoaderConfig(extractorConfig as ExtractorConfig)
           ]
         });
+        if (extractMdx) {
+          config.module.rules.push({
+            test: /\.mdx$/,
+            // MDX must be compiled before SWC can transform the injected hooks.
+            enforce: 'post',
+            use: [
+              getExtractMessagesLoaderConfig(extractorConfig as ExtractorConfig)
+            ]
+          });
+        }
       }
 
       // Add loader for catalog

@@ -129,3 +129,45 @@ describe('syntax per file extension', () => {
     }
   );
 });
+
+it('composes incoming MDX maps and includes them in the cache identity', async () => {
+  const transformer = new SourceTransformer({
+    isDevelopment: true,
+    projectRoot: '/project',
+    sourceMap: true
+  });
+  const source =
+    "import {useExtracted} from 'next-intl'; function Component() {const t = useExtracted(); return t('Hello!');}";
+  for (const name of ['first', 'second']) {
+    const inputMap = JSON.stringify({
+      version: 3,
+      names: [],
+      sources: [`/project/${name}.mdx`],
+      sourcesContent: ["# {t('Hello!')}"],
+      mappings: 'AAAA'
+    });
+    const result = await transformer.transform(
+      '/project/page.mdx',
+      source,
+      inputMap
+    );
+    expect(JSON.parse(result.map!).sources).toEqual([`/project/${name}.mdx`]);
+    expect(JSON.parse(result.map!).sourcesContent).toEqual(["# {t('Hello!')}"]);
+  }
+});
+
+it('preserves the incoming map when no transformation is needed', async () => {
+  const transformer = new SourceTransformer({
+    isDevelopment: false,
+    projectRoot: '/project'
+  });
+  const inputMap =
+    '{"version":3,"sources":["page.mdx"],"names":[],"mappings":"AAAA"}';
+  expect(
+    await transformer.transform(
+      '/project/page.mdx',
+      'export const title = "Static";',
+      inputMap
+    )
+  ).toEqual({code: 'export const title = "Static";', map: inputMap});
+});

@@ -30,9 +30,10 @@ export default class SourceTransformer {
 
   public async transform(
     absoluteFilePath: string,
-    source: string
+    source: string,
+    inputSourceMap?: string
   ): Promise<{code: string; map?: string}> {
-    const cacheKey = [source, absoluteFilePath].join('!');
+    const cacheKey = [source, absoluteFilePath, inputSourceMap].join('!');
     const cached = this.compileCache.get(cacheKey);
     if (cached) return cached;
 
@@ -40,7 +41,9 @@ export default class SourceTransformer {
     // pre-filters this, but for webpack this feature doesn't exist, so we need
     // to do it here.
     if (!source.includes('useExtracted') && !source.includes('getExtracted')) {
-      return {code: source};
+      return inputSourceMap
+        ? {code: source, map: inputSourceMap}
+        : {code: source};
     }
 
     // Load lazily so that importing the plugin doesn't require loading the
@@ -78,6 +81,7 @@ export default class SourceTransformer {
         }
       },
       sourceMaps: this.sourceMap,
+      inputSourceMap,
       // Is converted into a relative path by Next.js when
       // the final source map is generated
       sourceFileName: absoluteFilePath,
