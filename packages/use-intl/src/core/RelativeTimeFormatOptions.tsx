@@ -1,5 +1,5 @@
 type RelativeTimeFormatOptions = {
-  now?: number | Date;
+  now?: number | Date | string;
   unit?: Intl.RelativeTimeFormatUnit;
   numberingSystem?: string;
   style?: Intl.RelativeTimeFormatStyle;

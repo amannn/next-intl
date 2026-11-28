@@ -457,3 +457,53 @@ describe('list', () => {
     ).toBe('apple, banana, and orange');
   });
 });
+
+describe('ISO string support', () => {
+  it('accepts ISO strings in dateTime', () => {
+    const formatter = createFormatter({
+      locale: 'en',
+      timeZone: 'Europe/Berlin'
+    });
+    expect(
+      formatter.dateTime('2020-11-20T10:36:01.516Z', {
+        dateStyle: 'medium'
+      })
+    ).toBe('Nov 20, 2020');
+  });
+
+  it('accepts ISO strings in dateTimeRange', () => {
+    const formatter = createFormatter({
+      locale: 'en',
+      timeZone: 'Europe/Berlin'
+    });
+    expect(
+      formatter.dateTimeRange(
+        '2020-11-20T10:00:00.000Z',
+        '2020-11-20T12:00:00.000Z',
+        {dateStyle: 'medium', timeStyle: 'short'}
+      )
+    ).toBe('Nov 20, 2020, 10:00 AM – 12:00 PM');
+  });
+
+  it('accepts ISO strings in relativeTime', () => {
+    const formatter = createFormatter({
+      locale: 'en',
+      timeZone: 'Europe/Berlin'
+    });
+    expect(
+      formatter.relativeTime('2020-11-20T00:00:00.000Z', '2020-11-20T00:00:10.000Z')
+    ).toBe('10 seconds ago');
+  });
+
+  it('accepts ISO strings in relativeTime with now option', () => {
+    const formatter = createFormatter({
+      locale: 'en',
+      timeZone: 'Europe/Berlin'
+    });
+    expect(
+      formatter.relativeTime('2020-11-20T00:00:00.000Z', {
+        now: '2020-11-20T00:00:10.000Z'
+      })
+    ).toBe('10 seconds ago');
+  });
+});

@@ -169,53 +169,56 @@ export default function createFormatter(props: Props) {
 
   function dateTime(
     /** If a number is supplied, this is interpreted as a UTC timestamp. */
-    value: Date | number,
+    value: Date | number | string,
     options?: DateTimeFormatOptions
   ): string;
   function dateTime(
     /** If a number is supplied, this is interpreted as a UTC timestamp. */
-    value: Date | number,
+    value: Date | number | string,
     format?: FormatNames['dateTime'],
     options?: DateTimeFormatOptions
   ): string;
   function dateTime(
-    value: Date | number,
+    value: Date | number | string,
     formatOrOptions?: FormatNames['dateTime'] | DateTimeFormatOptions,
     overrides?: DateTimeFormatOptions
   ) {
+    const date = typeof value === 'string' ? new Date(value) : value;
     return getFormattedValue(
       formatOrOptions,
       overrides,
       formats?.dateTime,
       (options) => {
         options = applyTimeZone(options);
-        return formatters.getDateTimeFormat(locale, options).format(value);
+        return formatters.getDateTimeFormat(locale, options).format(date);
       },
-      () => String(value)
+      () => String(date)
     );
   }
 
   function dateTimeRange(
     /** If a number is supplied, this is interpreted as a UTC timestamp. */
-    start: Date | number,
+    start: Date | number | string,
     /** If a number is supplied, this is interpreted as a UTC timestamp. */
-    end: Date | number,
+    end: Date | number | string,
     options?: DateTimeFormatOptions
   ): string;
   function dateTimeRange(
     /** If a number is supplied, this is interpreted as a UTC timestamp. */
-    start: Date | number,
+    start: Date | number | string,
     /** If a number is supplied, this is interpreted as a UTC timestamp. */
-    end: Date | number,
+    end: Date | number | string,
     format?: FormatNames['dateTime'],
     options?: DateTimeFormatOptions
   ): string;
   function dateTimeRange(
-    start: Date | number,
-    end: Date | number,
+    start: Date | number | string,
+    end: Date | number | string,
     formatOrOptions?: FormatNames['dateTime'] | DateTimeFormatOptions,
     overrides?: DateTimeFormatOptions
   ) {
+    const startDate = typeof start === 'string' ? new Date(start) : start;
+    const endDate = typeof end === 'string' ? new Date(end) : end;
     return getFormattedValue(
       formatOrOptions,
       overrides,
@@ -224,9 +227,9 @@ export default function createFormatter(props: Props) {
         options = applyTimeZone(options);
         return formatters
           .getDateTimeFormat(locale, options)
-          .formatRange(start, end);
+          .formatRange(startDate, endDate);
       },
-      () => [dateTime(start), dateTime(end)].join(' – ')
+      () => [dateTime(startDate), dateTime(endDate)].join(' – ')
     );
   }
 
@@ -273,23 +276,24 @@ export default function createFormatter(props: Props) {
 
   function relativeTime(
     /** The date time that needs to be formatted. */
-    date: number | Date,
+    date: number | Date | string,
     /** The reference point in time to which `date` will be formatted in relation to. If this value is absent, a globally configured `now` value or alternatively the current time will be used. */
     now?: RelativeTimeFormatOptions['now']
   ): string;
   function relativeTime(
     /** The date time that needs to be formatted. */
-    date: number | Date,
+    date: number | Date | string,
     options?: RelativeTimeFormatOptions
   ): string;
   function relativeTime(
-    date: number | Date,
+    date: number | Date | string,
     nowOrOptions?: RelativeTimeFormatOptions['now'] | RelativeTimeFormatOptions
   ) {
     try {
       let nowDate: Date | undefined,
         unit: Intl.RelativeTimeFormatUnit | undefined;
       const opts: Intl.RelativeTimeFormatOptions = {};
+      const dateDate = typeof date === 'string' ? new Date(date) : new Date(date);
       if (nowOrOptions instanceof Date || typeof nowOrOptions === 'number') {
         nowDate = new Date(nowOrOptions);
       } else if (nowOrOptions) {
@@ -308,7 +312,6 @@ export default function createFormatter(props: Props) {
         nowDate = getGlobalNow();
       }
 
-      const dateDate = new Date(date);
       const seconds = (dateDate.getTime() - nowDate.getTime()) / 1000;
 
       if (!unit) {
